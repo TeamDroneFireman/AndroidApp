@@ -27,6 +27,7 @@ public interface IElement {
      */
     public Role getRole();
 
+
     /**
      * set the element's location
      * @param location
@@ -34,10 +35,21 @@ public interface IElement {
     public void setPosition(Location location);
 
     /**
+     *
+     * @return the location
+     */
+    public Location getPosition();
+
+    /**
      * set the element's name
      * @param name
      */
     public void setName(String name);
 
+    /**
+     *
+     * @return the name
+     */
+    public String getName();
 
 }
