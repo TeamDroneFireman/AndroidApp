@@ -1,0 +1,26 @@
+package edu.istic.tdf.dfclient.activity;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
+import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
+import edu.istic.tdf.dfclient.fragment.LoginFragment;
+
+public class MainMenuActivity extends AppCompatActivity implements InterventionDetailFragment.OnFragmentInteractionListener, InterventionListFragment.OnFragmentInteractionListener {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_menu);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.list_container, InterventionListFragment.newInstance())
+                .commit();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
+                .commit();
+    }
+}

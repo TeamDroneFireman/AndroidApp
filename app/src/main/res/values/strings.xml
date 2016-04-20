@@ -6,4 +6,6 @@
     <string name="login_password_text">Mot de passe</string>
     <string name="login_button_text">Connexion</string>
 
+    <string name="hello_blank_fragment">Fragment vide</string>
+
 </resources>
