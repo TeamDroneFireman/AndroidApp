@@ -7,20 +7,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import edu.istic.tdf.dfclient.R;
 
-public class InterventionDetailFragment extends Fragment {
+public class SitacFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public InterventionDetailFragment() {
-        // Required empty public constructor
+    public SitacFragment() {
     }
 
-    public static InterventionDetailFragment newInstance() {
-        InterventionDetailFragment fragment = new InterventionDetailFragment();
+    public static SitacFragment newInstance() {
+        SitacFragment fragment = new SitacFragment();
         return fragment;
     }
 
@@ -32,17 +30,8 @@ public class InterventionDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
-        Button loginButton = (Button) view.findViewById(R.id.interventionSelectionButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onInterventionSelect();
-            }
-        });
-
-        return view;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_sitac, container, false);
     }
 
     @Override
@@ -63,6 +52,5 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onInterventionSelect();
     }
 }

@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -22,5 +23,11 @@ public class MainMenuActivity extends AppCompatActivity implements InterventionD
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
                 .commit();
+    }
+
+    @Override
+    public void onInterventionSelect() {
+        Intent intent = new Intent(this, SitacActivity.class);
+        this.startActivity(intent);
     }
 }
