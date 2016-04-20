@@ -13,13 +13,13 @@ public interface ISinister {
      *
      * @return the sinister code, example 'SAP'
      */
-    public String getSinisterCode();
+    public SinisterCode getSinisterCode();
 
     /**
      *
      * @param sinisterCode
      */
-    public void setSinisterCode(String sinisterCode);
+    public void setSinisterCode(SinisterCode sinisterCode);
 
     /**
      *

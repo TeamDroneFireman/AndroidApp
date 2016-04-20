@@ -14,7 +14,7 @@ public class Sinister implements ISinister {
     /**
      * the sinisterCode of the sinister
      */
-    private String sinisterCode;
+    private SinisterCode sinisterCode;
 
     /**
      * the default collection of means for the defined sinisterCode
@@ -28,16 +28,16 @@ public class Sinister implements ISinister {
     // Initialize attributs
     private void init(){
         this.means = new ArrayList<IMean>();
-
+        this.sinisterCode = SinisterCode.SAP;
     }
 
     @Override
-    public String getSinisterCode() {
+    public SinisterCode getSinisterCode() {
         return this.sinisterCode;
     }
 
     @Override
-    public void setSinisterCode(String sinisterCode) {
+    public void setSinisterCode(SinisterCode sinisterCode) {
         this.sinisterCode = sinisterCode;
     }
 

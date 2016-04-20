@@ -29,7 +29,20 @@ public class Intervention implements IIntervention {
      */
     private Address address;
 
+    /**
+     * The creation date of the intervention
+     */
     private Date dateCreation;
+
+    /**
+     * the Date when the intervention is archived or null if the intervention isn't archived
+     */
+    private Date dateArchived;
+
+    /**
+     * True iff the intervention is archived
+     */
+    private boolean archived;
 
     public Intervention() {
 
@@ -42,12 +55,34 @@ public class Intervention implements IIntervention {
         this.sinister = new Sinister();
         elements = new ArrayList<IElement>();
         this.dateCreation = new Date();
+        this.archived = false;
     }
 
     @Override
     public Date getCreationDate()
     {
         return dateCreation;
+    }
+
+    @Override
+    public Date getArchivedDate() {
+        if(this.archived && this.dateArchived != null)
+        {
+            return this.dateArchived;
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean isArchived() {
+        return this.archived;
+    }
+
+    @Override
+    public void archive() {
+        this.archived = true;
+        this.dateArchived = new Date();
     }
 
     @Override

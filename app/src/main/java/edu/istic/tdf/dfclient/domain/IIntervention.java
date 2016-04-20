@@ -14,9 +14,26 @@ public interface IIntervention {
 
     /**
      *
-     * @return the object Date of the creation of this object
+     * @return the Date of the intervention creation
      */
     public Date getCreationDate();
+
+    /**
+     *
+     * @return the Date when the intervention is archived or null if the intervention isn't archived
+     */
+    public Date getArchivedDate();
+
+    /**
+     *
+     * @return true iff the intervention is archived
+     */
+    public boolean isArchived();
+
+    /**
+     * archive the intervention
+     */
+    public void archive();
 
     /**
      *
@@ -73,5 +90,5 @@ public interface IIntervention {
      * Render targeted element on the map
      * @param element must be not null and inside the collection of elements
      */
-    public void printOnMapElement(IElement element);
+    public void printOnMapElement(IElement element);;
 }
