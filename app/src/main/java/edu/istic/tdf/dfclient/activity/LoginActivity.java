@@ -1,7 +1,9 @@
-package edu.istic.tdf.dfclient;
+package edu.istic.tdf.dfclient.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import edu.istic.tdf.dfclient.R;
 
 public class LoginActivity extends AppCompatActivity {
 
