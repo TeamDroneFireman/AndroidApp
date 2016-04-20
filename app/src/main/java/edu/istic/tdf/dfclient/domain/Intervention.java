@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.domain;
 
 import android.location.Address;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,6 +29,8 @@ public class Intervention implements IIntervention {
      */
     private Address address;
 
+    private Date dateCreation;
+
     public Intervention() {
 
         this.init();
@@ -38,7 +41,13 @@ public class Intervention implements IIntervention {
 
         this.sinister = new Sinister();
         elements = new ArrayList<IElement>();
+        this.dateCreation = new Date();
+    }
 
+    @Override
+    public Date getCreationDate()
+    {
+        return dateCreation;
     }
 
     @Override

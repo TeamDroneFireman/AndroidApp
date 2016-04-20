@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.domain;
 
 import android.location.Address;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -10,6 +11,12 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  * Created by btessiau on 20/04/16.
  */
 public interface IIntervention {
+
+    /**
+     *
+     * @return the object Date of the creation of this object
+     */
+    public Date getCreationDate();
 
     /**
      *

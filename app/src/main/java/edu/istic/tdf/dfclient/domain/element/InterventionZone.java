@@ -7,11 +7,20 @@ import android.location.Location;
  */
 public class InterventionZone implements IInterventionZone {
     private Role role;
+    private String name;
 
+    public InterventionZone() {
+        this.init();
+    }
+
+    private void init() {
+        this.role = Role.NONE;
+        this.name = "Default Name";
+    }
 
     @Override
     public void printOnMap() {
-
+        //TODO
     }
 
     @Override
@@ -26,11 +35,13 @@ public class InterventionZone implements IInterventionZone {
 
     @Override
     public void setPosition(Location location) {
+        //TODO
 
     }
 
     @Override
     public void setName(String name) {
+        this.name = name;
 
     }
 }
