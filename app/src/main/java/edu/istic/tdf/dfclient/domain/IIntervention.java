@@ -57,4 +57,14 @@ public interface IIntervention {
      */
     public void setAddress(Address address);
 
+    /**
+     * Render all element on the map
+     */
+    public void renderOnMapAllElement();
+
+    /**
+     * Render targeted element on the map
+     * @param element must be not null and inside the collection of elements
+     */
+    public void renderOnMapElement(IElement element);
 }

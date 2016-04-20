@@ -6,6 +6,12 @@
     <string name="login_password_text">Mot de passe</string>
     <string name="login_button_text">Connexion</string>
 
+    <!-- Main menu -->
+    <string name="intervention_selection_button">Sélectionner</string>
+
+    <!-- SITAC -->
+
+    <!-- Divers -->
     <string name="hello_blank_fragment">Fragment vide</string>
 
 </resources>
