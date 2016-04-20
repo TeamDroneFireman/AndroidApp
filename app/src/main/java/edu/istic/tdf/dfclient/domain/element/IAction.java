@@ -10,4 +10,10 @@ public interface IAction extends IElement {
      * @param state
      */
     public void setState(ActionState state);
+
+    /**
+     *
+     * @return
+     */
+    public ActionState getState();
 }
