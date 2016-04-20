@@ -8,6 +8,7 @@ import android.location.Location;
 public class InterventionZone implements IInterventionZone {
     private Role role;
     private String name;
+    private Location location;
 
     public InterventionZone() {
         this.init();
@@ -36,12 +37,22 @@ public class InterventionZone implements IInterventionZone {
     @Override
     public void setPosition(Location location) {
         //TODO
+        this.location = location;
+    }
 
+    @Override
+    public Location getPosition() {
+        return this.location;
     }
 
     @Override
     public void setName(String name) {
         this.name = name;
 
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 }
