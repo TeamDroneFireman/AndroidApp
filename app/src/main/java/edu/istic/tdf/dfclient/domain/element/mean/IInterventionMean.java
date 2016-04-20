@@ -13,4 +13,10 @@ public interface IInterventionMean extends IMean {
      * @param state
      */
     public void setState(MeanState state);
+
+    /**
+     * change the current action (defence, move...)
+     * @param action
+     */
+    public void setAction(String action);
 }
