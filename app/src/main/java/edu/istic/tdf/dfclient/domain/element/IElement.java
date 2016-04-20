@@ -1,6 +1,5 @@
 package edu.istic.tdf.dfclient.domain.element;
 
-import android.graphics.Color;
 import android.location.Location;
 
 /**
@@ -14,13 +13,19 @@ public interface IElement {
      * Print itself on the map
      * TODO choose the map object (parameter)
      */
-    public void print();
+    public void printOnMap();
 
     /**
-     * set the element's color
-     * @param color
+     * set the element's role
+     * @param role
      */
-    public void setColor(Color color);
+    public void setRole(Role role);
+
+    /**
+     *
+     * @return the Role of the element
+     */
+    public Role getRole();
 
     /**
      * set the element's location
