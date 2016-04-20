@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.domain.Element.Mean.AirAssets.Drone;
+package edu.istic.tdf.dfclient.domain.element.mean.airAssets.drone;
 
 /**
  * Created by btessiau on 20/04/16.
