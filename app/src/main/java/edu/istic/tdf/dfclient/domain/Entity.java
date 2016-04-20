@@ -5,5 +5,6 @@ import io.realm.RealmObject;
 /**
  * {@inheritDoc}
  */
-public abstract class Entity extends RealmObject implements IEntity {
+public abstract class Entity implements IEntity {
+    abstract public String getRestEndpoint();
 }
