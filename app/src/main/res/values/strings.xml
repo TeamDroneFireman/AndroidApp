@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">DFClient</string>
+
+    <!-- Login -->
+    <string name="login_username_text">Nom d\'utilisateur</string>
+    <string name="login_password_text">Mot de passe</string>
+    <string name="login_button_text">Connexion</string>
+
 </resources>
