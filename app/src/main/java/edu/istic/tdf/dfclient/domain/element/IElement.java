@@ -9,11 +9,7 @@ import android.location.Location;
  */
 public interface IElement {
 
-    /**
-     * Print itself on the map
-     * TODO choose the map object (parameter)
-     */
-    public void printOnMap();
+
 
     /**
      * set the element's role
@@ -51,5 +47,7 @@ public interface IElement {
      * @return the name
      */
     public String getName();
+
+
 
 }
