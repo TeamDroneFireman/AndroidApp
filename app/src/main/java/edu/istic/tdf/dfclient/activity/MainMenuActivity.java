@@ -7,7 +7,6 @@ import android.os.Bundle;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
-import edu.istic.tdf.dfclient.fragment.LoginFragment;
 
 public class MainMenuActivity extends AppCompatActivity implements InterventionDetailFragment.OnFragmentInteractionListener, InterventionListFragment.OnFragmentInteractionListener {
 

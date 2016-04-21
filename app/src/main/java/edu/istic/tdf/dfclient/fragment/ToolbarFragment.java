@@ -10,40 +10,31 @@ import android.widget.Button;
 
 import edu.istic.tdf.dfclient.R;
 
-public class LoginFragment extends Fragment {
+public class ToolbarFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public LoginFragment() {
+    public ToolbarFragment() {
+        // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance() {
-        LoginFragment fragment = new LoginFragment();
+    public static ToolbarFragment newInstance() {
+        ToolbarFragment fragment = new ToolbarFragment();
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        super.onCreateView(inflater, container,savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-        Button loginButton = (Button) view.findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onLoginSuccess();
-            }
-        });
+
+        View view = inflater.inflate(R.layout.fragment_toolbar, container, false);
 
         return view;
-
     }
 
     @Override
@@ -64,7 +55,5 @@ public class LoginFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onLoginSuccess();
-        void onLoginError(String message);
     }
 }
