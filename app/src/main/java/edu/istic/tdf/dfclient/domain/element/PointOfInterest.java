@@ -8,16 +8,39 @@ import android.location.Location;
  */
 public class PointOfInterest implements IElement {
 
+    /**
+     * The unique Id of this object
+     */
+    private String id;
+
+    /**
+     * The role of this element
+     */
     private Role role;
 
-    private Location location;
-
+    /**
+     * The name of this element
+     */
     private String name;
 
+    /**
+     * The location of this element
+     */
+    private Location location;
 
+    public PointOfInterest() {
 
+    }
 
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
     @Override
     public void setRole(Role role) {

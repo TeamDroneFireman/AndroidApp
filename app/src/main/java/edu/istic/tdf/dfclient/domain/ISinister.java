@@ -11,6 +11,18 @@ public interface ISinister {
 
     /**
      *
+     * @return the unique id of the element
+     */
+    public String getId();
+
+    /**
+     *
+     * @param id the new unique id of the element
+     */
+    public void setId(String id);
+
+    /**
+     *
      * @return the sinister code, example 'SAP'
      */
     public SinisterCode getSinisterCode();

@@ -14,6 +14,18 @@ public interface IIntervention {
 
     /**
      *
+     * @return the unique id of the element
+     */
+    public String getId();
+
+    /**
+     *
+     * @param id the new unique id of the element
+     */
+    public void setId(String id);
+
+    /**
+     *
      * @return the Date of the intervention creation
      */
     public Date getCreationDate();

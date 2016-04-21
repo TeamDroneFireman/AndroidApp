@@ -12,6 +12,11 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 public class InterventionMean implements IInterventionMean {
 
     /**
+     * The unique Id of this object
+     */
+    private String id;
+
+    /**
      * represent the state for the means table
      */
     private MeanState state;
@@ -49,6 +54,16 @@ public class InterventionMean implements IInterventionMean {
         this.state=s;
         this.role=r;
         this.name=n;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

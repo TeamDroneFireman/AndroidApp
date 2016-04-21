@@ -13,7 +13,6 @@ import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
  */
 public class InterventionMeanAdapt implements IInterventionMean{
 
-
     private IInterventionMean interventionMean;
 
     public InterventionMeanAdapt(){
@@ -52,6 +51,18 @@ public class InterventionMeanAdapt implements IInterventionMean{
     @Override
     public String getAction() {
         return interventionMean.getAction();
+    }
+
+    //TODO retirer ?
+    @Override
+    public String getId() {
+        return null;
+    }
+
+    //TODO retirer ?
+    @Override
+    public void setId(String id) {
+
     }
 
     @Override

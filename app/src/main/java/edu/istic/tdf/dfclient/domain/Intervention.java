@@ -2,9 +2,8 @@ package edu.istic.tdf.dfclient.domain;
 
 import android.location.Address;
 
-import java.util.Date;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -13,6 +12,11 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  * Created by btessiau on 20/04/16.
  */
 public class Intervention implements IIntervention {
+
+    /**
+     * The unique Id of this object
+     */
+    private String id;
 
     /**
      * The sinister which define the default means collection
@@ -46,16 +50,16 @@ public class Intervention implements IIntervention {
 
     public Intervention() {
 
-        this.init();
     }
 
-    // Initialize attributs
-    private void init(){
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-        this.sinister = new Sinister();
-        elements = new ArrayList<IElement>();
-        this.dateCreation = new Date();
-        this.archived = false;
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

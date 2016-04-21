@@ -9,7 +9,17 @@ import android.location.Location;
  */
 public interface IElement {
 
+    /**
+     *
+     * @return the unique id of the element
+     */
+    public String getId();
 
+    /**
+     *
+     * @param id the new unique id of the element
+     */
+    public void setId(String id);
 
     /**
      * set the element's role
