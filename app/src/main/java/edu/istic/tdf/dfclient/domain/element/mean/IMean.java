@@ -7,9 +7,4 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  */
 public interface IMean extends IElement {
 
-    /**
-     *
-     * @return the state of the mean
-     */
-    public MeanState getMeanState();
 }

@@ -39,6 +39,17 @@ public class InterventionMean implements IInterventionMean {
      */
     private Location location;
 
+    public InterventionMean() {
+        this.state=MeanState.DEMANDED;
+        this.role=Role.NONE;
+        this.name="";
+    }
+
+    public InterventionMean(MeanState s, Role r,String n){
+        this.state=s;
+        this.role=r;
+        this.name=n;
+    }
 
     @Override
     public void setState(MeanState state) {
@@ -91,4 +102,5 @@ public class InterventionMean implements IInterventionMean {
     public String getName() {
         return this.name;
     }
+
 }
