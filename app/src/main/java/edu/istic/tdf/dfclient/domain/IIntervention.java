@@ -80,15 +80,4 @@ public interface IIntervention {
      * @param address of the intervention
      */
     public void setAddress(Address address);
-
-    /**
-     * Render all element on the map
-     */
-    public void printOnMapAllElement();
-
-    /**
-     * Render targeted element on the map
-     * @param element must be not null and inside the collection of elements
-     */
-    public void printOnMapElement(IElement element);;
 }

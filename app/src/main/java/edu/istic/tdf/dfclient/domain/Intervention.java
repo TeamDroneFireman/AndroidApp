@@ -137,28 +137,4 @@ public class Intervention implements IIntervention {
         this.address = address;
     }
 
-    @Override
-    public void printOnMapAllElement() {
-        if(this.elements != null)
-        {
-            Iterator<IElement> it = this.elements.iterator();
-            IElement element;
-            while(it.hasNext())
-            {
-                element = it.next();
-                //render this element on map
-                element.printOnMap();
-            }
-        }
-    }
-
-    @Override
-    public void printOnMapElement(IElement element) {
-        if(element != null && this.elements != null && this.elements.contains(element))
-        {
-            //render this element on map
-            element.printOnMap();
-        }
-    }
-
 }
