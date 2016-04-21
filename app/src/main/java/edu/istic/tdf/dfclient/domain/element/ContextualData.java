@@ -19,10 +19,7 @@ public class ContextualData implements IContextualData {
         this.name = "Default Name";
     }
 
-    @Override
-    public void printOnMap() {
-        //TODO
-    }
+
 
     @Override
     public void setRole(Role role) {

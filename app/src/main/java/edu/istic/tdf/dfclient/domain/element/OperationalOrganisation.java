@@ -19,10 +19,7 @@ public class OperationalOrganisation implements IOperationalOrganisation {
         this.name = "Default Name";
     }
 
-    @Override
-    public void printOnMap() {
-        //TODO
-    }
+
 
     @Override
     public void setRole(Role role) {
