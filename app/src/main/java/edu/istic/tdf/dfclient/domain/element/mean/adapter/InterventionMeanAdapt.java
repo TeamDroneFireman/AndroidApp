@@ -2,6 +2,9 @@ package edu.istic.tdf.dfclient.domain.element.mean.adapter;
 
 import android.location.Location;
 
+import java.util.Collection;
+
+import edu.istic.tdf.dfclient.domain.element.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IInterventionMean;
 import edu.istic.tdf.dfclient.domain.element.mean.InterventionMean;
@@ -11,12 +14,17 @@ import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
  * represent the observable element
  * Created by guerin on 21/04/16.
  */
-public class InterventionMeanAdapt implements IInterventionMean{
+public class InterventionMeanAdapt implements IInterventionMeanAdapter{
 
+    /**
+     * Element associate to the adapter
+     */
     private IInterventionMean interventionMean;
 
+    private Collection<ICommand> commands;
+
     public InterventionMeanAdapt(){
-        this.interventionMean=new InterventionMean();
+        this.interventionMean = new InterventionMean();
     }
 
     public InterventionMeanAdapt(MeanState state,Role role,String name){
@@ -30,9 +38,10 @@ public class InterventionMeanAdapt implements IInterventionMean{
 
     @Override
     public void setState(MeanState state) {
-        //TODO notify observer
-
         interventionMean.setState(state);
+
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
@@ -42,10 +51,10 @@ public class InterventionMeanAdapt implements IInterventionMean{
 
     @Override
     public void setAction(String action) {
-
-        //TODO notify observer
-
         interventionMean.setAction(action);
+
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
@@ -53,23 +62,25 @@ public class InterventionMeanAdapt implements IInterventionMean{
         return interventionMean.getAction();
     }
 
-    //TODO retirer ?
     @Override
     public String getId() {
-        return null;
+        return this.interventionMean.getId();
     }
 
-    //TODO retirer ?
     @Override
     public void setId(String id) {
+        this.interventionMean.setId(id);
 
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public void setRole(Role role) {
-        //TODO notify observer
-
         interventionMean.setRole(role);
+
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
@@ -79,9 +90,10 @@ public class InterventionMeanAdapt implements IInterventionMean{
 
     @Override
     public void setPosition(Location location) {
-        //TODO notify observer
-
         interventionMean.setPosition(location);
+
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
@@ -91,13 +103,31 @@ public class InterventionMeanAdapt implements IInterventionMean{
 
     @Override
     public void setName(String name) {
-        //TODO notify observer
-
         interventionMean.setName(name);
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public String getName() {
         return interventionMean.getName();
+    }
+
+    @Override
+    public void addCommand(ICommand command) {
+        if (this.commands != null && command != null)
+        {
+            this.commands.add(command);
+        }
+    }
+
+    private void executeAllCommands(){
+        if (this.commands != null)
+        {
+            for(ICommand command:this.commands)
+            {
+                command.execute();
+            }
+        }
     }
 }
