@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.domain;
 
 import android.location.Address;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -10,6 +11,29 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  * Created by btessiau on 20/04/16.
  */
 public interface IIntervention {
+
+    /**
+     *
+     * @return the Date of the intervention creation
+     */
+    public Date getCreationDate();
+
+    /**
+     *
+     * @return the Date when the intervention is archived or null if the intervention isn't archived
+     */
+    public Date getArchivedDate();
+
+    /**
+     *
+     * @return true iff the intervention is archived
+     */
+    public boolean isArchived();
+
+    /**
+     * archive the intervention
+     */
+    public void archive();
 
     /**
      *
@@ -66,5 +90,5 @@ public interface IIntervention {
      * Render targeted element on the map
      * @param element must be not null and inside the collection of elements
      */
-    public void printOnMapElement(IElement element);
+    public void printOnMapElement(IElement element);;
 }

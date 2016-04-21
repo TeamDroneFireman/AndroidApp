@@ -5,12 +5,12 @@ import android.location.Location;
 /**
  * Created by btessiau on 20/04/16.
  */
-public class InterventionZone implements IInterventionZone {
+public class Accident implements IAccident {
     private Role role;
     private String name;
     private Location location;
 
-    public InterventionZone() {
+    public Accident() {
         this.init();
     }
 
