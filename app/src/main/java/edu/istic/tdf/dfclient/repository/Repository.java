@@ -65,8 +65,25 @@ public abstract class Repository<E extends Entity> implements IRepository<E> {
         });
     }
 
+
+    @Override
+    public void delete(E entity, IDbReturnHandler<Void> handler) {
+        entity.delete();
+        handler.onSuccess(null);
+    }
+
     @Override
     public void delete(E entity) {
-        entity.delete();
+        this.delete(entity, new IDbReturnHandler<Void>() {
+            @Override
+            public void onSuccess(Void r) {
+
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+            }
+        });
     }
 }

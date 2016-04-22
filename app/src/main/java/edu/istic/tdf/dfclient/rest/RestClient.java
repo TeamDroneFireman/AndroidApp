@@ -48,7 +48,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
                 new RestHttpResponseHandler<>(callback, new ArrayListParameterizedType(entityClass));
 
         // Make request
-        httpClient.get(getRestEndpoint(), handler);
+        httpClient.get(getResourceUri(""), handler);
     }
 
     /**
@@ -58,10 +58,10 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     public void find(String id, IRestReturnHandler<E> callback) {
         // Response handler
         RestHttpResponseHandler<E> handler =
-                new RestHttpResponseHandler<E>(callback, entityClass);
+                new RestHttpResponseHandler<>(callback, entityClass);
 
         // Make request
-        httpClient.get(getRestEndpoint(), handler);
+        httpClient.get(getResourceUri(id + "/"), handler);
     }
 
     /**
@@ -71,38 +71,31 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     public void persist(E entity, IRestReturnHandler<E> callback) {
         // Response handler
         RestHttpResponseHandler<E> handler =
-                new RestHttpResponseHandler<E>(callback, entityClass);
+                new RestHttpResponseHandler<>(callback, entityClass);
 
         String body = serializer.toJson(entity);
 
-        httpClient.post(getRestEndpoint(), body, handler);
+        // If entity has an ID, its a PATCH, else its a POST
+        if(entity.getId() != null){
+            httpClient.patch(getResourceUri(entity.getId()+"/"), body, handler);
+        } else {
+            httpClient.post(getResourceUri(""), body, handler);
+        }
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void delete(E entity) {
-
-        // No callback
-        IRestReturnHandler<E> callback = new IRestReturnHandler<E>() {
-            @Override
-            public void onSuccess(E r) {
-
-            }
-
-            @Override
-            public void onError(Throwable error) {
-
-            }
-        };
+    public void delete(E entity, final IRestReturnHandler<Void> callback) {
 
         // Response handler
-        RestHttpResponseHandler<E> handler =
-                new RestHttpResponseHandler<E>(callback, entityClass);
+        RestHttpResponseHandler<Void> handler =
+                new RestHttpResponseHandler<>(callback, null);
 
         // Make request
-        httpClient.delete(getRestEndpoint(), handler);
+        httpClient.delete(getResourceUri(entity.getId() + "/"), handler);
     }
 
     /**
@@ -110,4 +103,8 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
      * @return The endpoint URL
      */
     public abstract String getRestEndpoint();
+
+    private String getResourceUri(String relativeUri) {
+        return getRestEndpoint() + relativeUri;
+    }
 }

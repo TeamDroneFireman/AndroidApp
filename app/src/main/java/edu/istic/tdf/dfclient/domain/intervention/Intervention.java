@@ -2,16 +2,20 @@ package edu.istic.tdf.dfclient.domain.intervention;
 
 import android.location.Address;
 
+import com.raizlabs.android.dbflow.annotation.Table;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
  * Created by btessiau on 20/04/16.
  */
+@Table(database = TdfDatabase.class)
 public class Intervention extends Entity implements IIntervention {
 
     /**

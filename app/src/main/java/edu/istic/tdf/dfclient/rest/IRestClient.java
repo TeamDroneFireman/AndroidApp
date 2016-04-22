@@ -35,5 +35,5 @@ public interface IRestClient<E extends Entity> {
      * Deletes an entity to Rest service
      * @param entity The entity to delete
      */
-    void delete(E entity);
+    void delete(E entity, IRestReturnHandler<Void> callback);
 }

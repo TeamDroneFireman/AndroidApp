@@ -41,4 +41,10 @@ public interface IRepository<E extends Entity> {
      * @param entity The entity to delete
      */
     void delete(E entity);
+
+    /**
+     * Deletes an entity
+     * @param entity The entity to delete
+     */
+    void delete(E entity, final IDbReturnHandler<Void> handler);
 }
