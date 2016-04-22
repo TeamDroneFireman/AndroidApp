@@ -25,7 +25,7 @@ public class PictoFactory {
     }
 
 
-    public Object getPicto(IElement element, DomaineType domaineType) {
+    public Drawable getPicto(IElement element, DomaineType domaineType) {
 
         Object defaultForm=getDefaultPicto(domaineType);
 
