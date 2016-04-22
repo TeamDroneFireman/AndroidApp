@@ -1,9 +1,14 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.app.ActionBar;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
@@ -13,6 +18,7 @@ public class SitacActivity extends AppCompatActivity implements SitacFragment.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
 
@@ -28,5 +34,10 @@ public class SitacActivity extends AppCompatActivity implements SitacFragment.On
                 .replace(R.id.contextual_drawer_container, ContextualDrawerFragment.newInstance())
                 .commit();
 
+    }
+
+    @Override
+    public void handleSelectedTool(Tool tool) {
+        Toast.makeText(SitacActivity.this, tool.getTitle(), Toast.LENGTH_SHORT).show();
     }
 }

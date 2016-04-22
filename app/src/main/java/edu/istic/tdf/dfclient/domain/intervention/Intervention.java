@@ -2,27 +2,17 @@ package edu.istic.tdf.dfclient.domain.intervention;
 
 import android.location.Address;
 
-import com.raizlabs.android.dbflow.annotation.Table;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
-import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.Entity;
-import edu.istic.tdf.dfclient.domain.sinister.ISinister;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
  * Created by btessiau on 20/04/16.
  */
-@Table(database = TdfDatabase.class)
 public class Intervention extends Entity implements IIntervention {
-
-    /**
-     * The sinister which define the default means collection
-     */
-    private ISinister sinister;
 
     /**
      * The collection of elements on the intervention
@@ -37,15 +27,15 @@ public class Intervention extends Entity implements IIntervention {
     /**
      * The creation date of the intervention
      */
-    private Date creationDate;
+    private Date dateCreation;
 
     /**
      * the Date when the intervention is archived or null if the intervention isn't archived
      */
-    private Date archiveDate;
+    private Date dateArchived;
 
     /**
-     * True if the intervention is archived
+     * True iff the intervention is archived
      */
     private boolean archived;
 
@@ -56,27 +46,12 @@ public class Intervention extends Entity implements IIntervention {
     @Override
     public Date getCreationDate()
     {
-        return creationDate;
+        return dateCreation;
     }
 
     @Override
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    @Override
-    public Date getArchiveDate() {
-        if(this.archived && this.archiveDate != null)
-        {
-            return this.archiveDate;
-        }
-
-        return null;
-    }
-
-    @Override
-    public void setArchiveDate(Date archiveDate) {
-        this.archiveDate = archiveDate;
+    public Date getArchivedDate() {
+        return this.dateArchived;
     }
 
     @Override
@@ -87,49 +62,22 @@ public class Intervention extends Entity implements IIntervention {
     @Override
     public void archive() {
         this.archived = true;
-        this.archiveDate = new Date();
-    }
-
-    @Override
-    public ISinister getSinister() {
-        return this.sinister;
-    }
-
-    @Override
-    public void setSinister(ISinister sinister) {
-        this.sinister = sinister;
+        this.dateArchived = new Date();
     }
 
     @Override
     public boolean addElement(IElement element) {
-
-        if(element != null && elements != null)
-        {
-            return this.elements.add(element);
-        }
-
-        return false;
+        return this.elements.add(element);
     }
 
     @Override
     public boolean removeElement(IElement element) {
-
-        if(element != null && elements != null)
-        {
-            return this.elements.remove(element);
-        }
-
-        return false;
+        return this.elements.remove(element);
     }
 
     @Override
     public Iterator<IElement> getIteratorOnElements() {
-        if (elements != null)
-        {
-            return this.elements.iterator();
-        }
-
-        return null;
+        return this.elements.iterator();
     }
 
     @Override
@@ -142,4 +90,38 @@ public class Intervention extends Entity implements IIntervention {
         this.address = address;
     }
 
+    @Override
+    public Collection<IElement> getElements() {
+        return elements;
+    }
+
+    @Override
+    public void setElements(Collection<IElement> elements) {
+        this.elements = elements;
+    }
+
+    @Override
+    public Date getDateCreation() {
+        return dateCreation;
+    }
+
+    @Override
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    @Override
+    public Date getDateArchived() {
+        return dateArchived;
+    }
+
+    @Override
+    public void setDateArchived(Date dateArchived) {
+        this.dateArchived = dateArchived;
+    }
+
+    @Override
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 }

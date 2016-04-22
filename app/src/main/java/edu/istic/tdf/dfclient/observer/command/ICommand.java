@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.adapter.command;
+package edu.istic.tdf.dfclient.observer.command;
 
 /**
  * Created by btessiau on 22/04/16.

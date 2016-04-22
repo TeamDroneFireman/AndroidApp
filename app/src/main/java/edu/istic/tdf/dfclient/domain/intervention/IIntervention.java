@@ -2,11 +2,11 @@ package edu.istic.tdf.dfclient.domain.intervention;
 
 import android.location.Address;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.IEntity;
-import edu.istic.tdf.dfclient.domain.sinister.ISinister;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
@@ -49,19 +49,6 @@ public interface IIntervention extends IEntity {
 
     /**
      *
-     * @return the sinister including the default means list
-     */
-    public ISinister getSinister();
-
-    /**
-     *
-     * @param sinister you want to associate with your intervention
-     * sinister must be not null
-     */
-    public void setSinister(ISinister sinister);
-
-    /**
-     *
      * @param element must be not null
      * @return true iff the collection is modified
      */
@@ -92,4 +79,46 @@ public interface IIntervention extends IEntity {
      * @param address of the intervention
      */
     public void setAddress(Address address);
+
+    /**
+     *
+     * @return
+     */
+    public Collection<IElement> getElements();
+
+    /**
+     *
+     * @param elements
+     */
+    public void setElements(Collection<IElement> elements);
+
+    /**
+     *
+     * @return
+     */
+    public Date getDateCreation();
+
+    /**
+     *
+     * @param dateCreation
+     */
+    public void setDateCreation(Date dateCreation);
+
+    /**
+     *
+     * @return
+     */
+    public Date getDateArchived();
+
+    /**
+     *
+     * @param dateArchived
+     */
+    public void setDateArchived(Date dateArchived);
+
+    /**
+     *
+     * @param archived
+     */
+    public void setArchived(boolean archived);
 }

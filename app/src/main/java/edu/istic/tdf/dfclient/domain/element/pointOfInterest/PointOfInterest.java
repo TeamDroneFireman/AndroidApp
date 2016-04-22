@@ -2,18 +2,14 @@ package edu.istic.tdf.dfclient.domain.element.pointOfInterest;
 
 import android.location.Location;
 
+import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.Role;
 
 /**
  * represent water point, two triangles
  * Created by guerin on 21/04/16.
  */
-public class PointOfInterest implements IPointOfInterest {
-
-    /**
-     * The unique Id of this object
-     */
-    private String id;
+public class PointOfInterest extends Entity implements IPointOfInterest {
 
     /**
      * The role of this element
@@ -22,6 +18,7 @@ public class PointOfInterest implements IPointOfInterest {
 
     /**
      * The name of this element
+     * //TODO check if we used the name for identify water point or other
      */
     private String name;
 
@@ -35,16 +32,6 @@ public class PointOfInterest implements IPointOfInterest {
     }
 
     @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
     public void setRole(Role role) {
         this.role=role;
     }
@@ -55,12 +42,12 @@ public class PointOfInterest implements IPointOfInterest {
     }
 
     @Override
-    public void setPosition(Location location) {
+    public void setLocation(Location location) {
         this.location=location;
     }
 
     @Override
-    public Location getPosition() {
+    public Location getLocation() {
         return this.location;
     }
 

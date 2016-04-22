@@ -1,17 +1,21 @@
-package edu.istic.tdf.dfclient.domain.element.mean.interventionMean;
+package edu.istic.tdf.dfclient.domain.element.mean.drone;
 
 import android.location.Location;
 
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
 
 /**
- *
- * InterventionMean represent truck during an intervention (
- * Created by guerin on 21/04/16.
+ * Created by btessiau on 22/04/16.
  */
-public class InterventionMean extends Entity implements IInterventionMean {
+public class Drone extends Entity implements IDrone {
+
+    /**
+     * represent the current mission of the drone
+     */
+    private IMission mission;
 
     /**
      * represent the state for the means table
@@ -41,13 +45,13 @@ public class InterventionMean extends Entity implements IInterventionMean {
      */
     private Location location;
 
-    public InterventionMean() {
+    public Drone() {
         this.state=MeanState.DEMANDED;
         this.role=Role.NONE;
         this.name="";
     }
 
-    public InterventionMean(MeanState s, Role r,String n){
+    public Drone(MeanState s, Role r,String n){
         this.state=s;
         this.role=r;
         this.name=n;
@@ -72,8 +76,6 @@ public class InterventionMean extends Entity implements IInterventionMean {
     public String getAction() {
         return this.action;
     }
-
-
 
     @Override
     public void setRole(Role role) {
@@ -105,4 +107,18 @@ public class InterventionMean extends Entity implements IInterventionMean {
         return this.name;
     }
 
+    @Override
+    public IMission getMission() {
+        return this.mission;
+    }
+
+    @Override
+    public void setMission(IMission mission) {
+        this.mission = mission;
+    }
+
+    @Override
+    public boolean hasMission() {
+        return (this.mission != null);
+    }
 }
