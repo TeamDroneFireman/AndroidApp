@@ -14,29 +14,6 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  */
 public interface IIntervention extends IEntity {
     /**
-     * @return the Date of the intervention creation
-     */
-    public Date getCreationDate();
-
-    /**
-     * Sets the creation date
-     * @param creationDate The creation date
-     */
-    public void setCreationDate(Date creationDate);
-
-    /**
-     *
-     * @return the Date when the intervention is archived or null if the intervention isn't archived
-     */
-    public Date getArchiveDate();
-
-    /**
-     * Sets the archive date
-     * @param archiveDate The archive date
-     */
-    public void setArchiveDate(Date archiveDate);
-
-    /**
      *
      * @return true iff the intervention is archived
      */

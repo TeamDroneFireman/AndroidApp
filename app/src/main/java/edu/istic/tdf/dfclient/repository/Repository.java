@@ -11,7 +11,6 @@ import java.util.List;
 
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
-import edu.istic.tdf.dfclient.domain.Entity_Table;
 
 /**
  * {@inheritDoc}

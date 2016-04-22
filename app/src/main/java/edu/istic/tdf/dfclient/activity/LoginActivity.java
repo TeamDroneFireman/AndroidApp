@@ -11,10 +11,8 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDaoReturnHandler;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
-import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
-import edu.istic.tdf.dfclient.rest.domain.SinisterRestClient;
 
 public class LoginActivity extends AppCompatActivity implements LoginFragment.OnFragmentInteractionListener {
 
