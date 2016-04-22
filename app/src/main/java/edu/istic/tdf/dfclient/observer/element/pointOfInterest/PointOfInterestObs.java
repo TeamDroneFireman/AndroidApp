@@ -92,4 +92,15 @@ public class PointOfInterestObs implements IPointOfInterestObs {
     public void setCommands(Collection<ICommand> commands) {
         this.commands = commands;
     }
+
+    @Override
+    public String getId() {
+        return this.pointOfInterest.getId();
+    }
+
+    @Override
+    public void setId(String id) {
+        this.pointOfInterest.setId(id);
+        this.executeAllCommands();
+    }
 }

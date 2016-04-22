@@ -136,4 +136,15 @@ public class DroneObs implements IDroneObs {
     public void setCommands(Collection<ICommand> commands) {
         this.commands = commands;
     }
+
+    @Override
+    public String getId() {
+        return this.getId();
+    }
+
+    @Override
+    public void setId(String id) {
+        this.setId(id);
+        this.executeAllCommands();
+    }
 }

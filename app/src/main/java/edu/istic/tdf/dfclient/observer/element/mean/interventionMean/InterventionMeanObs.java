@@ -4,11 +4,10 @@ import android.location.Location;
 
 import java.util.Collection;
 
-import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
-import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
+import edu.istic.tdf.dfclient.observer.command.ICommand;
 
 /**
  * represent the observable element
@@ -124,5 +123,16 @@ public class InterventionMeanObs implements IInterventionMeanObs {
     @Override
     public void setCommands(Collection<ICommand> commands) {
         this.commands = commands;
+    }
+
+    @Override
+    public String getId() {
+        return this.interventionMean.getId();
+    }
+
+    @Override
+    public void setId(String id) {
+        this.interventionMean.setId(id);
+        this.executeAllCommands();
     }
 }
