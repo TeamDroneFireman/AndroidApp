@@ -26,11 +26,6 @@ public class InterventionObs implements IInterventionObs {
     }
 
     @Override
-    public Date getArchivedDate() {
-        return this.intervention.getArchivedDate();
-    }
-
-    @Override
     public boolean isArchived() {
         return this.intervention.isArchived();
     }
@@ -76,11 +71,6 @@ public class InterventionObs implements IInterventionObs {
     }
 
     @Override
-    public Date getCreationDate() {
-        return this.intervention.getCreationDate();
-    }
-
-    @Override
     public void setCreationDate(Date dateCreation) {
         this.intervention.setCreationDate(dateCreation);
     }
@@ -108,5 +98,15 @@ public class InterventionObs implements IInterventionObs {
     @Override
     public void setIntervention(IIntervention intervention) {
         this.intervention = intervention;
+    }
+
+    @Override
+    public String getId() {
+        return this.intervention.getId();
+    }
+
+    @Override
+    public void setId(String id) {
+        this.intervention.setId(id);
     }
 }

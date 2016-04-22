@@ -116,4 +116,35 @@ public class DroneObs implements IDroneObs {
     public boolean hasMission() {
         return this.drone.hasMission();
     }
+
+    @Override
+    public IDrone getDrone() {
+        return drone;
+    }
+
+    @Override
+    public void setDrone(IDrone drone) {
+        this.drone = drone;
+    }
+
+    @Override
+    public Collection<ICommand> getCommands() {
+        return commands;
+    }
+
+    @Override
+    public void setCommands(Collection<ICommand> commands) {
+        this.commands = commands;
+    }
+
+    @Override
+    public String getId() {
+        return this.getId();
+    }
+
+    @Override
+    public void setId(String id) {
+        this.setId(id);
+        this.executeAllCommands();
+    }
 }
