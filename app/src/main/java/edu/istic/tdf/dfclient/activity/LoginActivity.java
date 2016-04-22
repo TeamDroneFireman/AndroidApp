@@ -11,7 +11,7 @@ import java.util.List;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.dao.IDaoCallback;
 import edu.istic.tdf.dfclient.dao.SinisterDao;
-import edu.istic.tdf.dfclient.domain.Sinister;
+import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.rest.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.SinisterRestClient;

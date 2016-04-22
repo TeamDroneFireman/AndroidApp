@@ -1,6 +1,7 @@
 package edu.istic.tdf.dfclient.rest;
 
-import edu.istic.tdf.dfclient.domain.Sinister;
+
+import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 
 /**
  * Created by maxime on 20/04/2016.

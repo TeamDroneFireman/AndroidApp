@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.domain;
+package edu.istic.tdf.dfclient.domain.sinister;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.database.TdfDatabase;
+import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 
 /**
@@ -15,6 +16,11 @@ import edu.istic.tdf.dfclient.domain.element.mean.IMean;
  */
 @Table(database = TdfDatabase.class)
 public class Sinister extends Entity implements ISinister {
+
+    /**
+     * The unique Id of this object
+     */
+    private String id;
 
     /**
      * the sinisterCode of the sinister
@@ -28,13 +34,17 @@ public class Sinister extends Entity implements ISinister {
     Collection<IMean> means;
 
     public Sinister() {
-        init();
+
     }
 
-    // Initialize attributs
-    private void init(){
-        this.means = new ArrayList<IMean>();
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

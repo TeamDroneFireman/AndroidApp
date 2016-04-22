@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.domain;
+package edu.istic.tdf.dfclient.domain.sinister;
 
 import java.util.Iterator;
 
@@ -8,6 +8,18 @@ import edu.istic.tdf.dfclient.domain.element.mean.IMean;
  * Created by btessiau on 20/04/16.
  */
 public interface ISinister {
+
+    /**
+     *
+     * @return the unique id of the element
+     */
+    public String getId();
+
+    /**
+     *
+     * @param id the new unique id of the element
+     */
+    public void setId(String id);
 
     /**
      *

@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,16 +10,16 @@ import android.widget.Button;
 
 import edu.istic.tdf.dfclient.R;
 
-public class InterventionDetailFragment extends Fragment {
+public class ContextualDrawerFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public InterventionDetailFragment() {
+    public ContextualDrawerFragment() {
         // Required empty public constructor
     }
 
-    public static InterventionDetailFragment newInstance() {
-        InterventionDetailFragment fragment = new InterventionDetailFragment();
+    public static ContextualDrawerFragment newInstance() {
+        ContextualDrawerFragment fragment = new ContextualDrawerFragment();
         return fragment;
     }
 
@@ -33,14 +32,7 @@ public class InterventionDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
-        Button loginButton = (Button) view.findViewById(R.id.interventionSelectionButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onInterventionSelect();
-            }
-        });
+        View view = inflater.inflate(R.layout.fragment_contextual_drawer, container, false);
 
         return view;
     }
@@ -63,6 +55,5 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onInterventionSelect();
     }
 }

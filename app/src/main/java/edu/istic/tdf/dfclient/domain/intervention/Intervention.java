@@ -1,17 +1,23 @@
-package edu.istic.tdf.dfclient.domain;
+package edu.istic.tdf.dfclient.domain.intervention;
 
 import android.location.Address;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
+import edu.istic.tdf.dfclient.domain.sinister.ISinister;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
  * Created by btessiau on 20/04/16.
  */
 public class Intervention implements IIntervention {
+
+    /**
+     * The unique Id of this object
+     */
+    private String id;
 
     /**
      * The sinister which define the default means collection
@@ -28,17 +34,60 @@ public class Intervention implements IIntervention {
      */
     private Address address;
 
+    /**
+     * The creation date of the intervention
+     */
+    private Date dateCreation;
+
+    /**
+     * the Date when the intervention is archived or null if the intervention isn't archived
+     */
+    private Date dateArchived;
+
+    /**
+     * True iff the intervention is archived
+     */
+    private boolean archived;
+
     public Intervention() {
 
-        this.init();
     }
 
-    // Initialize attributs
-    private void init(){
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-        this.sinister = new Sinister();
-        elements = new ArrayList<IElement>();
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    @Override
+    public Date getCreationDate()
+    {
+        return dateCreation;
+    }
+
+    @Override
+    public Date getArchivedDate() {
+        if(this.archived && this.dateArchived != null)
+        {
+            return this.dateArchived;
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean isArchived() {
+        return this.archived;
+    }
+
+    @Override
+    public void archive() {
+        this.archived = true;
+        this.dateArchived = new Date();
     }
 
     @Override

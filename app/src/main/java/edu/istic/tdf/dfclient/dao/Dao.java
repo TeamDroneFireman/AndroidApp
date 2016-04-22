@@ -47,10 +47,14 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
         restClient.findAll(new IRestReturnHandler<ArrayList<E>>() {
             @Override
             public void onSuccess(ArrayList<E> result) {
-                for(E e : result) {
-                    repository.persist(e);
+                if(result != null) {
+                    for(E e : result) {
+                        repository.persist(e);
+                    }
+                    handler.onRestResult(result);
+                } else {
+                    handler.onFailure(new Exception("No result from REST client"));
                 }
-                handler.onRestResult(result);
             }
 
             @Override

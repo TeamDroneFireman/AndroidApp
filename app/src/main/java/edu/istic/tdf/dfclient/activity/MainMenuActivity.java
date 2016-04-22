@@ -1,12 +1,12 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
-import edu.istic.tdf.dfclient.fragment.LoginFragment;
 
 public class MainMenuActivity extends AppCompatActivity implements InterventionDetailFragment.OnFragmentInteractionListener, InterventionListFragment.OnFragmentInteractionListener {
 
@@ -22,5 +22,11 @@ public class MainMenuActivity extends AppCompatActivity implements InterventionD
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
                 .commit();
+    }
+
+    @Override
+    public void onInterventionSelect() {
+        Intent intent = new Intent(this, SitacActivity.class);
+        this.startActivity(intent);
     }
 }

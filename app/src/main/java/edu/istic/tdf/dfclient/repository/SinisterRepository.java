@@ -1,6 +1,7 @@
 package edu.istic.tdf.dfclient.repository;
 
-import edu.istic.tdf.dfclient.domain.Sinister;
+
+import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 
 /**
  * Created by maxime on 21/04/2016.

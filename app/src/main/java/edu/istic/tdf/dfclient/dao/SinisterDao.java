@@ -1,6 +1,6 @@
 package edu.istic.tdf.dfclient.dao;
 
-import edu.istic.tdf.dfclient.domain.Sinister;
+import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.repository.SinisterRepository;
 import edu.istic.tdf.dfclient.rest.SinisterRestClient;
 
