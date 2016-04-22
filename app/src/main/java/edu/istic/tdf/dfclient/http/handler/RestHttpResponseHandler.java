@@ -1,10 +1,12 @@
-package edu.istic.tdf.dfclient.rest.handler;
+package edu.istic.tdf.dfclient.http.handler;
 
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import edu.istic.tdf.dfclient.http.exception.HttpException;
+import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -43,24 +45,33 @@ public class RestHttpResponseHandler<Result> implements Callback{
 
     @Override
     public void onFailure(Call call, IOException e) {
-        callback.onError(e);
+        callback.onError(new HttpException(e, call, null));
     }
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        // TODO : TREAT FUCKING HTTP CODE !
+        // If HTTP code is successful (200..399)
+        if(response.isSuccessful()) {
+            // Get response body
+            String responseBody = response.body().string();
 
-        // Get response body
-        String responseBody = response.body().string();
+            // Initialize result
+            Result result = null;
+            try {
+                result = deserializer.fromJson(responseBody, resultType);
+            } catch (Exception e) {
+                callback.onError(e);
+            }
 
-        // Initialize result
-        Result result = null;
-        try {
-            result = deserializer.fromJson(responseBody, resultType);
-        } catch (Exception e) {
-            callback.onError(e);
+            callback.onSuccess(result);
+        } else { // If HTTP code is not successful
+            callback.onError(
+                    new HttpException(
+                        new Exception("Http code is not successfull"),
+                        call,
+                        response
+                    )
+            );
         }
-
-        callback.onSuccess(result);
     }
 }

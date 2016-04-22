@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
-import edu.istic.tdf.dfclient.rest.handler.RestHttpResponseHandler;
+import edu.istic.tdf.dfclient.http.handler.RestHttpResponseHandler;
 import edu.istic.tdf.dfclient.rest.serializer.ArrayListParameterizedType;
 
 /**
