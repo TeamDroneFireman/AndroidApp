@@ -1,25 +1,31 @@
 package edu.istic.tdf.dfclient.domain;
 
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.Table;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 
 /**
  * Created by btessiau on 20/04/16.
  */
-public class Sinister implements ISinister {
+@Table(database = TdfDatabase.class)
+public class Sinister extends Entity implements ISinister {
 
     /**
      * the sinisterCode of the sinister
      */
-    private String sinisterCode;
+    @Column
+    String sinisterCode;
 
     /**
      * the default collection of means for the defined sinisterCode
      */
-    private Collection<IMean> means;
+    Collection<IMean> means;
 
     public Sinister() {
         init();

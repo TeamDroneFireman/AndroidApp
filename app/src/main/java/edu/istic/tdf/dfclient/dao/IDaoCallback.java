@@ -16,4 +16,10 @@ public interface IDaoCallback<Result> {
      * @param r
      */
     void onRestResult(Result r);
+
+    /**
+     * Callback called if something goes wrong
+     * @param e
+     */
+    void onFailure(Throwable e);
 }
