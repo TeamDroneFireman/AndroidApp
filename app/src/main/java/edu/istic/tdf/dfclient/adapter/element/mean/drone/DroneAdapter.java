@@ -4,7 +4,7 @@ import android.location.Location;
 
 import java.util.Collection;
 
-import edu.istic.tdf.dfclient.domain.element.toRemove.ICommand;
+import edu.istic.tdf.dfclient.adapter.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;

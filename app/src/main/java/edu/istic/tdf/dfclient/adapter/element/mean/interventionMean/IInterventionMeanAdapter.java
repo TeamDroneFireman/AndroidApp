@@ -1,6 +1,6 @@
 package edu.istic.tdf.dfclient.adapter.element.mean.interventionMean;
 
-import edu.istic.tdf.dfclient.domain.element.toRemove.ICommand;
+import edu.istic.tdf.dfclient.adapter.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
 
 /**
