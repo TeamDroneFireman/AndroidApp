@@ -38,7 +38,6 @@ public class InterventionMeanAdapter implements IInterventionMeanAdapter{
         //TODO UsinePicto.getPicto(interventionMean)
     }
 
-
     @Override
     public void setState(MeanState state) {
         if (this.interventionMean != null) {
