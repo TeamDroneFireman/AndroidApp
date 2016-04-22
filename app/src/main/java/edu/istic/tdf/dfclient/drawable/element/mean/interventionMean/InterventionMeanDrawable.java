@@ -1,11 +1,11 @@
-package edu.istic.tdf.dfclient.picto.mean;
+package edu.istic.tdf.dfclient.drawable.element.mean.interventionMean;
 
 import android.graphics.drawable.Drawable;
 
 import edu.istic.tdf.dfclient.observer.element.mean.interventionMean.InterventionMeanObs;
-import edu.istic.tdf.dfclient.picto.DomaineType;
-import edu.istic.tdf.dfclient.picto.IElementDrawable;
-import edu.istic.tdf.dfclient.picto.PictoFactory;
+import edu.istic.tdf.dfclient.drawable.element.DomaineType;
+import edu.istic.tdf.dfclient.drawable.element.IElementDrawable;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * Created by guerin on 22/04/16.

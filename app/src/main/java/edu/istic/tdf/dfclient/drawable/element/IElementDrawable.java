@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.picto;
+package edu.istic.tdf.dfclient.drawable.element;
 
 import android.graphics.drawable.Drawable;
 

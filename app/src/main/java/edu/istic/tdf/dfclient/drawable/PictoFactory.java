@@ -1,15 +1,14 @@
-package edu.istic.tdf.dfclient.picto;
+package edu.istic.tdf.dfclient.drawable;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.support.v4.content.ContextCompat;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.drawable.element.DomaineType;
 
 /**
  * Created by guerin on 22/04/16.
