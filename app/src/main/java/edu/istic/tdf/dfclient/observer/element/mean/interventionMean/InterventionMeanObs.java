@@ -78,16 +78,16 @@ public class InterventionMeanObs implements IInterventionMeanObs {
     }
 
     @Override
-    public void setPosition(Location location) {
-        interventionMean.setPosition(location);
+    public void setLocation(Location location) {
+        interventionMean.setLocation(location);
 
         //notify observer
         this.executeAllCommands();
     }
 
     @Override
-    public Location getPosition() {
-        return interventionMean.getPosition();
+    public Location getLocation() {
+        return interventionMean.getLocation();
     }
 
     @Override

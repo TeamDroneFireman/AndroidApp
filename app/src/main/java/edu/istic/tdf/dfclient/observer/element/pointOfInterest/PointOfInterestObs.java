@@ -37,16 +37,16 @@ public class PointOfInterestObs implements IPointOfInterestObs {
     }
 
     @Override
-    public void setPosition(Location location) {
-        pointOfInterest.setPosition(location);
+    public void setLocation(Location location) {
+        pointOfInterest.setLocation(location);
 
         //notify observer
         this.executeAllCommands();
     }
 
     @Override
-    public Location getPosition() {
-        return pointOfInterest.getPosition();
+    public Location getLocation() {
+        return pointOfInterest.getLocation();
     }
 
     @Override

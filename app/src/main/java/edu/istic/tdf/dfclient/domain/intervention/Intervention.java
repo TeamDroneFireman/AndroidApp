@@ -6,12 +6,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
  * Created by btessiau on 20/04/16.
  */
-public class Intervention implements IIntervention {
+public class Intervention extends Entity implements IIntervention {
 
     /**
      * The collection of elements on the intervention
@@ -89,4 +90,38 @@ public class Intervention implements IIntervention {
         this.address = address;
     }
 
+    @Override
+    public Collection<IElement> getElements() {
+        return elements;
+    }
+
+    @Override
+    public void setElements(Collection<IElement> elements) {
+        this.elements = elements;
+    }
+
+    @Override
+    public Date getDateCreation() {
+        return dateCreation;
+    }
+
+    @Override
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    @Override
+    public Date getDateArchived() {
+        return dateArchived;
+    }
+
+    @Override
+    public void setDateArchived(Date dateArchived) {
+        this.dateArchived = dateArchived;
+    }
+
+    @Override
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 }

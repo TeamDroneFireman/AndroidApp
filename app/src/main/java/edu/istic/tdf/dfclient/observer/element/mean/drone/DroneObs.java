@@ -78,16 +78,16 @@ public class DroneObs implements IDroneObs {
     }
 
     @Override
-    public void setPosition(Location location) {
-        drone.setPosition(location);
+    public void setLocation(Location location) {
+        drone.setLocation(location);
 
         //notify observer
         this.executeAllCommands();
     }
 
     @Override
-    public Location getPosition() {
-        return drone.getPosition();
+    public Location getLocation() {
+        return drone.getLocation();
     }
 
     @Override
