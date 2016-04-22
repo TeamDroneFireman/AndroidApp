@@ -27,12 +27,12 @@ public class Intervention extends Entity implements IIntervention {
     /**
      * The creation date of the intervention
      */
-    private Date dateCreation;
+    private Date creationDate;
 
     /**
      * the Date when the intervention is archived or null if the intervention isn't archived
      */
-    private Date dateArchived;
+    private Date archiveDate;
 
     /**
      * True iff the intervention is archived
@@ -44,17 +44,6 @@ public class Intervention extends Entity implements IIntervention {
     }
 
     @Override
-    public Date getCreationDate()
-    {
-        return dateCreation;
-    }
-
-    @Override
-    public Date getArchivedDate() {
-        return this.dateArchived;
-    }
-
-    @Override
     public boolean isArchived() {
         return this.archived;
     }
@@ -62,7 +51,7 @@ public class Intervention extends Entity implements IIntervention {
     @Override
     public void archive() {
         this.archived = true;
-        this.dateArchived = new Date();
+        this.archiveDate = new Date();
     }
 
     @Override
@@ -101,23 +90,23 @@ public class Intervention extends Entity implements IIntervention {
     }
 
     @Override
-    public Date getDateCreation() {
-        return dateCreation;
+    public Date getCreationDate() {
+        return creationDate;
     }
 
     @Override
-    public void setDateCreation(Date dateCreation) {
-        this.dateCreation = dateCreation;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override
-    public Date getDateArchived() {
-        return dateArchived;
+    public Date getArchiveDate() {
+        return archiveDate;
     }
 
     @Override
-    public void setDateArchived(Date dateArchived) {
-        this.dateArchived = dateArchived;
+    public void setArchiveDate(Date archiveDate) {
+        this.archiveDate = archiveDate;
     }
 
     @Override

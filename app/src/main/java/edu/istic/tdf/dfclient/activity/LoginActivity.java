@@ -13,7 +13,6 @@ import edu.istic.tdf.dfclient.dao.IDaoReturnHandler;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.rest.domain.SinisterRestClient;
 

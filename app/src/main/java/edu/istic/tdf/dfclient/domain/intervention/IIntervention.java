@@ -96,25 +96,25 @@ public interface IIntervention extends IEntity {
      *
      * @return
      */
-    public Date getDateCreation();
+    public Date getCreationDate();
 
     /**
      *
      * @param dateCreation
      */
-    public void setDateCreation(Date dateCreation);
+    public void setCreationDate(Date dateCreation);
 
     /**
      *
      * @return
      */
-    public Date getDateArchived();
+    public Date getArchiveDate();
 
     /**
      *
      * @param dateArchived
      */
-    public void setDateArchived(Date dateArchived);
+    public void setArchiveDate(Date dateArchived);
 
     /**
      *

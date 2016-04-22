@@ -76,23 +76,23 @@ public class InterventionObs implements IInterventionObs {
     }
 
     @Override
-    public Date getDateCreation() {
-        return this.intervention.getDateCreation();
+    public Date getCreationDate() {
+        return this.intervention.getCreationDate();
     }
 
     @Override
-    public void setDateCreation(Date dateCreation) {
-        this.intervention.setDateCreation(dateCreation);
+    public void setCreationDate(Date dateCreation) {
+        this.intervention.setCreationDate(dateCreation);
     }
 
     @Override
-    public Date getDateArchived() {
-        return this.intervention.getDateArchived();
+    public Date getArchiveDate() {
+        return this.intervention.getArchiveDate();
     }
 
     @Override
-    public void setDateArchived(Date dateArchived) {
-        this.intervention.setDateArchived(dateArchived);
+    public void setArchiveDate(Date dateArchived) {
+        this.intervention.setArchiveDate(dateArchived);
     }
 
     @Override
