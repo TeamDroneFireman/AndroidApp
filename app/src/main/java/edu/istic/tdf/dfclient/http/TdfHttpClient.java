@@ -9,8 +9,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class TdfHttpClient implements IHttpClient {
-    //private static final String BASE_URL = "http://projetm2gla.istic.univ-rennes1.fr/";
-    private static final String BASE_URL = "http://pastebin.com/raw/";
+    private static final String BASE_URL = "http://projetm2gla.istic.univ-rennes1.fr:12345/";
+    //private static final String BASE_URL = "http://pastebin.com/raw/";
 
     public static final String HTTP_ACCEPT = "application/json";
     public static final String HTTP_CONTENT_TYPE = "application/json; charset=utf-8";

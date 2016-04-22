@@ -6,13 +6,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.sinister.ISinister;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
  * Created by btessiau on 20/04/16.
  */
-public class Intervention implements IIntervention {
+public class Intervention extends Entity implements IIntervention {
 
     /**
      * The unique Id of this object
@@ -37,15 +38,15 @@ public class Intervention implements IIntervention {
     /**
      * The creation date of the intervention
      */
-    private Date dateCreation;
+    private Date creationDate;
 
     /**
      * the Date when the intervention is archived or null if the intervention isn't archived
      */
-    private Date dateArchived;
+    private Date archiveDate;
 
     /**
-     * True iff the intervention is archived
+     * True if the intervention is archived
      */
     private boolean archived;
 
@@ -66,17 +67,27 @@ public class Intervention implements IIntervention {
     @Override
     public Date getCreationDate()
     {
-        return dateCreation;
+        return creationDate;
     }
 
     @Override
-    public Date getArchivedDate() {
-        if(this.archived && this.dateArchived != null)
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Override
+    public Date getArchiveDate() {
+        if(this.archived && this.archiveDate != null)
         {
-            return this.dateArchived;
+            return this.archiveDate;
         }
 
         return null;
+    }
+
+    @Override
+    public void setArchiveDate(Date archiveDate) {
+        this.archiveDate = archiveDate;
     }
 
     @Override
@@ -87,7 +98,7 @@ public class Intervention implements IIntervention {
     @Override
     public void archive() {
         this.archived = true;
-        this.dateArchived = new Date();
+        this.archiveDate = new Date();
     }
 
     @Override

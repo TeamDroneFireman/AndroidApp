@@ -48,10 +48,10 @@ public class InterventionAdapter implements IInterventionAdapter {
     }
 
     @Override
-    public Date getArchivedDate() {
+    public Date getArchiveDate() {
         if (this.interventionAdapter != null)
         {
-            return this.interventionAdapter.getArchivedDate();
+            return this.interventionAdapter.getArchiveDate();
         }
         else
         {
@@ -152,6 +152,22 @@ public class InterventionAdapter implements IInterventionAdapter {
         if (this.interventionAdapter != null)
         {
             this.interventionAdapter.setAddress(address);
+        }
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        if (this.interventionAdapter != null)
+        {
+            this.interventionAdapter.setCreationDate(creationDate);
+        }
+    }
+
+    @Override
+    public void setArchiveDate(Date archiveDate) {
+        if (this.interventionAdapter != null)
+        {
+            this.interventionAdapter.setArchiveDate(archiveDate);
         }
     }
 }

@@ -9,16 +9,16 @@ import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.dao.IDaoReturnHandler;
-import edu.istic.tdf.dfclient.dao.SinisterDao;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.rest.domain.SinisterRestClient;
 
 public class LoginActivity extends AppCompatActivity implements LoginFragment.OnFragmentInteractionListener {
 
-    SinisterRestClient sinisterClient;
-
-    SinisterDao sinisterDao;
+    InterventionDao interventionDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +29,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
                 .replace(R.id.login_container, LoginFragment.newInstance())
                 .commit();
 
-        sinisterClient = new SinisterRestClient();
-        sinisterDao = new SinisterDao();
+        interventionDao = new InterventionDao();
 
         testMaxime();
     }
@@ -47,14 +46,14 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     }
 
     public void testMaxime() {
-        sinisterDao.findAll(new IDaoReturnHandler<List<Sinister>>() {
+        interventionDao.findAll(new IDaoReturnHandler<List<Intervention>>() {
             @Override
-            public void onRepositoryResult(List<Sinister> r) {
+            public void onRepositoryResult(List<Intervention> r) {
                 Log.d("MAXIME", "Hourra Repo!!!");
             }
 
             @Override
-            public void onRestResult(List<Sinister> r) {
+            public void onRestResult(List<Intervention> r) {
                 Log.d("MAXIME", "Hourra REST!!!");
             }
 
