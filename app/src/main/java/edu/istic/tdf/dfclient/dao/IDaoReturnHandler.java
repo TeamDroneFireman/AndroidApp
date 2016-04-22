@@ -19,8 +19,14 @@ public interface IDaoReturnHandler<Result> {
     void onRestResult(Result r);
 
     /**
-     * Callback called if something goes wrong
+     * Callback called if something goes wrong with repository
      * @param e
      */
-    void onFailure(Throwable e);
+    void onRepositoryFailure(Throwable e);
+
+    /**
+     * Callback called if something goes wrong with Rest
+     * @param e
+     */
+    void onRestFailure(Throwable e);
 }

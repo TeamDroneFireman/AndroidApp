@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.repository;
 
+import android.util.Log;
+
 import com.raizlabs.android.dbflow.runtime.transaction.BaseTransaction;
 import com.raizlabs.android.dbflow.runtime.transaction.TransactionListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -9,6 +11,7 @@ import java.util.List;
 
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
+import edu.istic.tdf.dfclient.domain.Entity_Table;
 
 /**
  * {@inheritDoc}
@@ -25,63 +28,41 @@ public abstract class Repository<E extends Entity> implements IRepository<E> {
     }
 
     @Override
-    public void findAll(final IDbReturnHandler<ArrayList<E>> handler) {
-
+    public void findAll(int limit, int offset, final IDbReturnHandler<List<E>> handler) {
         SQLite.select()
                 .from(entityClass)
-                .async().queryList(new TransactionListener<List<E>>() {
-
-            @Override
-            public void onResultReceived(List<E> result) {
-                handler.onSuccess((ArrayList<E>) result);
-            }
-
-            @Override
-            public boolean onReady(BaseTransaction<List<E>> transaction) {
-                return false;
-            }
-
-            @Override
-            public boolean hasResult(BaseTransaction<List<E>> transaction, List<E> result) {
-                return false;
-            }
-        });
+                .limit(limit)
+                .offset(offset)
+                .async().queryList(new SelectTransactionListener<>(handler));
     }
 
     @Override
     public void find(String id, final IDbReturnHandler<E> handler) {
-        // Async Transaction Queue Retrieval (Recommended for large queries)
         SQLite.select()
                 .from(entityClass)
-                .async().querySingle(new TransactionListener<E>() {
-            @Override
-            public void onResultReceived(E result) {
-                handler.onSuccess(result);
-            }
-
-            @Override
-            public boolean onReady(BaseTransaction<E> transaction) {
-                return false;
-            }
-
-            @Override
-            public boolean hasResult(BaseTransaction<E> transaction, E result) {
-                return false;
-            }
-        });
+                .where(Entity_Table.id.eq(id))
+                .async().querySingle(new SelectTransactionListener<>(handler));
     }
 
     @Override
     public void persist(E entity, final IDbReturnHandler<E> handler) {
         entity.save();
-        if(handler != null) {
-            handler.onSuccess(entity);
-        }
+        handler.onSuccess(entity);
     }
 
     @Override
     public void persist(E entity) {
-        persist(entity, null);
+        persist(entity, new IDbReturnHandler<E>() {
+            @Override
+            public void onSuccess(E r) {
+                // Nothing
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                // Nothing
+            }
+        });
     }
 
     @Override

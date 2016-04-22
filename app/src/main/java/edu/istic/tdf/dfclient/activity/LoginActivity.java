@@ -8,6 +8,7 @@ import android.util.Log;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDaoReturnHandler;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     }
 
     public void testMaxime() {
-        interventionDao.findAll(new IDaoReturnHandler<List<Intervention>>() {
+        interventionDao.findAll(new DaoSelectionParameters(20,0), new IDaoReturnHandler<List<Intervention>>() {
             @Override
             public void onRepositoryResult(List<Intervention> r) {
                 Log.d("MAXIME", "Hourra Repo!!!");
@@ -58,7 +59,36 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
             }
 
             @Override
-            public void onFailure(Throwable e) {
+            public void onRepositoryFailure(Throwable e) {
+                Log.d("MAXIME", "Oooooohhhh....");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.d("MAXIME", "Oooooohhhh....");
+            }
+        });
+
+        interventionDao.find("1", new IDaoReturnHandler<Intervention>() {
+            @Override
+            public void onRepositoryResult(Intervention r) {
+                Log.d("MAXIME", "Hourra Repo!!!");
+
+            }
+
+            @Override
+            public void onRestResult(Intervention r) {
+                Log.d("MAXIME", "Hourra REST!!!");
+
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.d("MAXIME", "Oooooohhhh....");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
                 Log.d("MAXIME", "Oooooohhhh....");
             }
         });

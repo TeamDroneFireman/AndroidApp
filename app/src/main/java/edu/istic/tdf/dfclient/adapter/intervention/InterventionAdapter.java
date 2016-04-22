@@ -17,22 +17,12 @@ public class InterventionAdapter implements IInterventionAdapter {
 
     @Override
     public String getId() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getId();
-        }
-        else
-        {
-            return null;
-        }
+        return this.interventionAdapter.getId();
     }
 
     @Override
     public void setId(String id) {
-        if (this.interventionAdapter != null)
-        {
-            this.interventionAdapter.setId(id);
-        }
+        this.interventionAdapter.setId(id);
     }
 
     @Override

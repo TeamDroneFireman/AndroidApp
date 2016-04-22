@@ -1,15 +1,24 @@
 package edu.istic.tdf.dfclient.http;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class TdfHttpClient implements IHttpClient {
-    private static final String BASE_URL = "http://projetm2gla.istic.univ-rennes1.fr:12345/";
+
+    private static final String SCHEME = "http";
+    private static final String HOST = "projetm2gla.istic.univ-rennes1.fr";
+    private static final int PORT = 12345;
+    private static final String PATH = "api";
+    /**
+     * Client base URL with a final slash
+     */
     //private static final String BASE_URL = "http://pastebin.com/raw/";
 
     public static final String HTTP_ACCEPT = "application/json";
@@ -123,9 +132,34 @@ public class TdfHttpClient implements IHttpClient {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the absolute URL of a resource, with query parameters
+     *
+     * @param relativeUrl     The relative endpoint
+     * @param queryParameters The GET query parameters
+     * @return An HTTP Url object
      */
-    private String getAbsoluteUrl(String relativeUrl) {
-        return BASE_URL + relativeUrl;
+    private HttpUrl getAbsoluteUrl(String relativeUrl, HashMap<String, String> queryParameters) {
+        HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
+                .scheme(SCHEME)
+                .host(HOST)
+                .port(PORT)
+                .addPathSegments(PATH)
+                .addPathSegments(relativeUrl);
+
+        for (Map.Entry<String, String> entry : queryParameters.entrySet()) {
+            urlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        return urlBuilder.build();
+    }
+
+    /**
+     * Gets the absolute URL of a resource
+     *
+     * @param relativeUrl The relative endpoint
+     * @return An HTTP Url object
+     */
+    private HttpUrl getAbsoluteUrl(String relativeUrl) {
+        return this.getAbsoluteUrl(relativeUrl, new HashMap<String, String>());
     }
 }

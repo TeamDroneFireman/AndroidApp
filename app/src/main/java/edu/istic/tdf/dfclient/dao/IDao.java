@@ -21,7 +21,7 @@ public interface IDao<E extends Entity, R extends IRepository<E>, C extends IRes
      * Finds all entities and returns them as a list
      * @param result List of entities
      */
-    void findAll(IDaoReturnHandler<List<E>> result);
+    void findAll(DaoSelectionParameters selectionParameters, IDaoReturnHandler<List<E>> result);
 
     /**
      * Finds one entity and returns it

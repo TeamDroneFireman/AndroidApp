@@ -1,7 +1,9 @@
 package edu.istic.tdf.dfclient.repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
 
@@ -14,7 +16,7 @@ public interface IRepository<E extends Entity> {
     /**
      * Finds all entities and returns them as a list
      */
-    void findAll(final IDbReturnHandler<ArrayList<E>> handler);
+    void findAll(int limit, int offset, final IDbReturnHandler<List<E>> handler);
 
     /**
      * Finds one entity and returns it
