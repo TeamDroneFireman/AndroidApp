@@ -1,10 +1,12 @@
-package edu.istic.tdf.dfclient.repository;
+package edu.istic.tdf.dfclient.repository.domain;
 
 
 import edu.istic.tdf.dfclient.domain.sinister.Sinister;
+import edu.istic.tdf.dfclient.repository.IRepository;
+import edu.istic.tdf.dfclient.repository.Repository;
 
 /**
- * Created by maxime on 21/04/2016.
+ * Sinister repository
  */
 public class SinisterRepository extends Repository<Sinister> implements IRepository<Sinister> {
     public SinisterRepository() {

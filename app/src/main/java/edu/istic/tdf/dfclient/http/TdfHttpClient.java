@@ -8,7 +8,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class TdfHttpClient {
+public class TdfHttpClient implements IHttpClient {
     //private static final String BASE_URL = "http://projetm2gla.istic.univ-rennes1.fr/";
     private static final String BASE_URL = "http://pastebin.com/raw/";
 
@@ -22,6 +22,9 @@ public class TdfHttpClient {
         this.client = new OkHttpClient.Builder().build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void get(String url, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(getAbsoluteUrl(url))
@@ -37,10 +40,16 @@ public class TdfHttpClient {
         client.newCall(request).enqueue(handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void get(String url, Callback handler) {
         this.get(url, new HashMap<String, String>(), handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void post(String url, String body, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(getAbsoluteUrl(url))
@@ -56,10 +65,16 @@ public class TdfHttpClient {
         client.newCall(request).enqueue(handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void post(String url, String body, Callback handler) {
         this.post(url, body, new HashMap<String, String>(), handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void patch(String url, String body, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(getAbsoluteUrl(url))
@@ -75,10 +90,16 @@ public class TdfHttpClient {
         client.newCall(request).enqueue(handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void patch(String url, String body, Callback handler) {
         this.patch(url, body, new HashMap<String, String>(), handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void delete(String url, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(getAbsoluteUrl(url))
@@ -94,10 +115,16 @@ public class TdfHttpClient {
         client.newCall(request).enqueue(handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void delete(String url, Callback handler) {
         this.delete(url, new HashMap<String, String>(), handler);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     private String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }

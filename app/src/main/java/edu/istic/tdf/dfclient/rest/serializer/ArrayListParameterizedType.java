@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
- * Represents an ArrayList parameterized type
+ * Represents an ArrayList parameterized type for deserialization
  */
 public class ArrayListParameterizedType implements ParameterizedType {
 

@@ -1,20 +1,14 @@
 package edu.istic.tdf.dfclient.repository;
 
-import com.raizlabs.android.dbflow.config.TdfDatabaseTDF_Database;
 import com.raizlabs.android.dbflow.runtime.transaction.BaseTransaction;
 import com.raizlabs.android.dbflow.runtime.transaction.TransactionListener;
-import com.raizlabs.android.dbflow.sql.QueryBuilder;
-import com.raizlabs.android.dbflow.sql.language.SQLCondition;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
-import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.Entity;
-import edu.istic.tdf.dfclient.domain.sinister.Sinister;
-import edu.istic.tdf.dfclient.rest.IRestReturnHandler;
 
 /**
  * {@inheritDoc}

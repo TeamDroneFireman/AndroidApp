@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.rest;
+package edu.istic.tdf.dfclient.rest.handler;
 
 /**
  * Represents a callback called after a rest call (call call call... loll)

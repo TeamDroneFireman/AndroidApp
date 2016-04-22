@@ -1,7 +1,7 @@
 package edu.istic.tdf.dfclient.database;
 
 /**
- * Represents a callback called after a rest call (call call call... loll)
+ * Handles Database returns
  *
  * @author maxime
  */

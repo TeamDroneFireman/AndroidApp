@@ -1,14 +1,13 @@
-package edu.istic.tdf.dfclient.rest;
+package edu.istic.tdf.dfclient.rest.domain;
 
-import java.util.List;
-
-import dagger.Provides;
 import edu.istic.tdf.dfclient.domain.sinister.Sinister;
+import edu.istic.tdf.dfclient.rest.IRestClient;
+import edu.istic.tdf.dfclient.rest.RestClient;
 
 /**
  * Created by maxime on 20/04/2016.
  */
-public class SinisterRestClient extends RestClient<Sinister> implements ISinisterRestClient {
+public class SinisterRestClient extends RestClient<Sinister> implements IRestClient<Sinister> {
 
     public SinisterRestClient() {
         super(Sinister.class);

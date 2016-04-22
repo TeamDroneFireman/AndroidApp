@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
-import edu.istic.tdf.dfclient.rest.IRestReturnHandler;
 
 /**
  * An entity repository

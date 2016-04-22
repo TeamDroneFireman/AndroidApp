@@ -1,9 +1,10 @@
 package edu.istic.tdf.dfclient.dao;
 
 /**
- * Created by maxime on 20/04/2016.
+ * Handler for DAO Results
+ * @param <Result> The result type
  */
-public interface IDaoCallback<Result> {
+public interface IDaoReturnHandler<Result> {
 
     /**
      * Callback called after repository request result

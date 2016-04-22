@@ -6,7 +6,7 @@ import java.util.List;
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.repository.IRepository;
-import edu.istic.tdf.dfclient.rest.IRestReturnHandler;
+import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.IRestClient;
 
 /**
@@ -24,7 +24,7 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
     }
 
     @Override
-    public void findAll(final IDaoCallback<List<E>> handler) {
+    public void findAll(final IDaoReturnHandler<List<E>> handler) {
         // Make a first query on local data
         try {
             repository.findAll(new IDbReturnHandler<ArrayList<E>>() {
@@ -65,12 +65,12 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
     }
 
     @Override
-    public void find(final String id, final IDaoCallback<E> handler) {
+    public void find(final String id, final IDaoReturnHandler<E> handler) {
 
     }
 
     @Override
-    public void persist(final E entity, final IDaoCallback<E> handler) {
+    public void persist(final E entity, final IDaoReturnHandler<E> handler) {
 
     }
 

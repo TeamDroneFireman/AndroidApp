@@ -5,13 +5,12 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import edu.istic.tdf.dfclient.rest.IRestReturnHandler;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 /**
- * Handles a HTTP client response, deserializes the result and calls the callback
+ * Handles a OK HTTP client response, deserializes the result and calls the callback
  * @param <Result> The expected result type in callback
  */
 public class RestHttpResponseHandler<Result> implements Callback{

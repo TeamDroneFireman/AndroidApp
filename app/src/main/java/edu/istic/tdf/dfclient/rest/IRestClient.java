@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.rest;
 import java.util.ArrayList;
 
 import edu.istic.tdf.dfclient.domain.Entity;
+import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 
 /**
  * Rest client for an entity

@@ -1,13 +1,15 @@
 package edu.istic.tdf.dfclient.dao;
 
 import edu.istic.tdf.dfclient.domain.sinister.Sinister;
-import edu.istic.tdf.dfclient.repository.SinisterRepository;
-import edu.istic.tdf.dfclient.rest.SinisterRestClient;
+import edu.istic.tdf.dfclient.repository.domain.SinisterRepository;
+import edu.istic.tdf.dfclient.rest.domain.SinisterRestClient;
 
 /**
- * Created by maxime on 21/04/2016.
+ * The DAO for Sinister
+ *
+ * {@inheritDoc}
  */
-public class SinisterDao extends Dao<Sinister, SinisterRepository, SinisterRestClient> {
+public class SinisterDao extends Dao<Sinister, SinisterRepository, SinisterRestClient> implements IDao<Sinister, SinisterRepository, SinisterRestClient> {
 
     public SinisterDao() {
         super(new SinisterRepository(), new SinisterRestClient());
