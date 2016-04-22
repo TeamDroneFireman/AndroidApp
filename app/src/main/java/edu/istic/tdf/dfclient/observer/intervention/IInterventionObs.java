@@ -6,4 +6,17 @@ import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
  * Created by btessiau on 22/04/16.
  */
 public interface IInterventionObs extends IIntervention {
+
+    /**
+     *
+     * @return
+     */
+    public IIntervention getIntervention();
+
+    /**
+     *
+     * @param intervention
+     */
+    public void setIntervention(IIntervention intervention);
+
 }

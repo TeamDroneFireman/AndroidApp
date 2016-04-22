@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.observer.intervention;
 
 import android.location.Address;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -62,5 +63,50 @@ public class InterventionObs implements IInterventionObs {
     @Override
     public void setAddress(Address address) {
         this.intervention.setAddress(address);
+    }
+
+    @Override
+    public Collection<IElement> getElements() {
+        return this.intervention.getElements();
+    }
+
+    @Override
+    public void setElements(Collection<IElement> elements) {
+        this.intervention.setElements(elements);
+    }
+
+    @Override
+    public Date getDateCreation() {
+        return this.intervention.getDateCreation();
+    }
+
+    @Override
+    public void setDateCreation(Date dateCreation) {
+        this.intervention.setDateCreation(dateCreation);
+    }
+
+    @Override
+    public Date getDateArchived() {
+        return this.intervention.getDateArchived();
+    }
+
+    @Override
+    public void setDateArchived(Date dateArchived) {
+        this.intervention.setDateArchived(dateArchived);
+    }
+
+    @Override
+    public void setArchived(boolean archived) {
+        this.intervention.setArchived(archived);
+    }
+
+    @Override
+    public IIntervention getIntervention() {
+        return intervention;
+    }
+
+    @Override
+    public void setIntervention(IIntervention intervention) {
+        this.intervention = intervention;
     }
 }
