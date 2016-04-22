@@ -22,6 +22,7 @@ public class PointOfInterest implements IPointOfInterest {
 
     /**
      * The name of this element
+     * //TODO check if we used the name for identify water point or other
      */
     private String name;
 
