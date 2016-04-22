@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import edu.istic.tdf.dfclient.auth.AuthHelper;
+import edu.istic.tdf.dfclient.auth.Credentials;
 import okhttp3.Request;
 
 /**
@@ -41,10 +43,17 @@ public class TdfHttpRequestBuilder {
      * Sets authentication headers
      */
     public void setAuth() {
-        HashMap<String, String> authHeaders = new HashMap<>();
-        authHeaders.put("HTTP-AUTH-LOGIN", "THESUPERLOGIN");
-        authHeaders.put("HTTP-AUTH-TOKEN", "THESUPERTOKEN");
-        this.appendHeaders(authHeaders);
+        Credentials credentials = AuthHelper.loadCredentials();
+        if(credentials != null) {
+            if(credentials.isValid()) {
+                HashMap<String, String> authHeaders = new HashMap<>();
+                authHeaders.put("HTTP-AUTH-LOGIN", credentials.getUserId());
+                authHeaders.put("HTTP-AUTH-TOKEN", credentials.getToken());
+                this.appendHeaders(authHeaders);
+            }
+            // TODO: Handle invalid credentials object
+
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.http;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.istic.tdf.dfclient.auth.Credentials;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;

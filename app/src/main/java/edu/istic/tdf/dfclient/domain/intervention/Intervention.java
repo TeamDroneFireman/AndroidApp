@@ -19,6 +19,11 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
 public class Intervention extends Entity implements IIntervention {
 
     /**
+     * The intervention name
+     */
+    private String name;
+
+    /**
      * The collection of elements on the intervention
      */
     private Collection<IElement> elements;
@@ -44,7 +49,17 @@ public class Intervention extends Entity implements IIntervention {
     private boolean archived;
 
     public Intervention() {
+        this.setCreationDate(new Date());
+    }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

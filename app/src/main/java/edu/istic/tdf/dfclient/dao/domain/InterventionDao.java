@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.dao.domain;
 
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;

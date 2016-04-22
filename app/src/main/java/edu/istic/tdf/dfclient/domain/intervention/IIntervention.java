@@ -13,6 +13,12 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  * Created by btessiau on 20/04/16.
  */
 public interface IIntervention extends IEntity {
+
+
+    String getName();
+
+    void setName(String name);
+
     /**
      *
      * @return true iff the intervention is archived

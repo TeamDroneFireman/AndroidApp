@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.rest.domain;
 
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestClient;

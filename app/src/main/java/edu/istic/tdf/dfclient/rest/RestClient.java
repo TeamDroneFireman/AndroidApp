@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.http.handler.RestHttpResponseHandler;
 import edu.istic.tdf.dfclient.rest.serializer.ArrayListParameterizedType;
+import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 
 /**
  * {@inheritDoc}
@@ -35,7 +37,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     public RestClient(Class<E> entityClass) {
         this.entityClass = entityClass;
         this.httpClient = new TdfHttpClient();
-        this.serializer = new Gson();
+        this.serializer = RestSerializerBuilder.build();
     }
 
     /**
@@ -77,7 +79,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
 
         // If entity has an ID, its a PATCH, else its a POST
         if(entity.getId() != null){
-            httpClient.patch(getResourceUri(entity.getId()+"/"), body, handler);
+            httpClient.patch(getResourceUri(entity.getId() + "/"), body, handler);
         } else {
             httpClient.post(getResourceUri(""), body, handler);
         }
