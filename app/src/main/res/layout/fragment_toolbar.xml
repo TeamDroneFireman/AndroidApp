@@ -4,9 +4,10 @@
     android:layout_height="match_parent"
     tools:context="edu.istic.tdf.dfclient.fragment.ToolbarFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        <ExpandableListView
+            android:id="@+id/toolbar_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ExpandableListView>
 
 </FrameLayout>
