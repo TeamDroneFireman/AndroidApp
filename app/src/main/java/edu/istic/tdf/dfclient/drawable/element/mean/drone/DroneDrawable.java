@@ -29,6 +29,6 @@ public class DroneDrawable extends DroneObs implements IElementDrawable {
     }
 
     public void setDomainType(DomainType domainType) {
-
+        // TODO: 22/04/16 think if we throw an exception or let it empty
     }
 }
