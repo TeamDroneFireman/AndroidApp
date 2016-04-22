@@ -3,8 +3,10 @@ package edu.istic.tdf.dfclient.picto;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.support.v4.content.ContextCompat;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -14,10 +16,16 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
  */
 public class PictoFactory {
 
-    private static int defaultColor=Color.WHITE;
+    private int defaultColor=Color.WHITE;
+
+    private Context context;
+
+    public PictoFactory(Context context){
+        this.context=context;
+    }
 
 
-    public static Object getPicto(IElement element, DomaineType domaineType) {
+    public Object getPicto(IElement element, DomaineType domaineType) {
 
         Object defaultForm=getDefaultPicto(domaineType);
 
@@ -26,7 +34,7 @@ public class PictoFactory {
     }
 
 
-    public static Object getDefaultPicto(DomaineType domaineType) {
+    public Object getDefaultPicto(DomaineType domaineType) {
         switch (domaineType){
             case DRONE: return getDefaultDroneForm();
             case INTERVENTIONMEAN:return getDefaultInterventionMeanForm();
@@ -42,7 +50,7 @@ public class PictoFactory {
      * Triangle \/
      * @return
      */
-    private static Object getDefaultSensibleForm() {
+    private  Object getDefaultSensibleForm() {
         return null;
     }
 
@@ -50,7 +58,7 @@ public class PictoFactory {
      * Trieangle /\
      * @return
      */
-    private static Object getDefaultRiskForm() {
+    private Object getDefaultRiskForm() {
 
         return null;
     }
@@ -59,16 +67,11 @@ public class PictoFactory {
      * Circle
      * @return
      */
-    private static Object getDefaulWaterPointForm() {
-       /* Resources res = Resources.getSystem();
-        //TODO récuperer le context pour le param null
-        Drawable drawable;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            drawable = res.getDrawable(R.drawable.waterPointDrawable,null);
-        }else{
-           drawable= res.getDrawable(R.drawable.waterPointDrawable);
-        }*/
+    private Object getDefaulWaterPointForm() {
 
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.water_point_drawable);
+       // drawable.setF(defaultColor);
+        drawable.mutate().setColorFilter(defaultColor, PorterDuff.Mode.MULTIPLY);
 
         return null;
     }
@@ -77,7 +80,7 @@ public class PictoFactory {
      * Square
      * @return
      */
-    private static Object getDefaultInterventionMeanForm() {
+    private Object getDefaultInterventionMeanForm() {
         return null;
     }
 
@@ -85,7 +88,7 @@ public class PictoFactory {
      * AirMean = square with two triangles
      * @return
      */
-    private static Object getDefaultDroneForm() {
+    private Object getDefaultDroneForm() {
         return null;
     }
 }
