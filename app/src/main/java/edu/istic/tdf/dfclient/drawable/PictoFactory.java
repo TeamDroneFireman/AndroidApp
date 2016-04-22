@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.drawable.element.DomaineType;
+import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
  * Created by guerin on 22/04/16.
@@ -24,17 +24,17 @@ public class PictoFactory {
     }
 
 
-    public Drawable getPicto(IElement element, DomaineType domaineType) {
+    public Drawable getPicto(IElement element, DomainType domainType) {
 
-        Object defaultForm=getDefaultPicto(domaineType);
+        Object defaultForm=getDefaultPicto(domainType);
 
 
         return null;
     }
 
 
-    public Object getDefaultPicto(DomaineType domaineType) {
-        switch (domaineType){
+    public Object getDefaultPicto(DomainType domainType) {
+        switch (domainType){
             case DRONE: return getDefaultDroneForm();
             case INTERVENTIONMEAN:return getDefaultInterventionMeanForm();
             case WATERPOINT:return getDefaulWaterPointForm();

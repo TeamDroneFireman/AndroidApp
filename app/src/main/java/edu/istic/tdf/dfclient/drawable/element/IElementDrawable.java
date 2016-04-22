@@ -7,5 +7,22 @@ import android.graphics.drawable.Drawable;
  */
 public interface IElementDrawable {
 
+    /**
+     *
+     * @return
+     */
     public Drawable getPitcto();
+
+    /**
+     *
+     * @return
+     */
+    public DomainType getDomainType();
+
+    /**
+     *
+     * @param domainType
+     */
+    public void setDomainType(DomainType domainType);
+
 }

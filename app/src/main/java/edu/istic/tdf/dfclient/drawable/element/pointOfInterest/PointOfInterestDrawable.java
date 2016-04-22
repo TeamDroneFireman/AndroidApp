@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable;
 
 import edu.istic.tdf.dfclient.drawable.element.IElementDrawable;
 import edu.istic.tdf.dfclient.observer.element.pointOfInterest.PointOfInterestObs;
-import edu.istic.tdf.dfclient.drawable.element.DomaineType;
+import edu.istic.tdf.dfclient.drawable.element.DomainType;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -13,7 +13,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 public class PointOfInterestDrawable extends PointOfInterestObs implements IElementDrawable {
     private PictoFactory pictoFactory;
 
-    private DomaineType domaineType;
+    private DomainType domainType;
 
     public PointOfInterestDrawable(PictoFactory pictoFactory){
         this.pictoFactory=pictoFactory;
@@ -21,14 +21,14 @@ public class PointOfInterestDrawable extends PointOfInterestObs implements IElem
 
     @Override
     public Drawable getPitcto() {
-        return pictoFactory.getPicto(this, domaineType);
+        return pictoFactory.getPicto(this, domainType);
     }
 
-    public DomaineType getDomaineType() {
-        return domaineType;
+    public DomainType getDomainType() {
+        return domainType;
     }
 
-    public void setDomaineType(DomaineType domaineType) {
-        this.domaineType = domaineType;
+    public void setDomainType(DomainType domainType) {
+        this.domainType = domainType;
     }
 }
