@@ -11,11 +11,6 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 public class PointOfInterest implements IPointOfInterest {
 
     /**
-     * The unique Id of this object
-     */
-    private String id;
-
-    /**
      * The role of this element
      */
     private Role role;
@@ -33,16 +28,6 @@ public class PointOfInterest implements IPointOfInterest {
 
     public PointOfInterest() {
 
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override

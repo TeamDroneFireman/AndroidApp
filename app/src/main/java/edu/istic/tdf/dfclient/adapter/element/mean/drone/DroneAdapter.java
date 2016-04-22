@@ -27,179 +27,93 @@ public class DroneAdapter implements IDroneAdapter {
 
     @Override
     public void addCommand(ICommand command) {
-        if (this.commands != null && command != null)
-        {
-            this.commands.add(command);
-        }
+        this.commands.add(command);
     }
 
     private void executeAllCommands(){
-        if (this.commands != null)
+        for(ICommand command:this.commands)
         {
-            for(ICommand command:this.commands)
-            {
-                command.execute();
-            }
+            command.execute();
         }
     }
 
 
     @Override
     public void setState(MeanState state) {
-        if (this.drone != null) {
-            drone.setState(state);
+        drone.setState(state);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public MeanState getState() {
-        if (this.drone != null) {
-            return drone.getState();
-        }
-        else
-        {
-            return null;
-        }
+        return drone.getState();
     }
 
     @Override
     public void setAction(String action) {
-        if (this.drone != null) {
-            drone.setAction(action);
+        drone.setAction(action);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public String getAction() {
-        if (this.drone != null) {
-            return drone.getAction();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public String getId() {
-        if (this.drone != null) {
-            return this.drone.getId();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public void setId(String id) {
-        if (this.drone != null) {
-            this.drone.setId(id);
-
-            //notify observer
-            this.executeAllCommands();
-        }
+        return drone.getAction();
     }
 
     @Override
     public void setRole(Role role) {
-        if (this.drone != null) {
-            drone.setRole(role);
+        drone.setRole(role);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public Role getRole() {
-        if (this.drone != null) {
-            return drone.getRole();
-        }
-        else
-        {
-            return null;
-        }
+        return drone.getRole();
     }
 
     @Override
     public void setPosition(Location location) {
-        if (this.drone != null) {
-            drone.setPosition(location);
+        drone.setPosition(location);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public Location getPosition() {
-        if (this.drone != null) {
-            return drone.getPosition();
-        }
-        else
-        {
-            return null;
-        }
+        return drone.getPosition();
     }
 
     @Override
     public void setName(String name) {
-        if (this.drone != null)
-        {
-            drone.setName(name);
-            //notify observer
-            this.executeAllCommands();
-        }
+        drone.setName(name);
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public String getName() {
-        if (this.drone != null)
-        {
-            return this.drone.getName();
-        }
-        else
-        {
-            return null;
-        }
+        return this.drone.getName();
     }
 
     @Override
     public IMission getMission() {
-        if (this.drone != null)
-        {
-            return this.drone.getMission();
-        }
-        else
-        {
-            return null;
-        }
+        return this.drone.getMission();
     }
 
     @Override
     public void setMission(IMission mission) {
-        if (this.drone != null)
-        {
-            this.drone.setMission(mission);
-        }
+        this.drone.setMission(mission);
     }
 
     @Override
     public boolean hasMission() {
-        if (this.drone != null)
-        {
-            return this.drone.hasMission();
-        }
-        else
-        {
-            return false;
-        }
+        return this.drone.hasMission();
     }
 }

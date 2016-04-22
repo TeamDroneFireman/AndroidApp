@@ -6,152 +6,61 @@ import java.util.Date;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.domain.sinister.ISinister;
+import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 
 /**
  * Created by btessiau on 22/04/16.
  */
 public class InterventionAdapter implements IInterventionAdapter {
 
-    private IInterventionAdapter interventionAdapter;
+    private IIntervention intervention;
 
-    @Override
-    public String getId() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getId();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public void setId(String id) {
-        if (this.interventionAdapter != null)
-        {
-            this.interventionAdapter.setId(id);
-        }
+    public InterventionAdapter(IIntervention intervention) {
+        this.intervention = intervention;
     }
 
     @Override
     public Date getCreationDate() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getCreationDate();
-        }
-        else
-        {
-            return null;
-        }
+        return this.intervention.getCreationDate();
     }
 
     @Override
     public Date getArchivedDate() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getArchivedDate();
-        }
-        else
-        {
-            return null;
-        }
+        return this.intervention.getArchivedDate();
     }
 
     @Override
     public boolean isArchived() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.isArchived();
-        }
-        else
-        {
-            return false;
-        }
+        return this.intervention.isArchived();
     }
 
     @Override
     public void archive() {
-        if (this.interventionAdapter != null)
-        {
-            this.interventionAdapter.archive();
-        }
-    }
-
-    @Override
-    public ISinister getSinister() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getSinister();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public void setSinister(ISinister sinister) {
-        if (this.interventionAdapter != null)
-        {
-            this.interventionAdapter.setSinister(sinister);
-        }
+        this.intervention.archive();
     }
 
     @Override
     public boolean addElement(IElement element) {
-        if (this.interventionAdapter != null && element != null)
-        {
-            return this.interventionAdapter.addElement(element);
-        }
-        else
-        {
-            return false;
-        }
+        return this.intervention.addElement(element);
     }
 
     @Override
     public boolean removeElement(IElement element) {
-        if (this.interventionAdapter != null && element != null)
-        {
-            return this.interventionAdapter.removeElement(element);
-        }
-        else
-        {
-            return false;
-        }
+        return this.intervention.removeElement(element);
     }
 
     @Override
     public Iterator<IElement> getIteratorOnElements() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getIteratorOnElements();
-        }
-        else
-        {
-            return null;
-        }
+        return this.intervention.getIteratorOnElements();
     }
 
     @Override
     public Address getAddress() {
-        if (this.interventionAdapter != null)
-        {
-            return this.interventionAdapter.getAddress();
-        }
-        else
-        {
-            return null;
-        }
+        return this.intervention.getAddress();
     }
 
     @Override
     public void setAddress(Address address) {
-        if (this.interventionAdapter != null)
-        {
-            this.interventionAdapter.setAddress(address);
-        }
+        this.intervention.setAddress(address);
     }
 }

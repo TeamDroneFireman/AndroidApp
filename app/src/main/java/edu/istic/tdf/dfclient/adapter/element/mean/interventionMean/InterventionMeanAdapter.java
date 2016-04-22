@@ -40,146 +40,77 @@ public class InterventionMeanAdapter implements IInterventionMeanAdapter{
 
     @Override
     public void setState(MeanState state) {
-        if (this.interventionMean != null) {
-            interventionMean.setState(state);
+        interventionMean.setState(state);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public MeanState getState() {
-        if (this.interventionMean != null) {
-            return interventionMean.getState();
-        }
-        else
-        {
-            return null;
-        }
+        return interventionMean.getState();
     }
 
     @Override
     public void setAction(String action) {
-        if (this.interventionMean != null) {
-            interventionMean.setAction(action);
+        interventionMean.setAction(action);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public String getAction() {
-        if (this.interventionMean != null) {
-            return interventionMean.getAction();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public String getId() {
-        if (this.interventionMean != null) {
-            return this.interventionMean.getId();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public void setId(String id) {
-        if (this.interventionMean != null) {
-            this.interventionMean.setId(id);
-
-            //notify observer
-            this.executeAllCommands();
-        }
+        return interventionMean.getAction();
     }
 
     @Override
     public void setRole(Role role) {
-        if (this.interventionMean != null) {
-            interventionMean.setRole(role);
+        interventionMean.setRole(role);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public Role getRole() {
-        if (this.interventionMean != null) {
-            return interventionMean.getRole();
-        }
-        else
-        {
-            return null;
-        }
+        return interventionMean.getRole();
     }
 
     @Override
     public void setPosition(Location location) {
-        if (this.interventionMean != null) {
-            interventionMean.setPosition(location);
+        interventionMean.setPosition(location);
 
-            //notify observer
-            this.executeAllCommands();
-        }
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public Location getPosition() {
-        if (this.interventionMean != null) {
-            return interventionMean.getPosition();
-        }
-        else
-        {
-            return null;
-        }
+        return interventionMean.getPosition();
     }
 
     @Override
     public void setName(String name) {
-        if (this.interventionMean != null)
-        {
-            interventionMean.setName(name);
-            //notify observer
-            this.executeAllCommands();
-        }
+        interventionMean.setName(name);
+        //notify observer
+        this.executeAllCommands();
     }
 
     @Override
     public String getName() {
-        if (this.interventionMean != null)
-        {
-            return this.interventionMean.getName();
-        }
-        else
-        {
-            return null;
-        }
+        return this.interventionMean.getName();
     }
 
     @Override
     public void addCommand(ICommand command) {
-        if (this.commands != null && command != null)
-        {
-            this.commands.add(command);
-        }
+        this.commands.add(command);
     }
 
     private void executeAllCommands(){
-        if (this.commands != null)
+        for(ICommand command:this.commands)
         {
-            for(ICommand command:this.commands)
-            {
-                command.execute();
-            }
+            command.execute();
         }
     }
 }

@@ -5,25 +5,12 @@ import android.location.Address;
 import java.util.Date;
 import java.util.Iterator;
 
-import edu.istic.tdf.dfclient.domain.sinister.ISinister;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
  * Created by btessiau on 20/04/16.
  */
 public interface IIntervention {
-
-    /**
-     *
-     * @return the unique id of the element
-     */
-    public String getId();
-
-    /**
-     *
-     * @param id the new unique id of the element
-     */
-    public void setId(String id);
 
     /**
      *
@@ -47,19 +34,6 @@ public interface IIntervention {
      * archive the intervention
      */
     public void archive();
-
-    /**
-     *
-     * @return the sinister including the default means list
-     */
-    public ISinister getSinister();
-
-    /**
-     *
-     * @param sinister you want to associate with your intervention
-     * sinister must be not null
-     */
-    public void setSinister(ISinister sinister);
 
     /**
      *
