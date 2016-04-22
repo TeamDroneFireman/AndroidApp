@@ -72,4 +72,24 @@ public class PointOfInterestObs implements IPointOfInterestObs {
             command.execute();
         }
     }
+
+    @Override
+    public IPointOfInterest getPointOfInterest() {
+        return pointOfInterest;
+    }
+
+    @Override
+    public void setPointOfInterest(IPointOfInterest pointOfInterest) {
+        this.pointOfInterest = pointOfInterest;
+    }
+
+    @Override
+    public Collection<ICommand> getCommands() {
+        return commands;
+    }
+
+    @Override
+    public void setCommands(Collection<ICommand> commands) {
+        this.commands = commands;
+    }
 }

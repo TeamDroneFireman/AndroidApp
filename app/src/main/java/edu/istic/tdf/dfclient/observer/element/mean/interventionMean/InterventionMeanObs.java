@@ -26,14 +26,6 @@ public class InterventionMeanObs implements IInterventionMeanObs {
      */
     private Collection<ICommand> commands;
 
-    public InterventionMeanObs(){
-        this.interventionMean = new InterventionMean();
-    }
-
-    public InterventionMeanObs(MeanState state, Role role, String name){
-        this.interventionMean=new InterventionMean(state,role,name);
-    }
-
     public void getPicto(){
         //TODO UsinePicto.getPicto(interventionMean)
     }
@@ -112,5 +104,25 @@ public class InterventionMeanObs implements IInterventionMeanObs {
         {
             command.execute();
         }
+    }
+
+    @Override
+    public IInterventionMean getInterventionMean() {
+        return interventionMean;
+    }
+
+    @Override
+    public void setInterventionMean(IInterventionMean interventionMean) {
+        this.interventionMean = interventionMean;
+    }
+
+    @Override
+    public Collection<ICommand> getCommands() {
+        return commands;
+    }
+
+    @Override
+    public void setCommands(Collection<ICommand> commands) {
+        this.commands = commands;
     }
 }
