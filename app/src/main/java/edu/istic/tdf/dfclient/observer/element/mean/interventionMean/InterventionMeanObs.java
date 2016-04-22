@@ -1,10 +1,10 @@
-package edu.istic.tdf.dfclient.adapter.element.mean.interventionMean;
+package edu.istic.tdf.dfclient.observer.element.mean.interventionMean;
 
 import android.location.Location;
 
 import java.util.Collection;
 
-import edu.istic.tdf.dfclient.adapter.command.ICommand;
+import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
@@ -14,7 +14,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionM
  * represent the observable element
  * Created by guerin on 21/04/16.
  */
-public class InterventionMeanAdapter implements IInterventionMeanAdapter{
+public class InterventionMeanObs implements IInterventionMeanObs {
 
     /**
      * Element associate to the adapter
@@ -26,11 +26,11 @@ public class InterventionMeanAdapter implements IInterventionMeanAdapter{
      */
     private Collection<ICommand> commands;
 
-    public InterventionMeanAdapter(){
+    public InterventionMeanObs(){
         this.interventionMean = new InterventionMean();
     }
 
-    public InterventionMeanAdapter(MeanState state, Role role, String name){
+    public InterventionMeanObs(MeanState state, Role role, String name){
         this.interventionMean=new InterventionMean(state,role,name);
     }
 

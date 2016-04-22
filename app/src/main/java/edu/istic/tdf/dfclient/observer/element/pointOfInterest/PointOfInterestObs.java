@@ -1,17 +1,17 @@
-package edu.istic.tdf.dfclient.adapter.element.pointOfInterest;
+package edu.istic.tdf.dfclient.observer.element.pointOfInterest;
 
 import android.location.Location;
 
 import java.util.Collection;
 
-import edu.istic.tdf.dfclient.adapter.command.ICommand;
+import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.IPointOfInterest;
 
 /**
  * Created by btessiau on 22/04/16.
  */
-public class PointOfInterestAdapter implements IPointOfInterestAdapter {
+public class PointOfInterestObs implements IPointOfInterestObs {
 
     /**
      * Element associate to the adapter

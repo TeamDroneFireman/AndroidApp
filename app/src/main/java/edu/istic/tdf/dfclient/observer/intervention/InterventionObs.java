@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.adapter.intervention;
+package edu.istic.tdf.dfclient.observer.intervention;
 
 import android.location.Address;
 
@@ -11,11 +11,11 @@ import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 /**
  * Created by btessiau on 22/04/16.
  */
-public class InterventionAdapter implements IInterventionAdapter {
+public class InterventionObs implements IInterventionObs {
 
     private IIntervention intervention;
 
-    public InterventionAdapter(IIntervention intervention) {
+    public InterventionObs(IIntervention intervention) {
         this.intervention = intervention;
     }
 

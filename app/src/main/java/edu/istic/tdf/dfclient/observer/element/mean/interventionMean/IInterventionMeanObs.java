@@ -1,12 +1,12 @@
-package edu.istic.tdf.dfclient.adapter.element.mean.interventionMean;
+package edu.istic.tdf.dfclient.observer.element.mean.interventionMean;
 
-import edu.istic.tdf.dfclient.adapter.command.ICommand;
+import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
 
 /**
  * Created by btessiau on 21/04/16.
  */
-public interface IInterventionMeanAdapter extends IInterventionMean {
+public interface IInterventionMeanObs extends IInterventionMean {
 
     /**
      *

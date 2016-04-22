@@ -1,10 +1,10 @@
-package edu.istic.tdf.dfclient.adapter.element.mean.drone;
+package edu.istic.tdf.dfclient.observer.element.mean.drone;
 
 import android.location.Location;
 
 import java.util.Collection;
 
-import edu.istic.tdf.dfclient.adapter.command.ICommand;
+import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
@@ -13,7 +13,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
 /**
  * Created by btessiau on 22/04/16.
  */
-public class DroneAdapter implements IDroneAdapter {
+public class DroneObs implements IDroneObs {
 
     /**
      * Element associate to the adapter

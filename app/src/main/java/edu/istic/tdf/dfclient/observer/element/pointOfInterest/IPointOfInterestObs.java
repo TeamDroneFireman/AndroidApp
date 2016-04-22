@@ -1,12 +1,12 @@
-package edu.istic.tdf.dfclient.adapter.element.pointOfInterest;
+package edu.istic.tdf.dfclient.observer.element.pointOfInterest;
 
-import edu.istic.tdf.dfclient.adapter.command.ICommand;
+import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.IPointOfInterest;
 
 /**
  * Created by btessiau on 22/04/16.
  */
-public interface IPointOfInterestAdapter extends IPointOfInterest {
+public interface IPointOfInterestObs extends IPointOfInterest {
 
     /**
      *
