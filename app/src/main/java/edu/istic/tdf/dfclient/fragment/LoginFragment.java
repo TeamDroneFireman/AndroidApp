@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -120,9 +122,13 @@ public class LoginFragment extends Fragment {
                 Credentials credentials = new Credentials(r.getUserId(), r.getToken());
                 AuthHelper.storeCredentials(credentials);
 
-                // Go to the next activity
-                Intent intent = new Intent(LoginFragment.this.getActivity(), MainMenuActivity.class);
-                LoginFragment.this.getActivity().startActivity(intent);
+                // Go to the next activity with transition
+                LoginFragment.this.getActivity().overridePendingTransition(R.anim.shake, R.anim.shake);
+
+                Bundle intentBundle = new Bundle();
+                final Intent intent = new Intent(LoginFragment.this.getActivity(), MainMenuActivity.class);
+                ActivityCompat.startActivity(LoginFragment.this.getActivity(), intent, intentBundle);
+                //LoginFragment.this.getActivity().startActivity(intent);
 
                 onEnd();
             }
@@ -131,27 +137,10 @@ public class LoginFragment extends Fragment {
             public void onError(Throwable error) {
 
                 // TODO : Remove this when auth service will work
-                /*LoginResponse loginResponse = new LoginResponse();
+                LoginResponse loginResponse = new LoginResponse();
                 loginResponse.setUserId("571a4902ddd1850100ce8691");
                 loginResponse.setToken("CS5JXqF9wQ7CVfdvpTx3oJxGPCGiKUfYDWZw2Hk0A29BTYCESuurYxYQLHQaSemB");
-                onSuccess(loginResponse);*/
-
-                LoginFragment.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Animation shake = AnimationUtils.loadAnimation(LoginFragment.this.getContext(), R.anim.shake);
-                        loginBt.startAnimation(shake);
-                        loginBt.setProgress(-1);
-
-                        // After a few seconds, set button back to normal position
-                        new android.os.Handler().postDelayed(
-                                new Runnable() {
-                                    public void run() {
-                                        loginBt.setProgress(0);
-                                    }
-                                }, BUTTON_ERROR_DISPLAY_TIME_IN_MS);
-                    }
-                });
+                onSuccess(loginResponse);
 
 
 
@@ -160,18 +149,30 @@ public class LoginFragment extends Fragment {
                 if(error instanceof HttpException
                         && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
                     LoginFragment.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
                         public void run() {
-                            Toast.makeText(LoginFragment.this.getActivity(), "Identifiants incorrects", Toast.LENGTH_SHORT).show();
+                            Animation shake = AnimationUtils.loadAnimation(LoginFragment.this.getContext(), R.anim.shake);
+                            loginBt.startAnimation(shake);
+                            loginBt.setProgress(-1);
+
+                            // After a few seconds, set button back to normal position
+                            new android.os.Handler().postDelayed(
+                                    new Runnable() {
+                                        public void run() {
+                                            loginBt.setProgress(0);
+                                        }
+                                    }, BUTTON_ERROR_DISPLAY_TIME_IN_MS);
                         }
                     });
                 } else {
                     LoginFragment.this.getActivity().runOnUiThread(new Runnable() { // If other error
                         public void run() {
-                            Toast.makeText(LoginFragment.this.getActivity(), "An error occured", Toast.LENGTH_SHORT).show();
+                            loginBt.setProgress(0);
+                            Toast.makeText(LoginFragment.this.getActivity(), "An error occured when logging in", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-                */
+                //*/
 
                 onEnd();
             }
