@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.auth.AuthHelper;
@@ -27,16 +29,13 @@ public class LoginFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-
     LoginRestService loginRestService;
 
-    public LoginFragment() {
-        loginRestService = new LoginRestService();
-    }
-
     // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance() {
+    // loginRestService is instanciated from Dagger FragmentModule
+    public static LoginFragment newInstance(LoginRestService loginRestService) {
         LoginFragment fragment = new LoginFragment();
+        fragment.loginRestService = loginRestService;
         return fragment;
     }
 

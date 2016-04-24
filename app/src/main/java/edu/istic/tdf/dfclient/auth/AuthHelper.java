@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import edu.istic.tdf.dfclient.TdfApplication;
 
 /**
+ * Helper for authentication
+ *
  * Created by maxime on 22/04/2016.
  */
 public class AuthHelper {
