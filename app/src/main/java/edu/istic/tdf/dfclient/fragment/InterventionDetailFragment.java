@@ -9,9 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 
 public class InterventionDetailFragment extends Fragment {
+
+    // UI
+    @Bind(R.id.interventionSelectionButton) Button interventionSelectionBt;
 
     private OnFragmentInteractionListener mListener;
 
@@ -34,8 +39,9 @@ public class InterventionDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
-        Button loginButton = (Button) view.findViewById(R.id.interventionSelectionButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        ButterKnife.bind(this, view);
+
+        interventionSelectionBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onInterventionSelect();

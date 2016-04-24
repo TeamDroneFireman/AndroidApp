@@ -23,6 +23,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    // For butterknife
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 }
 
 repositories {
@@ -44,6 +48,9 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.2'
     compile 'com.google.dagger:dagger:2.2'
     provided 'javax.annotation:jsr250-api:1.0'
+
+    // Butterknife
+    compile 'com.jakewharton:butterknife:7.0.1'
 
     // Rest client dependencies
     compile 'com.squareup.okhttp3:okhttp:3.2.0'

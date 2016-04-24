@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.auth.AuthHelper;
@@ -26,6 +28,11 @@ import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 import edu.istic.tdf.dfclient.rest.service.login.response.LoginResponse;
 
 public class LoginFragment extends Fragment {
+
+    // UI
+    @Bind(R.id.username) EditText usernameTxt;
+    @Bind(R.id.password) EditText passwordTxt;
+    @Bind(R.id.loginButton) Button loginBt;
 
     private OnFragmentInteractionListener mListener;
 
@@ -50,14 +57,10 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container,savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-
-        // Ui components
-        final EditText usernameTxt = (EditText) view.findViewById(R.id.username);
-        final EditText passwordTxt = (EditText) view.findViewById(R.id.password);
-        Button loginButton = (Button) view.findViewById(R.id.loginButton);
+        ButterKnife.bind(this, view);
 
         // Listeners
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        loginBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LoginFragment.this.login(usernameTxt.getText().toString(), passwordTxt.getText().toString());
