@@ -8,15 +8,21 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,11 +76,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         final GoogleMap gMap = map;
 
-        Polygon polygon = gMap.addPolygon(new PolygonOptions()
-                .add(new LatLng(0, 0), new LatLng(0, 5), new LatLng(3, 5), new LatLng(0, 0))
-                .strokeColor(Color.RED)
-                .fillColor(Color.BLUE));
-
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
@@ -94,21 +95,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 Tool selectedTool = mListener.getSelectedTool();
                 if (selectedTool != null) {
 
-                    View marker = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.icon_layout, null);
-                    TextView numTxt = (TextView) marker.findViewById(R.id.num_txt);
-                    numTxt.setText("27");
+                    View marker = getIconView();
 
                     Object customMarker = gMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .title("Title")
-                            .snippet("Description")
-                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker))));
-/*
-                    gMap.addMarker(new MarkerOptions()
-                            .position(latLng)
                             .title(selectedTool.getTitle())
                             .draggable(true)
-                            .icon(icon));*/
+                            .snippet("Description")
+                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker))));
 
                 }
             }
@@ -166,7 +160,21 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     + " must implement OnFragmentInteractionListener");
         }
     }
+    private View getIconView(){
 
+        View marker = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.icon_layout, null);
+
+        ImageView imageView = (ImageView) marker.findViewById(R.id.icon_image_view);
+        Drawable iconDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.mean, null);
+
+        imageView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.mean, null));
+        imageView.setColorFilter(Color.argb(255, 255, 255, 255));
+
+        TextView numTxt = (TextView) marker.findViewById(R.id.num_txt);
+        numTxt.setText("CDC 2");
+
+        return marker;
+    }
     @Override
     public void onDetach() {
         super.onDetach();
