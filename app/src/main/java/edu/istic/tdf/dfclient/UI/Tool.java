@@ -26,4 +26,7 @@ public class Tool {
     private String title = "Nom";
 
     public Tool(){}
+    public Tool(String title){
+        this.title = title;
+    }
 }

@@ -2,29 +2,44 @@ package edu.istic.tdf.dfclient.fragment;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.Tool;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback {
+
+    private OnFragmentInteractionListener mListener;
+    private Marker customMarker;
 
     public SitacFragment() {
     }
@@ -52,8 +67,70 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap map) {
+
+        final GoogleMap gMap = map;
+
+        Polygon polygon = gMap.addPolygon(new PolygonOptions()
+                .add(new LatLng(0, 0), new LatLng(0, 5), new LatLng(3, 5), new LatLng(0, 0))
+                .strokeColor(Color.RED)
+                .fillColor(Color.BLUE));
+
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
+        gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+        });
+        gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                Tool selectedTool = mListener.getSelectedTool();
+                if (selectedTool != null) {
+
+                    View marker = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.icon_layout, null);
+                    TextView numTxt = (TextView) marker.findViewById(R.id.num_txt);
+                    numTxt.setText("27");
+
+                    Object customMarker = gMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title("Title")
+                            .snippet("Description")
+                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker))));
+/*
+                    gMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(selectedTool.getTitle())
+                            .draggable(true)
+                            .icon(icon));*/
+
+                }
+            }
+        });
+
+
+        gMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                Toast.makeText(getContext(), marker.getTitle() + "(" + marker.getId()+ ")", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                Toast.makeText(getContext(), marker.getTitle() + "(" + marker.getId()+ ") OK ! ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -79,9 +156,44 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
 
         }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
+    // Convert a view to bitmap
+    public static Bitmap createDrawableFromView(Context context, View view) {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+
+        return bitmap;
+    }
     public interface OnFragmentInteractionListener {
+
+        public Tool getSelectedTool();
+        public void handleElementAdded();
+
     }
 
     }

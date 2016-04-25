@@ -7,7 +7,7 @@
     tools:context="edu.istic.tdf.dfclient.activity.SitacActivity">
 
     <FrameLayout android:id="@+id/toolbar_container"
-        android:layout_width="90dp"
+        android:layout_width="120dp"
         android:layout_height="match_parent" />
 
     <FrameLayout android:id="@+id/sitac_container"

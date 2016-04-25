@@ -16,6 +16,8 @@ import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 
 public class SitacActivity extends BaseActivity implements SitacFragment.OnFragmentInteractionListener, ContextualDrawerFragment.OnFragmentInteractionListener, ToolbarFragment.OnFragmentInteractionListener {
 
+    private Tool selectedTool;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -38,6 +40,17 @@ public class SitacActivity extends BaseActivity implements SitacFragment.OnFragm
 
     @Override
     public void handleSelectedTool(Tool tool) {
+        this.selectedTool = tool;
         Toast.makeText(SitacActivity.this, tool.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public Tool getSelectedTool() {
+        return selectedTool;
+    }
+
+    @Override
+    public void handleElementAdded() {
+
     }
 }
