@@ -13,6 +13,12 @@ buildscript {
         // For Dagger and DBFlow
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 
+        // Push
+        classpath 'com.google.gms:google-services:1.5.0'
+
+        // Push sender
+        classpath 'eu.inloop:easygcm-tasks:1.3.0'
+
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
