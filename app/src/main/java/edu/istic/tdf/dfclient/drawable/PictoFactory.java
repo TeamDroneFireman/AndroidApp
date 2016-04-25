@@ -32,7 +32,7 @@ public class PictoFactory {
         Drawable defaultForm=getDefaultPicto(domainType);
 
 
-        return null;
+        return defaultForm;
     }
 
 
