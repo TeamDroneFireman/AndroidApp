@@ -1,7 +1,5 @@
 package edu.istic.tdf.dfclient.dao;
 
-import com.google.common.base.Optional;
-
 /**
  * Represents selections parameters for a DAO layer
  */

@@ -4,11 +4,15 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.http.handler.RestHttpResponseHandler;
 import edu.istic.tdf.dfclient.rest.serializer.ArrayListParameterizedType;
+import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 
 /**
  * {@inheritDoc}
@@ -18,7 +22,6 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     /**
      * The HTTP client
      */
-    // TODO : Dependency injection
     TdfHttpClient httpClient;
 
     Gson serializer;
@@ -32,10 +35,11 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
      * Constructs a REST Client
      * @param entityClass The class of the entity
      */
-    public RestClient(Class<E> entityClass) {
+    public RestClient(Class<E> entityClass, TdfHttpClient httpClient) {
         this.entityClass = entityClass;
-        this.httpClient = new TdfHttpClient();
-        this.serializer = new Gson();
+        this.httpClient = httpClient;
+        //this.httpClient = new TdfHttpClient();
+        this.serializer = RestSerializerBuilder.build();
     }
 
     /**
@@ -48,7 +52,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
                 new RestHttpResponseHandler<>(callback, new ArrayListParameterizedType(entityClass));
 
         // Make request
-        httpClient.get(getRestEndpoint(), handler);
+        httpClient.get(getResourceUri(""), handler);
     }
 
     /**
@@ -58,10 +62,10 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     public void find(String id, IRestReturnHandler<E> callback) {
         // Response handler
         RestHttpResponseHandler<E> handler =
-                new RestHttpResponseHandler<E>(callback, entityClass);
+                new RestHttpResponseHandler<>(callback, entityClass);
 
         // Make request
-        httpClient.get(getRestEndpoint(), handler);
+        httpClient.get(getResourceUri(id + "/"), handler);
     }
 
     /**
@@ -71,38 +75,31 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     public void persist(E entity, IRestReturnHandler<E> callback) {
         // Response handler
         RestHttpResponseHandler<E> handler =
-                new RestHttpResponseHandler<E>(callback, entityClass);
+                new RestHttpResponseHandler<>(callback, entityClass);
 
         String body = serializer.toJson(entity);
 
-        httpClient.post(getRestEndpoint(), body, handler);
+        // If entity has an ID, its a PATCH, else its a POST
+        if(entity.getId() != null){
+            httpClient.patch(getResourceUri(entity.getId() + "/"), body, handler);
+        } else {
+            httpClient.post(getResourceUri(""), body, handler);
+        }
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void delete(E entity) {
-
-        // No callback
-        IRestReturnHandler<E> callback = new IRestReturnHandler<E>() {
-            @Override
-            public void onSuccess(E r) {
-
-            }
-
-            @Override
-            public void onError(Throwable error) {
-
-            }
-        };
+    public void delete(E entity, final IRestReturnHandler<Void> callback) {
 
         // Response handler
-        RestHttpResponseHandler<E> handler =
-                new RestHttpResponseHandler<E>(callback, entityClass);
+        RestHttpResponseHandler<Void> handler =
+                new RestHttpResponseHandler<>(callback, null);
 
         // Make request
-        httpClient.delete(getRestEndpoint(), handler);
+        httpClient.delete(getResourceUri(entity.getId() + "/"), handler);
     }
 
     /**
@@ -110,4 +107,8 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
      * @return The endpoint URL
      */
     public abstract String getRestEndpoint();
+
+    private String getResourceUri(String relativeUri) {
+        return getRestEndpoint() + relativeUri;
+    }
 }

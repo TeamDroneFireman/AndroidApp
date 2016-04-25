@@ -1,12 +1,7 @@
 package edu.istic.tdf.dfclient.repository;
 
-import android.util.Log;
-
-import com.raizlabs.android.dbflow.runtime.transaction.BaseTransaction;
-import com.raizlabs.android.dbflow.runtime.transaction.TransactionListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
@@ -65,8 +60,25 @@ public abstract class Repository<E extends Entity> implements IRepository<E> {
         });
     }
 
+
+    @Override
+    public void delete(E entity, IDbReturnHandler<Void> handler) {
+        entity.delete();
+        handler.onSuccess(null);
+    }
+
     @Override
     public void delete(E entity) {
-        entity.delete();
+        this.delete(entity, new IDbReturnHandler<Void>() {
+            @Override
+            public void onSuccess(Void r) {
+
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+            }
+        });
     }
 }

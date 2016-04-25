@@ -22,6 +22,17 @@ public class InterventionObs implements IInterventionObs {
         this.intervention = intervention;
     }
 
+
+    @Override
+    public String getName() {
+        return this.intervention.getName();
+    }
+
+    @Override
+    public void setName(String name) {
+        this.intervention.setName(name);
+    }
+
     @Override
     public Date getCreationDate() {
         return this.intervention.getCreationDate();

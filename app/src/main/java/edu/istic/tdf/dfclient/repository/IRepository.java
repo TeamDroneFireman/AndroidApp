@@ -1,9 +1,7 @@
 package edu.istic.tdf.dfclient.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
 
@@ -41,4 +39,10 @@ public interface IRepository<E extends Entity> {
      * @param entity The entity to delete
      */
     void delete(E entity);
+
+    /**
+     * Deletes an entity
+     * @param entity The entity to delete
+     */
+    void delete(E entity, final IDbReturnHandler<Void> handler);
 }

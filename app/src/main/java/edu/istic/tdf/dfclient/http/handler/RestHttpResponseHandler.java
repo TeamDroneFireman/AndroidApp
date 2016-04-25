@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 import edu.istic.tdf.dfclient.http.exception.HttpException;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
+import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -40,7 +41,7 @@ public class RestHttpResponseHandler<Result> implements Callback{
     public RestHttpResponseHandler(IRestReturnHandler<Result> callback, Type resultType) {
         this.callback = callback;
         this.resultType = resultType;
-        this.deserializer = new Gson();
+        this.deserializer = RestSerializerBuilder.build();
     }
 
     @Override

@@ -29,6 +29,6 @@ public class InterventionMeanDrawable extends InterventionMeanObs implements IEl
     }
 
     public void setDomainType(DomainType domainType) {
-
+        // TODO: 22/04/16 think if we throw an exception or let it empty
     }
 }

@@ -2,6 +2,8 @@ package edu.istic.tdf.dfclient.dao;
 
 import java.util.List;
 
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.repository.IRepository;
 import edu.istic.tdf.dfclient.rest.IRestClient;
@@ -21,25 +23,25 @@ public interface IDao<E extends Entity, R extends IRepository<E>, C extends IRes
      * Finds all entities and returns them as a list
      * @param result List of entities
      */
-    void findAll(DaoSelectionParameters selectionParameters, IDaoReturnHandler<List<E>> result);
+    void findAll(DaoSelectionParameters selectionParameters, IDaoSelectReturnHandler<List<E>> result);
 
     /**
      * Finds one entity and returns it
      * @param id Id of the entity to find
      * @param result The found entity
      */
-    void find(String id, IDaoReturnHandler<E> result);
+    void find(String id, IDaoSelectReturnHandler<E> result);
 
     /**
      * Persists an entity and returns its new version
      * @param entity The entity to persist
      * @param result The new version of entity
      */
-    void persist(E entity, IDaoReturnHandler<E> result);
+    void persist(E entity, IDaoWriteReturnHandler result);
 
     /**
      * Deletes an entity
      * @param entity The entity to delete
      */
-    void delete(E entity);
+    void delete(E entity, IDaoWriteReturnHandler result);
 }

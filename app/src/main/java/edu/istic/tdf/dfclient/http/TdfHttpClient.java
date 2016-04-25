@@ -3,6 +3,9 @@ package edu.istic.tdf.dfclient.http;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import edu.istic.tdf.dfclient.auth.Credentials;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -24,11 +27,11 @@ public class TdfHttpClient implements IHttpClient {
     public static final String HTTP_ACCEPT = "application/json";
     public static final String HTTP_CONTENT_TYPE = "application/json; charset=utf-8";
 
-    // TODO : Dependency injection
     public OkHttpClient client;
 
-    public TdfHttpClient() {
-        this.client = new OkHttpClient.Builder().build();
+    @Inject
+    public TdfHttpClient(OkHttpClient client) {
+        this.client = client;
     }
 
     /**
