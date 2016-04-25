@@ -80,13 +80,13 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         ToolsGroup group;
 
         group = new ToolsGroup("Outils", false);
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
+        group.addTool(new Tool("Test1"));
+        group.addTool(new Tool("Test1"));
+        group.addTool(new Tool("Test13"));
+        group.addTool(new Tool("Test1"));
+        group.addTool(new Tool("Test2"));
+        group.addTool(new Tool("Test1"));
+        group.addTool(new Tool("Test1"));
         group.addTool(new Tool());
         group.addTool(new Tool());
         group.addTool(new Tool());

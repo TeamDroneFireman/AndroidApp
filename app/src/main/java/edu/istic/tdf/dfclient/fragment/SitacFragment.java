@@ -4,27 +4,43 @@ package edu.istic.tdf.dfclient.fragment;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.Tool;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback {
+
+    private OnFragmentInteractionListener mListener;
 
     public SitacFragment() {
     }
@@ -52,8 +68,55 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap map) {
+
+        final GoogleMap gMap = map;
+
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
+        gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+        });
+        gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_tab_unselected_24dp1);
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                Tool selectedTool = mListener.getSelectedTool();
+                if (selectedTool != null) {
+                    gMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(selectedTool.getTitle())
+                            .draggable(true)
+                            .icon(icon));
+                }
+            }
+        });
+
+        gMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                Toast.makeText(getContext(), marker.getTitle() + "(" + marker.getId()+ ")", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                Toast.makeText(getContext(), marker.getTitle() + "(" + marker.getId()+ ") OK ! ", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -79,9 +142,25 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
 
         }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     public interface OnFragmentInteractionListener {
+       public Tool getSelectedTool();
     }
 
     }
