@@ -80,43 +80,30 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     public void handleSelectedTool(Tool tool){
         mListener.handleSelectedTool(tool);
     }
+
+
+
     public void createData() {
 
         ToolsGroup group;
 
         group = new ToolsGroup("Outils", false);
-        group.addTool(new Tool("Test1"));
-        group.addTool(new Tool("Test1"));
-        group.addTool(new Tool("Test13"));
-        group.addTool(new Tool("Test1"));
-        group.addTool(new Tool("Test2"));
-        group.addTool(new Tool("Test1"));
-        group.addTool(new Tool("Test1"));
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
+        group.addTool(new Tool("Moyen"));
+        group.addTool(new Tool("Point d'eau"));
+        group.addTool(new Tool("Risque"));
+        group.addTool(new Tool("Drone"));
         groups.append(0, group);
 
         group = new ToolsGroup("Demandés");
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
         groups.append(1, group);
 
         group = new ToolsGroup("En transit");
-        group.addTool(new Tool());
         groups.append(2, group);
 
         group = new ToolsGroup("Inactifs");
         groups.append(3, group);
 
         group = new ToolsGroup("Actifs");
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
-        group.addTool(new Tool());
         groups.append(4, group);
 
     }

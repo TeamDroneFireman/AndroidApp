@@ -48,4 +48,9 @@ public class SitacActivity extends BaseActivity implements SitacFragment.OnFragm
     public Tool getSelectedTool() {
         return selectedTool;
     }
+
+    @Override
+    public void handleElementAdded() {
+
+    }
 }
