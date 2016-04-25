@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.activity;
 
+import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
+
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -15,14 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.pushbots.push.Pushbots;
-
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
-import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
+import edu.istic.tdf.dfclient.push.PushListener;
+import eu.inloop.easygcm.EasyGcm;
 
 public class SitacActivity extends BaseActivity implements SitacFragment.OnFragmentInteractionListener, ContextualDrawerFragment.OnFragmentInteractionListener, ToolbarFragment.OnFragmentInteractionListener {
 
@@ -34,8 +35,7 @@ public class SitacActivity extends BaseActivity implements SitacFragment.OnFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
 
-        // Pushbot
-        Pushbots.sharedInstance().init(this);
+        //String registrationPush = EasyGcm.getRegistrationId(this);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.sitac_container, SitacFragment.newInstance())

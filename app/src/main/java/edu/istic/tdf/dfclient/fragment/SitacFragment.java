@@ -41,11 +41,14 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
+import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     private OnFragmentInteractionListener mListener;
     private Marker customMarker;
+    private PictoFactory pictoFactory;
 
     public SitacFragment() {
     }
@@ -63,6 +66,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         SupportMapFragment mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
+
+        pictoFactory=new PictoFactory(getContext());
         return view;
     }
 
@@ -96,14 +101,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 Tool selectedTool = mListener.getSelectedTool();
                 if (selectedTool != null) {
 
-                    View marker = getIconView();
+                    //View marker = getIconView();
 
                     Object customMarker = gMap.addMarker(new MarkerOptions()
                             .position(latLng)
                             .title(selectedTool.getTitle())
                             .draggable(true)
                             .snippet("Description")
-                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker))));
+                            .icon(BitmapDescriptorFactory.fromBitmap(pictoFactory.getDefaultBitMap(DomainType.INTERVENTIONMEAN))));
                     mListener.handleElementAdded();
 
                 } else {

@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.drawable.element.mean.interventionMean;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import edu.istic.tdf.dfclient.observer.element.mean.interventionMean.InterventionMeanObs;
@@ -20,8 +21,8 @@ public class InterventionMeanDrawable extends InterventionMeanObs implements IEl
     }
 
     @Override
-    public Drawable getPitcto() {
-        return pictoFactory.getPicto(this, domainType);
+    public Bitmap getPitcto() {
+        return pictoFactory.getBitMap(this, domainType);
     }
 
     public DomainType getDomainType() {

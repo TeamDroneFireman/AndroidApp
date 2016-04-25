@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.hugo'
 apply plugin: 'com.neenbedankt.android-apt' // For dagger
+apply plugin: 'com.google.gms.google-services' // For GCM
 
 def dbflow_version = "3.0.0-beta5"
 
@@ -59,12 +60,13 @@ dependencies {
         // sql-cipher database encyrption (optional)
     compile "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:${dbflow_version}"
 
-    //PushBot
-    compile 'com.pushbots:pushbots-lib:2.0.13@aar'
+    // Push
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
+    compile 'eu.inloop:easygcm:1.6.2@aar'
 
     // UI ----------------------------------
     // GoogleMaps API
-    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-maps:8.3.0'
 
     // Proccess button
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
