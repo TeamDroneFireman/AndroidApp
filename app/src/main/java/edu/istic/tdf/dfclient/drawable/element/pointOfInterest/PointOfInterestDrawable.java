@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.drawable.element.pointOfInterest;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import edu.istic.tdf.dfclient.drawable.element.IElementDrawable;
@@ -20,8 +21,8 @@ public class PointOfInterestDrawable extends PointOfInterestObs implements IElem
     }
 
     @Override
-    public Drawable getPitcto() {
-        return pictoFactory.getPicto(this, domainType);
+    public Bitmap getPitcto() {
+        return pictoFactory.getBitMap(this, domainType);
     }
 
     public DomainType getDomainType() {

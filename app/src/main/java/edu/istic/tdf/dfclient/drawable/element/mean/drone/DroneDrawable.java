@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.drawable.element.mean.drone;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import edu.istic.tdf.dfclient.drawable.element.IElementDrawable;
@@ -20,8 +21,8 @@ public class DroneDrawable extends DroneObs implements IElementDrawable {
     }
 
     @Override
-    public Drawable getPitcto() {
-        return pictoFactory.getPicto(this, domainType);
+    public Bitmap getPitcto() {
+        return pictoFactory.getBitMap(this, domainType);
     }
 
     public DomainType getDomainType() {
