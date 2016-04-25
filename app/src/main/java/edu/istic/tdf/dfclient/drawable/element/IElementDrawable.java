@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.drawable.element;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -11,7 +12,7 @@ public interface IElementDrawable {
      *
      * @return
      */
-    public Drawable getPitcto();
+    public Bitmap getPitcto();
 
     /**
      *
