@@ -35,6 +35,12 @@
             android:textColorHint="#cccccc"
             android:inputType="textPassword" />
 
+        <CheckBox
+            android:id="@+id/isCodis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_iscodis_text" />
+
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/loginButton"
             android:layout_width="match_parent"

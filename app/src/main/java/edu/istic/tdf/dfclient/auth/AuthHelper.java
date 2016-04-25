@@ -15,6 +15,7 @@ public class AuthHelper {
     private final static String SHARED_PREFENCES_LOGIN_NAME = "SPLOGIN";
     private final static String SHARED_PREFERENCE_USERID = "USERID";
     private final static String SHARED_PREFERENCE_TOKEN = "TOKEN";
+    private final static String SHARED_PREFERENCE_ISCODIS = "ISCODIS";
 
     public static void storeCredentials(Credentials credentials) {
         Context context = TdfApplication.getAppContext();
@@ -26,6 +27,7 @@ public class AuthHelper {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(SHARED_PREFERENCE_USERID, credentials.getUserId());
         editor.putString(SHARED_PREFERENCE_TOKEN, credentials.getToken());
+        editor.putBoolean(SHARED_PREFERENCE_ISCODIS, credentials.isCodisUser());
         editor.commit();
     }
 
@@ -40,6 +42,7 @@ public class AuthHelper {
 
         credentials.setUserId(sharedPref.getString(SHARED_PREFERENCE_USERID, null));
         credentials.setToken(sharedPref.getString(SHARED_PREFERENCE_TOKEN, null));
+        credentials.setIsCodisUser(sharedPref.getBoolean(SHARED_PREFERENCE_ISCODIS, false));
 
         if(!credentials.isValid()) {
             return null;

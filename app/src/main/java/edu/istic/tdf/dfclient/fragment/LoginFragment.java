@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class LoginFragment extends Fragment {
     // UI
     @Bind(R.id.username) EditText usernameTxt;
     @Bind(R.id.password) EditText passwordTxt;
+    @Bind(R.id.isCodis) CheckBox isCodisCheck;
     @Bind(R.id.loginButton) ActionProcessButton loginBt;
 
     private OnFragmentInteractionListener mListener;
@@ -128,7 +130,8 @@ public class LoginFragment extends Fragment {
             public void onSuccess(LoginResponse r) {
 
                 // Store credentials
-                Credentials credentials = new Credentials(r.getUserId(), r.getToken());
+                Boolean isCodisUser = isCodisCheck.isChecked();
+                Credentials credentials = new Credentials(r.getUserId(), r.getToken(), isCodisUser);
                 AuthHelper.storeCredentials(credentials);
 
                 // Go to the next activity with transition

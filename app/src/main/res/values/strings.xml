@@ -16,4 +16,5 @@
     <!-- Divers -->
     <string name="hello_blank_fragment">Fragment vide</string>
     <string name="google_maps_key">AIzaSyCG9LaYxU-AN6bc-lqj7jS9kAFxMqF9R6M</string>
+    <string name="login_iscodis_text">Je suis utilisateur CODIS</string>
 </resources>

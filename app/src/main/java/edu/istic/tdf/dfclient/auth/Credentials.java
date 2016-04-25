@@ -14,12 +14,18 @@ public class Credentials {
      */
     private String token;
 
+    /**
+     * Is a CODIS user
+     */
+    private Boolean isCodisUser;
+
     public Credentials() {
     }
 
-    public Credentials(String userId, String token) {
+    public Credentials(String userId, String token, Boolean isCodisUser) {
         this.userId = userId;
         this.token = token;
+        this.isCodisUser = isCodisUser;
     }
 
     public String getUserId() {
@@ -36,6 +42,14 @@ public class Credentials {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Boolean isCodisUser() {
+        return isCodisUser;
+    }
+
+    public void setIsCodisUser(Boolean isCodisUser) {
+        this.isCodisUser = isCodisUser;
     }
 
     public boolean isValid() {
