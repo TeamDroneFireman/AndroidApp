@@ -9,14 +9,15 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <permission android:name="edu.istic.tdf.dfclient.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <!--<permission android:name="edu.istic.tdf.dfclient.permission.C2D_MESSAGE" android:protectionLevel="signature" />
     <uses-permission android:name="edu.istic.tdf.dfclient.permission.C2D_MESSAGE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /> -->
+    <uses-permission android:name="easygcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="easygcm.permission.RECEIVE" />
 
     <permission
         android:name="edu.istic.tdf.dfclient.fragment.SitacFragment.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-
     <uses-permission android:name="edu.istic.tdf.dfclient.fragment.SitacFragment.permission.MAPS_RECEIVE" />
 
     <application
@@ -33,7 +34,7 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.example.gcm" />
+                <category android:name="edu.istic.tdf.dfclient.gcm" />
             </intent-filter>
         </receiver>
         <service
