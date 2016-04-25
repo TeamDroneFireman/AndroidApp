@@ -1,17 +1,18 @@
 package edu.istic.tdf.dfclient.rest.domain;
 
+import javax.inject.Inject;
+
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestClient;
 
-/**
- * Created by maxime on 20/04/2016.
- */
+
 public class InterventionRestClient extends RestClient<Intervention> implements IRestClient<Intervention> {
 
-    public InterventionRestClient() {
-        super(Intervention.class);
+    public InterventionRestClient(TdfHttpClient httpClient) {
+        super(Intervention.class, httpClient);
     }
 
     @Override

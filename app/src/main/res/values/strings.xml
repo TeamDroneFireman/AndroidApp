@@ -4,7 +4,9 @@
     <!-- Login -->
     <string name="login_username_text">Nom d\'utilisateur</string>
     <string name="login_password_text">Mot de passe</string>
-    <string name="login_button_text">Connexion</string>
+    <string name="login_button_text">Se connecter</string>
+    <string name="login_button_text_loading">Connexion en cours</string>
+    <string name="login_button_text_error">Identifiants incorrects</string>
 
     <!-- Main menu -->
     <string name="intervention_selection_button">Sélectionner</string>

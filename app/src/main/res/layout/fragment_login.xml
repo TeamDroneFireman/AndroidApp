@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     tools:context="edu.istic.tdf.dfclient.fragment.LoginFragment">
 
     <LinearLayout
@@ -16,24 +17,32 @@
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:hint="@string/login_username_text"
-            android:textColorHint="#cccccc"/>
+            android:textColorHint="#cccccc" />
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_password_text"
             android:textColorHint="#cccccc"
-            android:password="true"/>
-        <Button
+            android:inputType="textPassword" />
+
+        <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:layout_margin="4dp"
             android:text="@string/login_button_text"
-            />
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            custom:pb_colorComplete="@color/green_complete"
+            custom:pb_colorNormal="@color/blue_normal"
+            custom:pb_colorPressed="@color/blue_pressed"
+            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_textProgress="@string/login_button_text_loading"
+            custom:pb_textError="@string/login_button_text_error"
+            custom:pb_colorError="@color/red_error" />
     </LinearLayout>
 
 </FrameLayout>

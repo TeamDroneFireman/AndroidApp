@@ -1,12 +1,7 @@
 package edu.istic.tdf.dfclient.repository;
 
-import android.util.Log;
-
-import com.raizlabs.android.dbflow.runtime.transaction.BaseTransaction;
-import com.raizlabs.android.dbflow.runtime.transaction.TransactionListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.database.IDbReturnHandler;

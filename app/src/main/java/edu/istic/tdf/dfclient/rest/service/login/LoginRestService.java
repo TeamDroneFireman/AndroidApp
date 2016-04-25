@@ -20,12 +20,11 @@ public class LoginRestService {
     private final static String LOGIN_URI = "/SITUsers/login";
 
     TdfHttpClient httpClient;
-
     Gson serializer;
 
-    public LoginRestService() {
-        this.httpClient = new TdfHttpClient();
-        this.serializer = RestSerializerBuilder.build();
+    public LoginRestService(TdfHttpClient httpClient, Gson serializer) {
+        this.httpClient = httpClient;
+        this.serializer = serializer;
     }
 
     /**

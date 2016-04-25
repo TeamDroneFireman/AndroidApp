@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
@@ -20,7 +22,6 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     /**
      * The HTTP client
      */
-    // TODO : Dependency injection
     TdfHttpClient httpClient;
 
     Gson serializer;
@@ -34,9 +35,10 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
      * Constructs a REST Client
      * @param entityClass The class of the entity
      */
-    public RestClient(Class<E> entityClass) {
+    public RestClient(Class<E> entityClass, TdfHttpClient httpClient) {
         this.entityClass = entityClass;
-        this.httpClient = new TdfHttpClient();
+        this.httpClient = httpClient;
+        //this.httpClient = new TdfHttpClient();
         this.serializer = RestSerializerBuilder.build();
     }
 

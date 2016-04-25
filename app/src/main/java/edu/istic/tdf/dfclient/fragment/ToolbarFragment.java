@@ -19,12 +19,17 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.UI.adapter.ToolsListAdapter;
 
 public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnToolsListAdapterInteractionListener {
+
+    // UI
+    @Bind(R.id.toolbar_listview) ExpandableListView listView;
 
     private SparseArray<ToolsGroup> groups = new SparseArray<ToolsGroup>();
     private OnFragmentInteractionListener mListener;
@@ -46,9 +51,9 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_toolbar, container, false);
+        ButterKnife.bind(this, view);
 
         createData();
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.toolbar_listview);
         ToolsListAdapter adapter = new ToolsListAdapter(getContext(), groups, this);
         listView.setAdapter(adapter);
 
