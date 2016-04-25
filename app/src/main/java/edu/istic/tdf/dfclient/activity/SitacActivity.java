@@ -1,10 +1,18 @@
 package edu.istic.tdf.dfclient.activity;
 
 import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pushbots.push.Pushbots;
@@ -56,6 +64,34 @@ public class SitacActivity extends BaseActivity implements SitacFragment.OnFragm
 
     @Override
     public void handleElementAdded() {
+        ContextualDrawerFragment contextualDrawerFragment = (ContextualDrawerFragment) (getSupportFragmentManager()
+                .findFragmentById(R.id.contextual_drawer_container));
+        ViewGroup.LayoutParams params = contextualDrawerFragment.getView().getLayoutParams();
+        params.width = 400;
+        contextualDrawerFragment.getView().setLayoutParams(params);
+        contextualDrawerFragment.getView().requestLayout();
+/*
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_left)
+                .replace(R.id.contextual_drawer_container, ContextualDrawerFragment.newInstance())
+                .commit();*/
 
+        this.selectedTool = null;
+    }
+
+    @Override
+    public void handleCancelSelection() {
+        this.selectedTool = null;
+        ContextualDrawerFragment contextualDrawerFragment = (ContextualDrawerFragment) (getSupportFragmentManager()
+                .findFragmentById(R.id.contextual_drawer_container));
+        ViewGroup.LayoutParams params = contextualDrawerFragment.getView().getLayoutParams();
+        params.width = 0;
+        contextualDrawerFragment.getView().setLayoutParams(params);
+        contextualDrawerFragment.getView().requestLayout();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.sitac_menu, menu);
+        return true;
     }
 }

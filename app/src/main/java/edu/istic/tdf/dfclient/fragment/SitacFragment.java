@@ -83,6 +83,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                mListener.handleElementAdded();
                 return false;
             }
 
@@ -103,11 +104,13 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                             .draggable(true)
                             .snippet("Description")
                             .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker))));
+                    mListener.handleElementAdded();
 
+                } else {
+                    mListener.handleCancelSelection();
                 }
             }
         });
-
 
         gMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
@@ -125,6 +128,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             }
         });
+
+
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -201,6 +206,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         public Tool getSelectedTool();
         public void handleElementAdded();
+        public void handleCancelSelection();
 
     }
 
