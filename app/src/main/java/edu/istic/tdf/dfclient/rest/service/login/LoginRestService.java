@@ -17,7 +17,7 @@ import edu.istic.tdf.dfclient.rest.service.login.response.LoginResponse;
  */
 public class LoginRestService {
 
-    private final static String LOGIN_URI = "/SITUsers/login";
+    private final static String LOGIN_URI = "SITUsers/login";
 
     TdfHttpClient httpClient;
     Gson serializer;

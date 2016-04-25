@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
+import edu.istic.tdf.dfclient.http.TdfHttpClientPort12345;
+import edu.istic.tdf.dfclient.http.TdfHttpClientPort12346;
 import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 import okhttp3.OkHttpClient;
@@ -36,13 +38,19 @@ public class RestModule {
 
     @Provides
     @Singleton
-    TdfHttpClient provideTdfHttpClient(OkHttpClient client) {
-        return new TdfHttpClient(client);
+    TdfHttpClientPort12345 provideTdfHttpClient12345(OkHttpClient client) {
+        return new TdfHttpClientPort12345(client);
     }
 
     @Provides
     @Singleton
-    LoginRestService provideLoginRestService(TdfHttpClient httpClient, Gson serializer) {
+    TdfHttpClientPort12346 provideTdfHttpClient12346(OkHttpClient client) {
+        return new TdfHttpClientPort12346(client);
+    }
+
+    @Provides
+    @Singleton
+    LoginRestService provideLoginRestService(TdfHttpClientPort12346 httpClient, Gson serializer) {
         return new LoginRestService(httpClient, serializer);
     }
 

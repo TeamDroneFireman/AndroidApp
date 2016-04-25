@@ -136,16 +136,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onError(Throwable error) {
 
-                // TODO : Remove this when auth service will work
-                LoginResponse loginResponse = new LoginResponse();
-                loginResponse.setUserId("571a4902ddd1850100ce8691");
-                loginResponse.setToken("CS5JXqF9wQ7CVfdvpTx3oJxGPCGiKUfYDWZw2Hk0A29BTYCESuurYxYQLHQaSemB");
-                onSuccess(loginResponse);
 
-
-
-                // TODO: Activate this back when auth service works
-                /*
                 if(error instanceof HttpException
                         && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
                     LoginFragment.this.getActivity().runOnUiThread(new Runnable() {
@@ -172,7 +163,6 @@ public class LoginFragment extends Fragment {
                         }
                     });
                 }
-                //*/
 
                 onEnd();
             }

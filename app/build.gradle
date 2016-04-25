@@ -63,8 +63,6 @@ dependencies {
     // GoogleMaps API
     compile 'com.google.android.gms:play-services-maps:8.4.0'
 
-    // Transitions
-
     // Proccess button
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
 

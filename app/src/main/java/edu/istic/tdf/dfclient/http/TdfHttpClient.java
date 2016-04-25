@@ -13,12 +13,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class TdfHttpClient implements IHttpClient {
+public abstract class TdfHttpClient implements IHttpClient {
 
     private static final String SCHEME = "http";
     private static final String HOST = "projetm2gla.istic.univ-rennes1.fr";
-    private static final int PORT = 12345;
-    private static final String PATH = "api";
+    private static final int PORT = 12346;
+    private static final String PATH = "";
     /**
      * Client base URL with a final slash
      */
@@ -29,7 +29,7 @@ public class TdfHttpClient implements IHttpClient {
 
     public OkHttpClient client;
 
-    @Inject
+    //@Inject
     public TdfHttpClient(OkHttpClient client) {
         this.client = client;
     }

@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     tools:context="edu.istic.tdf.dfclient.fragment.LoginFragment">
+    
+    <!--<ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/login_bg"
+        android:scaleType="centerCrop"/>-->
 
     <LinearLayout
         android:orientation="vertical"
@@ -15,12 +21,14 @@
 
         <EditText
             android:id="@+id/username"
+            android:text="demo@sit.com"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_username_text"
             android:textColorHint="#cccccc" />
         <EditText
             android:id="@+id/password"
+            android:text="demo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_password_text"
@@ -44,5 +52,7 @@
             custom:pb_textError="@string/login_button_text_error"
             custom:pb_colorError="@color/red_error" />
     </LinearLayout>
+
+
 
 </FrameLayout>
