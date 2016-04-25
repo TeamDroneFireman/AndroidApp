@@ -59,6 +59,9 @@ dependencies {
         // sql-cipher database encyrption (optional)
     compile "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:${dbflow_version}"
 
+    //PushBot
+    compile 'com.pushbots:pushbots-lib:2.0.13@aar'
+
     // UI ----------------------------------
     // GoogleMaps API
     compile 'com.google.android.gms:play-services-maps:8.4.0'

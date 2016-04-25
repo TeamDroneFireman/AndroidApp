@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.pushbots.push.Pushbots;
+
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
@@ -23,6 +25,9 @@ public class SitacActivity extends BaseActivity implements SitacFragment.OnFragm
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
+
+        // Pushbot
+        Pushbots.sharedInstance().init(this);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.sitac_container, SitacFragment.newInstance())

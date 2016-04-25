@@ -115,6 +115,15 @@ public class LoginFragment extends Fragment {
 
             }
 
+            public void onNetworkError() {
+                LoginFragment.this.getActivity().runOnUiThread(new Runnable() { // If other error
+                    public void run() {
+                        loginBt.setProgress(0);
+                        Toast.makeText(LoginFragment.this.getActivity(), "Network error. Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
             @Override
             public void onSuccess(LoginResponse r) {
 
@@ -136,9 +145,9 @@ public class LoginFragment extends Fragment {
             @Override
             public void onError(Throwable error) {
 
-
                 if(error instanceof HttpException
-                        && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
+                    && ((HttpException) error).getResponse() != null
+                    && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
                     LoginFragment.this.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -155,13 +164,9 @@ public class LoginFragment extends Fragment {
                                     }, BUTTON_ERROR_DISPLAY_TIME_IN_MS);
                         }
                     });
-                } else {
-                    LoginFragment.this.getActivity().runOnUiThread(new Runnable() { // If other error
-                        public void run() {
-                            loginBt.setProgress(0);
-                            Toast.makeText(LoginFragment.this.getActivity(), "An error occured when logging in", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
+                } else { // If other error (network, server...)
+                    onNetworkError();
                 }
 
                 onEnd();
