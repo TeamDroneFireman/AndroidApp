@@ -11,6 +11,9 @@ import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
+ * //TODO check the color modification, check the text
+ * //TODO import new svg !!!!
+ *
  * Created by guerin on 22/04/16.
  */
 public class PictoFactory {
