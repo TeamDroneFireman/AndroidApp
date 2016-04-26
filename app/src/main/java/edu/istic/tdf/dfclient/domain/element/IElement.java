@@ -3,10 +3,11 @@ package edu.istic.tdf.dfclient.domain.element;
 import android.location.Location;
 
 import edu.istic.tdf.dfclient.domain.IEntity;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  *
- * IElement is graphic element of mean
+ * IElement is graphic element of mean_other
  * Created by btessiau on 20/04/16.
  */
 public interface IElement extends IEntity {
@@ -48,6 +49,7 @@ public interface IElement extends IEntity {
      */
     public String getName();
 
-
+    public PictoFactory.ElementForm getForm();
+    public void setForm(PictoFactory.ElementForm form);
 
 }

@@ -1,15 +1,23 @@
 package edu.istic.tdf.dfclient.activity;
 
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Element;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
@@ -26,6 +34,11 @@ public class SitacActivity extends BaseActivity implements
     private View contextualDrawer;
     private View sitacContainer;
 
+    private List<Element> elements;
+    private Element selectedElement;
+
+    private ArrayList<Observer> observers = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -37,16 +50,18 @@ public class SitacActivity extends BaseActivity implements
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.sitac_container, SitacFragment.newInstance())
-                .commit();
+        SitacFragment sitacFragment = SitacFragment.newInstance();
+        ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
+        ContextualDrawerFragment contextualDrawerFragment = ContextualDrawerFragment.newInstance();
+
+        observers.add(sitacFragment);
+        observers.add(toolbarFragment);
+        observers.add(contextualDrawerFragment);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.toolbar_container, ToolbarFragment.newInstance())
-                .commit();
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contextual_drawer_container, ContextualDrawerFragment.newInstance())
+                .replace(R.id.sitac_container, sitacFragment)
+                .replace(R.id.toolbar_container, toolbarFragment)
+                .replace(R.id.contextual_drawer_container, contextualDrawerFragment)
                 .commit();
 
     }
@@ -103,5 +118,12 @@ public class SitacActivity extends BaseActivity implements
 
         return true;
     }
+
+    private void notifyObservers(){
+        for(Observer observer : observers){
+            observer.notify();
+        }
+    }
+
 
 }
