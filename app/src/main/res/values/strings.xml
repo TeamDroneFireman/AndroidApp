@@ -11,6 +11,11 @@
     <!-- Main menu -->
     <string name="intervention_selection_button">Sélectionner</string>
 
+    <!-- Creation form -->
+    <string name="intervention_creation_validation_button">Valider</string>
+    <string name="intervention_creation_button">+</string>
+    <string name="generate_lat_lng_from_address_button">Génèrer coordonnées</string>
+
     <!-- SITAC -->
 
     <!-- Divers -->
