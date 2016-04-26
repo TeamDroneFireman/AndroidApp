@@ -5,11 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +20,7 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
- * Factory for icon likes mean, water point, etc...
+ * Factory for icon likes mean_other, water point, etc...
  * Created by guerin on 22/04/16.
  */
 public class PictoFactory {
@@ -59,17 +56,28 @@ public class PictoFactory {
 
     public enum ElementDrawable{
 
-        MEAN(R.drawable.mean),
-        TMP_MEAN(R.drawable.tmp_mean),
-        AIRMEAN(R.drawable.airmean),
-        TMP_AIRMEAN(R.drawable.tmp_airmean),
-        ISOLATED(R.drawable.isolated),
-        TMP_ISOLATED(R.drawable.tmp_isolated),
+        // Mean
+        MEAN(R.drawable.mean_other),
+        MEAN_PLANNED(R.drawable.mean_planned),
+        MEAN_GROUP(R.drawable.mean_group),
+        MEAN_COLUMN(R.drawable.mean_column),
+
+        // Mean other
+        MEAN_OTHER(R.drawable.mean_other),
+        MEAN_OTHER_PLANNED(R.drawable.mean_other_planned),
+
+        // Waterpoint
         WATERPOINT(R.drawable.waterpoint),
-        SUPPLY_WATERPOINT(R.drawable.supply_waterpoint),
-        SUSTAINABLE_WATERPOINT(R.drawable.sustainable_waterpoint),
-        GROUP(R.drawable.group),
-        COLUMN(R.drawable.column);
+        WATERPOINT_SUPPLY(R.drawable.waterpoint_supply),
+        WATERPOINT_SUSTAINABLE(R.drawable.waterpoint_sustainable),
+
+        // Airmean
+        AIRMEAN(R.drawable.airmean),
+        AIRMEAN_PLANNED(R.drawable.airmean_planned),
+
+        // Sources / target
+        SOURCE(R.drawable.source),
+        TARGET(R.drawable.target)
 
         private int drawable;
         private ElementDrawable(int drawable){
@@ -357,7 +365,7 @@ public class PictoFactory {
      * @return
      */
     private  Drawable getDefaultSensibleForm() {
-        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.sensible);
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.target);
         return drawable;
     }
 
@@ -366,7 +374,7 @@ public class PictoFactory {
      * @return
      */
     private Drawable getDefaultRiskForm() {
-        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.risk);
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.source);
         return drawable;
     }
 
@@ -376,7 +384,7 @@ public class PictoFactory {
      */
     private Drawable getDefaulWaterPointForm() {
 
-        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.water_point_drawable);
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.waterpoint_sustainable);
         return drawable;
     }
 
@@ -386,7 +394,7 @@ public class PictoFactory {
      */
     private Drawable getDefaultInterventionMeanForm() {
 
-        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.mean);
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.mean_other);
         return drawable;
     }
 
