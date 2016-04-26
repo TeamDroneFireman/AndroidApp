@@ -2,6 +2,8 @@ package edu.istic.tdf.dfclient.activity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.inject.Inject;
+
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
@@ -39,6 +43,11 @@ public class SitacActivity extends BaseActivity implements
     private List<Element> elements;
     private Element selectedElement;
 
+    @Inject
+    InterventionDao interventionDao;
+
+    private Intervention intervention;
+
     private ArrayList<Observer> observers = new ArrayList<>();
 
     @Override
@@ -48,6 +57,26 @@ public class SitacActivity extends BaseActivity implements
         setContentView(R.layout.activity_sitac);
 
         ButterKnife.bind(this);
+
+        interventionDao.find("1", new IDaoSelectReturnHandler<Intervention>() {
+            @Override
+            public void onRepositoryResult(Intervention r) {}
+
+            @Override
+            public void onRestResult(Intervention r) {
+                intervention = r;
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.e("MAXIME", "REPO FAILURE");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.e("MAXIME", "REST FAILURE");
+            }
+        });
 
         SitacFragment sitacFragment = SitacFragment.newInstance();
         ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
