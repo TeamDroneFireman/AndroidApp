@@ -6,11 +6,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.auth.Credentials;
 
 public class InterventionListFragment extends Fragment {
 
@@ -18,6 +24,14 @@ public class InterventionListFragment extends Fragment {
 
     @Bind(R.id.interventionCreationButton)
     Button interventionCreationBt;
+
+    @Bind(R.id.interventions_list)
+    ListView interventionsList;
+
+    // for listView sinister_code
+    private ArrayList<String> interventions =new ArrayList<String>();
+    private ArrayAdapter<String> interventionsAdapter;
+
 
     public InterventionListFragment() {
         // Required empty public constructor
@@ -40,12 +54,17 @@ public class InterventionListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_intervention_list, container, false);
         ButterKnife.bind(this, view);// Inflate the layout for this fragment
 
+        //interventionCreationBt
+        interventionCreationBt.setEnabled(isCodis());
+
         interventionCreationBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.handleInterventionCreation();
             }
         });
+
+        //interventionsList
 
         return view;
     }
@@ -69,5 +88,11 @@ public class InterventionListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void handleInterventionCreation();
+    }
+
+    private boolean isCodis(){
+        // TODO: 26/04/16
+        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
+        return credentials.isCodisUser();
     }
 }
