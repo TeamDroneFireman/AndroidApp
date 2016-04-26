@@ -37,8 +37,8 @@ public class SitacActivity extends BaseActivity implements
         ToolbarFragment.OnFragmentInteractionListener {
 
     private Tool selectedTool;
-    @Bind(R.id.contextual_drawer_container) View contextualDrawer;
-    @Bind(R.id.sitac_container) View sitacContainer;
+    private View contextualDrawer;
+    private View sitacContainer;
 
     private List<Element> elements;
     private Element selectedElement;
@@ -55,8 +55,11 @@ public class SitacActivity extends BaseActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
+        contextualDrawer = findViewById(R.id.contextual_drawer_container);
+        sitacContainer = findViewById(R.id.sitac_container);
 
-        ButterKnife.bind(this);
+        String registrationPush = EasyGcm.getRegistrationId(this);
+        Log.i("MAXIME", "Registration push : " + registrationPush);
 
         interventionDao.find("1", new IDaoSelectReturnHandler<Intervention>() {
             @Override
