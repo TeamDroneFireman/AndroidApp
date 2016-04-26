@@ -4,6 +4,7 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
+import eu.inloop.easygcm.EasyGcm;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -27,6 +29,9 @@ public class SitacActivity extends BaseActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
+
+        String registrationPush = EasyGcm.getRegistrationId(this);
+        Log.i("MAXIME", "Registration push : " + registrationPush);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.sitac_container, SitacFragment.newInstance())
