@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.activity;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 
@@ -31,8 +33,8 @@ public class SitacActivity extends BaseActivity implements
         ToolbarFragment.OnFragmentInteractionListener {
 
     private Tool selectedTool;
-    private View contextualDrawer;
-    private View sitacContainer;
+    @Bind(R.id.contextual_drawer_container) View contextualDrawer;
+    @Bind(R.id.sitac_container) View sitacContainer;
 
     private List<Element> elements;
     private Element selectedElement;
@@ -44,11 +46,8 @@ public class SitacActivity extends BaseActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
-        contextualDrawer = findViewById(R.id.contextual_drawer_container);
-        sitacContainer = findViewById(R.id.sitac_container);
 
-        String registrationPush = EasyGcm.getRegistrationId(this);
-        Log.i("MAXIME", "Registration push : " + registrationPush);
+        ButterKnife.bind(this);
 
         SitacFragment sitacFragment = SitacFragment.newInstance();
         ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
