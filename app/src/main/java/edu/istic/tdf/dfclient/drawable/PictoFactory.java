@@ -28,14 +28,14 @@ import edu.istic.tdf.dfclient.drawable.element.DomainType;
  */
 public class PictoFactory {
 
-    private enum ElementColor{
+    public enum ElementColor{
 
-        PEOPLE(0xFFFF00FF),
-        FIRE(0xFFFF00FF),
-        WATER(0xFFFF00FF),
-        SPECIFIC(0xFFFF00FF),
-        DEFAULT(0xFFFF00FF),
-        COMMAND();
+        PEOPLE(0xFF64DD17),
+        FIRE(0xFFD50000),
+        WATER(0xFF2962FF),
+        SPECIFIC(0xFFFF6D00),
+        DEFAULT(0xFF000000),
+        COMMAND(0xFFC51162);
 
         private int color;
 
@@ -57,9 +57,12 @@ public class PictoFactory {
         }
     }
 
-    private enum ElementDrawable{
+    public enum ElementDrawable{
+
         MEAN(R.drawable.mean),
         TMP_MEAN(R.drawable.tmp_mean),
+        AIRMEAN(R.drawable.airmean),
+        TMP_AIRMEAN(R.drawable.tmp_airmean),
         ISOLATED(R.drawable.isolated),
         TMP_ISOLATED(R.drawable.tmp_isolated),
         WATERPOINT(R.drawable.waterpoint),
@@ -93,7 +96,8 @@ public class PictoFactory {
     /**
      * Picto attributes
      */
-    private int color = defaultColor;
+    private int color = ElementColor.DEFAULT.getColor();
+    private int drawable = ElementDrawable.MEAN.getDrawable();
     private int size = 64;
     private DomainType domainType = DomainType.INTERVENTIONMEAN;
 
@@ -109,13 +113,20 @@ public class PictoFactory {
         return new PictoFactory(context);
     }
 
-    public static PictoFactory createPicto(Context context, IElement element){
-        PictoFactory pictoFactory = new PictoFactory(context).setColor();
-        return new PictoFactory(context);
+    public PictoFactory setElement(IElement element){
+        switch(element.getRole()){
+            //TODO
+        }
+        return this;
     }
 
     public PictoFactory setColor(int color){
         this.color = color;
+        return this;
+    }
+
+    public PictoFactory setDrawable(int drawable){
+        this.drawable = drawable;
         return this;
     }
 
@@ -130,15 +141,29 @@ public class PictoFactory {
     }
 
     public View toView(){
-
+        return getView();
     }
 
     public Drawable toDrawable(){
-
+       return ContextCompat.getDrawable(context, this.drawable);
     }
 
     public Bitmap toBitmap(){
 
+        View view = getView();
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+
+        return bitmap;
     }
     /**
      * get the icon to the type "View" for adroid manipulation
