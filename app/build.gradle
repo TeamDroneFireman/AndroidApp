@@ -41,6 +41,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v4:23.2.1'
 
+    // Util ----------------
+    // Lombok (util class tools)
+    provided "org.projectlombok:lombok:1.16.8"
+
     // Dependency injection ---------------
     // Dagger
     provided 'javax.annotation:jsr250-api:1.0'
