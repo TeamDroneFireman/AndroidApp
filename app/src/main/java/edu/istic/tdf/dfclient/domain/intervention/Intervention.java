@@ -4,6 +4,7 @@ import android.location.Address;
 
 import com.raizlabs.android.dbflow.annotation.Table;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -49,7 +50,8 @@ public class Intervention extends Entity implements IIntervention {
     private boolean archived;
 
     public Intervention() {
-        this.setCreationDate(new Date());
+        this.elements = new ArrayList<>();
+
     }
 
     @Override
