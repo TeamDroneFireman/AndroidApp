@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import edu.istic.tdf.dfclient.R;
 
-public class ContextualDrawerFragment extends Fragment {
+public class ContextualDrawerFragment extends Fragment implements Observer {
 
     private OnFragmentInteractionListener mListener;
 
@@ -52,6 +55,11 @@ public class ContextualDrawerFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+
     }
 
     public interface OnFragmentInteractionListener {

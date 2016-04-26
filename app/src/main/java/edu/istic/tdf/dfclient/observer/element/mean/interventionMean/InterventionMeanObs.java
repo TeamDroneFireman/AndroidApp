@@ -7,6 +7,7 @@ import java.util.Collection;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.observer.command.ICommand;
 
 /**
@@ -91,6 +92,16 @@ public class InterventionMeanObs implements IInterventionMeanObs {
     @Override
     public String getName() {
         return this.interventionMean.getName();
+    }
+
+    @Override
+    public PictoFactory.ElementForm getForm() {
+        return null;
+    }
+
+    @Override
+    public void setForm(PictoFactory.ElementForm form) {
+
     }
 
     @Override

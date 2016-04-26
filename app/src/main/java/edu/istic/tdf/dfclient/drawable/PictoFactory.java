@@ -5,11 +5,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,63 +21,44 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
- * Factory for icon likes mean, water point, etc...
+ * Factory for icon likes mean_other, water point, etc...
  * Created by guerin on 22/04/16.
  */
 public class PictoFactory {
 
-    public enum ElementColor{
+    public enum ElementForm {
 
-        PEOPLE(0xFF64DD17),
-        FIRE(0xFFD50000),
-        WATER(0xFF2962FF),
-        SPECIFIC(0xFFFF6D00),
-        DEFAULT(0xFF000000),
-        COMMAND(0xFFC51162);
+        // Mean
+        MEAN(R.drawable.mean_other),
+        MEAN_PLANNED(R.drawable.mean_planned),
+        MEAN_GROUP(R.drawable.mean_group),
+        MEAN_COLUMN(R.drawable.mean_column),
 
-        private int color;
+        // Mean other
+        MEAN_OTHER(R.drawable.mean_other),
+        MEAN_OTHER_PLANNED(R.drawable.mean_other_planned),
 
-        private ElementColor(int color){
-            this.color = color;
-        }
-
-        public int getColorByRole(Role role){
-            return 0;
-        }
-
-        public int getColor(){
-            return color;
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(color);
-        }
-    }
-
-    public enum ElementDrawable{
-
-        MEAN(R.drawable.mean),
-        TMP_MEAN(R.drawable.tmp_mean),
-        AIRMEAN(R.drawable.airmean),
-        TMP_AIRMEAN(R.drawable.tmp_airmean),
-        ISOLATED(R.drawable.isolated),
-        TMP_ISOLATED(R.drawable.tmp_isolated),
+        // Waterpoint
         WATERPOINT(R.drawable.waterpoint),
-        SUPPLY_WATERPOINT(R.drawable.supply_waterpoint),
-        SUSTAINABLE_WATERPOINT(R.drawable.sustainable_waterpoint),
-        GROUP(R.drawable.group),
-        COLUMN(R.drawable.column);
+        WATERPOINT_SUPPLY(R.drawable.waterpoint_supply),
+        WATERPOINT_SUSTAINABLE(R.drawable.waterpoint_sustainable),
+
+        // Airmean
+        AIRMEAN(R.drawable.airmean),
+        AIRMEAN_PLANNED(R.drawable.airmean_planned),
+
+        // Sources / target
+        SOURCE(R.drawable.source),
+        TARGET(R.drawable.target);
 
         private int drawable;
-        private ElementDrawable(int drawable){
+        private ElementForm(int drawable){
             this.drawable = drawable;
         }
 
         public int getDrawable(){
             return drawable;
         }
-
 
     }
 
@@ -96,8 +75,8 @@ public class PictoFactory {
     /**
      * Picto attributes
      */
-    private int color = ElementColor.DEFAULT.getColor();
-    private int drawable = ElementDrawable.MEAN.getDrawable();
+    private int color = Role.DEFAULT.getColor();
+    private int drawable = ElementForm.MEAN.getDrawable();
     private int size = 64;
     private DomainType domainType = DomainType.INTERVENTIONMEAN;
 
@@ -148,6 +127,15 @@ public class PictoFactory {
        return ContextCompat.getDrawable(context, this.drawable);
     }
 
+    public ImageView toImageView(){
+
+        ImageView imageView = new ImageView(this.context);
+        imageView.setImageResource(this.drawable);
+        imageView.setColorFilter(this.color);
+
+        return imageView;
+    }
+
     public Bitmap toBitmap(){
 
         View view = getView();
@@ -156,8 +144,16 @@ public class PictoFactory {
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
         view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+
+        ImageView imageView = (ImageView) view.findViewById(R.id.icon_image_view);
+        imageView.setImageResource(this.drawable);
+        imageView.setColorFilter(this.color);
+
+        TextView textView = (TextView) view.findViewById(R.id.num_txt);
+        textView.setText("");
         view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
         view.buildDrawingCache();
+
         Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
@@ -325,11 +321,7 @@ public class PictoFactory {
      * @return
      */
     private int getColor(Role role) {
-        switch (role){
-            case NONE:return Color.BLACK;
-            default:return Color.WHITE;
-        }
-
+        return role.getColor();
     }
 
     /**Get the icon form ***/
@@ -357,7 +349,7 @@ public class PictoFactory {
      * @return
      */
     private  Drawable getDefaultSensibleForm() {
-        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.sensible);
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.target);
         return drawable;
     }
 
@@ -366,7 +358,7 @@ public class PictoFactory {
      * @return
      */
     private Drawable getDefaultRiskForm() {
-        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.risk);
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.source);
         return drawable;
     }
 
@@ -376,7 +368,7 @@ public class PictoFactory {
      */
     private Drawable getDefaulWaterPointForm() {
 
-        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.water_point_drawable);
+        Drawable drawable=ContextCompat.getDrawable(context, R.drawable.waterpoint_sustainable);
         return drawable;
     }
 
@@ -386,7 +378,7 @@ public class PictoFactory {
      */
     private Drawable getDefaultInterventionMeanForm() {
 
-        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.mean);
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.mean_other);
         return drawable;
     }
 

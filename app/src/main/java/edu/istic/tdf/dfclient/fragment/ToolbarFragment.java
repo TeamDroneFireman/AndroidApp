@@ -18,6 +18,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,9 +27,11 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.UI.adapter.ToolsListAdapter;
+import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
-public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnToolsListAdapterInteractionListener {
+public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnToolsListAdapterInteractionListener, Observer {
 
     // UI
     @Bind(R.id.toolbar_listview) ExpandableListView listView;
@@ -82,17 +86,29 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         mListener.handleSelectedTool(tool);
     }
 
-
-
     public void createData() {
 
         ToolsGroup group;
 
         group = new ToolsGroup("Outils", false);
-        group.addTool(new Tool("Moyen", DomainType.INTERVENTIONMEAN));
-        group.addTool(new Tool("Point d'eau", DomainType.WATERPOINT));
-        group.addTool(new Tool("Risque", DomainType.RISK));
-        group.addTool(new Tool("Drone", DomainType.DRONE));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_PLANNED, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_GROUP, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_COLUMN, Role.DEFAULT));
+
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_OTHER, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_OTHER_PLANNED, Role.DEFAULT));
+
+        group.addTool(new Tool(PictoFactory.ElementForm.AIRMEAN, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.AIRMEAN_PLANNED, Role.DEFAULT));
+
+        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUPPLY, Role.DEFAULT));
+
+        group.addTool(new Tool(PictoFactory.ElementForm.SOURCE, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.TARGET, Role.DEFAULT));
+
         groups.append(0, group);
 
         group = new ToolsGroup("Demandés");
@@ -109,6 +125,9 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+    }
 
     public interface OnFragmentInteractionListener {
         void handleSelectedTool(Tool tool);

@@ -13,7 +13,7 @@ tools:context=".MainActivity">
         android:layout_gravity="center"
         android:contentDescription=""
         android:tint="#ffffff"
-        android:src="@drawable/risk"
+        android:src="@drawable/source"
         android:layout_margin="10dp" />
 
 </LinearLayout>

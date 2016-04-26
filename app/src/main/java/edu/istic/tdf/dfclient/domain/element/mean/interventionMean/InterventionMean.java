@@ -5,6 +5,7 @@ import android.location.Location;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  *
@@ -40,10 +41,11 @@ public class InterventionMean extends Entity implements IInterventionMean {
      * Maybe change int the futur (the type)
      */
     private Location location;
+    private PictoFactory.ElementForm form;
 
     public InterventionMean() {
         this.state=MeanState.DEMANDED;
-        this.role=Role.NONE;
+        this.role=Role.DEFAULT;
         this.name="";
     }
 
@@ -103,6 +105,16 @@ public class InterventionMean extends Entity implements IInterventionMean {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public PictoFactory.ElementForm getForm() {
+        return form;
+    }
+
+    @Override
+    public void setForm(PictoFactory.ElementForm form) {
+        this.form = form;
     }
 
 }

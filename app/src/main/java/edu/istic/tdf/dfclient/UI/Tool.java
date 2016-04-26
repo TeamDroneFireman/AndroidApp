@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.UI;
 
+import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
@@ -9,10 +11,23 @@ public class Tool {
 
     private String icon = "icone";
     private DomainType domainType = DomainType.INTERVENTIONMEAN;
+    private PictoFactory.ElementForm form = PictoFactory.ElementForm.MEAN;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    private Role role = Role.DEFAULT;
+    private String title = "Nom";
 
     public String getTitle() {
         return title;
     }
+
     public DomainType getDomainType(){
         return domainType;
     }
@@ -33,17 +48,28 @@ public class Tool {
         this.icon = icon;
     }
 
-    private String title = "Nom";
-
     public Tool(){}
 
     public Tool(String title){
         this.title = title;
     }
+
+    public Tool(PictoFactory.ElementForm form, Role role){
+        this.form = form;
+        this.role = role;
+    }
+
     public Tool(String title, DomainType domainType){
         this.title = title;
         this.domainType = domainType;
     }
 
+    public PictoFactory.ElementForm getForm() {
+        return form;
+    }
+
+    public void setForm(PictoFactory.ElementForm form) {
+        this.form = form;
+    }
 
 }

@@ -6,6 +6,7 @@ import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * Created by btessiau on 22/04/16.
@@ -45,9 +46,11 @@ public class Drone extends Entity implements IDrone {
      */
     private Location location;
 
+    private PictoFactory.ElementForm form = PictoFactory.ElementForm.AIRMEAN;
+
     public Drone() {
         this.state=MeanState.DEMANDED;
-        this.role=Role.NONE;
+        this.role=Role.DEFAULT;
         this.name="";
     }
 
@@ -105,6 +108,16 @@ public class Drone extends Entity implements IDrone {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public PictoFactory.ElementForm getForm() {
+        return form;
+    }
+
+    @Override
+    public void setForm(PictoFactory.ElementForm form) {
+        this.form = form;
     }
 
     @Override

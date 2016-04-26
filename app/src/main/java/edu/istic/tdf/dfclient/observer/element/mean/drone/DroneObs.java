@@ -4,6 +4,7 @@ import android.location.Location;
 
 import java.util.Collection;
 
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
@@ -100,6 +101,16 @@ public class DroneObs implements IDroneObs {
     @Override
     public String getName() {
         return this.drone.getName();
+    }
+
+    @Override
+    public PictoFactory.ElementForm getForm() {
+        return null;
+    }
+
+    @Override
+    public void setForm(PictoFactory.ElementForm form) {
+
     }
 
     @Override
