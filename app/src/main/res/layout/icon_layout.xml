@@ -7,7 +7,7 @@
         android:id="@+id/icon_image_view"
         android:layout_width="55dp"
         android:layout_height="65dp"
-        android:src="@drawable/water_point_drawable"
+        android:src="@drawable/waterpoint_sustainable"
         android:tint="#ffffff" />
 
     <TextView
