@@ -25,6 +25,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.UI.adapter.ToolsListAdapter;
+import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnToolsListAdapterInteractionListener {
 
@@ -88,10 +89,10 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         ToolsGroup group;
 
         group = new ToolsGroup("Outils", false);
-        group.addTool(new Tool("Moyen"));
-        group.addTool(new Tool("Point d'eau"));
-        group.addTool(new Tool("Risque"));
-        group.addTool(new Tool("Drone"));
+        group.addTool(new Tool("Moyen", DomainType.INTERVENTIONMEAN));
+        group.addTool(new Tool("Point d'eau", DomainType.WATERPOINT));
+        group.addTool(new Tool("Risque", DomainType.RISK));
+        group.addTool(new Tool("Drone", DomainType.DRONE));
         groups.append(0, group);
 
         group = new ToolsGroup("Demandés");

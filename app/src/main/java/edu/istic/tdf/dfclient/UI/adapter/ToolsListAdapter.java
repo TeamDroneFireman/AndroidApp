@@ -8,12 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
+import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
  * Created by Alexandre on 22/04/2016.
@@ -96,12 +99,11 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final Tool children = (Tool) getChild(groupPosition, childPosition);
-        TextView text = null;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.fragment_toolbar_item, null);
         }
-        text = (TextView) convertView.findViewById(R.id.textView1);
-        text.setText(children.getTitle());
+        ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
+        icon.setImageDrawable(PictoFactory.getDefaultPicto(context, children.getDomainType()));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

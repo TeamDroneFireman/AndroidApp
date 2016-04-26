@@ -97,6 +97,13 @@ public class PictoFactory {
         return marker;
     }
 
+    public static Drawable getDefaultPicto(Context context, DomainType domainType){
+
+        PictoFactory pictoFactory = new PictoFactory(context);
+        return pictoFactory.getDefaultPicto(domainType);
+
+    }
+
     /**
      * get default icon for google map
      * @param domainType
@@ -179,6 +186,7 @@ public class PictoFactory {
      * @return
      */
     private Bitmap getBitmap(View view) {
+
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));

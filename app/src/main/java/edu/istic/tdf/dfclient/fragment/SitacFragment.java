@@ -83,6 +83,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
+
         gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
 
             @Override
@@ -93,6 +94,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
 
         });
+
         gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
@@ -108,7 +110,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                             .title(selectedTool.getTitle())
                             .draggable(true)
                             .snippet("Description")
-                            .icon(BitmapDescriptorFactory.fromBitmap(pictoFactory.getDefaultBitMap(DomainType.INTERVENTIONMEAN))));
+                            .icon(BitmapDescriptorFactory.fromBitmap(pictoFactory.getDefaultBitMap(selectedTool.getDomainType()))));
                     mListener.handleElementAdded();
 
                 } else {

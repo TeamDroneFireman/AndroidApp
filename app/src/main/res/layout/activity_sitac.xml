@@ -1,23 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
-    android:showDividers="middle"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     tools:context="edu.istic.tdf.dfclient.activity.SitacActivity">
 
+    <!-- Map Container -->
+    <FrameLayout android:id="@+id/sitac_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"  />
+
+    <!-- Toolbar -->
     <FrameLayout android:id="@+id/toolbar_container"
         android:layout_width="120dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="top|left" />
 
-
-    <FrameLayout android:id="@+id/sitac_container"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent" />
-
-
+    <!-- Form -->
     <FrameLayout android:id="@+id/contextual_drawer_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|right">
+    </FrameLayout>
 
-</RelativeLayout>
+</FrameLayout>
