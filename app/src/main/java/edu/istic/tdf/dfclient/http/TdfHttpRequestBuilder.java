@@ -43,6 +43,7 @@ public class TdfHttpRequestBuilder {
      * Sets authentication headers
      */
     public void setAuth() {
+        // Todo: Make this with application context
         Credentials credentials = AuthHelper.loadCredentials();
         if(credentials != null) {
             if(credentials.isValid()) {

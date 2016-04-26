@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.auth.AuthHelper;
 import edu.istic.tdf.dfclient.auth.Credentials;
@@ -136,7 +137,8 @@ public class LoginFragment extends Fragment {
                 // Store credentials
                 Boolean isCodisUser = isCodisCheck.isChecked();
                 Credentials credentials = new Credentials(r.getUserId(), r.getToken(), isCodisUser);
-                AuthHelper.storeCredentials(credentials);
+                ((TdfApplication) LoginFragment.this.getActivity().getApplication()).storeCredentials(credentials);
+                //AuthHelper.storeCredentials(credentials);
 
                 // Go to the next activity with transition
                 LoginFragment.this.getActivity().overridePendingTransition(R.anim.shake, R.anim.shake);
