@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:viewportWidth="480.4698"
-    android:viewportHeight="292.832"
-    android:width="480.469816272966dp"
-    android:height="292.832020997375dp">
+    android:viewportWidth="242.6037"
+    android:viewportHeight="237.8661"
+    android:width="242.603674540682dp"
+    android:height="237.866141732283dp">
     <group>
         <clip-path
-            android:pathData="M0 0l480.46982 0 0 292.83203L0 292.83203 0 0Z" />
+            android:pathData="M0 0l242.60367 0 0 237.86613L0 237.86613 0 0Z" />
         <path
             android:pathData="M-40.782154 -23.27559l-183.165356 360 -183.16534 -360z"
             android:fillColor="#000000"
@@ -53,7 +53,7 @@
             android:strokeLineCap="butt"
             android:strokeColor="#000000" />
         <path
-            android:pathData="M21.343832 17.716536l439.779498 0 0 257.102404 -439.779498 0z"
+            android:pathData="M90.52493 323.81366l439.7795 0 0 257.10236 -439.7795 0z"
             android:strokeWidth="24"
             android:strokeLineJoin="round"
             android:strokeMiterLimit="10"
@@ -126,6 +126,13 @@
         <path
             android:pathData="M379.70163 687.5188l0 0C346.71164 754.22644 278.53403 796.34644 204.00876 796.06159 129.48351 795.77667 61.63104 753.13666 29.15384 686.17872l175.60207 -84.87164z"
             android:strokeWidth="1"
+            android:strokeLineJoin="round"
+            android:strokeMiterLimit="10"
+            android:strokeLineCap="butt"
+            android:strokeColor="#000000" />
+        <path
+            android:pathData="M121.83559 67.72215l38.70196 -59.19197 -3.81613 54.344353 43.93225 -8.858383 -17.44812 29.16735 45.69992 8.388931 -36.28958 23.860489 41.51985 28.72852 -49.52644 -3.55152 13.6008 52.58899 -42.89243 -37.12764 -8.03778 53.8851 -28.23101 -49.00686 -21.285034 68.01973 -8.006592 -60.95752 -30.705772 20.30896 9.410339 -37.55628 -57.522636 6.63358 37.29821 -28.69789L9.5354304 96.450667 57.647727 86.265563 13.38275 31.951833 85.566794 73.029013 96.380889 31.951833Z"
+            android:strokeWidth="8"
             android:strokeLineJoin="round"
             android:strokeMiterLimit="10"
             android:strokeLineCap="butt"
