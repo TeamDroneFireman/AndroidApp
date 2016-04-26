@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -25,36 +26,7 @@ import edu.istic.tdf.dfclient.drawable.element.DomainType;
  */
 public class PictoFactory {
 
-    public enum ElementColor{
-
-        PEOPLE(0xFF64DD17),
-        FIRE(0xFFD50000),
-        WATER(0xFF2962FF),
-        SPECIFIC(0xFFFF6D00),
-        DEFAULT(0xFF000000),
-        COMMAND(0xFFC51162);
-
-        private int color;
-
-        private ElementColor(int color){
-            this.color = color;
-        }
-
-        public int getColorByRole(Role role){
-            return 0;
-        }
-
-        public int getColor(){
-            return color;
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(color);
-        }
-    }
-
-    public enum ElementDrawable{
+    public enum ElementForm {
 
         // Mean
         MEAN(R.drawable.mean_other),
@@ -77,17 +49,16 @@ public class PictoFactory {
 
         // Sources / target
         SOURCE(R.drawable.source),
-        TARGET(R.drawable.target)
+        TARGET(R.drawable.target);
 
         private int drawable;
-        private ElementDrawable(int drawable){
+        private ElementForm(int drawable){
             this.drawable = drawable;
         }
 
         public int getDrawable(){
             return drawable;
         }
-
 
     }
 
@@ -104,8 +75,8 @@ public class PictoFactory {
     /**
      * Picto attributes
      */
-    private int color = ElementColor.DEFAULT.getColor();
-    private int drawable = ElementDrawable.MEAN.getDrawable();
+    private int color = Role.DEFAULT.getColor();
+    private int drawable = ElementForm.MEAN.getDrawable();
     private int size = 64;
     private DomainType domainType = DomainType.INTERVENTIONMEAN;
 
@@ -156,6 +127,15 @@ public class PictoFactory {
        return ContextCompat.getDrawable(context, this.drawable);
     }
 
+    public ImageView toImageView(){
+
+        ImageView imageView = new ImageView(this.context);
+        imageView.setImageResource(this.drawable);
+        imageView.setColorFilter(this.color);
+
+        return imageView;
+    }
+
     public Bitmap toBitmap(){
 
         View view = getView();
@@ -164,8 +144,16 @@ public class PictoFactory {
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
         view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+
+        ImageView imageView = (ImageView) view.findViewById(R.id.icon_image_view);
+        imageView.setImageResource(this.drawable);
+        imageView.setColorFilter(this.color);
+
+        TextView textView = (TextView) view.findViewById(R.id.num_txt);
+        textView.setText("");
         view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
         view.buildDrawingCache();
+
         Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
@@ -333,11 +321,7 @@ public class PictoFactory {
      * @return
      */
     private int getColor(Role role) {
-        switch (role){
-            case NONE:return Color.BLACK;
-            default:return Color.WHITE;
-        }
-
+        return role.getColor();
     }
 
     /**Get the icon form ***/
