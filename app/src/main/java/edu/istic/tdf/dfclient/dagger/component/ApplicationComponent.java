@@ -9,12 +9,14 @@ import java.lang.annotation.RetentionPolicy;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.activity.LoginActivity;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.activity.SitacActivity;
 import edu.istic.tdf.dfclient.dagger.module.ActivitiesModule;
 import edu.istic.tdf.dfclient.dagger.module.DaoModule;
 import edu.istic.tdf.dfclient.dagger.module.FragmentsModule;
+import edu.istic.tdf.dfclient.dagger.module.PushModule;
 import edu.istic.tdf.dfclient.dagger.module.RestModule;
 import edu.istic.tdf.dfclient.dagger.scope.AppScope;
 
@@ -25,10 +27,12 @@ import edu.istic.tdf.dfclient.dagger.scope.AppScope;
         RestModule.class,
         DaoModule.class,
         ActivitiesModule.class,
-        FragmentsModule.class
+        FragmentsModule.class,
+        PushModule.class
 })
 public interface ApplicationComponent {
     void inject(LoginActivity activity);
     void inject(MainMenuActivity activity);
     void inject(SitacActivity activity);
+    void inject(TdfApplication application);
 }

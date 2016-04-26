@@ -36,41 +36,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.OnFragm
 
         setContentView(R.layout.activity_login);
 
-        // TO THE ANDROID DREAM TEAM (especially Alexandre):
-        // These two lines have been replaced by dependancy injections (see @Inject annotation on attributes)
-        //
-        //interventionDao = new InterventionDao();
-        //loginFragment = LoginFragment.newInstance();
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.login_container, loginFragment)
                 .commit();
-
-        testMaxime();
-    }
-
-
-
-    public void testMaxime() {
-        Intervention inter = new Intervention();
-        inter.setName("Test de Michel");
-
-        interventionDao.persist(inter, new IDaoWriteReturnHandler() {
-            @Override
-            public void onSuccess() {
-                Log.e("MAXIME", "IT WOOOORKED !!!");
-            }
-
-            @Override
-            public void onRepositoryFailure(Throwable e) {
-                Log.e("MAXIME", "2 VIRGULE 21 GIGOWATTS ???");
-
-            }
-
-            @Override
-            public void onRestFailure(Throwable e) {
-                Log.e("MAXIME", "IL VA FAIRE TOUT NOIR");
-            }
-        });
     }
 }
