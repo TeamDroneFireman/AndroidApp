@@ -28,6 +28,58 @@ import edu.istic.tdf.dfclient.drawable.element.DomainType;
  */
 public class PictoFactory {
 
+    private enum ElementColor{
+
+        PEOPLE(0xFFFF00FF),
+        FIRE(0xFFFF00FF),
+        WATER(0xFFFF00FF),
+        SPECIFIC(0xFFFF00FF),
+        DEFAULT(0xFFFF00FF),
+        COMMAND();
+
+        private int color;
+
+        private ElementColor(int color){
+            this.color = color;
+        }
+
+        public int getColorByRole(Role role){
+            return 0;
+        }
+
+        public int getColor(){
+            return color;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(color);
+        }
+    }
+
+    private enum ElementDrawable{
+        MEAN(R.drawable.mean),
+        TMP_MEAN(R.drawable.tmp_mean),
+        ISOLATED(R.drawable.isolated),
+        TMP_ISOLATED(R.drawable.tmp_isolated),
+        WATERPOINT(R.drawable.waterpoint),
+        SUPPLY_WATERPOINT(R.drawable.supply_waterpoint),
+        SUSTAINABLE_WATERPOINT(R.drawable.sustainable_waterpoint),
+        GROUP(R.drawable.group),
+        COLUMN(R.drawable.column);
+
+        private int drawable;
+        private ElementDrawable(int drawable){
+            this.drawable = drawable;
+        }
+
+        public int getDrawable(){
+            return drawable;
+        }
+
+
+    }
+
     /**
      * The color of the default icon
      */
@@ -39,6 +91,13 @@ public class PictoFactory {
     private Context context;
 
     /**
+     * Picto attributes
+     */
+    private int color = defaultColor;
+    private int size = 64;
+    private DomainType domainType = DomainType.INTERVENTIONMEAN;
+
+    /**
      * Constructor with parameter the fragment context
      * @param context
      */
@@ -46,7 +105,41 @@ public class PictoFactory {
         this.context=context;
     }
 
+    public static PictoFactory createPicto(Context context){
+        return new PictoFactory(context);
+    }
 
+    public static PictoFactory createPicto(Context context, IElement element){
+        PictoFactory pictoFactory = new PictoFactory(context).setColor();
+        return new PictoFactory(context);
+    }
+
+    public PictoFactory setColor(int color){
+        this.color = color;
+        return this;
+    }
+
+    public PictoFactory setSize(int size){
+        this.size = size;
+        return this;
+    }
+
+    public PictoFactory setDomainType(DomainType domainType){
+        this.domainType = domainType;
+        return this;
+    }
+
+    public View toView(){
+
+    }
+
+    public Drawable toDrawable(){
+
+    }
+
+    public Bitmap toBitmap(){
+
+    }
     /**
      * get the icon to the type "View" for adroid manipulation
      * @param element: element

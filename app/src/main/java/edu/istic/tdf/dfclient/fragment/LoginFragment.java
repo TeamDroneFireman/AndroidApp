@@ -78,10 +78,10 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Bundle intentBundle = new Bundle();
-                final Intent intent = new Intent(LoginFragment.this.getActivity(), MainMenuActivity.class);
-                ActivityCompat.startActivity(LoginFragment.this.getActivity(), intent, intentBundle);
-                //LoginFragment.this.login(usernameTxt.getText().toString(), passwordTxt.getText().toString());
+                //Bundle intentBundle = new Bundle();
+                //final Intent intent = new Intent(LoginFragment.this.getActivity(), MainMenuActivity.class);
+                //ActivityCompat.startActivity(LoginFragment.this.getActivity(), intent, intentBundle);
+                LoginFragment.this.login(usernameTxt.getText().toString(), passwordTxt.getText().toString());
             }
         });
 

@@ -23,12 +23,16 @@ public class SitacActivity extends BaseActivity implements
         ToolbarFragment.OnFragmentInteractionListener {
 
     private Tool selectedTool;
+    private View contextualDrawer;
+    private View sitacContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
+        contextualDrawer = findViewById(R.id.contextual_drawer_container);
+        sitacContainer = findViewById(R.id.sitac_container);
 
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
@@ -71,12 +75,10 @@ public class SitacActivity extends BaseActivity implements
     }
 
     private void showContextualDrawer(){
-        View contextualDrawer = findViewById(R.id.contextual_drawer_container);
         contextualDrawer.animate().translationX(0);
 
     }
     private void hideContextualDrawer(){
-        View contextualDrawer = findViewById(R.id.contextual_drawer_container);
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
