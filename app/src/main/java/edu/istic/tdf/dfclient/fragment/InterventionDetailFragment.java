@@ -1,30 +1,50 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 
 public class InterventionDetailFragment extends Fragment {
 
     // UI
-    @Bind(R.id.interventionSelectionButton) Button interventionSelectionBt;
+    @Bind(R.id.interventionSelectionButton)
+    Button interventionSelectionBt;
+
+    // UI
+    @Bind(R.id.intervention_name)
+    TextView interventionName;
+
+    // UI
+    @Bind(R.id.intervention_address)
+    TextView interventionAddress;
 
     private OnFragmentInteractionListener mListener;
+
+    private static Intervention currentIntervention;
 
     public InterventionDetailFragment() {
         // Required empty public constructor
     }
 
     public static InterventionDetailFragment newInstance() {
+        InterventionDetailFragment fragment = new InterventionDetailFragment();
+        return fragment;
+    }
+
+    public static InterventionDetailFragment newInstance(Intervention intervention) {
+        // TODO: 26/04/16
+        //currentIntervention = intervention;
+        currentIntervention = new Intervention();
         InterventionDetailFragment fragment = new InterventionDetailFragment();
         return fragment;
     }
@@ -47,6 +67,18 @@ public class InterventionDetailFragment extends Fragment {
                 mListener.onInterventionSelect();
             }
         });
+        
+        if(currentIntervention != null) {
+            // TODO: 26/04/16 get the intervention name
+            currentIntervention.setName("Test");
+            
+            
+            interventionName.setText(currentIntervention.getName());
+
+            // TODO: 26/04/16  
+            interventionAddress.setText("adresse de test");
+            
+        }
 
         return view;
     }
