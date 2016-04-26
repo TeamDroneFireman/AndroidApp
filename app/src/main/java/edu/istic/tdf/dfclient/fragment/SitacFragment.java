@@ -1,6 +1,5 @@
 package edu.istic.tdf.dfclient.fragment;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -16,13 +14,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,15 +32,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
+
+import java.util.Observable;
+import java.util.Observer;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
-import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
-public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback {
+public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
 
     private OnFragmentInteractionListener mListener;
     private Marker customMarker;
@@ -106,12 +103,17 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     //View marker = getIconView();
 
                     Object customMarker = gMap.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .title(selectedTool.getTitle())
-                            .draggable(true)
-                            .snippet("Description")
-                            .icon(BitmapDescriptorFactory.fromBitmap(pictoFactory.getDefaultBitMap(selectedTool.getDomainType()))));
-                    mListener.handleElementAdded();
+                                    .position(latLng)
+                                    .title(selectedTool.getTitle())
+                                    .draggable(true)
+                                    .snippet("Description")
+                                    .icon(BitmapDescriptorFactory.fromBitmap(
+                                            pictoFactory.createPicto(getContext())
+                                                    .setDrawable(selectedTool.getForm().getDrawable())
+                                                    .setColor(Role.getRandomColor())
+                                                    .toBitmap()
+                                    )));
+                            mListener.handleElementAdded();
 
                 } else {
                     mListener.handleCancelSelection();
@@ -177,9 +179,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         View marker = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.icon_layout, null);
 
         ImageView imageView = (ImageView) marker.findViewById(R.id.icon_image_view);
-        Drawable iconDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.mean, null);
+        Drawable iconDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.mean_other, null);
 
-        imageView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.mean, null));
+        imageView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.mean_other, null));
         imageView.setColorFilter(Color.argb(255, 255, 255, 255));
 
         TextView numTxt = (TextView) marker.findViewById(R.id.num_txt);
@@ -209,6 +211,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         return bitmap;
     }
+
+    @Override
+    public void update(Observable observable, Object data) {
+
+    }
+
     public interface OnFragmentInteractionListener {
 
         public Tool getSelectedTool();
