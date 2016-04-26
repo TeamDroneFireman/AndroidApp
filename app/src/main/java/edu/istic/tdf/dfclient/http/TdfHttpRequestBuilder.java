@@ -47,8 +47,8 @@ public class TdfHttpRequestBuilder {
         if(credentials != null) {
             if(credentials.isValid()) {
                 HashMap<String, String> authHeaders = new HashMap<>();
-                authHeaders.put("HTTP-AUTH-LOGIN", credentials.getUserId());
-                authHeaders.put("HTTP-AUTH-TOKEN", credentials.getToken());
+                authHeaders.put("userid", credentials.getUserId());
+                authHeaders.put("token", credentials.getToken());
                 this.appendHeaders(authHeaders);
             }
             // TODO: Handle invalid credentials object
