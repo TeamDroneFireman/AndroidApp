@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,9 +50,8 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     public static InterventionDetailFragment newInstance(Intervention intervention) {
-        // TODO: 26/04/16
-        //currentIntervention = intervention;
-        currentIntervention = new Intervention();
+
+        currentIntervention = intervention;
         InterventionDetailFragment fragment = new InterventionDetailFragment();
         return fragment;
     }
@@ -75,16 +76,15 @@ public class InterventionDetailFragment extends Fragment {
         });
         
         if(currentIntervention != null) {
-            // TODO: 26/04/16 name
-            currentIntervention.setName("SAP_Interventon");
-
             interventionName.setText(currentIntervention.getName());
 
-            // TODO: 26/04/16  address
-            interventionAddress.setText("50 rue du crapeau, 66 666 le Marais");
+            //// TODO: 27/04/16 address
+            //interventionAddress.setText(currentIntervention.getLocation().get);
+            interventionAddress.setText("");
 
-            //// TODO: 27/04/16 date
-            interventionDate.setText(new Date().toString());
+            Date now = currentIntervention.getCreationDate();
+            String strDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.FRANCE).format(now);
+            interventionDate.setText(strDate);
         }
 
         return view;

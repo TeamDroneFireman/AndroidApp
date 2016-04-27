@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,12 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -20,6 +26,9 @@ import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.auth.Credentials;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 
 public class InterventionListFragment extends Fragment {
@@ -32,11 +41,14 @@ public class InterventionListFragment extends Fragment {
     @Bind(R.id.interventions_list)
     ListView interventionsList;
 
-    // for listView sinister_code
+    InterventionDao interventionDao;
+
+    // for listView intervention
     private ArrayList<String> interventions = new ArrayList<String>();
     private ArrayAdapter<String> interventionsAdapter;
+    private boolean interventionsIsDirty;
 
-    // the collection of all ibject interventions
+    // the collection of all object interventions
     Map<String,Intervention> nameInterventionMap = new HashMap<>();
 
 
@@ -44,8 +56,9 @@ public class InterventionListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static InterventionListFragment newInstance() {
+    public static InterventionListFragment newInstance(InterventionDao interventionDao) {
         InterventionListFragment fragment = new InterventionListFragment();
+        fragment.interventionDao = interventionDao;
         return fragment;
     }
 
@@ -79,15 +92,12 @@ public class InterventionListFragment extends Fragment {
         interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 26/04/16
-                //Intervention intervention = nameInterventionMap.get(interventions.get(position));
-                Intervention intervention = null;
+                Intervention intervention = nameInterventionMap.get(interventions.get(position));
                 mListener.handleInterventionSelected(intervention);
             }
         });
 
                 interventionsList.setAdapter(interventionsAdapter);
-
 
         loadInterventions();
 
@@ -121,25 +131,66 @@ public class InterventionListFragment extends Fragment {
     }
 
     private boolean isCodis(){
-        // TODO: 26/04/16
         Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
         return credentials.isCodisUser();
     }
 
     private void loadInterventions(){
-        // TODO: 26/04/16 request to get all intervention
-        // add all intervention.name
-        // add all intervention the map
-        nameInterventionMap.put("SAP 1", null);
-        interventions.add("SAP 1");
-        nameInterventionMap.put("SAP 2", null);
-        interventions.add("SAP 2");
+        interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
+            @Override
+            public void onRepositoryResult(List<Intervention> interventionList) {
+            }
 
-        nameInterventionMap.put("INC 1", null);
-        interventions.add("INC 1");
-        nameInterventionMap.put("INC 2", null);
-        interventions.add("INC 2");
+            @Override
+            public void onRestResult(List<Intervention> interventionList) {
+                Iterator<Intervention> interventionIterator = interventionList.iterator();
+                Intervention intervention;
+                while (interventionIterator.hasNext()) {
+                    intervention = interventionIterator.next();
+                    nameInterventionMap.put(intervention.getName(), intervention);
+                }
 
-        interventionsAdapter.notifyDataSetChanged();
+                addSortedInterventions();
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.e("", "REPO FAILURE");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.e("", "REST FAILURE");
+            }
+        });
+    }
+
+    private void addSortedInterventions(){
+        ArrayList<Intervention> interventionArrayList = new ArrayList<>(nameInterventionMap.values());
+
+        Collections.sort(interventionArrayList, new Comparator<Intervention>() {
+            @Override
+            public int compare(Intervention lhs, Intervention rhs) {
+                Date date1 = lhs.getCreationDate();
+                Date date2 = rhs.getCreationDate();
+
+                return date2.compareTo(date1);
+            }
+        });
+
+        Iterator<Intervention> it = interventionArrayList.iterator();
+        Intervention intervention;
+        while(it.hasNext())
+        {
+            intervention = it.next();
+            interventions.add(intervention.getName());
+        }
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                interventionsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
