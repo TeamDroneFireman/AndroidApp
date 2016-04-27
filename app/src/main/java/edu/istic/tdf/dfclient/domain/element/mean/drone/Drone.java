@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.domain.element.mean.drone;
 import android.location.Location;
 
 import edu.istic.tdf.dfclient.domain.Entity;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
@@ -11,7 +12,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 /**
  * A mean of type drone
  */
-public class Drone extends Entity implements IDrone {
+public class Drone extends Element implements IDrone {
 
     /**
      * represent the current mission of the drone

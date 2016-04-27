@@ -24,14 +24,14 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
     /**
      * The HTTP client
      */
-    TdfHttpClient httpClient;
+    protected TdfHttpClient httpClient;
 
-    Gson serializer;
+    protected Gson serializer;
 
     /**
      * The class of entity
      */
-    final Class<E> entityClass;
+    protected final Class<E> entityClass;
 
     /**
      * Constructs a REST Client
@@ -113,7 +113,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
      */
     public abstract String getRestEndpoint();
 
-    private String getResourceUri(String relativeUri) {
+    protected String getResourceUri(String relativeUri) {
         return getRestEndpoint() + relativeUri;
     }
 }

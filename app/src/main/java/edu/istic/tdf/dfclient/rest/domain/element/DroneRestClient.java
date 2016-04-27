@@ -9,7 +9,7 @@ import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestClient;
 
 
-public class DroneRestClient extends RestClient<Drone> implements IRestClient<Drone> {
+public class DroneRestClient extends ElementRestClient<Drone> implements IRestClient<Drone> {
 
     public DroneRestClient(TdfHttpClient httpClient) {
         super(Drone.class, httpClient);
