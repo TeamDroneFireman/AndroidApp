@@ -2,7 +2,9 @@ package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,9 @@ public class InterventionListFragment extends Fragment {
 
     @Bind(R.id.interventions_list)
     ListView interventionsList;
+
+    @Bind(R.id.pull_to_refresh_interventions)
+    SwipeRefreshLayout pullToRefresh;
 
     InterventionDao interventionDao;
 
@@ -99,8 +104,27 @@ public class InterventionListFragment extends Fragment {
 
         interventionsList.setAdapter(interventionsAdapter);
 
+        // Pull to refresh
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadInterventions(new Runnable() {
+                    @Override
+                    public void run() {
+                        InterventionListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pullToRefresh.setRefreshing(false);
+                            }
+                        });
+                    }
+                });
+            }
+        });
 
-        loadInterventions();
+
+        // TODO : Runnable that selects the first item when loaded ?
+        loadInterventions(null);
 
         return view;
     }
@@ -136,7 +160,7 @@ public class InterventionListFragment extends Fragment {
         return credentials.isCodisUser();
     }
 
-    public void loadInterventions(){
+    public void loadInterventions(final Runnable onLoaded){
         interventions.clear();
         interventionArrayList.clear();
 
@@ -165,6 +189,11 @@ public class InterventionListFragment extends Fragment {
                 }
 
                 addSortedInterventions();
+
+                // Run callback
+                if(onLoaded != null) {
+                    onLoaded.run();
+                }
             }
 
             @Override
