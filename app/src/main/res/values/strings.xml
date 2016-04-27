@@ -25,6 +25,7 @@
 
     <string name="action_switch_to_means_table">Tableau des moyens</string>
     <string name="action_switch_to_drones_map">Carte des drones</string>
+    <string name="logout">Se déconnecter</string>
 
     <!-- Mean Table-->
     <string name="mean_id">nom</string>
