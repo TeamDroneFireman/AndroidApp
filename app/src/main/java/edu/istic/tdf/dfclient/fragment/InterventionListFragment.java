@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -58,6 +57,7 @@ public class InterventionListFragment extends Fragment {
     // the collection of all object interventions
     ArrayList<Intervention> interventionArrayList = new ArrayList<>();
 
+    private TextView currentSelectedView;
 
     public InterventionListFragment() {
         // Required empty public constructor
@@ -99,22 +99,18 @@ public class InterventionListFragment extends Fragment {
         interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListener.handleInterventionSelected(interventionArrayList.get(position));
-                // TODO: 27/04/16 meilleur couleur
-                for(int i = 0; i<interventionsList.getCount();i++){
-                    TextView v = (TextView)interventionsList.getChildAt(i);
-                    v.setBackgroundColor(parent.getSolidColor());
-                    v.setTypeface(Typeface.DEFAULT);
-                    v.setTextColor(Color.LTGRAY);
-                }
+                if (!view.equals(currentSelectedView)) {
+                    if (currentSelectedView != null) {
+                        //reset color of last selected item
+                        currentSelectedView.setBackgroundColor(parent.getSolidColor());
+                        currentSelectedView.setTypeface(Typeface.DEFAULT);
+                        currentSelectedView.setTextColor(Color.LTGRAY);
+                    }
 
-                view.setBackgroundColor(Color.parseColor("#212121"));
-                ((TextView)view).setTypeface(Typeface.DEFAULT_BOLD);
-                ((TextView)view).setTextColor(Color.WHITE);
+                    selectItem(position, (TextView) view);
+                }
             }
         });
-
-
 
         interventionsList.setAdapter(interventionsAdapter);
 
@@ -135,7 +131,6 @@ public class InterventionListFragment extends Fragment {
                 });
             }
         });
-
 
         // TODO : Runnable that selects the first item when loaded ?
         loadInterventions(null);
@@ -183,8 +178,14 @@ public class InterventionListFragment extends Fragment {
         interventionBouchon.setName("Bouchon");
         interventionBouchon.setCreationDate(new Date());
         interventionBouchon.setSinisterCode(SinisterCode.FDF);
-        interventionBouchon.setLocation(new Location());
+        Location location = new Location();
+        location.setAddress("12 rue de papouille, 777 BisounoursLand");
+        interventionBouchon.setLocation(location);
         interventionArrayList.add(interventionBouchon);
+        interventions.add(interventionBouchon.getName() + "\n" + interventionBouchon.getLocation().getAddress());
+        // TODO: 27/04/16 2 bouchons a remove
+        interventionArrayList.add(interventionBouchon);
+        interventions.add(interventionBouchon.getName() + "\n" + interventionBouchon.getLocation().getAddress());
 
         interventionsAdapter.notifyDataSetChanged();
 
@@ -220,6 +221,12 @@ public class InterventionListFragment extends Fragment {
                 Log.e("", "REST FAILURE");
             }
         });
+
+        // TODO: 27/04/16 retirer en même temps que le bouchon
+        if(interventionsList.getCount() > 0)
+        {
+            selectFirstItem();
+        }
     }
 
     private void addSortedInterventions(){
@@ -239,11 +246,11 @@ public class InterventionListFragment extends Fragment {
                 boolean archived1 = lhs.isArchived();
                 boolean archived2 = lhs.isArchived();
 
-                if (archived1&&!archived2){
+                if (archived1 && !archived2) {
                     return -1;
                 }
 
-                if(!archived1&&archived2){
+                if (!archived1 && archived2) {
                     return 1;
                 }
 
@@ -260,7 +267,7 @@ public class InterventionListFragment extends Fragment {
         while(it.hasNext())
         {
             intervention = it.next();
-            interventions.add(intervention.getName());
+            interventions.add(intervention.getName() + "\n" + intervention.getLocation().getAddress());
         }
 
         getActivity().runOnUiThread(new Runnable() {
@@ -269,7 +276,48 @@ public class InterventionListFragment extends Fragment {
                 interventionsAdapter.notifyDataSetChanged();
             }
         });
-        // TODO: 27/04/16 en bleu le selected pour alexandre
-        // TODO: 27/04/16 que ca selectionne le premier ?
+
+        //select the first intervention
+        if(interventionsList.getCount() > 0 && currentSelectedView == null)
+        {
+            selectFirstItem();
+        }
+
+    }
+
+    private void selectFirstItem(){
+
+        int firstListItemPosition = interventionsList.getFirstVisiblePosition();
+
+        // TODO: 27/04/16 chopper la view de l'item qui correspond a firstListItemPosition
+        int wantedPosition = firstListItemPosition;
+        int firstPosition = interventionsList.getFirstVisiblePosition() - interventionsList.getHeaderViewsCount();
+        int wantedChild = wantedPosition - firstPosition;
+        TextView view = (TextView)interventionsAdapter.getView(wantedChild,null,interventionsList);
+
+        /*final int lastListItemPosition = firstListItemPosition + interventionsList.getChildCount() - 1;
+
+        if (wantedPosition < firstListItemPosition || wantedPosition > lastListItemPosition ) {
+            view = (TextView)interventionsList.getAdapter().getView(wantedPosition, null, interventionsList);
+        } else {
+            final int childIndex = wantedPosition - firstListItemPosition;
+            view = (TextView)interventionsList.getChildAt(childIndex);
+        }*/
+
+        selectItem(firstListItemPosition, view);
+    }
+
+    private void selectItem(int i, TextView view){
+        mListener.handleInterventionSelected(interventionArrayList.get(i));
+        currentSelectedView = view;
+
+        //color the selected item
+        highlight(view);
+    }
+
+    private void highlight(TextView view) {
+        // TODO: 27/04/16 autre couleur
+        view.setBackgroundColor(Color.parseColor("#212121"));
+        view.setTypeface(Typeface.DEFAULT_BOLD);
     }
 }
