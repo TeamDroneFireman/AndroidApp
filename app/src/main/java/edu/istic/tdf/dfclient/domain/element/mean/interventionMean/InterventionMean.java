@@ -1,5 +1,9 @@
 package edu.istic.tdf.dfclient.domain.element.mean.interventionMean;
 
+import java.util.Date;
+import java.util.HashMap;
+
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 
 import edu.istic.tdf.dfclient.domain.Entity;
@@ -12,7 +16,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
  * InterventionMean represent things like trucks... during an intervention (
  * Created by guerin on 21/04/16.
  */
-public class InterventionMean extends Entity implements IInterventionMean {
+public class InterventionMean extends Element implements IInterventionMean {
 
     /**
      * represent the state for the means table
@@ -24,24 +28,6 @@ public class InterventionMean extends Entity implements IInterventionMean {
      * But not use for the moment !
      */
     private String action;
-
-    /**
-     *it's the current fonctionnality of the InterventionMean: water,fire, sap...
-     */
-    private Role role;
-
-    /**
-     *
-     * It's the name used for the GUI
-     */
-    private String name;
-
-    /**
-     * InterventionMean's location
-     * Maybe change int the futur (the type)
-     */
-    private Location location;
-    private PictoFactory.ElementForm form;
 
     public InterventionMean() {
         this.state=MeanState.ASKED;
@@ -75,46 +61,5 @@ public class InterventionMean extends Entity implements IInterventionMean {
         return this.action;
     }
 
-
-
-    @Override
-    public void setRole(Role role) {
-        this.role=role;
-    }
-
-    @Override
-    public Role getRole() {
-        return this.role;
-    }
-
-    @Override
-    public void setLocation(Location location) {
-        this.location=location;
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name=name;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public PictoFactory.ElementForm getForm() {
-        return form;
-    }
-
-    @Override
-    public void setForm(PictoFactory.ElementForm form) {
-        this.form = form;
-    }
 
 }

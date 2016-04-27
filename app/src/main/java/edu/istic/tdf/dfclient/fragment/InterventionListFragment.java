@@ -46,7 +46,6 @@ public class InterventionListFragment extends Fragment {
     // for listView intervention
     private ArrayList<String> interventions = new ArrayList<String>();
     private ArrayAdapter<String> interventionsAdapter;
-    private boolean interventionsIsDirty;
 
     // the collection of all object interventions
     ArrayList<Intervention> interventionArrayList = new ArrayList<>();
@@ -93,10 +92,13 @@ public class InterventionListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mListener.handleInterventionSelected(interventionArrayList.get(position));
+                interventionsList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                interventionsList.setSelector(android.R.color.holo_blue_dark);
             }
         });
 
         interventionsList.setAdapter(interventionsAdapter);
+
 
         loadInterventions();
 
@@ -136,6 +138,7 @@ public class InterventionListFragment extends Fragment {
 
     public void loadInterventions(){
         interventions.clear();
+        interventionArrayList.clear();
 
         // TODO: 27/04/16 bouchon à enlever
         Intervention interventionBouchon = new Intervention();
@@ -178,8 +181,30 @@ public class InterventionListFragment extends Fragment {
 
     private void addSortedInterventions(){
         Collections.sort(interventionArrayList, new Comparator<Intervention>() {
+            /**
+             *
+             * @param lhs
+             * @param rhs
+             * @return -1 iff the first element is smaller than the second one
+             * 1 iff the second element is smaller than the first one
+             * 0 iff the two elements are equals
+             */
             @Override
             public int compare(Intervention lhs, Intervention rhs) {
+
+                //compare archived or not
+                boolean archived1 = lhs.isArchived();
+                boolean archived2 = lhs.isArchived();
+
+                if (archived1&&!archived2){
+                    return -1;
+                }
+
+                if(!archived1&&archived2){
+                    return 1;
+                }
+
+                //compare date
                 Date date1 = lhs.getCreationDate();
                 Date date2 = rhs.getCreationDate();
 

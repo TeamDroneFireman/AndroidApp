@@ -236,6 +236,7 @@ public class InterventionCreateFormFragment extends Fragment {
         GeoPoint geoPoint = new GeoPoint();
         geoPoint.setLatitude(Double.valueOf(lat.getText().toString()));
         geoPoint.setLongitude(Double.valueOf(lng.getText().toString()));
+        location.setGeopoint(geoPoint);
         intervention.setLocation(location);
 
         //date creation
