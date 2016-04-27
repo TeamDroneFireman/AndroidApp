@@ -165,10 +165,14 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
+
         IElement drone = new Drone();
         drone.setRole(Role.FIRE);
         drone.setForm(form);
+        drone.setId("TEST");
+        drone.setName("azerty");
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+
         this.selectedTool = null;
         return drone;
     }
