@@ -5,5 +5,6 @@ package edu.istic.tdf.dfclient.domain.intervention;
  */
 public enum SinisterCode {
     FDF,
-    SAP
+    SAP,
+    INC
 }
