@@ -1,8 +1,7 @@
 package edu.istic.tdf.dfclient.domain.element;
 
-import android.location.Location;
-
 import edu.istic.tdf.dfclient.domain.IEntity;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
