@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
@@ -37,9 +38,8 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
 
     private OnFragmentInteractionListener mListener;
-
-    private Intervention intervention;
     private GoogleMap googleMap;
+
     // Liste d'association marker <--> element
     private HashMap<Marker, IElement> markersList = new HashMap<>();
 
@@ -69,14 +69,13 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     public void onMapReady(GoogleMap map) {
 
         this.googleMap = map;
-        this.intervention = mListener.getIntervention();
-
         initMap();
 
     }
 
     private void initMap(){
-        for(IElement element : intervention.getElements()){
+
+        for(IElement element : mListener.getInterventionElements()){
             markersList.put(createMarker(element), element);
         }
 
@@ -138,8 +137,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         });
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(intervention.getAddress().getLatitude(), intervention.getAddress().getLongitude()), 17));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mListener.getInterventionLatLng(), 10));
 
     }
 
@@ -186,7 +184,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
-        public Intervention getIntervention();
+        public LatLng getInterventionLatLng();
+        public Collection<IElement> getInterventionElements();
+
         public Tool getSelectedTool();
         public void handleElementAdded();
         public void handleCancelSelection();

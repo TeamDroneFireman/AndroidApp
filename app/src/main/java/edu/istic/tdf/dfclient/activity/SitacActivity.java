@@ -22,7 +22,10 @@ import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -172,6 +175,16 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public Intervention getIntervention() {
         return new Intervention();
+    }
+
+    @Override
+    public LatLng getInterventionLatLng() {
+        return null;
+    }
+
+    @Override
+    public Collection<IElement> getInterventionElements() {
+        return null;
     }
 
     @Override
