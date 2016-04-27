@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.domain.element.mean.drone;
 
+import com.google.gson.annotations.Expose;
+
 import edu.istic.tdf.dfclient.domain.geo.Location;
 
 import edu.istic.tdf.dfclient.domain.Entity;
@@ -29,25 +31,6 @@ public class Drone extends Element implements IDrone {
      * But not use for the moment !
      */
     private String action;
-
-    /**
-     *it's the current fonctionnality of the InterventionMean: water,fire, sap...
-     */
-    private Role role;
-
-    /**
-     *
-     * It's the name used for the GUI
-     */
-    private String name;
-
-    /**
-     * InterventionMean's location
-     * Maybe change int the futur (the type)
-     */
-    private Location location;
-
-    private PictoFactory.ElementForm form = PictoFactory.ElementForm.AIRMEAN;
 
     public Drone() {
         this.state=MeanState.ASKED;
@@ -79,46 +62,6 @@ public class Drone extends Element implements IDrone {
     @Override
     public String getAction() {
         return this.action;
-    }
-
-    @Override
-    public void setRole(Role role) {
-        this.role=role;
-    }
-
-    @Override
-    public Role getRole() {
-        return this.role;
-    }
-
-    @Override
-    public void setLocation(Location location) {
-        this.location=location;
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name=name;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public PictoFactory.ElementForm getForm() {
-        return form;
-    }
-
-    @Override
-    public void setForm(PictoFactory.ElementForm form) {
-        this.form = form;
     }
 
     @Override

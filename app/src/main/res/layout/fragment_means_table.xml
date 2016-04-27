@@ -3,59 +3,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.istic.tdf.dfclient.fragment.MeansTableFragment">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="*"
+            android:baselineAligned="false"
+            android:shrinkColumns="*"
+            android:theme="@style/Base.Theme.AppCompat"
+            android:id="@+id/meanTab">
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:stretchColumns="*"
-        android:baselineAligned="false"
-        android:shrinkColumns="*"
-        android:theme="@style/Base.Theme.AppCompat"
-        android:id="@+id/meanTab">
+            <TableRow
+                    android:text="@string/mean_id"
+                    android:padding="3dip"
+                    android:gravity="center_horizontal">
 
-        <TableRow
-                android:text="@string/mean_id"
-                android:padding="3dip"
-                android:gravity="center_horizontal" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/mean_id"
-                android:id="@+id/textView5"
-                android:gravity="center_horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/column_1"
-                android:id="@+id/textView4"
-                android:gravity="center_horizontal" />
-
-            <TextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/column_2"
-                    android:id="@+id/textView"
-                    android:gravity="center_horizontal" />
+                    android:text="@string/mean_id"
+                    android:id="@+id/textView5"
+                    android:gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:singleLine="false" />
 
-            <TextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/column_3"
-                    android:id="@+id/textView2"
-                    android:gravity="center_horizontal" />
+                    android:text="@string/column_1"
+                    android:id="@+id/textView4"
+                    android:gravity="center_horizontal"
+                    android:textStyle="bold" />
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/column_4"
-                    android:id="@+id/textView3"
-                    android:gravity="center_horizontal" />
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/column_2"
+                        android:id="@+id/textView"
+                        android:gravity="center_horizontal"
+                    android:textStyle="bold" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/column_3"
+                        android:id="@+id/textView2"
+                        android:gravity="center_horizontal"
+                    android:textStyle="bold" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/column_4"
+                        android:id="@+id/textView3"
+                        android:gravity="center_horizontal"
+                    android:textStyle="bold" />
 
 
 
-    </TableRow>
-    </TableLayout>
+        </TableRow>
+        </TableLayout>
+    </ScrollView>
 
 </FrameLayout>
