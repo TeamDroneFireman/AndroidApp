@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 
 /**
@@ -64,13 +65,13 @@ public class InterventionObs implements IInterventionObs {
     }
 
     @Override
-    public Address getAddress() {
-        return this.intervention.getAddress();
+    public Location getLocation() {
+        return this.intervention.getLocation();
     }
 
     @Override
-    public void setAddress(Address address) {
-        this.intervention.setAddress(address);
+    public void setLocation(Location location) {
+        this.intervention.setLocation(location);
     }
 
     @Override

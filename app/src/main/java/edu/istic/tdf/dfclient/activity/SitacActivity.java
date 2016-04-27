@@ -4,6 +4,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 
@@ -19,6 +22,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -29,6 +33,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
+import edu.istic.tdf.dfclient.observer.intervention.InterventionObs;
 import eu.inloop.easygcm.EasyGcm;
 
 public class SitacActivity extends BaseActivity implements
@@ -46,28 +51,60 @@ public class SitacActivity extends BaseActivity implements
     @Inject
     InterventionDao interventionDao;
 
-    private Intervention intervention;
+    private InterventionObs intervention;
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sitac);
+
+        // Inject dagger dependencies
+        getApplicationComponent().inject(this);
+
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
 
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
 
-        interventionDao.find("1", new IDaoSelectReturnHandler<Intervention>() {
+        Intervention inter = Intervention.builder()
+                .location(Location.builder()
+                                .city("SAINT-GREGOIRE")
+                                .postalCode("35760")
+                                .street("Rue de l'étang du diable")
+                                .geopoint(new GeoPoint(3.1234, 2.543, 3.1))
+                                .build()
+                )
+                .creationDate(new Date())
+                .name("Toto")
+                .build();
+        interventionDao.persist(inter, new IDaoWriteReturnHandler() {
+            @Override
+            public void onSuccess() {
+                Log.i("MAXIME", "IT WORKED");
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.i("MAXIME", "IT DID NOT WORKED");
+
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.i("MAXIME", "IT DID NOT WORKED");
+            }
+        });
+
+        interventionDao.find("57207136b87e690100d7718f", new IDaoSelectReturnHandler<Intervention>() {
             @Override
             public void onRepositoryResult(Intervention r) {}
 
             @Override
             public void onRestResult(Intervention r) {
-                intervention = r;
+                intervention = new InterventionObs(r);
             }
 
             @Override
