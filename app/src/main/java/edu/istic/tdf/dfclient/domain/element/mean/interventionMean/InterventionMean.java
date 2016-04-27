@@ -44,7 +44,7 @@ public class InterventionMean extends Entity implements IInterventionMean {
     private PictoFactory.ElementForm form;
 
     public InterventionMean() {
-        this.state=MeanState.DEMANDED;
+        this.state=MeanState.ASKED;
         this.role=Role.DEFAULT;
         this.name="";
     }

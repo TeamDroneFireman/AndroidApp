@@ -69,6 +69,7 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".activity.MeansTableActivity"></activity>
+        <activity android:name=".activity.DronesMapActivity"></activity>
     </application>
 
 </manifest>
