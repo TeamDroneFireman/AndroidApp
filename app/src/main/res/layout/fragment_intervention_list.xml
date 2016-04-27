@@ -4,8 +4,6 @@
     android:layout_height="match_parent"
     tools:context="edu.istic.tdf.dfclient.fragment.InterventionListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
@@ -14,13 +16,19 @@ import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
 
 public class MainMenuActivity extends BaseActivity implements InterventionDetailFragment.OnFragmentInteractionListener, InterventionListFragment.OnFragmentInteractionListener, InterventionCreateFormFragment.OnFragmentInteractionListener {
 
+    @Inject
+    InterventionListFragment interventionListFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        // Inject dagger dependencies
+        getApplicationComponent().inject(this);
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.list_container, InterventionListFragment.newInstance())
+                .replace(R.id.list_container, interventionListFragment)
                 .commit();
 
         getSupportFragmentManager().beginTransaction()
@@ -31,11 +39,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void onInterventionSelect(Intervention intervention) {
-        Intent intent = new Intent(this, SitacActivity.class);
-
-        // TODO: 27/04/16 for the moment intervention is null
-        //intent.putExtra("interventionId",intervention.getId());
-        this.startActivity(intent);
+        if(intervention != null)
+        {
+            Intent intent = new Intent(this, SitacActivity.class);
+            intent.putExtra("interventionId",intervention.getId());
+            this.startActivity(intent);
+        }
     }
 
     @Override

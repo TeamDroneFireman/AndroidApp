@@ -7,4 +7,17 @@
         app:showAsAction="ifRoom"
         android:title="@string/action_switch_to_means_table"/>
 
+    <item
+        android:id="@+id/switch_to_sitac"
+        android:icon="@android:drawable/ic_dialog_map"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:showAsAction="ifRoom"
+        android:title="SITAC"/>
+
+    <item
+        android:id="@+id/switch_to_drones_map"
+        android:icon="@android:drawable/ic_dialog_map"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:showAsAction="ifRoom"
+        android:title="DRONES"/>
 </menu>

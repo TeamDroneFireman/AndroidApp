@@ -49,7 +49,7 @@ public class Drone extends Entity implements IDrone {
     private PictoFactory.ElementForm form = PictoFactory.ElementForm.AIRMEAN;
 
     public Drone() {
-        this.state=MeanState.DEMANDED;
+        this.state=MeanState.ASKED;
         this.role=Role.DEFAULT;
         this.name="";
     }

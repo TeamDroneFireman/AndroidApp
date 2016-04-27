@@ -104,22 +104,18 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.fragment_toolbar_item, null);
         }
-/*
-        ImageView icon = PictoFactory
-                            .createPicto(context)
-                            .setColor(children.getRole().getColor())
-                            .setDrawable(children.getForm().getDrawable())
-                            .toImageView();
-*/
-        ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
 
+
+        ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
+        icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
+/*
         icon.setImageBitmap(
                 PictoFactory
                         .createPicto(context)
                         .setColor(children.getRole().getColor())
                         .setDrawable(children.getForm().getDrawable())
                         .toBitmap()
-        );
+        );*/
        // icon.setImageDrawable(PictoFactory.getDefaultPicto(context, children.getDomainType()));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

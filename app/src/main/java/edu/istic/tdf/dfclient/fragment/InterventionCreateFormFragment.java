@@ -177,7 +177,7 @@ public class InterventionCreateFormFragment extends Fragment {
         mListener = null;
     }
 
-    // TODO: 26/04/16 it's in hard
+    // TODO: 26/04/16
     private void loadSinisters()
     {
         sinisters.add("SAP");
@@ -234,7 +234,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private IMean compute(String mean) {
         IMean m = new InterventionMean();
-        m.setState(MeanState.DEMANDED);
+        m.setState(MeanState.ASKED);
         m.setRole(Role.DEFAULT);
 
         return m;
