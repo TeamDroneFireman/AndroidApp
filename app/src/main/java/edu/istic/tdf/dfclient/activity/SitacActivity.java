@@ -216,6 +216,9 @@ public class SitacActivity extends BaseActivity implements
             case R.id.switch_to_sitac:
                 switchTo(sitacFragment);
                 break;
+            case R.id.switch_to_drones_map:
+                switchTo(sitacFragment);
+                break;
             default:
                 break;
         }
