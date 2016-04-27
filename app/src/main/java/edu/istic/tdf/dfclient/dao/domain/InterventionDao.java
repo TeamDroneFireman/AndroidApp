@@ -7,6 +7,7 @@ import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
+import edu.istic.tdf.dfclient.http.TdfHttpClientPort12345;
 import edu.istic.tdf.dfclient.repository.domain.InterventionRepository;
 import edu.istic.tdf.dfclient.rest.domain.InterventionRestClient;
 
@@ -18,7 +19,7 @@ import edu.istic.tdf.dfclient.rest.domain.InterventionRestClient;
 public class InterventionDao extends Dao<Intervention, InterventionRepository, InterventionRestClient>
         implements IDao<Intervention, InterventionRepository, InterventionRestClient> {
 
-    public InterventionDao(TdfHttpClient httpClient) {
+    public InterventionDao(TdfHttpClientPort12345 httpClient) {
         super(new InterventionRepository(), new InterventionRestClient(httpClient));
     }
 }

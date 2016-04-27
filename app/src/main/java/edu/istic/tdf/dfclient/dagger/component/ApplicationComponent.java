@@ -21,8 +21,9 @@ import edu.istic.tdf.dfclient.dagger.module.RestModule;
 import edu.istic.tdf.dfclient.dagger.scope.AppScope;
 
 // TODO : Singleton fore some injections, not all of them
-@AppScope
-@Singleton
+// TODO : Set that back
+//@AppScope
+//@Singleton
 @Component(modules = {
         RestModule.class,
         DaoModule.class,

@@ -15,10 +15,10 @@ import okhttp3.RequestBody;
 
 public abstract class TdfHttpClient implements IHttpClient {
 
-    private static final String SCHEME = "http";
-    private static final String HOST = "projetm2gla.istic.univ-rennes1.fr";
-    private static final int PORT = 12346;
-    private static final String PATH = "";
+    private final static String SCHEME = "http";
+    private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
+    private final static int PORT = 12346;
+    private final static String PATH = "";
     /**
      * Client base URL with a final slash
      */

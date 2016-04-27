@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.google.gson.Gson;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -16,6 +15,7 @@ import edu.istic.tdf.dfclient.http.TdfHttpClientPort12346;
 import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by maxime on 24/04/2016.
@@ -26,37 +26,41 @@ import okhttp3.OkHttpClient;
 public class RestModule {
 
     @Provides
-    @Singleton
+    //@Singleton
     OkHttpClient provideOkHttpClient() {
-        return new OkHttpClient.Builder().build();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     Gson provideSerializer() {
         return RestSerializerBuilder.build();
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     AuthHelper provideAuthHelper() {
         return new AuthHelper();
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     TdfHttpClientPort12345 provideTdfHttpClient12345(OkHttpClient client) {
         return new TdfHttpClientPort12345(client);
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     TdfHttpClientPort12346 provideTdfHttpClient12346(OkHttpClient client) {
         return new TdfHttpClientPort12346(client);
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     LoginRestService provideLoginRestService(TdfHttpClientPort12346 httpClient, Gson serializer) {
         return new LoginRestService(httpClient, serializer);
     }

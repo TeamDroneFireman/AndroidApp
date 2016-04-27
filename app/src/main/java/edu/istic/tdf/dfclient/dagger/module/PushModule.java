@@ -22,7 +22,7 @@ import okhttp3.OkHttpClient;
 public class PushModule {
 
     @Provides
-    @Singleton
+    //@Singleton
     PushHandler providePushHandler() {
         return new PushHandler();
     }

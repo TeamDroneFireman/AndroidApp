@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.domain.intervention;
 
-import android.location.Address;
-
+import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Table;
 
 import java.util.ArrayList;
@@ -12,11 +11,18 @@ import java.util.Iterator;
 import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.geo.Location;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by btessiau on 20/04/16.
  */
 @Table(database = TdfDatabase.class)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Intervention extends Entity implements IIntervention {
 
     /**
@@ -25,14 +31,20 @@ public class Intervention extends Entity implements IIntervention {
     private String name;
 
     /**
+     * The corresponding sinister code
+     */
+    @SerializedName("interventionCode")
+    private SinisterCode sinisterCode;
+
+    /**
      * The collection of elements on the intervention
      */
-    private Collection<IElement> elements;
+    private Collection<IElement> elements = new ArrayList<>();
 
     /**
      * The address of the intervention
      */
-    private Address address;
+    private Location location;
 
     /**
      * The creation date of the intervention
@@ -48,11 +60,6 @@ public class Intervention extends Entity implements IIntervention {
      * True iff the intervention is archived
      */
     private boolean archived;
-
-    public Intervention() {
-        this.elements = new ArrayList<>();
-
-    }
 
     @Override
     public String getName() {
@@ -91,13 +98,13 @@ public class Intervention extends Entity implements IIntervention {
     }
 
     @Override
-    public Address getAddress() {
-        return this.address;
+    public Location getLocation() {
+        return this.location;
     }
 
     @Override
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override
