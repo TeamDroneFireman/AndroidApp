@@ -124,7 +124,7 @@ public class PictoFactory {
     }
 
     public Drawable toDrawable(){
-       return ContextCompat.getDrawable(context, this.drawable);
+        return ContextCompat.getDrawable(context, this.drawable);
     }
 
     public ImageView toImageView(){

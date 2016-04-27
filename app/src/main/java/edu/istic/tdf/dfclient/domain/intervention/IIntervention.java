@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import edu.istic.tdf.dfclient.domain.IEntity;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 
 /**
  * Created by btessiau on 20/04/16.
@@ -55,13 +56,13 @@ public interface IIntervention extends IEntity {
      *
      * @return the address of the intervention
      */
-    public Address getAddress();
+    public Location getLocation();
 
     /**
      *
      * @param address of the intervention
      */
-    public void setAddress(Address address);
+    public void setLocation(Location location);
 
     /**
      *

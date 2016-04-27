@@ -22,7 +22,7 @@ public class DaoModule {
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     InterventionDao provideInterventionDao(TdfHttpClientPort12345 httpClient){
         return new InterventionDao(httpClient);
     }

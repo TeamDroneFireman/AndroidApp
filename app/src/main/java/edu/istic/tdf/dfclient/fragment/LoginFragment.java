@@ -175,7 +175,15 @@ public class LoginFragment extends Fragment {
                     });
 
                 } else { // If other error (network, server...)
-                    onNetworkError();
+
+                    // TODO : Remove that, to fix network errors
+                    // If ws is down and you need to test...
+                    LoginResponse lr = new LoginResponse();
+                    lr.setToken("token");
+                    lr.setUserId("userId");
+                    onSuccess(lr);
+
+                    //onNetworkError();
                 }
 
                 onEnd();
