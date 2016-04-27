@@ -4,11 +4,16 @@
     android:layout_height="match_parent"
     tools:context="edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment">
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:autoText="true"
-        android:background="#424242"
-        android:minWidth="150dp" />
+        android:layout_height="wrap_content"
+        android:id="@+id/ElementLabelEdit"
+        android:layout_gravity="center_horizontal|top" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enregistrer"
+        android:id="@+id/ElementSubmitButton"
+        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>

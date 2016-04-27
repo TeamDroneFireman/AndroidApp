@@ -239,7 +239,7 @@ public class SitacActivity extends BaseActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            
+
             // action with ID action_refresh was selected
             case R.id.switch_to_means_table:
                 intent = new Intent(this, MeansTableActivity.class);
