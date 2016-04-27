@@ -30,8 +30,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
-    public void onInterventionSelect() {
+    public void onInterventionSelect(Intervention intervention) {
         Intent intent = new Intent(this, SitacActivity.class);
+
+        // TODO: 27/04/16 for the moment intervention is null
+        //intent.putExtra("interventionId",intervention.getId());
         this.startActivity(intent);
     }
 
@@ -51,10 +54,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void createIntervention(IIntervention intervention) {
-        // TODO: 26/04/16
         Toast t = Toast.makeText(this, intervention.getName(), Toast.LENGTH_LONG);
         t.getView().setBackgroundColor(Color.RED);
         t.show();
-        //push intervention
+        // TODO: 27/04/16 push the intervention
+
+        // TODO: 27/04/16 reload all sinister when intervention is on the server
     }
 }

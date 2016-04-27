@@ -1,13 +1,5 @@
 package edu.istic.tdf.dfclient.activity;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
-import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
-
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Element;
@@ -20,13 +12,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 import java.util.Observer;
 
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import eu.inloop.easygcm.EasyGcm;
@@ -61,7 +55,7 @@ public class SitacActivity extends BaseActivity implements
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
 
-        interventionDao.find("1", new IDaoSelectReturnHandler<Intervention>() {
+        /*interventionDao.find("1", new IDaoSelectReturnHandler<Intervention>() {
             @Override
             public void onRepositoryResult(Intervention r) {}
 
@@ -79,7 +73,7 @@ public class SitacActivity extends BaseActivity implements
             public void onRestFailure(Throwable e) {
                 Log.e("MAXIME", "REST FAILURE");
             }
-        });
+        });*/
 
         SitacFragment sitacFragment = SitacFragment.newInstance();
         ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();

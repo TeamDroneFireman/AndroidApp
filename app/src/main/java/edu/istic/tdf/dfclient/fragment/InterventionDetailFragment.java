@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
@@ -27,6 +29,10 @@ public class InterventionDetailFragment extends Fragment {
     // UI
     @Bind(R.id.intervention_address)
     TextView interventionAddress;
+
+    // UI
+    @Bind(R.id.intervention_date)
+    TextView interventionDate;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,20 +70,21 @@ public class InterventionDetailFragment extends Fragment {
         interventionSelectionBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onInterventionSelect();
+                mListener.onInterventionSelect(currentIntervention);
             }
         });
         
         if(currentIntervention != null) {
-            // TODO: 26/04/16 get the intervention name
-            currentIntervention.setName("Test");
-            
-            
+            // TODO: 26/04/16 name
+            currentIntervention.setName("SAP_Interventon");
+
             interventionName.setText(currentIntervention.getName());
 
-            // TODO: 26/04/16  
-            interventionAddress.setText("adresse de test");
-            
+            // TODO: 26/04/16  address
+            interventionAddress.setText("50 rue du crapeau, 66 666 le Marais");
+
+            //// TODO: 27/04/16 date
+            interventionDate.setText(new Date().toString());
         }
 
         return view;
@@ -101,6 +108,6 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onInterventionSelect();
+        void onInterventionSelect(Intervention intervention);
     }
 }
