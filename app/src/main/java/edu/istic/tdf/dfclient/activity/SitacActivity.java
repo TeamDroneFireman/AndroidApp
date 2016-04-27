@@ -1,16 +1,5 @@
 package edu.istic.tdf.dfclient.activity;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
-import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
-import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
-import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
-import edu.istic.tdf.dfclient.domain.geo.Location;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
-
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Element;
@@ -24,13 +13,19 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
 import java.util.Observer;
 
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
+import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.observer.intervention.InterventionObs;
