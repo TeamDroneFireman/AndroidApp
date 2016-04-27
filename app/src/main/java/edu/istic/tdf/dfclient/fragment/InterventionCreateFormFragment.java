@@ -177,7 +177,7 @@ public class InterventionCreateFormFragment extends Fragment {
         mListener = null;
     }
 
-    // TODO: 26/04/16 it's in hard
+    // TODO: 26/04/16
     private void loadSinisters()
     {
         sinisters.add("SAP");
