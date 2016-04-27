@@ -127,12 +127,12 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Double getInterventionLatitude() {
-        return 4.3;
+        return 48.1151489;
     }
 
     @Override
     public Double getInterventionLongitude() {
-        return -4.3;
+        return -1.6380783;
     }
 
     @Override
@@ -169,6 +169,7 @@ public class SitacActivity extends BaseActivity implements
         drone.setRole(Role.FIRE);
         drone.setForm(form);
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+        this.selectedTool = null;
         return drone;
     }
 
