@@ -124,12 +124,12 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Double getInterventionLatitude() {
-        return 4.3;
+        return 48.1151489;
     }
 
     @Override
     public Double getInterventionLongitude() {
-        return -4.3;
+        return -1.6380783;
     }
 
     @Override
@@ -162,10 +162,15 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
+
         IElement drone = new Drone();
         drone.setRole(Role.FIRE);
         drone.setForm(form);
+        drone.setId("TEST");
+        drone.setName("azerty");
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+
+        this.selectedTool = null;
         return drone;
     }
 
@@ -208,6 +213,10 @@ public class SitacActivity extends BaseActivity implements
 
             case R.id.switch_to_drones_map:
                 intent = new Intent(this, DronesMapActivity.class);
+                this.startActivity(intent);
+                break;
+            case R.id.logout_button:
+                intent = new Intent(this, LoginActivity.class);
                 this.startActivity(intent);
                 break;
             default:

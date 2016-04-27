@@ -6,5 +6,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:showAsAction="ifRoom"
         android:title="SITAC"/>
+    <item
+        android:id="@+id/logout_button"
+        android:icon="@android:drawable/ic_lock_power_off"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:title="@string/logout"/>
 
 </menu>
