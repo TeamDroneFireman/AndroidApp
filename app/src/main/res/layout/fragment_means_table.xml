@@ -13,8 +13,7 @@
         android:theme="@style/Base.Theme.AppCompat"
         android:id="@+id/meanTab">
 
-        <TableRow android:gravity="center_vertical">
-            <TextView
+        <TextView
                 android:text="@string/mean_id"
                 android:padding="3dip"
                 android:gravity="center_horizontal" />
