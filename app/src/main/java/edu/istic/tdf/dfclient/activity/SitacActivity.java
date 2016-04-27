@@ -32,6 +32,8 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
@@ -158,17 +160,18 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(IElement element) {
         showContextualDrawer();
-        Toast.makeText(SitacActivity.this, element.getName(), Toast.LENGTH_SHORT).show();
         contextualDrawerFragment.setSelectedElement(element);
     }
 
     @Override
-    public IElement handleElementAdded(PictoFactory.ElementForm form) {
+    public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
         IElement drone = new Drone();
+        drone.setRole(Role.FIRE);
         drone.setForm(form);
-        drone.setName(form.toString());
+        drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
         return drone;
     }
+
     @Override
     public void handleCancelSelection() {
         this.selectedTool = null;

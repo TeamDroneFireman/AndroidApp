@@ -43,19 +43,19 @@ public class DronesMapFragment extends SupportMapFragment implements OnMapReadyC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        drone = new Drone();
+        drone = new Drone();/*
         Location tempLoc = new Location("tempLoc");
         tempLoc.setLatitude(219);
         tempLoc.setLongitude(302);
         drone.setLocation(tempLoc);
-        String latitude = "Latitude : " + String.valueOf(drone.getLocation().getLatitude());
-        String longitude = "Longitude : " + String.valueOf(drone.getLocation().getLongitude());
+        String latitude = "Latitude : " + String.valueOf(drone.getLocation().getGeopoint().getLatitude());
+        String longitude = "Longitude : " + String.valueOf(drone.getLocation().getGeopoint().getLongitude());
         Toast toastLatitude = Toast.makeText(this.getContext(), latitude, Toast.LENGTH_LONG);
         Toast toastLongitude = Toast.makeText(this.getContext(), longitude, Toast.LENGTH_LONG);
         toastLatitude.show();
         toastLongitude.show();
 
-
+*/
     }
 
     @Override

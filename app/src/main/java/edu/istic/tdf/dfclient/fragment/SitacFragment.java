@@ -115,7 +115,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                                             .setColor(Role.getRandomColor())
                                             .toBitmap()
                             )));
-                    IElement element = mListener.handleElementAdded(selectedTool.getForm());
+                    IElement element = mListener.handleElementAdded(selectedTool.getForm(), marker.getPosition().latitude, marker.getPosition().longitude);
                     markersList.put(marker, element);
 
                 } else {
@@ -148,7 +148,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private MarkerOptions createMarkerOptions(IElement element){
 
-        LatLng latLng = new LatLng(element.getLocation().getLatitude(), element.getLocation().getLongitude());
+        LatLng latLng = new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude());
         Bitmap bitmap =  PictoFactory.createPicto(getContext())
                 .setDrawable(element.getForm().getDrawable())
                 .setColor(element.getRole().getColor())
@@ -195,7 +195,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         public Tool getSelectedTool();
 
         public void setSelectedElement(IElement element);
-        public IElement handleElementAdded(PictoFactory.ElementForm form);
+        public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
         public void handleCancelSelection();
 
     }
@@ -221,9 +221,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         Marker marker = getMarker(element);
         markersList.remove(marker);
-
-        marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).setColor(Role.PEOPLE.getColor()).toBitmap()));
-        marker.setPosition(new LatLng(element.getLocation().getLatitude(), element.getLocation().getLongitude()));
+        System.out.print("ELEMEMENT NAME:" + element.getName());
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).toBitmap()));
+        marker.setPosition(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()));
         marker.setTitle(element.getName());
 
     }
