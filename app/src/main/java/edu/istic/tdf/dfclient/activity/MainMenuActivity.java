@@ -63,8 +63,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void onCreateIntervention() {
-        // TODO: 27/04/16 push the intervention
-
-        // TODO: 27/04/16 reload all sinister when intervention is on the server
+        interventionListFragment.loadInterventions();
     }
 }

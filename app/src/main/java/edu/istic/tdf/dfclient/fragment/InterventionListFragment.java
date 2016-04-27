@@ -16,10 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,7 +49,7 @@ public class InterventionListFragment extends Fragment {
     private boolean interventionsIsDirty;
 
     // the collection of all object interventions
-    Map<String,Intervention> nameInterventionMap = new HashMap<>();
+    ArrayList<Intervention> interventionArrayList = new ArrayList<>();
 
 
     public InterventionListFragment() {
@@ -94,8 +92,7 @@ public class InterventionListFragment extends Fragment {
         interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intervention intervention = nameInterventionMap.get(interventions.get(position));
-                mListener.handleInterventionSelected(intervention);
+                mListener.handleInterventionSelected(interventionArrayList.get(position));
             }
         });
 
@@ -137,7 +134,19 @@ public class InterventionListFragment extends Fragment {
         return credentials.isCodisUser();
     }
 
-    private void loadInterventions(){
+    public void loadInterventions(){
+        interventions.clear();
+
+        // TODO: 27/04/16 bouchon à enlever
+        Intervention interventionBouchon = new Intervention();
+        interventionBouchon.setName("Bouchon");
+        interventionBouchon.setCreationDate(new Date());
+        interventionBouchon.setSinisterCode(SinisterCode.FDF);
+        interventionBouchon.setLocation(new Location());
+        interventionArrayList.add(interventionBouchon);
+
+        interventionsAdapter.notifyDataSetChanged();
+
         interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
             @Override
             public void onRepositoryResult(List<Intervention> interventionList) {
@@ -149,7 +158,7 @@ public class InterventionListFragment extends Fragment {
                 Intervention intervention;
                 while (interventionIterator.hasNext()) {
                     intervention = interventionIterator.next();
-                    nameInterventionMap.put(intervention.getName(), intervention);
+                    interventionArrayList.add(intervention);
                 }
 
                 addSortedInterventions();
@@ -165,23 +174,9 @@ public class InterventionListFragment extends Fragment {
                 Log.e("", "REST FAILURE");
             }
         });
-
-        // TODO: 27/04/16 bouchon à enlever
-        Intervention interventionBouchon = new Intervention();
-        interventionBouchon.setName("Bouchon");
-        interventionBouchon.setCreationDate(new Date());
-        interventionBouchon.setSinisterCode(SinisterCode.FDF);
-        interventionBouchon.setLocation(new Location());
-        interventions.add(interventionBouchon.getName());
-
-        nameInterventionMap.put(interventionBouchon.getName(),interventionBouchon);
-
-        interventionsAdapter.notifyDataSetChanged();
     }
 
     private void addSortedInterventions(){
-        ArrayList<Intervention> interventionArrayList = new ArrayList<>(nameInterventionMap.values());
-
         Collections.sort(interventionArrayList, new Comparator<Intervention>() {
             @Override
             public int compare(Intervention lhs, Intervention rhs) {
@@ -206,5 +201,7 @@ public class InterventionListFragment extends Fragment {
                 interventionsAdapter.notifyDataSetChanged();
             }
         });
+        // TODO: 27/04/16 en bleu le selected pour alexandre
+        // TODO: 27/04/16 que ca selectionne le premier ?
     }
 }
