@@ -1,6 +1,8 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +70,7 @@ public class InterventionListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_intervention_list, container, false);
@@ -92,10 +95,21 @@ public class InterventionListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mListener.handleInterventionSelected(interventionArrayList.get(position));
-                interventionsList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-                interventionsList.setSelector(android.R.color.holo_blue_dark);
+                // TODO: 27/04/16 meilleur couleur
+                for(int i = 0; i<interventionsList.getCount();i++){
+                    TextView v = (TextView)interventionsList.getChildAt(i);
+                    v.setBackgroundColor(parent.getSolidColor());
+                    v.setTypeface(Typeface.DEFAULT);
+                    v.setTextColor(Color.LTGRAY);
+                }
+
+                view.setBackgroundColor(Color.parseColor("#212121"));
+                ((TextView)view).setTypeface(Typeface.DEFAULT_BOLD);
+                ((TextView)view).setTextColor(Color.WHITE);
             }
         });
+
+
 
         interventionsList.setAdapter(interventionsAdapter);
 
@@ -127,7 +141,7 @@ public class InterventionListFragment extends Fragment {
         // When button creation intervention clicked
         void handleInterventionCreation();
 
-        //
+        // when an interventions is selected
         void handleInterventionSelected(Intervention intervention);
     }
 
