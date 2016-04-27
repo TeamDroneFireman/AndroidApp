@@ -74,11 +74,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void initMap(){
-
+/*
         for(IElement element : mListener.getInterventionElements()){
             markersList.put(createMarker(element), element);
         }
-
+*/
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
@@ -137,7 +137,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         });
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mListener.getInterventionLatLng(), 10));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mListener.getInterventionLatitude(), mListener.getInterventionLongitude()), 10));
 
     }
 
@@ -184,7 +184,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
-        public LatLng getInterventionLatLng();
+        public Double getInterventionLatitude();
+        public Double getInterventionLongitude();
         public Collection<IElement> getInterventionElements();
 
         public Tool getSelectedTool();

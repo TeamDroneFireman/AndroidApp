@@ -51,6 +51,7 @@ import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
+import edu.istic.tdf.dfclient.observer.element.mean.drone.DroneObs;
 import edu.istic.tdf.dfclient.observer.intervention.InterventionObs;
 import eu.inloop.easygcm.EasyGcm;
 
@@ -146,17 +147,15 @@ public class SitacActivity extends BaseActivity implements
             }
         });
 
-        SitacFragment sitacFragment = SitacFragment.newInstance();
-        ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
-        ContextualDrawerFragment contextualDrawerFragment = ContextualDrawerFragment.newInstance();
+        sitacFragment = SitacFragment.newInstance();
+        toolbarFragment = ToolbarFragment.newInstance();
+        contextualDrawerFragment = ContextualDrawerFragment.newInstance();
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);
         observers.add(contextualDrawerFragment);
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.sitac_container, meansTableFragment, meansTableFragment.getTag())
-                .hide(meansTableFragment)
                 .add(R.id.sitac_container, sitacFragment, sitacFragment.getTag())
                 .add(R.id.toolbar_container, toolbarFragment)
                 .add(R.id.contextual_drawer_container, contextualDrawerFragment)
@@ -173,13 +172,28 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public LatLng getInterventionLatLng() {
-        return null;
+    public Double getInterventionLatitude() {
+        return 4.3;
+    }
+
+    @Override
+    public Double getInterventionLongitude() {
+        return -4.3;
     }
 
     @Override
     public Collection<IElement> getInterventionElements() {
-        return null;
+        IElement element = new DroneObs();
+        element.setForm(PictoFactory.ElementForm.MEAN_COLUMN);
+        element.setRole(Role.PEOPLE);
+        element.setName("DRONE");
+        android.location.Location location =  new android.location.Location("");
+        location.setLongitude(12.2);
+        location.setLatitude(12.2);
+        element.setLocation(location);
+        Collection<IElement> liste = new ArrayList<>();
+        liste.add(element);
+        return liste;
     }
 
     @Override
