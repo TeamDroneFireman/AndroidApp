@@ -93,9 +93,8 @@ public class PictoFactory {
     }
 
     public PictoFactory setElement(IElement element){
-        switch(element.getRole()){
-            //TODO
-        }
+        this.setDrawable(element.getForm().getDrawable());
+        this.setColor(element.getRole().getColor());
         return this;
     }
 

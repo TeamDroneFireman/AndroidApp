@@ -26,8 +26,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
@@ -113,7 +115,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                                             .setColor(Role.getRandomColor())
                                             .toBitmap()
                             )));
-                    IElement element = mListener.handleElementAdded(selectedTool.getRole());
+                    IElement element = mListener.handleElementAdded(selectedTool.getForm());
                     markersList.put(marker, element);
 
                 } else {
@@ -193,9 +195,41 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         public Tool getSelectedTool();
 
         public void setSelectedElement(IElement element);
-        public IElement handleElementAdded(Role role);
+        public IElement handleElementAdded(PictoFactory.ElementForm form);
         public void handleCancelSelection();
 
+    }
+
+    private Marker getMarker(IElement element){
+        if(markersList.containsValue(element)){
+            for (Map.Entry<Marker, IElement> entry : markersList.entrySet()) {
+                Marker marker = entry.getKey();
+                IElement elementValue = entry.getValue();
+                if(elementValue.equals(element)){
+                    return marker;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void addMarker(IElement element){
+
+    }
+
+    private void updateMarker(IElement element){
+
+        Marker marker = getMarker(element);
+        markersList.remove(marker);
+
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).setColor(Role.PEOPLE.getColor()).toBitmap()));
+        marker.setPosition(new LatLng(element.getLocation().getLatitude(), element.getLocation().getLongitude()));
+        marker.setTitle(element.getName());
+
+    }
+
+    public void updateElement(IElement element){
+        updateMarker(element);
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
@@ -25,6 +26,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     @Bind(R.id.ElementSubmitButton)
     Button ElementSubmitButton;
+
+    private IElement element;
 
     public ContextualDrawerFragment() {
         // Required empty public constructor
@@ -46,6 +49,15 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         View view = inflater.inflate(R.layout.fragment_contextual_drawer, container, false);
 
+        ButterKnife.bind(this, view);
+
+        ElementSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                element.setName(ElementLabelEdit.getText().toString());
+                mListener.updateElement(element);
+            }
+        });
         return view;
     }
 
@@ -72,9 +84,11 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     }
 
     public void setSelectedElement(IElement element) {
-        ElementLabelEdit.setText("test");
+        this.element = element;
+        ElementLabelEdit.setText(this.element.getName());
     }
 
     public interface OnFragmentInteractionListener {
+        void updateElement(IElement element);
     }
 }

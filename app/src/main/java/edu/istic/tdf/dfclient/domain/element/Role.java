@@ -30,6 +30,7 @@ public enum Role {
     private int color;
 
     private Role(String title, int color){
+        this.title = title;
         this.color = color;
     }
 

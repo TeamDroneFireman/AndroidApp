@@ -33,6 +33,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
@@ -95,9 +96,9 @@ public class SitacActivity extends BaseActivity implements
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
 
-        SitacFragment sitacFragment = SitacFragment.newInstance();
-        ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
-        ContextualDrawerFragment contextualDrawerFragment = ContextualDrawerFragment.newInstance();
+        sitacFragment = SitacFragment.newInstance();
+        toolbarFragment = ToolbarFragment.newInstance();
+        contextualDrawerFragment = ContextualDrawerFragment.newInstance();
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);
@@ -157,14 +158,17 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(IElement element) {
         showContextualDrawer();
+        Toast.makeText(SitacActivity.this, element.getName(), Toast.LENGTH_SHORT).show();
         contextualDrawerFragment.setSelectedElement(element);
     }
 
     @Override
-    public IElement handleElementAdded(Role role) {
-        return null;
+    public IElement handleElementAdded(PictoFactory.ElementForm form) {
+        IElement drone = new Drone();
+        drone.setForm(form);
+        drone.setName(form.toString());
+        return drone;
     }
-
     @Override
     public void handleCancelSelection() {
         this.selectedTool = null;
@@ -248,6 +252,11 @@ public class SitacActivity extends BaseActivity implements
                 Toast.makeText(SitacActivity.this, "A network error occured. Please retry in a few seconds.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void updateElement(IElement element) {
+        sitacFragment.updateElement(element);
     }
 
     private class DataLoader {
