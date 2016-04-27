@@ -3,9 +3,9 @@ package edu.istic.tdf.dfclient.domain.element.mean.interventionMean;
 import java.util.Date;
 import java.util.HashMap;
 
-import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.element.Element;
 
-import edu.istic.tdf.dfclient.domain.Entity;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -15,7 +15,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
  * InterventionMean represent things like trucks... during an intervention (
  * Created by guerin on 21/04/16.
  */
-public class InterventionMean extends Entity implements IInterventionMean {
+public class InterventionMean extends Element implements IInterventionMean {
 
     /**
      * represent the list of states with the corresponding timestamp
@@ -27,24 +27,6 @@ public class InterventionMean extends Entity implements IInterventionMean {
      * But not use for the moment !
      */
     private String action;
-
-    /**
-     *it's the current fonctionnality of the InterventionMean: water,fire, sap...
-     */
-    private Role role;
-
-    /**
-     *
-     * It's the name used for the GUI
-     */
-    private String name;
-
-    /**
-     * InterventionMean's location
-     * Maybe change int the futur (the type)
-     */
-    private Location location;
-    private PictoFactory.ElementForm form;
 
     public InterventionMean() {
         this.states.put(MeanState.ASKED, new Date());

@@ -38,6 +38,10 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
                 Intent intent = new Intent(this, SitacActivity.class);
                 this.startActivity(intent);
                 break;
+            case R.id.logout_button:
+                intent = new Intent(this, LoginActivity.class);
+                this.startActivity(intent);
+                break;
             default:
                 break;
         }

@@ -33,8 +33,11 @@ import java.util.Random;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -69,101 +72,55 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {
+    public void onMapReady(GoogleMap googleMap) {
 
-        this.googleMap = map;
+        this.googleMap = googleMap;
         initMap();
 
     }
 
     private void initMap(){
-
+/*
         for(IElement element : mListener.getInterventionElements()){
             markersList.put(createMarker(element), element);
         }
+*/
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(hasElementSelected()){
+                    IElement element = createElementFromLatLng(latLng);
+                    addMarker(element);
+                } else {
+                    cancelSelection();
+                }
+            }
+        });
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                IElement element = markersList.get(marker);
-                //Toast.makeText(getContext(), element.getName(), Toast.LENGTH_SHORT).show();
-                mListener.setSelectedElement(element);
+                mListener.setSelectedElement(markersList.get(marker));
                 return false;
             }
 
         });
-
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-            @Override
-            public void onMapClick(LatLng latLng) {
-
-                Tool selectedTool = mListener.getSelectedTool();
-                if (selectedTool != null) {
-
-                    //View marker = getIconView();
-
-                    Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .title(selectedTool.getTitle())
-                            .draggable(true)
-                            .snippet("Description")
-                            .icon(BitmapDescriptorFactory.fromBitmap(
-                                    PictoFactory.createPicto(getContext())
-                                            .setDrawable(selectedTool.getForm().getDrawable())
-                                            .setColor(Role.getRandomColor())
-                                            .toBitmap()
-                            )));
-                    IElement element = mListener.handleElementAdded(selectedTool.getForm(), marker.getPosition().latitude, marker.getPosition().longitude);
-                    markersList.put(marker, element);
-
-                } else {
-                    mListener.handleCancelSelection();
-                }
-            }
-        });
-
-        googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-                Toast.makeText(getContext(), marker.getTitle() + "(" + marker.getId() + ")", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-                Toast.makeText(getContext(), marker.getTitle() + "(" + marker.getId() + ") OK ! ", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-
-            }
-        });
-
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mListener.getInterventionLatitude(), mListener.getInterventionLongitude()), 10));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mListener.getInterventionLatitude(), mListener.getInterventionLongitude()), 18));
 
     }
 
-
-    private MarkerOptions createMarkerOptions(IElement element){
-
-        LatLng latLng = new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude());
-        Bitmap bitmap =  PictoFactory.createPicto(getContext())
-                .setDrawable(element.getForm().getDrawable())
-                .setColor(element.getRole().getColor())
-                .toBitmap();
-
-        return new MarkerOptions()
-                .position(latLng)
-                .title(element.getName())
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-
+    private IElement createElementFromLatLng(LatLng latLng){
+        Tool tool = mListener.getSelectedTool();
+        return mListener.handleElementAdded(tool.getForm(), latLng.latitude, latLng.longitude);
     }
 
-    private Marker createMarker(IElement element){
-        return googleMap.addMarker(createMarkerOptions(element));
+    private void cancelSelection(){
+        mListener.handleCancelSelection();
+    }
+
+    private boolean hasElementSelected(){
+        return mListener.getSelectedTool() != null;
     }
 
     @Override
@@ -215,21 +172,57 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private void addMarker(IElement element){
 
+        Marker marker = googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
+                .title(element.getName())
+                .draggable(true)
+                .icon(BitmapDescriptorFactory.fromBitmap(
+                        PictoFactory.createPicto(getContext())
+                                .setDrawable(element.getForm().getDrawable())
+                                .setColor(element.getRole().getColor())
+                                .toBitmap()
+                )));
+
+        markersList.put(marker, element);
     }
 
-    private void updateMarker(IElement element){
+    private void updateMarker(Marker marker, IElement element){
 
-        Marker marker = getMarker(element);
-        markersList.remove(marker);
-        System.out.print("ELEMEMENT NAME:" + element.getName());
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).toBitmap()));
         marker.setPosition(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()));
         marker.setTitle(element.getName());
 
+        markersList.remove(marker);
+        markersList.put(marker, element);
+
     }
 
     public void updateElement(IElement element){
-        updateMarker(element);
+        Marker marker = getMarker(element);
+        if(marker == null){
+            addMarker(element);
+        } else {
+            updateMarker(marker, element);
+        }
+    }
+
+    public void updateElements(Collection<IElement> elements){
+        for(IElement element : elements){
+            updateElement(element);
+        }
+    }
+
+    public void removeElement(IElement element){
+        Marker marker = getMarker(element);
+        if(marker != null){
+            markersList.remove(marker);
+        }
+    }
+
+    public void removeElements(Collection<IElement> elements){
+        for(IElement element : elements){
+            removeElement(element);
+        }
     }
 
 }

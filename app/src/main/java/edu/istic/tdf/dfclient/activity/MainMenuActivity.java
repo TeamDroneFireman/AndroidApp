@@ -63,6 +63,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void onCreateIntervention() {
-        interventionListFragment.loadInterventions();
+        interventionListFragment.loadInterventions(null);
     }
 }

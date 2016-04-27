@@ -3,13 +3,11 @@ package edu.istic.tdf.dfclient.domain.element.mean.drone;
 import java.util.Date;
 import java.util.HashMap;
 
-import edu.istic.tdf.dfclient.domain.geo.Location;
-
-import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -32,25 +30,6 @@ public class Drone extends Element implements IDrone {
      * But not use for the moment !
      */
     private String action;
-
-    /**
-     *it's the current fonctionnality of the InterventionMean: water,fire, sap...
-     */
-    private Role role;
-
-    /**
-     *
-     * It's the name used for the GUI
-     */
-    private String name;
-
-    /**
-     * InterventionMean's location
-     * Maybe change int the futur (the type)
-     */
-    private Location location;
-
-    private PictoFactory.ElementForm form = PictoFactory.ElementForm.AIRMEAN;
 
     public Drone() {
         this.states.put(MeanState.ASKED, new Date());
@@ -100,46 +79,6 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
-    public void setRole(Role role) {
-        this.role=role;
-    }
-
-    @Override
-    public Role getRole() {
-        return this.role;
-    }
-
-    @Override
-    public void setLocation(Location location) {
-        this.location=location;
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name=name;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public PictoFactory.ElementForm getForm() {
-        return form;
-    }
-
-    @Override
-    public void setForm(PictoFactory.ElementForm form) {
-        this.form = form;
-    }
-
-    @Override
     public IMission getMission() {
         return this.mission;
     }
@@ -152,5 +91,45 @@ public class Drone extends Element implements IDrone {
     @Override
     public boolean hasMission() {
         return (this.mission != null);
+    }
+
+    @Override
+    public void setRole(Role role) {
+
+    }
+
+    @Override
+    public Role getRole() {
+        return null;
+    }
+
+    @Override
+    public void setLocation(Location location) {
+
+    }
+
+    @Override
+    public Location getLocation() {
+        return null;
+    }
+
+    @Override
+    public void setName(String name) {
+
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public PictoFactory.ElementForm getForm() {
+        return null;
+    }
+
+    @Override
+    public void setForm(PictoFactory.ElementForm form) {
+
     }
 }

@@ -1,8 +1,12 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,12 +46,14 @@ public class InterventionListFragment extends Fragment {
     @Bind(R.id.interventions_list)
     ListView interventionsList;
 
+    @Bind(R.id.pull_to_refresh_interventions)
+    SwipeRefreshLayout pullToRefresh;
+
     InterventionDao interventionDao;
 
     // for listView intervention
     private ArrayList<String> interventions = new ArrayList<String>();
     private ArrayAdapter<String> interventionsAdapter;
-    private boolean interventionsIsDirty;
 
     // the collection of all object interventions
     ArrayList<Intervention> interventionArrayList = new ArrayList<>();
@@ -68,7 +75,7 @@ public class InterventionListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_intervention_list, container, false);
@@ -93,12 +100,45 @@ public class InterventionListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mListener.handleInterventionSelected(interventionArrayList.get(position));
+                // TODO: 27/04/16 meilleur couleur
+                for(int i = 0; i<interventionsList.getCount();i++){
+                    TextView v = (TextView)interventionsList.getChildAt(i);
+                    v.setBackgroundColor(parent.getSolidColor());
+                    v.setTypeface(Typeface.DEFAULT);
+                    v.setTextColor(Color.LTGRAY);
+                }
+
+                view.setBackgroundColor(Color.parseColor("#212121"));
+                ((TextView)view).setTypeface(Typeface.DEFAULT_BOLD);
+                ((TextView)view).setTextColor(Color.WHITE);
             }
         });
 
+
+
         interventionsList.setAdapter(interventionsAdapter);
 
-        loadInterventions();
+        // Pull to refresh
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadInterventions(new Runnable() {
+                    @Override
+                    public void run() {
+                        InterventionListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pullToRefresh.setRefreshing(false);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+
+        // TODO : Runnable that selects the first item when loaded ?
+        loadInterventions(null);
 
         return view;
     }
@@ -125,7 +165,7 @@ public class InterventionListFragment extends Fragment {
         // When button creation intervention clicked
         void handleInterventionCreation();
 
-        //
+        // when an interventions is selected
         void handleInterventionSelected(Intervention intervention);
     }
 
@@ -134,8 +174,9 @@ public class InterventionListFragment extends Fragment {
         return credentials.isCodisUser();
     }
 
-    public void loadInterventions(){
+    public void loadInterventions(final Runnable onLoaded){
         interventions.clear();
+        interventionArrayList.clear();
 
         // TODO: 27/04/16 bouchon à enlever
         Intervention interventionBouchon = new Intervention();
@@ -162,6 +203,11 @@ public class InterventionListFragment extends Fragment {
                 }
 
                 addSortedInterventions();
+
+                // Run callback
+                if(onLoaded != null) {
+                    onLoaded.run();
+                }
             }
 
             @Override
@@ -178,8 +224,30 @@ public class InterventionListFragment extends Fragment {
 
     private void addSortedInterventions(){
         Collections.sort(interventionArrayList, new Comparator<Intervention>() {
+            /**
+             *
+             * @param lhs
+             * @param rhs
+             * @return -1 iff the first element is smaller than the second one
+             * 1 iff the second element is smaller than the first one
+             * 0 iff the two elements are equals
+             */
             @Override
             public int compare(Intervention lhs, Intervention rhs) {
+
+                //compare archived or not
+                boolean archived1 = lhs.isArchived();
+                boolean archived2 = lhs.isArchived();
+
+                if (archived1&&!archived2){
+                    return -1;
+                }
+
+                if(!archived1&&archived2){
+                    return 1;
+                }
+
+                //compare date
                 Date date1 = lhs.getCreationDate();
                 Date date2 = rhs.getCreationDate();
 
