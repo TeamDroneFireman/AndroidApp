@@ -24,5 +24,6 @@
     <string name="login_iscodis_text">Je suis utilisateur CODIS</string>
 
     <string name="action_switch_to_means_table">Tableau des moyens</string>
+    <string name="action_switch_to_drones_map">Carte des drones</string>
 
 </resources>
