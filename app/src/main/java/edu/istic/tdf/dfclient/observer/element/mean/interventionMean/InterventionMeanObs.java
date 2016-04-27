@@ -1,12 +1,11 @@
 package edu.istic.tdf.dfclient.observer.element.mean.interventionMean;
 
-import android.location.Location;
-
 import java.util.Collection;
 
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.observer.command.ICommand;
 

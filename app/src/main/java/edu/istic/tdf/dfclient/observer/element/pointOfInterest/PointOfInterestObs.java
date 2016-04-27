@@ -1,6 +1,6 @@
 package edu.istic.tdf.dfclient.observer.element.pointOfInterest;
 
-import android.location.Location;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 
 import java.util.Collection;
 

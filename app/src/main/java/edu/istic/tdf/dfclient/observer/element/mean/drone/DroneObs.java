@@ -1,9 +1,9 @@
 package edu.istic.tdf.dfclient.observer.element.mean.drone;
 
-import android.location.Location;
 
 import java.util.Collection;
 
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.observer.command.ICommand;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -81,6 +81,7 @@ public class DroneObs implements IDroneObs {
     public Role getRole() {
         return drone.getRole();
     }
+
 
     @Override
     public void setLocation(Location location) {

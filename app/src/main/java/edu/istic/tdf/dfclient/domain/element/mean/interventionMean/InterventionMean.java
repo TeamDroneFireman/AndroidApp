@@ -1,6 +1,6 @@
 package edu.istic.tdf.dfclient.domain.element.mean.interventionMean;
 
-import android.location.Location;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.Role;

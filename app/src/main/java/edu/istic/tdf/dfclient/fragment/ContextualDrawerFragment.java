@@ -85,7 +85,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     public void setSelectedElement(IElement element) {
         this.element = element;
-        ElementLabelEdit.setText(this.element.getName());
     }
 
     public interface OnFragmentInteractionListener {
