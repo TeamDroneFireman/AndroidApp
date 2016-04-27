@@ -40,9 +40,6 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
-import edu.istic.tdf.dfclient.observer.element.mean.drone.DroneObs;
-import edu.istic.tdf.dfclient.observer.element.mean.interventionMean.InterventionMeanObs;
-import edu.istic.tdf.dfclient.observer.element.pointOfInterest.PointOfInterestObs;
 import eu.inloop.easygcm.EasyGcm;
 
 public class SitacActivity extends BaseActivity implements
@@ -66,9 +63,9 @@ public class SitacActivity extends BaseActivity implements
     private List<Element> elements;
 
     private Intervention intervention;
-    private Collection<DroneObs> drones;
-    private Collection<InterventionMeanObs> means;
-    private Collection<PointOfInterestObs> pointsOfInterest;
+    private Collection<Drone> drones;
+    private Collection<InterventionMean> means;
+    private Collection<PointOfInterest> pointsOfInterest;
 
     private Element selectedElement;
 
@@ -317,12 +314,7 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestResult(List<Drone> r) {
-                    // Wrap to observable
-                    List<DroneObs> dronesObs = new ArrayList<DroneObs>();
-                    for(Drone d : r) {
-                        dronesObs.add(new DroneObs(d));
-                    }
-                    SitacActivity.this.drones = dronesObs;
+                    SitacActivity.this.drones = r;
 
                     // TODO : What to do when these are loaded ?
                 }
@@ -349,12 +341,7 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<InterventionMean> r) {
-                            // Wrap to observable
-                            List<InterventionMeanObs> meansObs = new ArrayList<InterventionMeanObs>();
-                            for(InterventionMean i : r) {
-                                meansObs.add(new InterventionMeanObs());
-                            }
-                            SitacActivity.this.means = meansObs;
+                            SitacActivity.this.means = r;
 
                             // TODO : What to do when these are loaded ?
                         }
@@ -381,12 +368,7 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<PointOfInterest> r) {
-                            // Wrap to observable
-                            List<PointOfInterestObs> poiObs = new ArrayList<PointOfInterestObs>();
-                            for(PointOfInterest p : r) {
-                                poiObs.add(new PointOfInterestObs(p));
-                            }
-                            SitacActivity.this.pointsOfInterest = poiObs;
+                            SitacActivity.this.pointsOfInterest = r;
                         }
 
                         @Override

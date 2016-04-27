@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.istic.tdf.dfclient">
 
+    <!-- Global permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -9,12 +10,14 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- Push permissions -->
     <permission
         android:name="edu.istic.tdf.dfclient.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
     <uses-permission android:name="easygcm.permission.C2D_MESSAGE" />
     <uses-permission android:name="easygcm.permission.RECEIVE" />
 
+    <!-- Maps permissions -->
     <permission
         android:name="edu.istic.tdf.dfclient.fragment.SitacFragment.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -27,6 +30,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- Push receiver -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -37,6 +42,7 @@
             </intent-filter>
         </receiver>
 
+        <!-- Push services -->
         <service
             android:name="eu.inloop.easygcm.EasyGcmListenerService"
             android:exported="false">
@@ -52,8 +58,10 @@
             </intent-filter>
         </service>
 
+        <!-- Activities -->
         <activity
             android:name=".activity.LoginActivity"
+            android:screenOrientation="landscape"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,15 +69,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainMenuActivity" />
-        <activity android:name=".activity.SitacActivity" />
+        <activity android:name=".activity.MainMenuActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".activity.SitacActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".activity.MeansTableActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name=".activity.DronesMapActivity"
+            android:screenOrientation="landscape"></activity>
 
+        <!-- Google maps api key-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".activity.MeansTableActivity"></activity>
-        <activity android:name=".activity.DronesMapActivity"></activity>
     </application>
 
 </manifest>
