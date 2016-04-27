@@ -96,9 +96,9 @@ public class SitacActivity extends BaseActivity implements
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
 
-        SitacFragment sitacFragment = SitacFragment.newInstance();
-        ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
-        ContextualDrawerFragment contextualDrawerFragment = ContextualDrawerFragment.newInstance();
+        sitacFragment = SitacFragment.newInstance();
+        toolbarFragment = ToolbarFragment.newInstance();
+        contextualDrawerFragment = ContextualDrawerFragment.newInstance();
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);
@@ -111,6 +111,9 @@ public class SitacActivity extends BaseActivity implements
                 .commit();
 
         currentFragment = sitacFragment;
+
+        //add
+        meansTableFragment=(MeansTableFragment.newInstance());
 
     }
 
@@ -193,6 +196,7 @@ public class SitacActivity extends BaseActivity implements
             case R.id.switch_to_means_table:
                 intent = new Intent(this, MeansTableActivity.class);
                 this.startActivity(intent);
+                //switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
