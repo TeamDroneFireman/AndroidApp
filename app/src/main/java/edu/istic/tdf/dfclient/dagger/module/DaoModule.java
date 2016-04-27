@@ -1,16 +1,12 @@
 package edu.istic.tdf.dfclient.dagger.module;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
-import edu.istic.tdf.dfclient.dao.domain.InterventionMeanDao;
+import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
+import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
+import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
-import edu.istic.tdf.dfclient.http.TdfHttpClientPort12345;
 
 /**
  * Created by maxime on 24/04/2016.
@@ -24,12 +20,22 @@ public class DaoModule {
 
     @Provides
     //@Singleton
-    InterventionDao provideInterventionDao(TdfHttpClientPort12345 httpClient){
+    InterventionDao provideInterventionDao(TdfHttpClient httpClient){
         return new InterventionDao(httpClient);
     }
 
     @Provides
-    InterventionMeanDao provideInterventionMeanDao(TdfHttpClientPort12345 httpClient) {
+    InterventionMeanDao provideInterventionMeanDao(TdfHttpClient httpClient) {
         return new InterventionMeanDao(httpClient);
+    }
+
+    @Provides
+    DroneDao provideDroneDao(TdfHttpClient httpClient) {
+        return new DroneDao(httpClient);
+    }
+
+    @Provides
+    PointOfInterestDao providePointOfInterestDao(TdfHttpClient httpClient) {
+        return new PointOfInterestDao(httpClient);
     }
 }

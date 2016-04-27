@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.dao.domain;
+package edu.istic.tdf.dfclient.dao.domain.element;
 
 import java.util.List;
 

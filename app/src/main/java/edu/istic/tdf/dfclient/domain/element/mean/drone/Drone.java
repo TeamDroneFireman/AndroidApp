@@ -9,7 +9,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
- * Created by btessiau on 22/04/16.
+ * A mean of type drone
  */
 public class Drone extends Entity implements IDrone {
 

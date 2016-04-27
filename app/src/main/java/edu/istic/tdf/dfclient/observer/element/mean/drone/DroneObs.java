@@ -26,6 +26,10 @@ public class DroneObs implements IDroneObs {
      */
     private Collection<ICommand> commands;
 
+    public DroneObs(IDrone drone) {
+        this.drone = drone;
+    }
+
     @Override
     public void addCommand(ICommand command) {
         this.commands.add(command);

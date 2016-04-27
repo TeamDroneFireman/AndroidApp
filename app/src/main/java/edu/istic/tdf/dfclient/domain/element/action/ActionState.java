@@ -1,7 +1,8 @@
 package edu.istic.tdf.dfclient.domain.element.action;
 
+// TODO : Remove this or use it
 /**
- * Created by guerin on 20/04/16.
+ * Represents the state of an action (arrows on map)
  */
 public enum ActionState {
 

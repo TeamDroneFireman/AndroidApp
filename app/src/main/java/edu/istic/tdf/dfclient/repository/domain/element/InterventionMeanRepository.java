@@ -1,4 +1,4 @@
-package edu.istic.tdf.dfclient.repository.domain;
+package edu.istic.tdf.dfclient.repository.domain.element;
 
 
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;

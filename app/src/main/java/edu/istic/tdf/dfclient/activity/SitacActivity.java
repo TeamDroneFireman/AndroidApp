@@ -1,58 +1,45 @@
 package edu.istic.tdf.dfclient.activity;
 
-import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
-
-import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.domain.element.Role;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.drawable.PictoFactory;
-import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
-
-import android.location.Address;
-import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Element;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import android.support.v4.app.Fragment;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Observer;
-
-import javax.annotation.Resource;
-
-import edu.istic.tdf.dfclient.R;
-import edu.istic.tdf.dfclient.UI.Tool;
-import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import java.util.Observer;
 
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
+import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
+import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
-import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
-import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
-import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
+import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.observer.element.mean.drone.DroneObs;
-import edu.istic.tdf.dfclient.observer.intervention.InterventionObs;
+import edu.istic.tdf.dfclient.observer.element.mean.interventionMean.InterventionMeanObs;
+import edu.istic.tdf.dfclient.observer.element.pointOfInterest.PointOfInterestObs;
 import eu.inloop.easygcm.EasyGcm;
 
 public class SitacActivity extends BaseActivity implements
@@ -61,22 +48,33 @@ public class SitacActivity extends BaseActivity implements
         ToolbarFragment.OnFragmentInteractionListener,
         MeansTableFragment.OnFragmentInteractionListener{
 
+    // UI
     private Tool selectedTool;
     private View contextualDrawer;
     private View sitacContainer;
-
-    private List<Element> elements;
-    private Element selectedElement;
 
     private SitacFragment sitacFragment;
     private ToolbarFragment toolbarFragment;
     private ContextualDrawerFragment contextualDrawerFragment;
     private MeansTableFragment meansTableFragment;
 
+    // Data
+    // TODO : Remove elemnts
+    private List<Element> elements;
+
+    private Intervention intervention;
+    private Collection<DroneObs> drones;
+    private Collection<InterventionMeanObs> means;
+    private Collection<PointOfInterestObs> pointsOfInterest;
+
+    private Element selectedElement;
+
     private android.support.v4.app.Fragment currentFragment;
 
-    @Inject
-    InterventionDao interventionDao;
+    @Inject InterventionDao interventionDao;
+    @Inject DroneDao droneDao;
+    @Inject InterventionMeanDao interventionMeanDao;
+    @Inject PointOfInterestDao pointOfInterestDao;
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
@@ -90,11 +88,12 @@ public class SitacActivity extends BaseActivity implements
         // Inject dagger dependencies
         getApplicationComponent().inject(this);
 
+        // Load data
+        DataLoader dataLoader = new DataLoader("57207136b87e690100d7718f"); // TODO : Set the real intervention id
+        dataLoader.loadData();
+
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
-
-        String registrationPush = EasyGcm.getRegistrationId(this);
-        Log.i("MAXIME", "Registration push : " + registrationPush);
 
         SitacFragment sitacFragment = SitacFragment.newInstance();
         ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
@@ -235,6 +234,151 @@ public class SitacActivity extends BaseActivity implements
         // so that user can use the back button
         t.addToBackStack(null);
         t.commit();
+    }
+
+    private void displayNetworkError() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // TODO : This to string.xml
+                Toast.makeText(SitacActivity.this, "A network error occured. Please retry in a few seconds.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private class DataLoader {
+        private String interventionId;
+
+        public DataLoader(String interventionId) {
+            this.interventionId = interventionId;
+        }
+
+        public void loadData() {
+            this.loadIntervention();
+            this.loadDrones();
+            this.loadMeans();
+            this.loadPointsOfInterest();
+        }
+
+        private void loadIntervention() {
+            SitacActivity.this.interventionDao.find(this.interventionId, new IDaoSelectReturnHandler<Intervention>() {
+                @Override
+                public void onRepositoryResult(Intervention r) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestResult(Intervention r) {
+                    SitacActivity.this.intervention = r;
+
+                    // TODO : What to do when it is loaded ?
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.displayNetworkError();
+                }
+            });
+        }
+
+        private void loadDrones() {
+            SitacActivity.this.droneDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
+                    new IDaoSelectReturnHandler<List<Drone>>() {
+                @Override
+                public void onRepositoryResult(List<Drone> r) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestResult(List<Drone> r) {
+                    // Wrap to observable
+                    List<DroneObs> dronesObs = new ArrayList<DroneObs>();
+                    for(Drone d : r) {
+                        dronesObs.add(new DroneObs(d));
+                    }
+                    SitacActivity.this.drones = dronesObs;
+
+                    // TODO : What to do when these are loaded ?
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.displayNetworkError();
+                }
+            });
+        }
+
+        private void loadMeans() {
+            SitacActivity.this.interventionMeanDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
+                    new IDaoSelectReturnHandler<List<InterventionMean>>() {
+                        @Override
+                        public void onRepositoryResult(List<InterventionMean> r) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestResult(List<InterventionMean> r) {
+                            // Wrap to observable
+                            List<InterventionMeanObs> meansObs = new ArrayList<InterventionMeanObs>();
+                            for(InterventionMean i : r) {
+                                meansObs.add(new InterventionMeanObs());
+                            }
+                            SitacActivity.this.means = meansObs;
+
+                            // TODO : What to do when these are loaded ?
+                        }
+
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+                            SitacActivity.this.displayNetworkError();
+                        }
+                    });
+        }
+
+        private void loadPointsOfInterest() {
+            SitacActivity.this.pointOfInterestDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
+                    new IDaoSelectReturnHandler<List<PointOfInterest>>() {
+                        @Override
+                        public void onRepositoryResult(List<PointOfInterest> r) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestResult(List<PointOfInterest> r) {
+                            // Wrap to observable
+                            List<PointOfInterestObs> poiObs = new ArrayList<PointOfInterestObs>();
+                            for(PointOfInterest p : r) {
+                                poiObs.add(new PointOfInterestObs(p));
+                            }
+                            SitacActivity.this.pointsOfInterest = poiObs;
+                        }
+
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+                            SitacActivity.this.displayNetworkError();
+                        }
+                    });
+        }
     }
 
 }

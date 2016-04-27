@@ -9,7 +9,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  *
- * InterventionMean represent truck during an intervention (
+ * InterventionMean represent things like trucks... during an intervention (
  * Created by guerin on 21/04/16.
  */
 public class InterventionMean extends Entity implements IInterventionMean {

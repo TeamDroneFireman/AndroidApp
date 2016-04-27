@@ -1,17 +1,12 @@
 package edu.istic.tdf.dfclient.dagger.module;
 
-import android.app.Application;
-import android.content.Context;
-
 import com.google.gson.Gson;
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.auth.AuthHelper;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
-import edu.istic.tdf.dfclient.http.TdfHttpClientPort12345;
-import edu.istic.tdf.dfclient.http.TdfHttpClientPort12346;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 import okhttp3.OkHttpClient;
@@ -49,19 +44,13 @@ public class RestModule {
 
     @Provides
     //@Singleton
-    TdfHttpClientPort12345 provideTdfHttpClient12345(OkHttpClient client) {
-        return new TdfHttpClientPort12345(client);
+    TdfHttpClient provideTdfHttpClient(OkHttpClient client) {
+        return new TdfHttpClient(client);
     }
 
     @Provides
     //@Singleton
-    TdfHttpClientPort12346 provideTdfHttpClient12346(OkHttpClient client) {
-        return new TdfHttpClientPort12346(client);
-    }
-
-    @Provides
-    //@Singleton
-    LoginRestService provideLoginRestService(TdfHttpClientPort12346 httpClient, Gson serializer) {
+    LoginRestService provideLoginRestService(TdfHttpClient httpClient, Gson serializer) {
         return new LoginRestService(httpClient, serializer);
     }
 

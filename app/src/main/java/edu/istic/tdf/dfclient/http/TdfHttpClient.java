@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.auth.Credentials;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfUser;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -17,21 +19,25 @@ public class TdfHttpClient {
 
     private final static String SCHEME = "http";
     private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
-    private final static int PORT = 12346;
-    private final static String PATH = "";
-    /**
-     * Client base URL with a final slash
-     */
-    //private static final String BASE_URL = "http://pastebin.com/raw/";
 
     public static final String HTTP_ACCEPT = "application/json";
     public static final String HTTP_CONTENT_TYPE = "application/json; charset=utf-8";
 
-    public OkHttpClient client;
+    OkHttpClient client;
+    TdfHttpClientConf conf;
 
-    //@Inject
+
     public TdfHttpClient(OkHttpClient client) {
         this.client = client;
+        this.conf = new TdfHttpClientConfUser(); // TODO : Remove this ugly default
+    }
+
+    public TdfHttpClientConf getConf() {
+        return conf;
+    }
+
+    public void setConf(TdfHttpClientConf conf) {
+        this.conf = conf;
     }
 
     /**
@@ -145,8 +151,8 @@ public class TdfHttpClient {
         HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
                 .scheme(SCHEME)
                 .host(HOST)
-                .port(PORT)
-                .addPathSegments(PATH)
+                .port(this.conf.getPort())
+                .addPathSegments(this.conf.getPath())
                 .addPathSegments(relativeUrl);
 
         for (Map.Entry<String, String> entry : queryParameters.entrySet()) {

@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.drawable.element.mean.drone;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.drawable.element.IElementDrawable;
 import edu.istic.tdf.dfclient.observer.element.mean.drone.DroneObs;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
@@ -16,7 +17,8 @@ public class DroneDrawable extends DroneObs implements IElementDrawable {
 
     private final DomainType domainType = DomainType.DRONE;
 
-    public DroneDrawable(PictoFactory pictoFactory){
+    public DroneDrawable(Drone drone, PictoFactory pictoFactory){
+        super(drone);
         this.pictoFactory=pictoFactory;
     }
 

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfUser;
 import edu.istic.tdf.dfclient.http.handler.RestHttpResponseHandler;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
@@ -25,6 +26,7 @@ public class LoginRestService {
     public LoginRestService(TdfHttpClient httpClient, Gson serializer) {
         this.httpClient = httpClient;
         this.serializer = serializer;
+        this.httpClient.setConf(new TdfHttpClientConfUser());
     }
 
     /**

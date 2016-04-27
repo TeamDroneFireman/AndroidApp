@@ -24,6 +24,10 @@ public class PointOfInterestObs implements IPointOfInterestObs {
      */
     private Collection<ICommand> commands;
 
+    public PointOfInterestObs(IPointOfInterest pointOfInterest) {
+        this.pointOfInterest = pointOfInterest;
+    }
+
     @Override
     public void setRole(Role role) {
         pointOfInterest.setRole(role);

@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.drawable.element.pointOfInterest;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.drawable.element.IElementDrawable;
 import edu.istic.tdf.dfclient.observer.element.pointOfInterest.PointOfInterestObs;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
@@ -16,7 +17,8 @@ public class PointOfInterestDrawable extends PointOfInterestObs implements IElem
 
     private DomainType domainType;
 
-    public PointOfInterestDrawable(PictoFactory pictoFactory){
+    public PointOfInterestDrawable(PointOfInterest poi, PictoFactory pictoFactory){
+        super(poi);
         this.pictoFactory=pictoFactory;
     }
 
