@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
@@ -29,8 +30,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
-    public void onInterventionSelect() {
+    public void onInterventionSelect(Intervention intervention) {
         Intent intent = new Intent(this, SitacActivity.class);
+
+        // TODO: 27/04/16 for the moment intervention is null
+        //intent.putExtra("interventionId",intervention.getId());
         this.startActivity(intent);
     }
 
@@ -42,12 +46,19 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
+    public void handleInterventionSelected(Intervention intervention) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, InterventionDetailFragment.newInstance(intervention))
+                .commit();
+    }
+
+    @Override
     public void createIntervention(IIntervention intervention) {
-        // TODO: 26/04/16
         Toast t = Toast.makeText(this, intervention.getName(), Toast.LENGTH_LONG);
         t.getView().setBackgroundColor(Color.RED);
         t.show();
+        // TODO: 27/04/16 push the intervention
 
-        //push intervention
+        // TODO: 27/04/16 reload all sinister when intervention is on the server
     }
 }

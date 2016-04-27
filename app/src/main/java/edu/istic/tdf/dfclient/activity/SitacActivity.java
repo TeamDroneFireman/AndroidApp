@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.activity;
 
+import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
+
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
@@ -32,6 +34,15 @@ import javax.annotation.Resource;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
+import java.util.Observer;
+
+import javax.inject.Inject;
+
+import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import eu.inloop.easygcm.EasyGcm;
@@ -56,6 +67,9 @@ public class SitacActivity extends BaseActivity implements
 
     private android.support.v4.app.Fragment currentFragment;
 
+    @Inject
+    InterventionDao interventionDao;
+
     private Intervention intervention;
 
     private ArrayList<Observer> observers = new ArrayList<>();
@@ -73,10 +87,29 @@ public class SitacActivity extends BaseActivity implements
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
 
-        sitacFragment = SitacFragment.newInstance();
-        toolbarFragment = ToolbarFragment.newInstance();
-        contextualDrawerFragment = ContextualDrawerFragment.newInstance();
-        meansTableFragment = MeansTableFragment.newInstance();
+        /*interventionDao.find("1", new IDaoSelectReturnHandler<Intervention>() {
+            @Override
+            public void onRepositoryResult(Intervention r) {}
+
+            @Override
+            public void onRestResult(Intervention r) {
+                intervention = r;
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.e("MAXIME", "REPO FAILURE");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.e("MAXIME", "REST FAILURE");
+            }
+        });*/
+
+        SitacFragment sitacFragment = SitacFragment.newInstance();
+        ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();
+        ContextualDrawerFragment contextualDrawerFragment = ContextualDrawerFragment.newInstance();
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);

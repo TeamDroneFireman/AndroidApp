@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.istic.tdf.dfclient.auth.AuthHelper;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.http.TdfHttpClientPort12345;
 import edu.istic.tdf.dfclient.http.TdfHttpClientPort12346;
@@ -34,6 +35,12 @@ public class RestModule {
     @Singleton
     Gson provideSerializer() {
         return RestSerializerBuilder.build();
+    }
+
+    @Provides
+    @Singleton
+    AuthHelper provideAuthHelper() {
+        return new AuthHelper();
     }
 
     @Provides

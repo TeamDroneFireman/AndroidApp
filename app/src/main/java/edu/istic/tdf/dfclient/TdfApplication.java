@@ -9,6 +9,8 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 
 import javax.inject.Inject;
 
+import edu.istic.tdf.dfclient.auth.AuthHelper;
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dagger.component.ApplicationComponent;
 import edu.istic.tdf.dfclient.dagger.component.DaggerApplicationComponent;
 import edu.istic.tdf.dfclient.dagger.module.ActivitiesModule;
@@ -34,6 +36,7 @@ public class TdfApplication extends Application implements GcmListener {
      * Dagger component
      */
     private ApplicationComponent applicationComponent;
+
 
     /**
      * Push handler
@@ -105,5 +108,13 @@ public class TdfApplication extends Application implements GcmListener {
         Log.v(TAG, "### registration id: " + registrationId);
 
         // TODO : Send registration to backend
+    }
+
+    public void storeCredentials(Credentials credentials) {
+        AuthHelper.storeCredentials(credentials);
+    }
+
+    public Credentials loadCredentials() {
+        return AuthHelper.loadCredentials();
     }
 }
