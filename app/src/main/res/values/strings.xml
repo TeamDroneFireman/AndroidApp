@@ -26,4 +26,12 @@
     <string name="action_switch_to_means_table">Tableau des moyens</string>
     <string name="action_switch_to_drones_map">Carte des drones</string>
 
+    <!-- Mean Table-->
+    <string name="mean_id">ID</string>
+    <string name="column_1">demandé à</string>
+    <string name="column_2">arrivé à</string>
+    <string name="column_3">engagé à</string>
+    <string name="column_4">liberé à</string>
+
+
 </resources>

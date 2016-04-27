@@ -7,27 +7,47 @@
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:stretchColumns="1"
-        android:background="@android:color/background_dark">
+        android:stretchColumns="*"
+        android:baselineAligned="false"
+        android:shrinkColumns="*"
+        android:theme="@style/Base.Theme.AppCompat"
+        android:id="@+id/meanTab">
+
+        <TableRow android:gravity="center_vertical">
+            <TextView
+                android:text="@string/mean_id"
+                android:padding="3dip"
+                android:gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/column_1"
+                android:id="@+id/textView4"
+                android:gravity="center_horizontal" />
 
         <TableRow>
             <TextView
-                android:text="@string/login_username_text"
-                android:padding="3dip" />
-            <TextView
-                android:text="@string/login_username_text"
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/column_2"
+                android:id="@+id/textView"
+                android:gravity="center_horizontal" />
 
-        <TableRow>
             <TextView
-                android:text="@string/login_username_text"
-                android:padding="3dip" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/column_3"
+                android:id="@+id/textView2"
+                android:gravity="center_horizontal" />
+
             <TextView
-                android:text="@string/login_username_text"
-                android:gravity="right"
-                android:padding="3dip" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/column_4"
+                android:id="@+id/textView3"
+                android:gravity="center_horizontal" />
+
         </TableRow>
     </TableLayout>
 

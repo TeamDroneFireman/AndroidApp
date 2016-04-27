@@ -234,7 +234,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private IMean compute(String mean) {
         IMean m = new InterventionMean();
-        m.setState(MeanState.DEMANDED);
+        m.setState(MeanState.ASKED);
         m.setRole(Role.DEFAULT);
 
         return m;
