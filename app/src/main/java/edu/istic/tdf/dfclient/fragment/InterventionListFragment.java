@@ -166,6 +166,7 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
+        // TODO: 27/04/16 bouchon à enlever
         Intervention interventionBouchon = new Intervention();
         interventionBouchon.setName("Bouchon");
         interventionBouchon.setCreationDate(new Date());
@@ -174,6 +175,8 @@ public class InterventionListFragment extends Fragment {
         interventions.add(interventionBouchon.getName());
 
         nameInterventionMap.put(interventionBouchon.getName(),interventionBouchon);
+
+        interventionsAdapter.notifyDataSetChanged();
     }
 
     private void addSortedInterventions(){
