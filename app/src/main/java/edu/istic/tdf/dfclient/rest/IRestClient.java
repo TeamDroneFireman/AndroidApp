@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.rest;
 
 import java.util.ArrayList;
 
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 
@@ -15,7 +16,7 @@ public interface IRestClient<E extends Entity> {
      * Gets all entities from Rest service
      * @param callback A list of entities wrapped on a callback
      */
-    void findAll(final IRestReturnHandler<ArrayList<E>> callback);
+    void findAll(DaoSelectionParameters selectionParameters, final IRestReturnHandler<ArrayList<E>> callback);
 
     /**
      * Gets one entity from Rest service

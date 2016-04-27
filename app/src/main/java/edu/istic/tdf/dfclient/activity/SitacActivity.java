@@ -46,8 +46,6 @@ public class SitacActivity extends BaseActivity implements
     @Inject
     InterventionDao interventionDao;
 
-    private InterventionObs intervention;
-
     private ArrayList<Observer> observers = new ArrayList<>();
 
     @Override
@@ -63,55 +61,6 @@ public class SitacActivity extends BaseActivity implements
 
         String registrationPush = EasyGcm.getRegistrationId(this);
         Log.i("MAXIME", "Registration push : " + registrationPush);
-
-        Intervention inter = Intervention.builder()
-                .location(Location.builder()
-                                .city("SAINT-GREGOIRE")
-                                .postalCode("35760")
-                                .street("Rue de l'étang du diable")
-                                .geopoint(new GeoPoint(3.1234, 2.543, 3.1))
-                                .build()
-                )
-                .creationDate(new Date())
-                .name("Toto")
-                .build();
-        interventionDao.persist(inter, new IDaoWriteReturnHandler() {
-            @Override
-            public void onSuccess() {
-                Log.i("MAXIME", "IT WORKED");
-            }
-
-            @Override
-            public void onRepositoryFailure(Throwable e) {
-                Log.i("MAXIME", "IT DID NOT WORKED");
-
-            }
-
-            @Override
-            public void onRestFailure(Throwable e) {
-                Log.i("MAXIME", "IT DID NOT WORKED");
-            }
-        });
-
-        interventionDao.find("57207136b87e690100d7718f", new IDaoSelectReturnHandler<Intervention>() {
-            @Override
-            public void onRepositoryResult(Intervention r) {}
-
-            @Override
-            public void onRestResult(Intervention r) {
-                intervention = new InterventionObs(r);
-            }
-
-            @Override
-            public void onRepositoryFailure(Throwable e) {
-                Log.e("MAXIME", "REPO FAILURE");
-            }
-
-            @Override
-            public void onRestFailure(Throwable e) {
-                Log.e("MAXIME", "REST FAILURE");
-            }
-        });
 
         SitacFragment sitacFragment = SitacFragment.newInstance();
         ToolbarFragment toolbarFragment = ToolbarFragment.newInstance();

@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.InterventionMeanDao;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.http.TdfHttpClientPort12345;
 
@@ -25,5 +26,10 @@ public class DaoModule {
     //@Singleton
     InterventionDao provideInterventionDao(TdfHttpClientPort12345 httpClient){
         return new InterventionDao(httpClient);
+    }
+
+    @Provides
+    InterventionMeanDao provideInterventionMeanDao(TdfHttpClientPort12345 httpClient) {
+        return new InterventionMeanDao(httpClient);
     }
 }

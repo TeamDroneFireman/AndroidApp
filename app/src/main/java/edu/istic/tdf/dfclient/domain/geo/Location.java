@@ -17,26 +17,8 @@ import lombok.Setter;
 public class Location {
 
     @Getter @Setter
-    String postalCode;
-
-    @Getter @Setter
-    String city;
-
-    @Getter @Setter
-    String street;
+    String address;
 
     @Getter @Setter
     GeoPoint geopoint;
-
-    public android.location.Address toAndroidAddress(Locale locale){
-        android.location.Address address = new android.location.Address(locale);
-        address.setPostalCode(this.getPostalCode());
-        address.setLocality(this.getCity());
-        address.setAddressLine(0, this.getStreet());
-        address.setLatitude(this.getGeopoint().getLatitude());
-        address.setLongitude(this.getGeopoint().getLongitude());
-
-        return address;
-    }
-
 }

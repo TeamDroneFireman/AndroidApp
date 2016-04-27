@@ -49,7 +49,7 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
         }
 
         // Get data from REST service
-        restClient.findAll(new IRestReturnHandler<ArrayList<E>>() {
+        restClient.findAll(selectionParameters, new IRestReturnHandler<ArrayList<E>>() {
             @Override
             public void onSuccess(ArrayList<E> result) {
                 for(E e : result) {
