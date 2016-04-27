@@ -63,8 +63,8 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void onCreateIntervention() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.list_container, interventionListFragment)
-                .commit();
+        // TODO: 27/04/16 push the intervention
+
+        // TODO: 27/04/16 reload all sinister when intervention is on the server
     }
 }
