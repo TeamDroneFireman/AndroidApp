@@ -215,6 +215,10 @@ public class SitacActivity extends BaseActivity implements
                 intent = new Intent(this, DronesMapActivity.class);
                 this.startActivity(intent);
                 break;
+            case R.id.logout_button:
+                intent = new Intent(this, LoginActivity.class);
+                this.startActivity(intent);
+                break;
             default:
                 break;
         }
