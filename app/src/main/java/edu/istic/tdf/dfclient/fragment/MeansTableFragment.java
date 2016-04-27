@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class MeansTableFragment extends Fragment {
     private TableLayout meanTab;
 
     //Bouchon
-    private List<List<String>> existedMeans;
+    private List<List<String>> existedMeans=new ArrayList<>();
 
     public MeansTableFragment() {
         // Required empty public constructor
@@ -54,16 +55,17 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void loadMeans(List<List<String>> means) {
-/*        for(int i=0;i< means.size();i++){
+       for(int i=0;i< means.size();i++){
             List<String> current=means.get(i);
             TableRow tableRow=new TableRow(meanTab.getContext());
             for(int j=0;j<current.size();j++){
                 TextView textView=new TextView(meanTab.getContext());
-                textView.setText(current.get(i));
+                textView.setText(current.get(j));
                 tableRow.addView(textView);
+                textView.setGravity(Gravity.CENTER_HORIZONTAL);
             }
             meanTab.addView(tableRow);
-        }*/
+        }
 
     }
 
@@ -87,7 +89,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     public void getExistedMeans() {
-       /* List<String> element=new ArrayList<>();
+        List<String> element=new ArrayList<>();
         element.add("SAP1");
         element.add("11:15");
         element.add("12:00");
@@ -102,7 +104,7 @@ public class MeansTableFragment extends Fragment {
         element1.add("");
 
         existedMeans.add(element);
-        existedMeans.add(element1);*/
+        existedMeans.add(element1);
     }
 
     public interface OnFragmentInteractionListener {
