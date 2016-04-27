@@ -41,4 +41,16 @@ public class LoginRestService {
 
         httpClient.post(LOGIN_URI, body, handler);
     }
+
+    /*
+    TODO : add class logout, add method to buttons in menus
+    public void logout(String token, IRestReturnHandler<LogoutResponse> callback) {
+        RestHttpResponseHandler<LogoutResponse> handler =
+                new RestHttpResponseHandler<>(callback, LogoutResponse.class);
+        LogoutRequest request = new LogoutRequest(token);
+        String body = serializer.toJson(request);
+
+        httpClient.post(LOGOUT_URI, body, handler);
+    }
+    */
 }
