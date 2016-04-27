@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -74,18 +75,18 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void initMap(){
-/*
+
         for(IElement element : mListener.getInterventionElements()){
             markersList.put(createMarker(element), element);
         }
-*/
+
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
                 IElement element = markersList.get(marker);
-                Toast.makeText(getContext(), element.getName(), Toast.LENGTH_SHORT).show();
-                mListener.handleElementAdded();
+                //Toast.makeText(getContext(), element.getName(), Toast.LENGTH_SHORT).show();
+                mListener.setSelectedElement(element);
                 return false;
             }
 
@@ -112,7 +113,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                                             .setColor(Role.getRandomColor())
                                             .toBitmap()
                             )));
-                    mListener.handleElementAdded();
+                    IElement element = mListener.handleElementAdded(selectedTool.getRole());
+                    markersList.put(marker, element);
 
                 } else {
                     mListener.handleCancelSelection();
@@ -189,7 +191,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         public Collection<IElement> getInterventionElements();
 
         public Tool getSelectedTool();
-        public void handleElementAdded();
+
+        public void setSelectedElement(IElement element);
+        public IElement handleElementAdded(Role role);
         public void handleCancelSelection();
 
     }
