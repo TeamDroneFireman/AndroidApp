@@ -43,6 +43,7 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
@@ -229,20 +230,23 @@ public class InterventionCreateFormFragment extends Fragment {
             intervention.addElement(compute(mean));
         }*/
 
-        // TODO: 27/04/16 address and geopoint
+        // address and geopoint inside location
         Location location = new Location();
+        location.setAddress(address.getText().toString());
+        GeoPoint geoPoint = new GeoPoint();
+        geoPoint.setLatitude(Double.valueOf(lat.getText().toString()));
+        geoPoint.setLongitude(Double.valueOf(lng.getText().toString()));
         intervention.setLocation(location);
 
         //date creation
         Date now = new Date();
         intervention.setCreationDate(now);
-        String strNow = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss.SSS", Locale.FRANCE).format(now);
+        String strNow = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(now);
 
         String str_sinister_code = sinister_code.getSelectedItem().toString();
 
         // TODO: 27/04/16 intervention code
         //intervention code
-
         switch (str_sinister_code) {
             case "SAP":
                 intervention.setSinisterCode(SinisterCode.SAP);

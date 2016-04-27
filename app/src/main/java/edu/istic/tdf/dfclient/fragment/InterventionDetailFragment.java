@@ -76,14 +76,16 @@ public class InterventionDetailFragment extends Fragment {
         });
         
         if(currentIntervention != null) {
+
+            // name
             interventionName.setText(currentIntervention.getName());
 
-            //// TODO: 27/04/16 address
-            //interventionAddress.setText(currentIntervention.getLocation().get);
-            interventionAddress.setText("");
+            // address
+            interventionAddress.setText(currentIntervention.getLocation().getAddress());
 
-            Date now = currentIntervention.getCreationDate();
-            String strDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.FRANCE).format(now);
+            // date creation
+            Date date = currentIntervention.getCreationDate();
+            String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
             interventionDate.setText(strDate);
         }
 
