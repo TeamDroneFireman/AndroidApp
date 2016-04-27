@@ -1,7 +1,5 @@
 package edu.istic.tdf.dfclient.domain.intervention;
 
-import android.location.Address;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -60,7 +58,7 @@ public interface IIntervention extends IEntity {
 
     /**
      *
-     * @param address of the intervention
+     * @param location of the intervention
      */
     public void setLocation(Location location);
 
@@ -105,4 +103,17 @@ public interface IIntervention extends IEntity {
      * @param archived
      */
     public void setArchived(boolean archived);
+
+    /**
+     *
+     * @return
+     */
+    public SinisterCode getSinisterCode();
+
+    /**
+     *
+     * @param sinisterCode
+     */
+    public void setSinisterCode(SinisterCode sinisterCode);
+
 }

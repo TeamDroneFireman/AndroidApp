@@ -1,14 +1,11 @@
 package edu.istic.tdf.dfclient.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
-import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
@@ -18,6 +15,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Inject
     InterventionListFragment interventionListFragment;
+
+    @Inject
+    InterventionCreateFormFragment interventionCreateFormFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Override
     public void handleInterventionCreation() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, InterventionCreateFormFragment.newInstance())
+                .replace(R.id.detail_container, interventionCreateFormFragment)
                 .commit();
     }
 
@@ -62,10 +62,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
-    public void createIntervention(IIntervention intervention) {
-        Toast t = Toast.makeText(this, intervention.getName(), Toast.LENGTH_LONG);
-        t.getView().setBackgroundColor(Color.RED);
-        t.show();
+    public void onCreateIntervention() {
         // TODO: 27/04/16 push the intervention
 
         // TODO: 27/04/16 reload all sinister when intervention is on the server

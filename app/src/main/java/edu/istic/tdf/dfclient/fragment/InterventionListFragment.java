@@ -29,7 +29,9 @@ import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
 
 public class InterventionListFragment extends Fragment {
 
@@ -97,7 +99,7 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
-                interventionsList.setAdapter(interventionsAdapter);
+        interventionsList.setAdapter(interventionsAdapter);
 
         loadInterventions();
 
@@ -163,6 +165,18 @@ public class InterventionListFragment extends Fragment {
                 Log.e("", "REST FAILURE");
             }
         });
+
+        // TODO: 27/04/16 bouchon à enlever
+        Intervention interventionBouchon = new Intervention();
+        interventionBouchon.setName("Bouchon");
+        interventionBouchon.setCreationDate(new Date());
+        interventionBouchon.setSinisterCode(SinisterCode.FDF);
+        interventionBouchon.setLocation(new Location());
+        interventions.add(interventionBouchon.getName());
+
+        nameInterventionMap.put(interventionBouchon.getName(),interventionBouchon);
+
+        interventionsAdapter.notifyDataSetChanged();
     }
 
     private void addSortedInterventions(){

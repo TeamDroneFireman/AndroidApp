@@ -1,7 +1,5 @@
 package edu.istic.tdf.dfclient.observer.intervention;
 
-import android.location.Address;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -9,6 +7,7 @@ import java.util.Iterator;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
+import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
 
 /**
  * Created by btessiau on 22/04/16.
@@ -16,8 +15,6 @@ import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 public class InterventionObs implements IInterventionObs {
 
     private IIntervention intervention;
-
-
 
     public InterventionObs(IIntervention intervention) {
         this.intervention = intervention;
@@ -102,6 +99,16 @@ public class InterventionObs implements IInterventionObs {
     @Override
     public void setArchived(boolean archived) {
         this.intervention.setArchived(archived);
+    }
+
+    @Override
+    public SinisterCode getSinisterCode() {
+        return this.intervention.getSinisterCode();
+    }
+
+    @Override
+    public void setSinisterCode(SinisterCode sinisterCode) {
+        this.intervention.setSinisterCode(sinisterCode);
     }
 
     @Override

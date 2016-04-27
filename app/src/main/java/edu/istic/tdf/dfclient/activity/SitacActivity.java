@@ -111,6 +111,9 @@ public class SitacActivity extends BaseActivity implements
 
         currentFragment = sitacFragment;
 
+        //add
+        meansTableFragment=(MeansTableFragment.newInstance());
+
     }
 
     @Override
@@ -192,6 +195,7 @@ public class SitacActivity extends BaseActivity implements
             case R.id.switch_to_means_table:
                 intent = new Intent(this, MeansTableActivity.class);
                 this.startActivity(intent);
+                //switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:

@@ -27,20 +27,25 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
-import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
 
 /**
  * Created by btessiau on 25/04/16.
@@ -72,6 +77,8 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    InterventionDao interventionDao;
+
     // for listView sinister_code
     private ArrayList<String> sinisters =new ArrayList<String>();
     private ArrayAdapter<String> sinistersAdapter;
@@ -100,8 +107,9 @@ public class InterventionCreateFormFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static InterventionCreateFormFragment newInstance() {
+    public static InterventionCreateFormFragment newInstance(InterventionDao interventionDao) {
         InterventionCreateFormFragment fragment = new InterventionCreateFormFragment();
+        fragment.interventionDao = interventionDao;
         return fragment;
     }
 
@@ -122,8 +130,7 @@ public class InterventionCreateFormFragment extends Fragment {
             public void onClick(View v) {
                 if (IsValideForm())
                 {
-                    IIntervention intervention = computeIntervention();
-                    mListener.createIntervention(intervention);
+                    computeIntervention();
                 }
             }
         });
@@ -209,27 +216,69 @@ public class InterventionCreateFormFragment extends Fragment {
          * Called iff the form is complete
          *
          */
-        void createIntervention(IIntervention intervention);
+        void onCreateIntervention();
 
     }
 
-    private IIntervention computeIntervention() {
+    private void computeIntervention() {
+        Intervention intervention = new Intervention();
+
         // TODO: 26/04/16 when model ok
-        IIntervention intervention = new Intervention();
 
-        //intervention.setAddress(address.getText().toString());
-
-        for(String mean:means) {
+        /*for(String mean:means) {
             intervention.addElement(compute(mean));
-        }
+        }*/
+
+        // TODO: 27/04/16 address and geopoint
+        Location location = new Location();
+        intervention.setLocation(location);
+
+        //date creation
+        Date now = new Date();
+        intervention.setCreationDate(now);
+        String strNow = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss.SSS", Locale.FRANCE).format(now);
 
         String str_sinister_code = sinister_code.getSelectedItem().toString();
 
-        intervention.setName(str_sinister_code + "Nom à compléter");
-        intervention.setCreationDate(new Date());
+        // TODO: 27/04/16 intervention code
+        //intervention code
+
+        switch (str_sinister_code) {
+            case "SAP":
+                intervention.setSinisterCode(SinisterCode.SAP);
+                break;
+            case "INC":
+                intervention.setSinisterCode(SinisterCode.INC);
+                break;
+        }
+        
+        //name
+        intervention.setName(str_sinister_code + "-" + strNow);
+
+        //archived
         intervention.setArchived(false);
 
-        return intervention;
+        interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+            @Override
+            public void onSuccess() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.onCreateIntervention();
+                    }
+                });
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.e("", "REPO FAILURE");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.e("", "REST FAILURE");
+            }
+        });
     }
 
     private IMean compute(String mean) {
@@ -278,7 +327,7 @@ public class InterventionCreateFormFragment extends Fragment {
         try
         {
             Double lng = Double.parseDouble(this.lng.getText().toString());
-            if(lng > 90 || lng < -90)
+            if(lng > 180 || lng < -180)
             {
                 showErrorMsg("Longitude non valide");
 
@@ -315,8 +364,7 @@ public class InterventionCreateFormFragment extends Fragment {
         dataLongOperationAsynchTask.execute(this.address.getText().toString());
     }
 
-    private void setAddLatLng(String add, Double lat, Double lng)
-    {
+    private void setAddLatLng(String add, Double lat, Double lng) {
         this.lat.setText(String.valueOf(lat));
         this.lng.setText(String.valueOf(lng));
         this.address.setText(add);
@@ -385,7 +433,6 @@ public class InterventionCreateFormFragment extends Fragment {
         }
     }
 
-
     private String getLatLongByURL(String requestURL) {
         URL url;
         String response = "";
@@ -423,4 +470,5 @@ public class InterventionCreateFormFragment extends Fragment {
         t.getView().setBackgroundColor(Color.RED);
         t.show();
     }
+
 }

@@ -13,9 +13,16 @@
         android:theme="@style/Base.Theme.AppCompat"
         android:id="@+id/meanTab">
 
-        <TextView
+        <TableRow
                 android:text="@string/mean_id"
                 android:padding="3dip"
+                android:gravity="center_horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mean_id"
+                android:id="@+id/textView5"
                 android:gravity="center_horizontal" />
 
             <TextView
@@ -25,29 +32,30 @@
                 android:id="@+id/textView4"
                 android:gravity="center_horizontal" />
 
-        <TableRow>
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/column_2"
-                android:id="@+id/textView"
-                android:gravity="center_horizontal" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/column_2"
+                    android:id="@+id/textView"
+                    android:gravity="center_horizontal" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/column_3"
-                android:id="@+id/textView2"
-                android:gravity="center_horizontal" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/column_3"
+                    android:id="@+id/textView2"
+                    android:gravity="center_horizontal" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/column_4"
-                android:id="@+id/textView3"
-                android:gravity="center_horizontal" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/column_4"
+                    android:id="@+id/textView3"
+                    android:gravity="center_horizontal" />
 
-        </TableRow>
+
+
+    </TableRow>
     </TableLayout>
 
 </FrameLayout>

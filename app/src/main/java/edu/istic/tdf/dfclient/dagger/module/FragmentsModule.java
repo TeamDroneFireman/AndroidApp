@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.dagger.module;
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
@@ -23,5 +24,10 @@ public class FragmentsModule {
     @Provides
     InterventionListFragment provideInterventionListFragment(InterventionDao interventionDao) {
         return InterventionListFragment.newInstance(interventionDao);
+    }
+
+    @Provides
+    InterventionCreateFormFragment provideInterventionCreateFormFragment(InterventionDao interventionDao) {
+        return InterventionCreateFormFragment.newInstance(interventionDao);
     }
 }

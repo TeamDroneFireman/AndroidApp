@@ -141,4 +141,14 @@ public class Intervention extends Entity implements IIntervention {
     public void setArchived(boolean archived) {
         this.archived = archived;
     }
+
+    @Override
+    public SinisterCode getSinisterCode() {
+        return sinisterCode;
+    }
+
+    @Override
+    public void setSinisterCode(SinisterCode sinisterCode) {
+        this.sinisterCode = sinisterCode;
+    }
 }
