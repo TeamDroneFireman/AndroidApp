@@ -183,16 +183,18 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Collection<IElement> getInterventionElements() {
+        Collection<IElement> liste = new ArrayList<>();
+        /*
         IElement element = new DroneObs();
         element.setForm(PictoFactory.ElementForm.MEAN_COLUMN);
-        element.setRole(Role.PEOPLE);
+        //element.setRole(Role.COMMAND);
+        //element.setRole(Role.FIRE);
         element.setName("DRONE");
         android.location.Location location =  new android.location.Location("");
         location.setLongitude(12.2);
         location.setLatitude(12.2);
         element.setLocation(location);
-        Collection<IElement> liste = new ArrayList<>();
-        liste.add(element);
+        liste.add(element);*/
         return liste;
     }
 
@@ -202,9 +204,14 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void handleElementAdded() {
-        this.selectedTool = null;
+    public void setSelectedElement(IElement element) {
         showContextualDrawer();
+        contextualDrawerFragment.setSelectedElement(element);
+    }
+
+    @Override
+    public IElement handleElementAdded(Role role) {
+        return null;
     }
 
     @Override
@@ -230,16 +237,21 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
+            
             // action with ID action_refresh was selected
             case R.id.switch_to_means_table:
-                switchTo(meansTableFragment);
+                intent = new Intent(this, MeansTableActivity.class);
+                this.startActivity(intent);
                 break;
+
             case R.id.switch_to_sitac:
                 switchTo(sitacFragment);
                 break;
+
             case R.id.switch_to_drones_map:
-                Intent intent = new Intent(this, DronesMapActivity.class);
+                intent = new Intent(this, DronesMapActivity.class);
                 this.startActivity(intent);
                 break;
             default:
