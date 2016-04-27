@@ -173,11 +173,6 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public Intervention getIntervention() {
-        return new Intervention();
-    }
-
-    @Override
     public LatLng getInterventionLatLng() {
         return null;
     }
@@ -230,7 +225,8 @@ public class SitacActivity extends BaseActivity implements
                 switchTo(sitacFragment);
                 break;
             case R.id.switch_to_drones_map:
-                switchTo(sitacFragment);
+                Intent intent = new Intent(this, DronesMapActivity.class);
+                this.startActivity(intent);
                 break;
             default:
                 break;
