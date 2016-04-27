@@ -6,6 +6,7 @@ package edu.istic.tdf.dfclient.domain.element.mean;
 public enum MeanState {
 
     ASKED,
+    VALIDATED,
     ARRIVED,
     ENGAGED,
     RELEASED
