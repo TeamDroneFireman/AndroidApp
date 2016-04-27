@@ -8,7 +8,7 @@ import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestClient;
 
 
-public class PointOfInterestRestClient extends RestClient<PointOfInterest> implements IRestClient<PointOfInterest> {
+public class PointOfInterestRestClient extends ElementRestClient<PointOfInterest> implements IRestClient<PointOfInterest> {
 
     public PointOfInterestRestClient(TdfHttpClient httpClient) {
         super(PointOfInterest.class, httpClient);

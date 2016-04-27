@@ -9,7 +9,7 @@ import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestClient;
 
 
-public class InterventionMeanRestClient extends RestClient<InterventionMean> implements IRestClient<InterventionMean> {
+public class InterventionMeanRestClient extends ElementRestClient<InterventionMean> implements IRestClient<InterventionMean> {
 
     public InterventionMeanRestClient(TdfHttpClient httpClient) {
         super(InterventionMean.class, httpClient);

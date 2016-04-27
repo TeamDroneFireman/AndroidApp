@@ -19,9 +19,9 @@ import edu.istic.tdf.dfclient.rest.IRestClient;
  */
 public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends IRestClient<E>> implements IDao<E,R,C> {
 
-    R repository;
+    protected R repository;
 
-    C restClient;
+    protected C restClient;
 
     public Dao(R repository, C restClient) {
         this.repository = repository;

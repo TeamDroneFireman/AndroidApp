@@ -92,7 +92,7 @@ public class SitacActivity extends BaseActivity implements
         getApplicationComponent().inject(this);
 
         // Load data
-        DataLoader dataLoader = new DataLoader("57207136b87e690100d7718f"); // TODO : Set the real intervention id
+        DataLoader dataLoader = new DataLoader("5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
