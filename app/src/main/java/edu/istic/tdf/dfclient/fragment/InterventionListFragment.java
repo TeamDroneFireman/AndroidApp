@@ -51,7 +51,7 @@ public class InterventionListFragment extends Fragment {
     InterventionDao interventionDao;
 
     // for listView intervention
-    private ArrayList<String> interventions = new ArrayList<String>();
+    private ArrayList<String> interventions = new ArrayList<>();
     private ArrayAdapter<String> interventionsAdapter;
 
     // the collection of all object interventions
@@ -92,7 +92,7 @@ public class InterventionListFragment extends Fragment {
         });
 
         //interventionsList
-        interventionsAdapter = new ArrayAdapter<String>(getActivity(),
+        interventionsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1,
                 interventions);
 
@@ -132,7 +132,7 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
-        // TODO : Runnable that selects the first item when loaded ?
+        // TODO : Runnable that selects the first item when loaded ?  -> it's done biatch
         loadInterventions(null);
 
         return view;
@@ -183,9 +183,6 @@ public class InterventionListFragment extends Fragment {
         interventionBouchon.setLocation(location);
         interventionArrayList.add(interventionBouchon);
         interventions.add(interventionBouchon.getName() + "\n" + interventionBouchon.getLocation().getAddress());
-        // TODO: 27/04/16 2 bouchons a remove
-        interventionArrayList.add(interventionBouchon);
-        interventions.add(interventionBouchon.getName() + "\n" + interventionBouchon.getLocation().getAddress());
 
         interventionsAdapter.notifyDataSetChanged();
 
@@ -221,12 +218,6 @@ public class InterventionListFragment extends Fragment {
                 Log.e("", "REST FAILURE");
             }
         });
-
-        // TODO: 27/04/16 retirer en même temps que le bouchon
-        if(interventionsList.getCount() > 0)
-        {
-            selectFirstItem();
-        }
     }
 
     private void addSortedInterventions(){
@@ -282,7 +273,6 @@ public class InterventionListFragment extends Fragment {
         {
             selectFirstItem();
         }
-
     }
 
     private void selectFirstItem(){
