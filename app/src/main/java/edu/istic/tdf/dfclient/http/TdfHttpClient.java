@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public abstract class TdfHttpClient implements IHttpClient {
+public class TdfHttpClient {
 
     private final static String SCHEME = "http";
     private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
@@ -37,9 +37,9 @@ public abstract class TdfHttpClient implements IHttpClient {
     /**
      * {@inheritDoc}
      */
-    public void get(String url, HashMap<String, String> headers, Callback handler) {
+    public void get(String url, HashMap<String, String> queryParameters, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
-                .url(getAbsoluteUrl(url))
+                .url(getAbsoluteUrl(url, queryParameters))
                 .get();
 
         TdfHttpRequestBuilder tdfRequestBuilder = new TdfHttpRequestBuilder(requestBuilder);
@@ -56,15 +56,15 @@ public abstract class TdfHttpClient implements IHttpClient {
      * {@inheritDoc}
      */
     public void get(String url, Callback handler) {
-        this.get(url, new HashMap<String, String>(), handler);
+        this.get(url, new HashMap<String, String>(), new HashMap<String, String>(), handler);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void post(String url, String body, HashMap<String, String> headers, Callback handler) {
+    public void post(String url, HashMap<String, String> queryParameters, String body, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
-                .url(getAbsoluteUrl(url))
+                .url(getAbsoluteUrl(url, queryParameters))
                 .post(RequestBody.create(MediaType.parse(HTTP_CONTENT_TYPE), body));
 
         TdfHttpRequestBuilder tdfRequestBuilder = new TdfHttpRequestBuilder(requestBuilder);
@@ -81,15 +81,15 @@ public abstract class TdfHttpClient implements IHttpClient {
      * {@inheritDoc}
      */
     public void post(String url, String body, Callback handler) {
-        this.post(url, body, new HashMap<String, String>(), handler);
+        this.post(url, new HashMap<String, String>(), body, new HashMap<String, String>(), handler);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void patch(String url, String body, HashMap<String, String> headers, Callback handler) {
+    public void patch(String url, HashMap<String, String> queryParameters, String body, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
-                .url(getAbsoluteUrl(url))
+                .url(getAbsoluteUrl(url, queryParameters))
                 .patch(RequestBody.create(MediaType.parse(HTTP_CONTENT_TYPE), body));
 
         TdfHttpRequestBuilder tdfRequestBuilder = new TdfHttpRequestBuilder(requestBuilder);
@@ -106,15 +106,15 @@ public abstract class TdfHttpClient implements IHttpClient {
      * {@inheritDoc}
      */
     public void patch(String url, String body, Callback handler) {
-        this.patch(url, body, new HashMap<String, String>(), handler);
+        this.patch(url, new HashMap<String, String>(), body, new HashMap<String, String>(), handler);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void delete(String url, HashMap<String, String> headers, Callback handler) {
+    public void delete(String url, HashMap<String, String> queryParameters, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
-                .url(getAbsoluteUrl(url))
+                .url(getAbsoluteUrl(url, queryParameters))
                 .get();
 
         TdfHttpRequestBuilder tdfRequestBuilder = new TdfHttpRequestBuilder(requestBuilder);
@@ -131,7 +131,7 @@ public abstract class TdfHttpClient implements IHttpClient {
      * {@inheritDoc}
      */
     public void delete(String url, Callback handler) {
-        this.delete(url, new HashMap<String, String>(), handler);
+        this.delete(url, new HashMap<String, String>(), new HashMap<String, String>(), handler);
     }
 
     /**

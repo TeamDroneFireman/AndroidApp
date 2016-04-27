@@ -3,10 +3,12 @@ package edu.istic.tdf.dfclient.rest;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.auth.Credentials;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
@@ -46,13 +48,16 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
      * {@inheritDoc}
      */
     @Override
-    public void findAll(final IRestReturnHandler<ArrayList<E>> callback) {
+    public void findAll(DaoSelectionParameters selectionParameters, final IRestReturnHandler<ArrayList<E>> callback) {
+        // Query filters
+        HashMap<String, String> queryParameters = selectionParameters.getFilters();
+
         // Response handler
         RestHttpResponseHandler<ArrayList<E>> handler =
                 new RestHttpResponseHandler<>(callback, new ArrayListParameterizedType(entityClass));
 
         // Make request
-        httpClient.get(getResourceUri(""), handler);
+        httpClient.get(getResourceUri(""), queryParameters, new HashMap<String,String>(), handler);
     }
 
     /**
