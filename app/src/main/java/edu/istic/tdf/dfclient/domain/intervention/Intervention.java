@@ -1,6 +1,5 @@
 package edu.istic.tdf.dfclient.domain.intervention;
 
-import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Table;
 
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ public class Intervention extends Entity implements IIntervention {
     /**
      * The corresponding sinister code
      */
-    @SerializedName("interventionCode")
     private SinisterCode sinisterCode;
 
     /**
