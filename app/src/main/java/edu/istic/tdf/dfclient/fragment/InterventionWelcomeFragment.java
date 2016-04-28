@@ -44,7 +44,7 @@ public class InterventionWelcomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // View
-        View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_intervention_welcome, container, false);
         ButterKnife.bind(this, view);
 
         return view;

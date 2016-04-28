@@ -89,13 +89,7 @@ public class InterventionListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.setSelected(true);
-                //if (!view.equals(currentSelectedView)) {
-                    //if (currentSelectedView != null) {
-                        //reset color of last selected item
-                        //unhighlight(currentSelectedView, parent);
-                    //}
-
-                    selectItem(position);
+                selectItem(position);
                 }
             //}
         });
@@ -265,7 +259,6 @@ public class InterventionListFragment extends Fragment {
     }
 
     private void selectItem(int i){
-        // TODO: 28/04/16 bug, when call on create, doesn't select the first intervention 
         fragmentInteractionListener.handleInterventionSelected(interventionArrayList.get(i));
     }
 }
