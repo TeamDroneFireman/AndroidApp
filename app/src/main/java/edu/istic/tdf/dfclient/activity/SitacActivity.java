@@ -96,7 +96,8 @@ public class SitacActivity extends BaseActivity implements
         getApplicationComponent().inject(this);
 
         // Load data
-        DataLoader dataLoader = new DataLoader("5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        String interventionId = (String) getIntent().getExtras().get("interventionId");
+        DataLoader dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
@@ -152,12 +153,14 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Double getInterventionLatitude() {
-        return 48.1151489;
+        return this.intervention.getLocation().getGeopoint().getLatitude();
+        //return 48.1151489;
     }
 
     @Override
     public Double getInterventionLongitude() {
-        return -1.6380783;
+        return this.intervention.getLocation().getGeopoint().getLongitude();
+        //return -1.6380783;
     }
 
     @Override
@@ -182,7 +185,7 @@ public class SitacActivity extends BaseActivity implements
         drone.setName("azerty");
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
-        //meansTableFragment.updateElement(drone);
+
         this.selectedTool = null;
         contextualDrawerFragment.setSelectedElement(drone);
         showContextualDrawer();
@@ -223,12 +226,22 @@ public class SitacActivity extends BaseActivity implements
 
             // action with ID action_refresh was selected
             case R.id.switch_to_means_table:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .hide(sitacFragment)
+                        .commit();
                 /*intent = new Intent(this, MeansTableActivity.class);
                 this.startActivity(intent);*/
                 switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .show(contextualDrawerFragment)
+                        .show(sitacFragment)
+                        .commit();
                 switchTo(sitacFragment);
                 break;
 
@@ -287,6 +300,7 @@ public class SitacActivity extends BaseActivity implements
     public void updateElement(IElement element) {
         sitacFragment.updateElement(element);
         meansTableFragment.updateElement(element);
+
     }
 
 
@@ -326,6 +340,7 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestFailure(Throwable e) {
+                    Log.e("INTER", " --> DNE");
                     SitacActivity.this.displayNetworkError();
                 }
             });
@@ -353,6 +368,7 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestFailure(Throwable e) {
+                    Log.e("DRONE", " --> DNE");
                     SitacActivity.this.displayNetworkError();
                 }
             });
@@ -380,6 +396,7 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
+                            Log.e("MEANS", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
@@ -405,6 +422,7 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
+                            Log.e("POINT", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });

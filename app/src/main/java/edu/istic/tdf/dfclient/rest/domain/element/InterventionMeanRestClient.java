@@ -19,6 +19,6 @@ public class InterventionMeanRestClient extends ElementRestClient<InterventionMe
 
     @Override
     public String getRestEndpoint() {
-        return "interventionmeans/";
+        return "means/";
     }
 }
