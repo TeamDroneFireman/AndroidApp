@@ -4,13 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
@@ -113,12 +112,15 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showProgress(){
         if(progressOverlay != null){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             AndroidUtils.animateView(progressOverlay, View.VISIBLE, 0.4f, 200);
         }
     }
 
     public void hideProgress() {
         if(progressOverlay != null) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             AndroidUtils.animateView(progressOverlay, View.GONE, 0, 200);
         }
     }
