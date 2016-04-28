@@ -223,12 +223,22 @@ public class SitacActivity extends BaseActivity implements
 
             // action with ID action_refresh was selected
             case R.id.switch_to_means_table:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .hide(sitacFragment)
+                        .commit();
                 /*intent = new Intent(this, MeansTableActivity.class);
                 this.startActivity(intent);*/
                 switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .show(contextualDrawerFragment)
+                        .show(sitacFragment)
+                        .commit();
                 switchTo(sitacFragment);
                 break;
 
