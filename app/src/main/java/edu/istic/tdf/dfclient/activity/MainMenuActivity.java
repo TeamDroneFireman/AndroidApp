@@ -2,6 +2,9 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import javax.inject.Inject;
 
@@ -35,6 +38,28 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
                 .commit();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.logout_button:
+                intent = new Intent(this, LoginActivity.class);
+                this.startActivity(intent);
+                break;
+            default:
+                break;
+        }
+
+        return true;
     }
 
     @Override
