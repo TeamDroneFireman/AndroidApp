@@ -42,12 +42,15 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void onInterventionSelect(Intervention intervention) {
+        Intent intent = new Intent(this, SitacActivity.class);
+        this.startActivity(intent);
+        /*
         if(intervention != null)
         {
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
             this.startActivity(intent);
-        }
+        }*/
     }
 
     @Override

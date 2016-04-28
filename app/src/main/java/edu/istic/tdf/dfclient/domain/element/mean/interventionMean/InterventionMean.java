@@ -29,12 +29,13 @@ public class InterventionMean extends Element implements IInterventionMean {
     private String action;
 
     public InterventionMean() {
-        this.states.put(MeanState.ASKED, new Date());
+        this.states.put(MeanState.ASKED, null);
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
         this.states.put(MeanState.ENGAGED, null);
         this.states.put(MeanState.RELEASED, null);
         this.role=Role.DEFAULT;
+        this.form= PictoFactory.ElementForm.MEAN;
         this.name="";
     }
 
