@@ -85,10 +85,10 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
-        interventionDetailFragment.setCurrentIntervention(intervention);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
+        interventionDetailFragment.setCurrentIntervention(intervention);
 
         // Map
         final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
