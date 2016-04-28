@@ -29,10 +29,8 @@ public class PointOfInterest extends Entity implements IPointOfInterest {
      */
     private Location location;
 
-    private PictoFactory.ElementForm form = PictoFactory.ElementForm.SOURCE;
-
     public PointOfInterest() {
-
+        this.setForm(PictoFactory.ElementForm.SOURCE);
     }
 
     @Override
@@ -67,12 +65,12 @@ public class PointOfInterest extends Entity implements IPointOfInterest {
 
     @Override
     public PictoFactory.ElementForm getForm() {
-        return form;
+        return null;
     }
 
     @Override
     public void setForm(PictoFactory.ElementForm form) {
-        this.form = form;
+
     }
 
     @Override
