@@ -8,9 +8,4 @@ public class TdfHttpClientConfPointOfInterest extends TdfHttpClientConf {
     public int getPort() {
         return 12350;
     }
-
-    @Override
-    public String getPath() {
-        return "";
-    }
 }

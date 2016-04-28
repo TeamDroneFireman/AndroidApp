@@ -25,39 +25,18 @@ import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 public class InterventionDetailFragment extends Fragment {
 
     // UI
-    @Bind(R.id.interventionSelectionButton)
-    Button interventionSelectionBt;
+    @Bind(R.id.interventionSelectionButton) Button selectionBt;
+    @Bind(R.id.interventionArchiveButton) Button archiveBt;
+    @Bind(R.id.intervention_name)TextView interventionName;
+    @Bind(R.id.intervention_address) TextView interventionAddress;
+    @Bind(R.id.intervention_date) TextView interventionDate;
 
-    // UI
-    @Bind(R.id.interventionArchiveButton)
-    Button interventionArchiveBt;
-
-    // UI
-    @Bind(R.id.intervention_name)
-    TextView interventionName;
-
-    // UI
-    @Bind(R.id.intervention_address)
-    TextView interventionAddress;
-
-    // UI
-    @Bind(R.id.intervention_date)
-    TextView interventionDate;
-
-    private OnFragmentInteractionListener mListener;
-
-    private static Intervention currentIntervention;
-
+    // Data
     InterventionDao interventionDao;
+    private static Intervention intervention;
 
-    public InterventionDetailFragment() {
-        // Required empty public constructor
-    }
-
-    public static InterventionDetailFragment newInstance() {
-        InterventionDetailFragment fragment = new InterventionDetailFragment();
-        return fragment;
-    }
+    // Fragments
+    private OnFragmentInteractionListener fragmentInteractionListener;
 
     public static InterventionDetailFragment newInstance(InterventionDao interventionDao) {
         InterventionDetailFragment fragment = new InterventionDetailFragment();
@@ -74,18 +53,19 @@ public class InterventionDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // View
         View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
         ButterKnife.bind(this, view);
 
         // Events
-        interventionSelectionBt.setOnClickListener(new View.OnClickListener() {
+        selectionBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onInterventionSelection(currentIntervention);
+                fragmentInteractionListener.onInterventionSelected(intervention);
             }
         });
 
-        interventionArchiveBt.setOnClickListener(new View.OnClickListener() {
+        archiveBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 archiveCurrentIntervention();
@@ -93,18 +73,7 @@ public class InterventionDetailFragment extends Fragment {
         });
 
         // View binding
-        if(currentIntervention != null) {
-
-            // TODO: 27/04/16 remove name ? and xml
-            // name
-            interventionName.setText(currentIntervention.getName());
-
-            // TODO: 27/04/16 add sinisterCode ? 
-
-            // TODO: 27/04/16 remove address ? and xml
-            // address
-            interventionAddress.setText(currentIntervention.getLocation().getAddress());
-        }
+        displayIntervention();
 
         return view;
     }
@@ -113,7 +82,7 @@ public class InterventionDetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            fragmentInteractionListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -123,23 +92,60 @@ public class InterventionDetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        fragmentInteractionListener = null;
     }
 
     public interface OnFragmentInteractionListener {
-        void onInterventionSelection(Intervention intervention);
-
+        void onInterventionSelected(Intervention intervention);
         void onInterventionArchived();
     }
 
+    public void setIntervention(Intervention intervention){
+        InterventionDetailFragment.intervention = intervention;
+    }
+
+    /**
+     * Gets intervention data to display it in view
+     */
+    public void displayIntervention() {
+        if(intervention != null) {
+
+            // UI
+            interventionName.setText(intervention.getName());
+            interventionAddress.setText(intervention.getLocation().getAddress());
+            Date date = intervention.getCreationDate();
+            // TODO : Get format from String resource
+            String strDate = new SimpleDateFormat(
+                    "yyyy-MM-dd'-'HH:mm:ss"
+                    , Locale.FRANCE)
+                    .format(date);
+            interventionDate.setText(strDate);
+
+            // archived button
+            if(intervention.isArchived()) {
+                archiveBt.setText(R.string.intervention_detail_unarchive);
+            } else {
+                archiveBt.setText(R.string.intervention_detail_archive);
+            }
+
+            // Listeners
+            archiveBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toggleArchiveIntervention();
+                }
+            });
+        }
+    }
+
     private void archiveCurrentIntervention(){
-        if (currentIntervention != null){
-            currentIntervention.setArchived(!currentIntervention.isArchived());
-            interventionDao.persist(currentIntervention, new IDaoWriteReturnHandler() {
+        if (intervention != null){
+            intervention.setArchived(!intervention.isArchived());
+            interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
                 @Override
                 public void onSuccess() {
-                    loadInfos();
-                    mListener.onInterventionArchived();
+                    displayIntervention();
+                    fragmentInteractionListener.onInterventionArchived();
                 }
 
                 @Override
@@ -155,49 +161,34 @@ public class InterventionDetailFragment extends Fragment {
         }
     }
 
-    public void setCurrentIntervention(Intervention intervention){
-        currentIntervention = intervention;
-        loadInfos();
-    }
-
-    // TODO: 28/04/16 from creation then select an item, date bug 
-    // TODO: 28/04/16 on creation the first element as to be selected but it bug 
-    private void loadInfos() {
-
-        if(currentIntervention != null) {
-            Activity activity = getActivity();
-            if(activity != null)
-            {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // TODO: 27/04/16 remove name ? and xml
-                        // name
-                        interventionName.setText(currentIntervention.getName());
-
-                        // TODO: 27/04/16 add sinisterCode ?
-
-                        // TODO: 27/04/16 remove address ? and xml
-                        // address
-                        interventionAddress.setText(currentIntervention.getLocation().getAddress());
-
-                        // date creation
-                        Date date = currentIntervention.getCreationDate();
-                        String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
-                        interventionDate.setText(strDate);
-
-                        // TODO: 27/04/16 add map ?
-
-                        // archived button
-                        if(currentIntervention.isArchived()) {
-                            interventionArchiveBt.setText("Désarchiver");
-                        } else {
-                            interventionArchiveBt.setText(" Archiver ");
+    /**
+     * Archives or unarchives an intervention
+     */
+    private void toggleArchiveIntervention(){
+        if(intervention != null) {
+            intervention.setArchived(!intervention.isArchived());
+            interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess() {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            fragmentInteractionListener.onInterventionArchived();
                         }
-                    }
-                });
-            }
+                    });
+                }
 
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
         }
+
     }
 }

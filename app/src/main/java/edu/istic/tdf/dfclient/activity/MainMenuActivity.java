@@ -21,10 +21,12 @@ import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
+import edu.istic.tdf.dfclient.fragment.InterventionWelcomeFragment;
 
 public class MainMenuActivity extends BaseActivity implements InterventionDetailFragment.OnFragmentInteractionListener,
         InterventionListFragment.OnFragmentInteractionListener,
         InterventionCreateFormFragment.OnFragmentInteractionListener,
+        InterventionWelcomeFragment.OnFragmentInteractionListener,
         OnMapReadyCallback {
 
     // UI
@@ -49,6 +51,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Inject
     InterventionCreateFormFragment interventionCreateFormFragment;
 
+    /**
+     * Intervention welcome fragment, welcomes the user
+     */
+    @Inject
+    InterventionWelcomeFragment interventionWelcomeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +73,8 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
 
+        displayWelcome();
+
         // Map
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.intervention_detail_map);
@@ -72,10 +82,17 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     }
 
-    /**
-     * Called when select button is touched. Goes to the next activity
-     * @param intervention The selected intervention
-     */
+    public void displayWelcome() {
+        // Hide map
+
+        // Unselect from list
+
+        // Display in fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, interventionWelcomeFragment)
+                .commit();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -85,7 +102,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.logout_button:
                 logout();
@@ -97,8 +113,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         return true;
     }
 
+    /**
+     * Called when select button is touched. Goes to the next activity
+     * @param intervention The selected intervention
+     */
     @Override
-    public void onInterventionSelection(Intervention intervention) {
+    public void onInterventionSelected(Intervention intervention) {
         if(intervention != null)
         {
             // Detail fragment
@@ -113,7 +133,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
      */
     @Override
     public void onInterventionArchived() {
-        interventionListFragment.loadInterventions(null);
+        interventionListFragment.loadAndDisplayInterventions(null);
     }
 
     @Override
@@ -128,7 +148,8 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
-        interventionDetailFragment.setCurrentIntervention(intervention);
+        interventionDetailFragment.setIntervention(intervention);
+        interventionDetailFragment.displayIntervention();
 
         // Map
         if(intervention.getLocation() != null && intervention.getLocation().getGeopoint() != null) {
@@ -152,11 +173,16 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void onCreateIntervention() {
-        interventionListFragment.loadInterventions(null);
+        interventionListFragment.loadAndDisplayInterventions(null);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    @Override
+    public void onNewInterventionPressed() {
 
     }
 }
