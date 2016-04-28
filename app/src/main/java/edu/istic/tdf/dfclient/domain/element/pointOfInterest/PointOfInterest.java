@@ -31,7 +31,6 @@ public class PointOfInterest extends Element implements IPointOfInterest {
     private Location location;
 
     public PointOfInterest() {
-        this.setForm(PictoFactory.ElementForm.SOURCE);
     }
 
     @Override
@@ -62,16 +61,6 @@ public class PointOfInterest extends Element implements IPointOfInterest {
     @Override
     public String getName() {
         return this.name;
-    }
-
-    @Override
-    public PictoFactory.ElementForm getForm() {
-        return null;
-    }
-
-    @Override
-    public void setForm(PictoFactory.ElementForm form) {
-
     }
 
     @Override
