@@ -32,13 +32,11 @@ public class Drone extends Element implements IDrone {
     private String action;
 
     public Drone() {
-        /*
         this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
         this.states.put(MeanState.ENGAGED, null);
         this.states.put(MeanState.RELEASED, null);
-        */
         this.role=Role.DEFAULT;
         this.name="";
     }
@@ -71,6 +69,11 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
+    public HashMap<MeanState, Date> getStates() {
+        return null;
+    }
+
+    @Override
     public void setAction(String action) {
         this.action=action;
     }
@@ -95,4 +98,43 @@ public class Drone extends Element implements IDrone {
         return (this.mission != null);
     }
 
+    @Override
+    public void setRole(Role role) {
+
+    }
+
+    @Override
+    public Role getRole() {
+        return null;
+    }
+
+    @Override
+    public void setLocation(Location location) {
+
+    }
+
+    @Override
+    public Location getLocation() {
+        return null;
+    }
+
+    @Override
+    public void setName(String name) {
+
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public PictoFactory.ElementForm getForm() {
+        return null;
+    }
+
+    @Override
+    public void setForm(PictoFactory.ElementForm form) {
+
+    }
 }

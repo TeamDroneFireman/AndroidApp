@@ -1,6 +1,7 @@
 package edu.istic.tdf.dfclient.domain.element.mean;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
@@ -28,6 +29,11 @@ public interface IMean extends IElement {
      */
     public Date getStateDate(MeanState state);
 
+    /**
+     * Get the map of all states and their timestamp
+     * @return
+     */
+    public HashMap<MeanState, Date> getStates();
 
     /**
      * change the current action (defence, move...)
