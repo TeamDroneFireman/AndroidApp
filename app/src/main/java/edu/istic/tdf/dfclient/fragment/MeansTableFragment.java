@@ -147,16 +147,29 @@ public class MeansTableFragment extends Fragment {
         HashMap<MeanState,Date> currentStates=element.getStates();
         TableRow tableRow=new TableRow(meanTab.getContext());
 
+        TextView name=new TextView(meanTab.getContext());
+        name.setText(element.getName());
+        name.setGravity(Gravity.CENTER_HORIZONTAL);
+        tableRow.addView(name);
+
+        tableRow.setBackgroundColor(element.getRole().getColor());
+
+
         Set<MeanState> stateSet=currentStates.keySet();
         Iterator<MeanState> iterator=stateSet.iterator();
 
 
         while(iterator.hasNext()){
-/*            MeanState current=iterator.next();
+            MeanState current=iterator.next();
             TextView textView=new TextView(meanTab.getContext());
-            textView.setText(currentStates.get(current).toString());
+            if(currentStates.get(current)!=null) {
+                textView.setText(currentStates.get(current).toString());
+            }else{
+                textView.setText("");
+            }
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
             tableRow.addView(textView);
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);*/
+
 
         }
 
