@@ -88,7 +88,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="@string/intervention_archive_button"
             android:id="@+id/interventionArchiveButton"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/interventionSelectionButton"
