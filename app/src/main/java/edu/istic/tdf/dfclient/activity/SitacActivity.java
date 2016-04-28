@@ -77,6 +77,7 @@ public class SitacActivity extends BaseActivity implements
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -270,6 +271,9 @@ public class SitacActivity extends BaseActivity implements
                 break;
             case R.id.logout_button:
                 logout();
+                break;
+            case R.id.refresh_datas:
+                dataLoader.loadData();
                 break;
             default:
                 break;
