@@ -66,13 +66,7 @@ public class SitacActivity extends BaseActivity implements
     private MeansTableFragment meansTableFragment;
 
     // Data
-    // TODO : Remove elemnts
-    private List<Element> elements;
-
     private Intervention intervention;
-    private Collection<Drone> drones;
-    private Collection<InterventionMean> means;
-    private Collection<PointOfInterest> pointsOfInterest;
 
     private Element selectedElement;
 
@@ -358,9 +352,15 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestResult(List<Drone> r) {
-                    SitacActivity.this.drones = r;
+                    // Cast to collection of elements
+                    Collection<IElement> colR = new ArrayList<IElement>();
+                    colR.addAll(r);
 
-                    // TODO : What to do when these are loaded ?
+                    // Update Map
+                    SitacActivity.this.sitacFragment.updateElements(colR);
+
+                    // Update Means table
+
                 }
 
                 @Override
@@ -386,8 +386,8 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<InterventionMean> r) {
-                            SitacActivity.this.means = r;
-
+                            // TODO : Update elements
+                                //SitacActivity.this.meansTableFragment.updateElement();
                             // TODO : What to do when these are loaded ?
                         }
 
@@ -414,7 +414,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<PointOfInterest> r) {
-                            SitacActivity.this.pointsOfInterest = r;
                         }
 
                         @Override
