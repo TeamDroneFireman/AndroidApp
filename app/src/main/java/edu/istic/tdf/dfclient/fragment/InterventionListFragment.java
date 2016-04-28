@@ -246,11 +246,17 @@ public class InterventionListFragment extends Fragment {
         Collections.sort(interventionArrayListNotArchived, interventionComparator);
         Collections.sort(interventionArrayListArchived, interventionComparator);
 
+        //put in interventionArrayList ordered interventions
+        interventionArrayList.clear();
+        interventionArrayList.addAll(interventionArrayListNotArchived);
+        interventionArrayList.addAll(interventionArrayListArchived);
+
         //add first interventions not archived
         it = interventionArrayListNotArchived.iterator();
         while(it.hasNext())
         {
             intervention = it.next();
+            // TODO: 28/04/16 better address
             interventions.add(intervention.getName() + "\n" + intervention.getLocation().getAddress());
         }
 
@@ -259,6 +265,7 @@ public class InterventionListFragment extends Fragment {
         while(it.hasNext())
         {
             intervention = it.next();
+            // TODO: 28/04/16 better address
             interventions.add(intervention.getName() + "\n" + intervention.getLocation().getAddress());
         }
 
@@ -299,6 +306,7 @@ public class InterventionListFragment extends Fragment {
     }
 
     private void selectItem(int i, TextView view){
+        // TODO: 28/04/16 bug, when call on create, doesn't select the first intervention 
         mListener.handleInterventionSelected(interventionArrayList.get(i));
         currentSelectedView = view;
 
