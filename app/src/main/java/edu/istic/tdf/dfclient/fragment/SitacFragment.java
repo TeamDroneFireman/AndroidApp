@@ -105,6 +105,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void cancelSelection(){
+
         mListener.handleCancelSelection();
     }
 
@@ -166,6 +167,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 .draggable(true)
                 .icon(BitmapDescriptorFactory.fromBitmap(
                         PictoFactory.createPicto(getContext())
+                                .setLabel(element.getName())
                                 .setDrawable(element.getForm().getDrawable())
                                 .setColor(element.getRole().getColor())
                                 .toBitmap()

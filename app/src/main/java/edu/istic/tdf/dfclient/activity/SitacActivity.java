@@ -176,7 +176,7 @@ public class SitacActivity extends BaseActivity implements
 
         //Todo: Rendre tout ça dynamique ;^)
         IElement drone = new Drone();
-        drone.setRole(Role.FIRE);
+        drone.setRole(Role.DEFAULT);
         drone.setForm(form);
         drone.setId("TEST");
         drone.setName("azerty");
@@ -296,7 +296,7 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void updateElement(IElement element) {
         sitacFragment.updateElement(element);
-        meansTableFragment.updateElement(element);
+        //meansTableFragment.updateElement(element);
 
     }
 
