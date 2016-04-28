@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.AutoScaleTextView;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
@@ -167,7 +168,7 @@ public class PictoFactory {
         imageView.setImageResource(this.drawable);
         imageView.setColorFilter(this.color);
 
-        TextView textView = (TextView) view.findViewById(R.id.num_txt);
+        AutoScaleTextView textView = (AutoScaleTextView) view.findViewById(R.id.icon_text);
         textView.setText(this.label);
         textView.setTextColor(this.color);
 
@@ -268,7 +269,7 @@ public class PictoFactory {
      */
     public void setText(View view,String str){
         ImageView imageView=getImageView(view);
-        TextView numTxt = (TextView) view.findViewById(R.id.num_txt);
+        TextView numTxt = (TextView) view.findViewById(R.id.icon_text);
         numTxt.setText(str);
     }
 

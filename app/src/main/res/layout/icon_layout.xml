@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
-
+    android:layout_width="80dp"
+    android:layout_height="80dp" >
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
     <ImageView
         android:id="@+id/icon_image_view"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/waterpoint_sustainable"
-        android:tint="#ffffff" />
+        android:src="@drawable/mean_planned"
+        android:tint="#ffffff"
+        android:layout_gravity="center" />
 
-    <TextView
-        android:id="@+id/num_txt"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="azerty"
-        android:textColor="#ce8223"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginTop="100dp" />
+        <edu.istic.tdf.dfclient.UI.AutoScaleTextView
+            android:id="@+id/icon_text"
+            android:text="azert"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:textSize="30sp" />
 
+    </FrameLayout>
 </RelativeLayout>
