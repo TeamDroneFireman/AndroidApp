@@ -104,9 +104,6 @@ public class InterventionDetailFragment extends Fragment {
         InterventionDetailFragment.intervention = intervention;
     }
 
-    // TODO: 28/04/16 from creation then select an item, date bug
-    // TODO: 28/04/16 on creation the first element as to be selected but it bug
-
     /**
      * Gets intervention data to display it in view
      */
@@ -117,8 +114,9 @@ public class InterventionDetailFragment extends Fragment {
             interventionName.setText(intervention.getName());
             interventionAddress.setText(intervention.getLocation().getAddress());
             Date date = intervention.getCreationDate();
+            // TODO : Get format from String resource
             String strDate = new SimpleDateFormat(
-                    InterventionDetailFragment.this.getContext().getString(R.string.intervention_detail_dateformat)
+                    "yyyy-MM-dd'-'HH:mm:ss"
                     , Locale.FRANCE)
                     .format(date);
             interventionDate.setText(strDate);
@@ -162,31 +160,6 @@ public class InterventionDetailFragment extends Fragment {
             });
         }
     }
-
-
-    /*protected void displayIntervention(){
-        if(intervention != null) {
-
-            // UI
-            // TODO: 27/04/16 remove name ? and xml
-            // name
-            interventionName.setText(intervention.getName());
-
-                        // TODO: 27/04/16 add sinisterCode ?
-
-            // TODO: 27/04/16 remove address ? and xml
-            // address
-            interventionAddress.setText(intervention.getLocation().getAddress());
-
-            // Listeners
-            archiveBt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleArchiveIntervention();
-                }
-            });
-        }
-    }*/
 
     /**
      * Archives or unarchives an intervention

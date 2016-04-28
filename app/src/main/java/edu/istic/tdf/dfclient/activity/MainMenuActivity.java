@@ -93,10 +93,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .commit();
     }
 
-    /**
-     * Called when select button is touched. Goes to the next activity
-     * @param intervention The selected intervention
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -118,6 +114,10 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         return true;
     }
 
+    /**
+     * Called when select button is touched. Goes to the next activity
+     * @param intervention The selected intervention
+     */
     @Override
     public void onInterventionSelected(Intervention intervention) {
         if(intervention != null)

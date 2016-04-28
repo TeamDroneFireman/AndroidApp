@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -183,12 +184,6 @@ public class InterventionListFragment extends Fragment {
                     }
                 });
 
-                //select the first intervention
-                if(interventionsList.getCount() > 0)
-                {
-                    //selectFirstItem();
-                }
-
                 // Run callback
                 if (onLoaded != null) {
                     onLoaded.run();
@@ -202,6 +197,14 @@ public class InterventionListFragment extends Fragment {
             @Override
             public void onRestFailure(Throwable e) {
                 // TODO : display toast error
+                Log.e("TAG","Rest error when loading interventions");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(InterventionListFragment.this.getActivity(),
+                                "Network error when loading interventions", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
@@ -261,43 +264,8 @@ public class InterventionListFragment extends Fragment {
         }
     }
 
-    private void selectFirstItem(){
-
-        int firstListItemPosition = interventionsList.getFirstVisiblePosition();
-
-        // TODO: 27/04/16 chopper la view de l'item qui correspond a firstListItemPosition
-        int wantedPosition = firstListItemPosition;
-        int firstPosition = interventionsList.getFirstVisiblePosition() - interventionsList.getHeaderViewsCount();
-        int wantedChild = wantedPosition - firstPosition;
-        TextView view = (TextView)interventionsAdapter.getView(wantedChild,null,interventionsList);
-
-        /*final int lastListItemPosition = firstListItemPosition + interventionsList.getChildCount() - 1;
-
-        if (wantedPosition < firstListItemPosition || wantedPosition > lastListItemPosition ) {
-            view = (TextView)interventionsList.getAdapter().getView(wantedPosition, null, interventionsList);
-        } else {
-            final int childIndex = wantedPosition - firstListItemPosition;
-            view = (TextView)interventionsList.getChildAt(childIndex);
-        }*/
-
-        selectItem(firstListItemPosition);
-    }
-
     private void selectItem(int i){
         // TODO: 28/04/16 bug, when call on create, doesn't select the first intervention 
         fragmentInteractionListener.handleInterventionSelected(interventionArrayList.get(i));
-    }
-
-    private void highlight(TextView view) {
-        // TODO: 27/04/16 color ?
-        view.setBackgroundColor(Color.parseColor("#212121"));
-        // TODO: 28/04/16 typeface ?
-        //view.setTypeface(Typeface.DEFAULT_BOLD);
-    }
-
-    private void unhighlight(TextView view, AdapterView adapterView) {
-        view.setBackgroundColor(adapterView.getSolidColor());
-        // TODO: 28/04/16 typeface ?
-        //view.setTypeface(Typeface.DEFAULT);
     }
 }
