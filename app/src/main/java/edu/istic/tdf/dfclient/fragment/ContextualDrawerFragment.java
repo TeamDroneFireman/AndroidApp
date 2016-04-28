@@ -131,7 +131,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         }
 
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), forms));
-        formSpinner.setSelection(Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm()));
+        formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
     }
 
     public interface OnFragmentInteractionListener {
