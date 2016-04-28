@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 
 public class InterventionDetailFragment extends Fragment {
@@ -30,6 +33,9 @@ public class InterventionDetailFragment extends Fragment {
     // UI
     @Bind(R.id.interventionSelectionButton)
     Button interventionSelectionBt;
+    // UI
+    @Bind(R.id.interventionArchiveButton)
+    Button interventionArchiveBt;
 
     // UI
     @Bind(R.id.intervention_name)
@@ -47,6 +53,8 @@ public class InterventionDetailFragment extends Fragment {
 
     private static Intervention currentIntervention;
 
+    InterventionDao interventionDao;
+
     public InterventionDetailFragment() {
         // Required empty public constructor
     }
@@ -56,10 +64,9 @@ public class InterventionDetailFragment extends Fragment {
         return fragment;
     }
 
-    public static InterventionDetailFragment newInstance(Intervention intervention) {
-
-        currentIntervention = intervention;
+    public static InterventionDetailFragment newInstance(InterventionDao interventionDao) {
         InterventionDetailFragment fragment = new InterventionDetailFragment();
+        fragment.interventionDao = interventionDao;
         return fragment;
     }
 
@@ -96,12 +103,12 @@ public class InterventionDetailFragment extends Fragment {
             // address
             interventionAddress.setText(currentIntervention.getLocation().getAddress());
 
-            // date creation
-            Date date = currentIntervention.getCreationDate();
-            String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
-            interventionDate.setText(strDate);
-
-            // TODO: 27/04/16 add map ?
+            interventionArchiveBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    archiveCurrentIntervention();
+                }
+            });
         }
 
         return view;
@@ -126,5 +133,66 @@ public class InterventionDetailFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onInterventionSelect(Intervention intervention);
+
+        void onInterventionArchived();
+    }
+
+    private void archiveCurrentIntervention(){
+        currentIntervention.setArchived(!currentIntervention.isArchived());
+        interventionDao.persist(currentIntervention, new IDaoWriteReturnHandler() {
+            @Override
+            public void onSuccess() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+        mListener.onInterventionArchived();
+                    }
+                });
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                Log.e("", "REPO FAILURE");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.e("", "REST FAILURE");
+            }
+        });
+    }
+
+    public void setCurrentIntervention(Intervention intervention){
+        currentIntervention = intervention;
+        loadInfos();
+    }
+
+    private void loadInfos() {
+        if(currentIntervention != null) {
+
+            // TODO: 27/04/16 remove name ? and xml
+            // name
+            interventionName.setText(currentIntervention.getName());
+
+            // TODO: 27/04/16 add sinisterCode ?
+
+            // TODO: 27/04/16 remove address ? and xml
+            // address
+            interventionAddress.setText(currentIntervention.getLocation().getAddress());
+
+            // date creation
+            Date date = currentIntervention.getCreationDate();
+            String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
+            interventionDate.setText(strDate);
+
+            // TODO: 27/04/16 add map ?
+
+            // archived button
+            if(currentIntervention.isArchived()) {
+                interventionArchiveBt.setText("Désarchiver");
+            } else {
+                interventionArchiveBt.setText(" Archiver ");
+            }
+        }
     }
 }

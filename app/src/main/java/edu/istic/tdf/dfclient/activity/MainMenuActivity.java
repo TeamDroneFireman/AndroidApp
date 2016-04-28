@@ -27,6 +27,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     SupportMapFragment mapFragment;
 
     @Inject
+    InterventionDetailFragment interventionDetailFragment;
+
+    @Inject
     InterventionListFragment interventionListFragment;
 
     @Inject
@@ -45,7 +48,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .commit();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
+                .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
 
         // Map
@@ -78,6 +81,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
+    public void onInterventionArchived() {
+        interventionListFragment.loadInterventions(null);
+    }
+
+    @Override
     public void handleInterventionCreation() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionCreateFormFragment)
@@ -86,8 +94,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
+        interventionDetailFragment.setCurrentIntervention(intervention);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, InterventionDetailFragment.newInstance(intervention))
+                .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
     }
 

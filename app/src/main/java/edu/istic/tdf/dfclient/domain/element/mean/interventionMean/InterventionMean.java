@@ -67,6 +67,11 @@ public class InterventionMean extends Element implements IInterventionMean {
     }
 
     @Override
+    public HashMap<MeanState, Date> getStates() {
+        return this.states;
+    }
+
+    @Override
     public void setAction(String action) {
         this.action=action;
     }
