@@ -68,13 +68,7 @@ public class SitacActivity extends BaseActivity implements
     private MeansTableFragment meansTableFragment;
 
     // Data
-    // TODO : Remove elemnts
-    private List<Element> elements;
-
     private Intervention intervention;
-    private Collection<Drone> drones;
-    private Collection<InterventionMean> means;
-    private Collection<PointOfInterest> pointsOfInterest;
 
     private Element selectedElement;
 
@@ -373,29 +367,32 @@ public class SitacActivity extends BaseActivity implements
         private void loadDrones() {
             SitacActivity.this.droneDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
                     new IDaoSelectReturnHandler<List<Drone>>() {
-                @Override
-                public void onRepositoryResult(List<Drone> r) {
-                    // Nothing
-                }
+                        @Override
+                        public void onRepositoryResult(List<Drone> r) {
+                            // Nothing
+                        }
 
-                @Override
-                public void onRestResult(List<Drone> r) {
-                    SitacActivity.this.drones = r;
+                        @Override
+                        public void onRestResult(List<Drone> r) {
+                            // Cast to collection of elements
+                            Collection<IElement> colR = new ArrayList<IElement>();
+                            colR.addAll(r);
 
-                    // TODO : What to do when these are loaded ?
-                }
+                            updateElementsInUi(colR);
 
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
+                        }
 
-                @Override
-                public void onRestFailure(Throwable e) {
-                    Log.e("DRONE", " --> DNE");
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+                            Log.e("DRONE", " --> DNE");
+                            SitacActivity.this.displayNetworkError();
+                        }
+                    });
         }
 
         private void loadMeans() {
@@ -408,9 +405,11 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<InterventionMean> r) {
-                            SitacActivity.this.means = r;
+                            // Cast to collection of elements
+                            Collection<IElement> colR = new ArrayList<IElement>();
+                            colR.addAll(r);
 
-                            // TODO : What to do when these are loaded ?
+                            updateElementsInUi(colR);
                         }
 
                         @Override
@@ -436,7 +435,11 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<PointOfInterest> r) {
-                            SitacActivity.this.pointsOfInterest = r;
+                            // Cast to collection of elements
+                            Collection<IElement> colR = new ArrayList<IElement>();
+                            colR.addAll(r);
+
+                            updateElementsInUi(colR);
                         }
 
                         @Override
@@ -450,6 +453,14 @@ public class SitacActivity extends BaseActivity implements
                             SitacActivity.this.displayNetworkError();
                         }
                     });
+        }
+
+        private void updateElementsInUi(Collection<IElement> elements) {
+            // Update Map
+            SitacActivity.this.sitacFragment.updateElements(elements);
+
+            // Update Means table
+            SitacActivity.this.meansTableFragment.updateElements(elements);
         }
     }
 

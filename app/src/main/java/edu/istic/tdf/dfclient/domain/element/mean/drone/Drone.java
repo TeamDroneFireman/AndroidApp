@@ -1,8 +1,11 @@
 package edu.istic.tdf.dfclient.domain.element.mean.drone;
 
+import com.raizlabs.android.dbflow.annotation.Table;
+
 import java.util.Date;
 import java.util.HashMap;
 
+import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
@@ -14,6 +17,7 @@ import lombok.Setter;
 /**
  * A mean of type drone
  */
+@Table(database = TdfDatabase.class)
 public class Drone extends Element implements IDrone {
 
     /**
