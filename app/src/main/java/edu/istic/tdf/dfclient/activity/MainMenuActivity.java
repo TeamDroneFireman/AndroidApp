@@ -8,6 +8,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     // UI
     SupportMapFragment mapFragment;
+    Marker mapMarker;
 
     @Inject
     InterventionDetailFragment interventionDetailFragment;
@@ -66,17 +68,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
             this.startActivity(intent);
-
-            // Map
-            final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
-                    intervention.getLocation().getGeopoint().getLongitude());
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    googleMap.addMarker(new MarkerOptions().position(location).title("Marker in Sydney"));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                }
-            });
         }
     }
 
@@ -94,10 +85,26 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
+        // Detail view
         interventionDetailFragment.setCurrentIntervention(intervention);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
+
+        // Map
+        final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
+                intervention.getLocation().getGeopoint().getLongitude());
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                if(mapMarker != null) {
+                    mapMarker.remove();
+                }
+                mapMarker = googleMap.addMarker(new MarkerOptions().position(location));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                googleMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+            }
+        });
     }
 
     @Override
