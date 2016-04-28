@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ public class InterventionDetailFragment extends Fragment {
     // UI
     @Bind(R.id.interventionSelectionButton)
     Button interventionSelectionBt;
+
     // UI
     @Bind(R.id.interventionArchiveButton)
     Button interventionArchiveBt;
@@ -83,6 +85,13 @@ public class InterventionDetailFragment extends Fragment {
             }
         });
 
+        interventionArchiveBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                archiveCurrentIntervention();
+            }
+        });
+
         // View binding
         if(currentIntervention != null) {
 
@@ -95,13 +104,6 @@ public class InterventionDetailFragment extends Fragment {
             // TODO: 27/04/16 remove address ? and xml
             // address
             interventionAddress.setText(currentIntervention.getLocation().getAddress());
-
-            interventionArchiveBt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    archiveCurrentIntervention();
-                }
-            });
         }
 
         return view;
@@ -131,28 +133,26 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     private void archiveCurrentIntervention(){
-        currentIntervention.setArchived(!currentIntervention.isArchived());
-        interventionDao.persist(currentIntervention, new IDaoWriteReturnHandler() {
-            @Override
-            public void onSuccess() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.onInterventionArchived();
-                    }
-                });
-            }
+        if (currentIntervention != null){
+            currentIntervention.setArchived(!currentIntervention.isArchived());
+            interventionDao.persist(currentIntervention, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess() {
+                    loadInfos();
+                    mListener.onInterventionArchived();
+                }
 
-            @Override
-            public void onRepositoryFailure(Throwable e) {
-                Log.e("", "REPO FAILURE");
-            }
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
 
-            @Override
-            public void onRestFailure(Throwable e) {
-                Log.e("", "REST FAILURE");
-            }
-        });
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
+        }
     }
 
     public void setCurrentIntervention(Intervention intervention){
@@ -163,31 +163,41 @@ public class InterventionDetailFragment extends Fragment {
     // TODO: 28/04/16 from creation then select an item, date bug 
     // TODO: 28/04/16 on creation the first element as to be selected but it bug 
     private void loadInfos() {
+
         if(currentIntervention != null) {
+            Activity activity = getActivity();
+            if(activity != null)
+            {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO: 27/04/16 remove name ? and xml
+                        // name
+                        interventionName.setText(currentIntervention.getName());
 
-            // TODO: 27/04/16 remove name ? and xml
-            // name
-            interventionName.setText(currentIntervention.getName());
+                        // TODO: 27/04/16 add sinisterCode ?
 
-            // TODO: 27/04/16 add sinisterCode ?
+                        // TODO: 27/04/16 remove address ? and xml
+                        // address
+                        interventionAddress.setText(currentIntervention.getLocation().getAddress());
 
-            // TODO: 27/04/16 remove address ? and xml
-            // address
-            interventionAddress.setText(currentIntervention.getLocation().getAddress());
+                        // date creation
+                        Date date = currentIntervention.getCreationDate();
+                        String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
+                        interventionDate.setText(strDate);
 
-            // date creation
-            Date date = currentIntervention.getCreationDate();
-            String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
-            interventionDate.setText(strDate);
+                        // TODO: 27/04/16 add map ?
 
-            // TODO: 27/04/16 add map ?
-
-            // archived button
-            if(currentIntervention.isArchived()) {
-                interventionArchiveBt.setText("Désarchiver");
-            } else {
-                interventionArchiveBt.setText(" Archiver ");
+                        // archived button
+                        if(currentIntervention.isArchived()) {
+                            interventionArchiveBt.setText("Désarchiver");
+                        } else {
+                            interventionArchiveBt.setText(" Archiver ");
+                        }
+                    }
+                });
             }
+
         }
     }
 }
