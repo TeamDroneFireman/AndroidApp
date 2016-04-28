@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Element;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -10,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import java.util.Observer;
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
@@ -40,7 +44,10 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
-import eu.inloop.easygcm.EasyGcm;
+import edu.istic.tdf.dfclient.http.exception.HttpException;
+import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
+import edu.istic.tdf.dfclient.rest.service.logout.LogoutRestService;
+import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -75,6 +82,7 @@ public class SitacActivity extends BaseActivity implements
     @Inject DroneDao droneDao;
     @Inject InterventionMeanDao interventionMeanDao;
     @Inject PointOfInterestDao pointOfInterestDao;
+    @Inject LogoutRestService logoutRestService;
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
@@ -216,8 +224,7 @@ public class SitacActivity extends BaseActivity implements
                 this.startActivity(intent);
                 break;
             case R.id.logout_button:
-                intent = new Intent(this, LoginActivity.class);
-                this.startActivity(intent);
+                logout();
                 break;
             default:
                 break;
@@ -266,6 +273,65 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void updateElement(IElement element) {
         sitacFragment.updateElement(element);
+    }
+
+    public void logout() {
+        logoutRestService.logout(new IRestReturnHandler<LogoutResponse>() {
+            // This will be called, no matter what the result is
+            public void onEnd() {
+
+            }
+
+            public void onNetworkError() {
+                SitacActivity.this.runOnUiThread(new Runnable() { // If other error
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Network error. Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onSuccess(LogoutResponse r) {
+
+                ((TdfApplication) SitacActivity.this.getApplication()).deleteCredentials();
+                //AuthHelper.storeCredentials(credentials);
+
+                // Go to the next activity with transition
+                SitacActivity.this.overridePendingTransition(R.anim.shake, R.anim.shake);
+
+                Bundle intentBundle = new Bundle();
+                final Intent intent = new Intent(SitacActivity.this, LoginActivity.class);
+                ActivityCompat.startActivity(SitacActivity.this, intent, intentBundle);
+                onEnd();
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+                if (error instanceof HttpException
+                        && ((HttpException) error).getResponse() != null
+                        && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
+                    SitacActivity.this.runOnUiThread(new Runnable() { // If other error
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Authorization error.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                } else if (error instanceof HttpException
+                        && ((HttpException) error).getResponse() != null
+                        && ((HttpException) error).getResponse().code() == 500) { // If no credentials
+                    // Go back to login activity with transition
+                    SitacActivity.this.overridePendingTransition(R.anim.shake, R.anim.shake);
+
+                    Bundle intentBundle = new Bundle();
+                    final Intent intent = new Intent(SitacActivity.this, LoginActivity.class);
+                    ActivityCompat.startActivity(SitacActivity.this, intent, intentBundle);
+                    onEnd();
+                }
+
+                onEnd();
+            }
+        });
     }
 
     private class DataLoader {

@@ -11,6 +11,6 @@ public class TdfHttpClientConfUser extends TdfHttpClientConf {
 
     @Override
     public String getPath() {
-        return "";
+        return "api/";
     }
 }
