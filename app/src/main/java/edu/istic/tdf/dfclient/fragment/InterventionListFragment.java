@@ -102,9 +102,7 @@ public class InterventionListFragment extends Fragment {
                 if (!view.equals(currentSelectedView)) {
                     if (currentSelectedView != null) {
                         //reset color of last selected item
-                        currentSelectedView.setBackgroundColor(parent.getSolidColor());
-                        currentSelectedView.setTypeface(Typeface.DEFAULT);
-                        currentSelectedView.setTextColor(Color.LTGRAY);
+                        unhighlight(currentSelectedView,parent);
                     }
 
                     selectItem(position, (TextView) view);
@@ -182,8 +180,6 @@ public class InterventionListFragment extends Fragment {
         location.setAddress("12 rue de papouille, 777 BisounoursLand");
         interventionBouchon.setLocation(location);
         interventionArrayList.add(interventionBouchon);
-        interventions.add(interventionBouchon.getName() + "\n" + interventionBouchon.getLocation().getAddress());
-
         interventionsAdapter.notifyDataSetChanged();
 
         interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
@@ -309,5 +305,12 @@ public class InterventionListFragment extends Fragment {
         // TODO: 27/04/16 autre couleur
         view.setBackgroundColor(Color.parseColor("#212121"));
         view.setTypeface(Typeface.DEFAULT_BOLD);
+    }
+
+    private void unhighlight(TextView view, AdapterView adapterView) {
+        // TODO: 27/04/16 autre couleur
+        view.setBackgroundColor(adapterView.getSolidColor());
+        view.setTypeface(Typeface.DEFAULT);
+        view.setTextColor(Color.LTGRAY);
     }
 }
