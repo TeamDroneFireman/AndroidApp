@@ -6,6 +6,7 @@ import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
+import edu.istic.tdf.dfclient.fragment.InterventionWelcomeFragment;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 
@@ -35,5 +36,10 @@ public class FragmentsModule {
     @Provides
     InterventionDetailFragment provideInterventionDetailFragment(InterventionDao interventionDao) {
         return InterventionDetailFragment.newInstance(interventionDao);
+    }
+
+    @Provides
+    InterventionWelcomeFragment provideInterventionWelcomeFragment() {
+        return InterventionWelcomeFragment.newInstance();
     }
 }
