@@ -30,8 +30,8 @@ public class Drone extends Element implements IDrone {
     private String action;
 
     public Drone() {
+        super();
         this.states = new HashMap<>();
-
         this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
