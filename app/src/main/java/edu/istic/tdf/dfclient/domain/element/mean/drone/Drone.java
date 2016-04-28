@@ -10,6 +10,7 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * A mean of type drone
@@ -32,6 +33,7 @@ public class Drone extends Element implements IDrone {
      * But not use for the moment !
      */
     private String action;
+    private PictoFactory.ElementForm form = PictoFactory.ElementForm.AIRMEAN;
 
     public Drone() {
         super();

@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -76,6 +77,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         });
 
+
         roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), PictoFactory.ElementForm.values()));
        return view;
@@ -107,7 +109,14 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
-        formSpinner.setSelection(Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm()));
+
+        PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
+
+        if(element.getType() == ElementType.AIRMEAN){
+            forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.AIRMEAN, PictoFactory.ElementForm.AIRMEAN_PLANNED};
+        }
+
+        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), forms));
     }
 
     public interface OnFragmentInteractionListener {

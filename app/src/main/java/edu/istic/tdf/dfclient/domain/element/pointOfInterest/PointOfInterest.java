@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.domain.element.pointOfInterest;
 
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 
 import edu.istic.tdf.dfclient.domain.Entity;
@@ -72,5 +73,10 @@ public class PointOfInterest extends Entity implements IPointOfInterest {
     @Override
     public void setForm(PictoFactory.ElementForm form) {
         this.form = form;
+    }
+
+    @Override
+    public ElementType getType() {
+        return ElementType.POINT_OF_INTEREST;
     }
 }

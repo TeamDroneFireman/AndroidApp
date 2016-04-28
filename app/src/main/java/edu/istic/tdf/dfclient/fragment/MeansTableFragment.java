@@ -22,6 +22,7 @@ import java.util.Set;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
@@ -137,7 +138,7 @@ public class MeansTableFragment extends Fragment {
     }*/
 
     public void updateElement(IElement element) {
-        if (element instanceof IMean){//TODO Here change condition
+        if (element.getType()== ElementType.AIRMEAN || element.getType()==ElementType.MEAN){
             if(means.contains(element)){
                 updateElem((IMean) element);
             }else{
