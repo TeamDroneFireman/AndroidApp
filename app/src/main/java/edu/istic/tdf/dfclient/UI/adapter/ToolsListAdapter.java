@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.UI.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.media.Image;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -105,18 +106,11 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.fragment_toolbar_item, null);
         }
 
-
         ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
+
         icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
-/*
-        icon.setImageBitmap(
-                PictoFactory
-                        .createPicto(context)
-                        .setColor(children.getRole().getColor())
-                        .setDrawable(children.getForm().getDrawable())
-                        .toBitmap()
-        );*/
-       // icon.setImageDrawable(PictoFactory.getDefaultPicto(context, children.getDomainType()));
+        icon.setColorFilter(Color.WHITE);
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

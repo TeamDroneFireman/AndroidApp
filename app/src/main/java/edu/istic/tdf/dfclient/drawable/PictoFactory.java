@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -88,6 +87,7 @@ public class PictoFactory {
     private int color = Role.DEFAULT.getColor();
     private int drawable = ElementForm.MEAN.getDrawable();
     private int size = 64;
+    private String label = "Test";
     private DomainType domainType = DomainType.INTERVENTIONMEAN;
 
     /**
@@ -105,11 +105,17 @@ public class PictoFactory {
     public PictoFactory setElement(IElement element){
         this.setDrawable(element.getForm().getDrawable());
         this.setColor(element.getRole().getColor());
+        this.setLabel(element.getName());
         return this;
     }
 
     public PictoFactory setColor(int color){
         this.color = color;
+        return this;
+    }
+
+    public PictoFactory setLabel(String label){
+        this.label = label;
         return this;
     }
 
@@ -162,7 +168,9 @@ public class PictoFactory {
         imageView.setColorFilter(this.color);
 
         TextView textView = (TextView) view.findViewById(R.id.num_txt);
-        textView.setText("");
+        textView.setText(this.label);
+        textView.setTextColor(this.color);
+
         view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
         view.buildDrawingCache();
 
