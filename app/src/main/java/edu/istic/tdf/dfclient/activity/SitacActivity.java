@@ -299,8 +299,7 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void updateElement(IElement element) {
         sitacFragment.updateElement(element);
-        //meansTableFragment.updateElement(element);
-
+        meansTableFragment.updateElement(element);
     }
 
 
