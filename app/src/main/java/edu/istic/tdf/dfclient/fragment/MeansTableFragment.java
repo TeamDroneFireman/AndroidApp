@@ -148,8 +148,8 @@ public class MeansTableFragment extends Fragment {
         }
     }
 
-    public void updateElements(Collection<IElement> element) {
-        Iterator<IElement> iterator= element.iterator();
+    public void updateElements(Collection<Element> element) {
+        Iterator<Element> iterator= element.iterator();
         while (iterator.hasNext()){
             updateElement(iterator.next());
         }

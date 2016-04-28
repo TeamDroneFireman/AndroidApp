@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -43,7 +44,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.FormSpinner)
     Spinner formSpinner;
 
-    private IElement element;
+    private Element element;
 
     public ContextualDrawerFragment() {
         // Required empty public constructor
@@ -105,7 +106,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     }
 
-    public void setSelectedElement(IElement element) {
+    public void setSelectedElement(Element element) {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
@@ -129,6 +130,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     }
 
     public interface OnFragmentInteractionListener {
-        void updateElement(IElement element);
+        void updateElement(Element element);
     }
 }

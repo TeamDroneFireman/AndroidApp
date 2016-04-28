@@ -2,7 +2,6 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Element;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -26,12 +25,15 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -68,6 +70,8 @@ public class SitacActivity extends BaseActivity implements
     private MeansTableFragment meansTableFragment;
 
     // Data
+    private DataLoader dataLoader;
+
     private Intervention intervention;
 
     private Element selectedElement;
@@ -96,7 +100,7 @@ public class SitacActivity extends BaseActivity implements
 
         // Load data
         String interventionId = (String) getIntent().getExtras().get("interventionId");
-        DataLoader dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
@@ -168,15 +172,15 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void setSelectedElement(IElement element) {
+    public void setSelectedElement(Element element) {
         contextualDrawerFragment.setSelectedElement(element);
         showContextualDrawer();
     }
 
     @Override
-    public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
+    public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
 
-        IElement element = null;
+        Element element = null;
 
         switch(ElementType.getElementType(form)){
 
@@ -316,9 +320,50 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void updateElement(IElement element) {
+    public void updateElement(final Element element) {
         sitacFragment.updateElement(element);
         meansTableFragment.updateElement(element);
+
+        dataLoader.persistElement(element, new IDaoWriteReturnHandler() {
+            @Override
+            public void onSuccess() {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        sitacFragment.updateElement(element);
+                        meansTableFragment.updateElement(element);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                     @Override
+                     public void run() {
+                         Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+
+                     }
+                 });
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+
         //TODO: push to persist
     }
 
@@ -334,6 +379,33 @@ public class SitacActivity extends BaseActivity implements
             this.loadDrones();
             this.loadMeans();
             this.loadPointsOfInterest();
+        }
+
+        public Dao getDaoOfElement(IElement element) {
+            Dao dao = null;
+            switch (element.getType()) {
+                case MEAN:
+                    dao = SitacActivity.this.interventionMeanDao;
+                    break;
+                case POINT_OF_INTEREST:
+                case MEAN_OTHER:
+                case WATERPOINT:
+                    dao = SitacActivity.this.pointOfInterestDao;
+                    break;
+                case AIRMEAN:
+                    dao = SitacActivity.this.droneDao;
+                    break;
+            }
+
+            return dao;
+        }
+
+        public void persistElement(Element element, IDaoWriteReturnHandler handler) {
+            Dao dao = getDaoOfElement(element);
+            if(dao != null){
+                dao.persist(element, handler);
+            }
+
         }
 
         private void loadIntervention() {
@@ -374,7 +446,7 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void onRestResult(List<Drone> r) {
                             // Cast to collection of elements
-                            Collection<IElement> colR = new ArrayList<IElement>();
+                            Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
                             updateElementsInUi(colR);
@@ -405,7 +477,7 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void onRestResult(List<InterventionMean> r) {
                             // Cast to collection of elements
-                            Collection<IElement> colR = new ArrayList<IElement>();
+                            Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
                             updateElementsInUi(colR);
@@ -435,7 +507,7 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void onRestResult(List<PointOfInterest> r) {
                             // Cast to collection of elements
-                            Collection<IElement> colR = new ArrayList<IElement>();
+                            Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
                             updateElementsInUi(colR);
@@ -454,12 +526,19 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void updateElementsInUi(Collection<IElement> elements) {
-            // Update Map
-            SitacActivity.this.sitacFragment.updateElements(elements);
+        private void updateElementsInUi(final Collection<Element> elements) {
 
-            // Update Means table
-            SitacActivity.this.meansTableFragment.updateElements(elements);
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update Map
+                    SitacActivity.this.sitacFragment.updateElements(elements);
+
+                    // Update Means table
+                    SitacActivity.this.meansTableFragment.updateElements(elements);
+                }
+            });
+
         }
     }
 
