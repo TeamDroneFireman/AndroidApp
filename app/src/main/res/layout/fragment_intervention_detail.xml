@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="edu.istic.tdf.dfclient.fragment.InterventionDetailFragment">
 
@@ -13,7 +13,11 @@
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/interventionSelectionButton"
+            android:id="@+id/scrollView2">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -22,7 +26,7 @@
 
                 <TextView
                     android:id="@+id/intervention_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:text=""
@@ -30,7 +34,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="20dp"
                     android:text="Nom de code"
@@ -38,7 +42,7 @@
 
                 <TextView
                     android:id="@+id/intervention_address"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:textSize="16sp"
@@ -46,7 +50,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="20dp"
                     android:text="Adresse"
@@ -54,7 +58,7 @@
 
                 <TextView
                     android:id="@+id/intervention_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:textSize="16sp"
@@ -62,7 +66,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="20dp"
                     android:text="Date"
@@ -70,14 +74,6 @@
 
             </LinearLayout>
         </ScrollView>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/layout_buttons">
 
         <Button
             android:layout_width="wrap_content"
@@ -87,7 +83,7 @@
             android:layout_gravity="right|bottom"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="false" />
 
         <Button
             android:layout_width="wrap_content"
@@ -96,7 +92,9 @@
             android:id="@+id/interventionArchiveButton"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/interventionSelectionButton"
-            android:layout_toStartOf="@+id/interventionSelectionButton" />
+            android:layout_toStartOf="@+id/interventionSelectionButton"
+            android:layout_below="@+id/scrollView2" />
+
     </RelativeLayout>
 
 </LinearLayout>

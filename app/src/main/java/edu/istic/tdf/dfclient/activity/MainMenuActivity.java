@@ -85,8 +85,13 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
-        // Detail view
-        interventionDetailFragment.setCurrentIntervention(intervention);
+        final Intervention interventionFinal = intervention;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                interventionDetailFragment.setCurrentIntervention(interventionFinal);
+            }
+        });
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
