@@ -29,7 +29,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -39,14 +41,19 @@ import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.action.ActionState;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * Created by btessiau on 25/04/16.
@@ -221,8 +228,61 @@ public class InterventionCreateFormFragment extends Fragment {
 
     }
 
+
+    // JUST FOR TEST, Elements drone or mean examples
+  /*  public void makeElementsExample(Intervention intervention){
+
+
+        Drone elemDrone1 = new Drone();
+        Drone elemDrone2 = new Drone();
+
+        InterventionMean elemInterventionMean1 = new InterventionMean();
+        InterventionMean elemInterventionMean2 = new InterventionMean();
+        InterventionMean elemInterventionMean3 = new InterventionMean();
+
+        elemDrone1.setName("Drone1-Patrick");
+        elemDrone1.setRole(Role.DEFAULT);
+        elemDrone1.setLocation(intervention.getLocation());
+        elemDrone1.setForm(PictoFactory.ElementForm.AIRMEAN);
+        elemDrone1.setAction("IN_PROGRESS");
+        elemDrone1.setState(MeanState.ASKED);
+
+        elemDrone2.setName("Drone1-Michel");
+        elemDrone2.setRole(Role.DEFAULT);
+        elemDrone2.setLocation(intervention.getLocation());
+        elemDrone2.setForm(PictoFactory.ElementForm.AIRMEAN);
+        elemDrone2.setAction("IN_PROGRESS");
+        elemDrone2.setState(MeanState.ASKED);
+
+        elemInterventionMean1.setName("InterventionMean-Jéjé");
+        elemInterventionMean1.setRole(Role.DEFAULT);
+        elemInterventionMean1.setLocation(intervention.getLocation());
+        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
+        elemInterventionMean1.setState(MeanState.ENGAGED);
+        elemInterventionMean1.setAction("IN_PROGRESS");
+
+        elemInterventionMean2.setName("InterventionMean-Albert");
+        elemInterventionMean2.setRole(Role.DEFAULT);
+        elemInterventionMean2.setLocation(intervention.getLocation());
+        elemInterventionMean2.setForm(PictoFactory.ElementForm.MEAN_GROUP);
+        elemInterventionMean2.setState(MeanState.RELEASED);
+        elemInterventionMean2.setAction("IN_PROGRESS");
+
+        elemInterventionMean3.setName("InterventionMean-JosephJeanMie");
+        elemInterventionMean3.setRole(Role.DEFAULT);
+        elemInterventionMean3.setLocation(intervention.getLocation());
+        elemInterventionMean3.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+        elemInterventionMean3.setState(MeanState.VALIDATED);
+        elemInterventionMean3.setAction("IN_PROGRESS");
+
+        Collection<IElement> elements = new HashSet<IElement>();
+        elements.add(elemDrone1);
+        intervention.setElements(elements);
+
+    }*/
+
     private void computeIntervention() {
-        Intervention intervention = new Intervention();
+        final Intervention intervention = new Intervention();
 
         // TODO: 26/04/16 when model ok
 
@@ -262,14 +322,15 @@ public class InterventionCreateFormFragment extends Fragment {
 
         //archived
         intervention.setArchived(false);
-
+        //makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
             @Override
             public void onSuccess() {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mListener.onCreateIntervention();
+                         cleanForm();
+                         mListener.onCreateIntervention();
                     }
                 });
             }
@@ -474,6 +535,14 @@ public class InterventionCreateFormFragment extends Fragment {
         Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
         t.getView().setBackgroundColor(Color.RED);
         t.show();
+    }
+
+    private void cleanForm(){
+        this.address.setText("");
+        this.lat.setText("");
+        this.lng.setText("");
+        this.sinisters.clear();
+        this.means.clear();
     }
 
 }
