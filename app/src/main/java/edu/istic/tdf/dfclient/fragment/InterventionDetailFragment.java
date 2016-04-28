@@ -9,6 +9,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -68,13 +75,15 @@ public class InterventionDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
         ButterKnife.bind(this, view);
 
+        // Events
         interventionSelectionBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onInterventionSelect(currentIntervention);
             }
         });
-        
+
+        // View binding
         if(currentIntervention != null) {
 
             // TODO: 27/04/16 remove name ? and xml

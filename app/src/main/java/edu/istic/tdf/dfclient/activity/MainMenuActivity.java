@@ -3,6 +3,13 @@ package edu.istic.tdf.dfclient.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
@@ -11,7 +18,13 @@ import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
 
-public class MainMenuActivity extends BaseActivity implements InterventionDetailFragment.OnFragmentInteractionListener, InterventionListFragment.OnFragmentInteractionListener, InterventionCreateFormFragment.OnFragmentInteractionListener {
+public class MainMenuActivity extends BaseActivity implements InterventionDetailFragment.OnFragmentInteractionListener,
+        InterventionListFragment.OnFragmentInteractionListener,
+        InterventionCreateFormFragment.OnFragmentInteractionListener,
+        OnMapReadyCallback {
+
+    // UI
+    SupportMapFragment mapFragment;
 
     @Inject
     InterventionListFragment interventionListFragment;
@@ -35,15 +48,32 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
                 .commit();
 
+        // Map
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.intervention_detail_map);
+        mapFragment.getMapAsync(this);
+
     }
 
     @Override
     public void onInterventionSelect(Intervention intervention) {
         if(intervention != null)
         {
+            // Detail fragment
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
             this.startActivity(intent);
+
+            // Map
+            final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
+                    intervention.getLocation().getGeopoint().getLongitude());
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    googleMap.addMarker(new MarkerOptions().position(location).title("Marker in Sydney"));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                }
+            });
         }
     }
 
@@ -64,5 +94,10 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Override
     public void onCreateIntervention() {
         interventionListFragment.loadInterventions(null);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 }

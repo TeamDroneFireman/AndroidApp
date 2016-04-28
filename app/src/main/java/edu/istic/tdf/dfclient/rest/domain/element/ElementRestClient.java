@@ -24,7 +24,7 @@ public abstract class ElementRestClient<E extends Entity> extends RestClient<E> 
      * Constructs a REST Client
      *
      * @param entityClass The class of the entity
-     * @param httpClient
+     * @param httpClient The http client
      */
     public ElementRestClient(Class<E> entityClass, TdfHttpClient httpClient) {
         super(entityClass, httpClient);
