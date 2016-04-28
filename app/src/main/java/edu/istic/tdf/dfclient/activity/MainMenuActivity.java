@@ -2,6 +2,9 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -94,6 +97,27 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
      * Called when select button is touched. Goes to the next activity
      * @param intervention The selected intervention
      */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.logout_button:
+                logout();
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
+
     @Override
     public void onInterventionSelected(Intervention intervention) {
         if(intervention != null)

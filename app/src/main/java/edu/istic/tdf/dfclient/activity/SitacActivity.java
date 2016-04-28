@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Element;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -10,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import java.util.Observer;
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
@@ -40,7 +44,10 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
-import eu.inloop.easygcm.EasyGcm;
+import edu.istic.tdf.dfclient.http.exception.HttpException;
+import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
+import edu.istic.tdf.dfclient.rest.service.logout.LogoutRestService;
+import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -216,8 +223,7 @@ public class SitacActivity extends BaseActivity implements
                 this.startActivity(intent);
                 break;
             case R.id.logout_button:
-                intent = new Intent(this, LoginActivity.class);
-                this.startActivity(intent);
+                logout();
                 break;
             default:
                 break;

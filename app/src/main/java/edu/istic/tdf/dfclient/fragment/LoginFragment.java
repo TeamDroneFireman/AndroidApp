@@ -2,34 +2,26 @@ package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 
-import javax.inject.Inject;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
-import edu.istic.tdf.dfclient.auth.AuthHelper;
 import edu.istic.tdf.dfclient.auth.Credentials;
-import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.http.exception.HttpException;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
@@ -67,7 +59,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        super.onCreateView(inflater, container,savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, view);
 
@@ -154,9 +146,9 @@ public class LoginFragment extends Fragment {
             @Override
             public void onError(Throwable error) {
 
-                if(error instanceof HttpException
-                    && ((HttpException) error).getResponse() != null
-                    && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
+                if (error instanceof HttpException
+                        && ((HttpException) error).getResponse() != null
+                        && ((HttpException) error).getResponse().code() == 401) { // If unauthorized
                     LoginFragment.this.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

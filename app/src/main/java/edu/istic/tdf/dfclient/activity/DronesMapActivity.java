@@ -27,20 +27,22 @@ public class DronesMapActivity extends BaseActivity implements DronesMapFragment
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.drones_map_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             // action with ID action_refresh was selected
-            case R.id.switch_to_sitac:
-                Intent intent = new Intent(this, SitacActivity.class);
+            /*case R.id.switch_to_sitac:
+                intent = new Intent(this, SitacActivity.class);
                 this.startActivity(intent);
-                break;
+                break;*/
             case R.id.logout_button:
-                intent = new Intent(this, LoginActivity.class);
-                this.startActivity(intent);
+                logout();
                 break;
             default:
                 break;

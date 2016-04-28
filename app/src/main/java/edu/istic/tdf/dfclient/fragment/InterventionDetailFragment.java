@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -64,9 +65,15 @@ public class InterventionDetailFragment extends Fragment {
             }
         });
 
+        archiveBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                archiveCurrentIntervention();
+            }
+        });
+
         // View binding
         displayIntervention();
-
 
         return view;
     }
@@ -133,6 +140,29 @@ public class InterventionDetailFragment extends Fragment {
         }
     }
 
+    private void archiveCurrentIntervention(){
+        if (intervention != null){
+            intervention.setArchived(!intervention.isArchived());
+            interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess() {
+                    displayIntervention();
+                    fragmentInteractionListener.onInterventionArchived();
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
+        }
+    }
+
 
     /*protected void displayIntervention(){
         if(intervention != null) {
@@ -142,7 +172,7 @@ public class InterventionDetailFragment extends Fragment {
             // name
             interventionName.setText(intervention.getName());
 
-            // TODO: 27/04/16 add sinisterCode ?
+                        // TODO: 27/04/16 add sinisterCode ?
 
             // TODO: 27/04/16 remove address ? and xml
             // address

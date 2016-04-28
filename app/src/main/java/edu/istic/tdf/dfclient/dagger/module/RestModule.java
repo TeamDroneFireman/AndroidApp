@@ -9,6 +9,7 @@ import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
+import edu.istic.tdf.dfclient.rest.service.logout.LogoutRestService;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -52,6 +53,12 @@ public class RestModule {
     //@Singleton
     LoginRestService provideLoginRestService(TdfHttpClient httpClient, Gson serializer) {
         return new LoginRestService(httpClient, serializer);
+    }
+
+    @Provides
+    //@Singleton
+    LogoutRestService provideLogoutRestService(TdfHttpClient httpClient, Gson serializer) {
+        return new LogoutRestService(httpClient);
     }
 
 }
