@@ -32,6 +32,7 @@ import java.util.Observer;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
@@ -160,6 +161,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private Marker addMarker(IElement element){
+
+        if(element.getRole() == null ){
+            element.setRole(Role.DEFAULT);
+        }
 
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))

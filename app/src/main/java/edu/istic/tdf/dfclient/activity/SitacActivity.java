@@ -179,26 +179,26 @@ public class SitacActivity extends BaseActivity implements
         IElement element = null;
 
         switch(ElementType.getElementType(form)){
+
             case AIRMEAN:
                 element = new Drone();
                 break;
+
             case MEAN:
                 element = new InterventionMean();
                 break;
+
             case MEAN_OTHER:
             case POINT_OF_INTEREST:
                 element = new PointOfInterest();
                 break;
+
             case WATERPOINT:
                 element = new PointOfInterest();
+                element.setRole(Role.WATER);
+                break;
             default:
                 element = new InterventionMean();
-        }
-
-        if(element.getType() == ElementType.WATERPOINT){
-            element.setRole(Role.WATER);
-        } else {
-            element.setRole(Role.DEFAULT);
         }
 
         element.setForm(form);

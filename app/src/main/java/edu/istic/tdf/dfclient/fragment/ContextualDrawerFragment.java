@@ -116,22 +116,16 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             case MEAN:
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN, PictoFactory.ElementForm.MEAN_PLANNED,  PictoFactory.ElementForm.MEAN_GROUP,  PictoFactory.ElementForm.MEAN_COLUMN };
                 break;
-            case MEAN_OTHER:
-                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN_OTHER, PictoFactory.ElementForm.MEAN_OTHER_PLANNED};
-                break;
-            case POINT_OF_INTEREST:
-                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.SOURCE, PictoFactory.ElementForm.TARGET};
-                break;
-            case WATERPOINT:
-                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.WATERPOINT, PictoFactory.ElementForm.WATERPOINT_SUPPLY, PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
-                break;
             case AIRMEAN:
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.AIRMEAN, PictoFactory.ElementForm.AIRMEAN_PLANNED};
+                break;
+            default:
+                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN_OTHER, PictoFactory.ElementForm.MEAN_OTHER_PLANNED,PictoFactory.ElementForm.SOURCE, PictoFactory.ElementForm.TARGET,PictoFactory.ElementForm.WATERPOINT, PictoFactory.ElementForm.WATERPOINT_SUPPLY, PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
                 break;
         }
 
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), forms));
-        formSpinner.setSelection(Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm()));
+        formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
     }
 
     public interface OnFragmentInteractionListener {
