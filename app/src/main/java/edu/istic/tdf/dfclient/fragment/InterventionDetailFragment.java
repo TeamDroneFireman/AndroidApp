@@ -79,7 +79,7 @@ public class InterventionDetailFragment extends Fragment {
         interventionSelectionBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onInterventionSelect(currentIntervention);
+                mListener.onInterventionSelection(currentIntervention);
             }
         });
 
@@ -125,7 +125,7 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onInterventionSelect(Intervention intervention);
+        void onInterventionSelection(Intervention intervention);
 
         void onInterventionArchived();
     }
