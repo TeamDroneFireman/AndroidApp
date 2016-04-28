@@ -82,6 +82,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     IElement element = createElementFromLatLng(latLng);
                     addMarker(element).showInfoWindow();
                 } else {
+
                     cancelSelection();
                 }
             }
@@ -143,6 +144,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         public void setSelectedElement(IElement element);
         public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+
         public void handleCancelSelection();
 
     }
@@ -169,7 +171,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                 .title(element.getName())
-                .draggable(true)
                 .icon(BitmapDescriptorFactory.fromBitmap(
                         PictoFactory.createPicto(getContext())
                                 .setLabel(element.getName())
