@@ -31,6 +31,7 @@ import java.util.Observer;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -41,7 +42,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private GoogleMap googleMap;
 
     // Liste d'association marker <--> element
-    private HashMap<Marker, IElement> markersList = new HashMap<>();
+    private HashMap<Marker, Element> markersList = new HashMap<>();
 
     public SitacFragment() {
     }
@@ -79,7 +80,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             @Override
             public void onMapClick(LatLng latLng) {
                 if(hasElementSelected()){
-                    IElement element = createElementFromLatLng(latLng);
+                    Element element = createElementFromLatLng(latLng);
                     addMarker(element).showInfoWindow();
                 } else {
                     cancelSelection();
@@ -100,7 +101,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     }
 
-    private IElement createElementFromLatLng(LatLng latLng){
+    private Element createElementFromLatLng(LatLng latLng){
         Tool tool = mListener.getSelectedTool();
         return mListener.handleElementAdded(tool.getForm(), latLng.latitude, latLng.longitude);
     }
@@ -141,15 +142,15 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         public Tool getSelectedTool();
 
-        public void setSelectedElement(IElement element);
-        public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        public void setSelectedElement(Element element);
+        public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
         public void handleCancelSelection();
 
     }
 
     private Marker getMarker(IElement element){
         if(markersList.containsValue(element)){
-            for (Map.Entry<Marker, IElement> entry : markersList.entrySet()) {
+            for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
                 Marker marker = entry.getKey();
                 IElement elementValue = entry.getValue();
                 if(elementValue.equals(element)){
@@ -160,7 +161,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
-    private Marker addMarker(IElement element){
+    private Marker addMarker(Element element){
 
         if(element.getRole() == null ){
             element.setRole(Role.DEFAULT);
@@ -182,7 +183,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return marker;
     }
 
-    private void updateMarker(Marker marker, IElement element){
+    private void updateMarker(Marker marker, Element element){
 
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).toBitmap()));
         marker.setPosition(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()));
@@ -193,7 +194,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     }
 
-    public void updateElement(IElement element){
+    public void updateElement(Element element){
         Marker marker = getMarker(element);
         if(marker == null){
             addMarker(element);
@@ -202,8 +203,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-    public void updateElements(Collection<IElement> elements){
-        for(IElement element : elements){
+    public void updateElements(Collection<Element> elements){
+        for(Element element : elements){
             updateElement(element);
         }
     }
