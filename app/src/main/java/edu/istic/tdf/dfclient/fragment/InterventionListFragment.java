@@ -2,7 +2,6 @@ package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -179,8 +178,8 @@ public class InterventionListFragment extends Fragment {
         Location location = new Location();
         location.setAddress("12 rue de papouille, 777 BisounoursLand");
         interventionBouchon.setLocation(location);
+        interventionBouchon.setArchived(true);
         interventionArrayList.add(interventionBouchon);
-        interventionsAdapter.notifyDataSetChanged();
 
         interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
             @Override
@@ -217,40 +216,46 @@ public class InterventionListFragment extends Fragment {
     }
 
     private void addSortedInterventions(){
-        Collections.sort(interventionArrayList, new Comparator<Intervention>() {
-            /**
-             *
-             * @param lhs
-             * @param rhs
-             * @return -1 iff the first element is smaller than the second one
-             * 1 iff the second element is smaller than the first one
-             * 0 iff the two elements are equals
-             */
+        ArrayList<Intervention> interventionArrayListNotArchived = new ArrayList<>();
+        ArrayList<Intervention> interventionArrayListArchived = new ArrayList<>();
+
+        Iterator<Intervention> it = interventionArrayList.iterator();
+        Intervention intervention;
+        while(it.hasNext())
+        {
+            intervention = it.next();
+            if(intervention.isArchived()){
+                interventionArrayListArchived.add(intervention);
+            }
+            else {
+                interventionArrayListNotArchived.add(intervention);
+            }
+        }
+
+        Comparator<Intervention> interventionComparator = new Comparator<Intervention>() {
             @Override
             public int compare(Intervention lhs, Intervention rhs) {
-
-                //compare archived or not
-                boolean archived1 = lhs.isArchived();
-                boolean archived2 = lhs.isArchived();
-
-                if (archived1 && !archived2) {
-                    return -1;
-                }
-
-                if (!archived1 && archived2) {
-                    return 1;
-                }
-
                 //compare date
                 Date date1 = lhs.getCreationDate();
                 Date date2 = rhs.getCreationDate();
 
                 return date2.compareTo(date1);
             }
-        });
+        };
 
-        Iterator<Intervention> it = interventionArrayList.iterator();
-        Intervention intervention;
+        Collections.sort(interventionArrayListNotArchived, interventionComparator);
+        Collections.sort(interventionArrayListArchived, interventionComparator);
+
+        //add first interventions not archived
+        it = interventionArrayListNotArchived.iterator();
+        while(it.hasNext())
+        {
+            intervention = it.next();
+            interventions.add(intervention.getName() + "\n" + intervention.getLocation().getAddress());
+        }
+
+        //then add interventions archived
+        it = interventionArrayListArchived.iterator();
         while(it.hasNext())
         {
             intervention = it.next();
@@ -302,15 +307,15 @@ public class InterventionListFragment extends Fragment {
     }
 
     private void highlight(TextView view) {
-        // TODO: 27/04/16 autre couleur
+        // TODO: 27/04/16 color ?
         view.setBackgroundColor(Color.parseColor("#212121"));
-        view.setTypeface(Typeface.DEFAULT_BOLD);
+        // TODO: 28/04/16 typeface ?
+        //view.setTypeface(Typeface.DEFAULT_BOLD);
     }
 
     private void unhighlight(TextView view, AdapterView adapterView) {
-        // TODO: 27/04/16 autre couleur
         view.setBackgroundColor(adapterView.getSolidColor());
-        view.setTypeface(Typeface.DEFAULT);
-        view.setTextColor(Color.LTGRAY);
+        // TODO: 28/04/16 typeface ?
+        //view.setTypeface(Typeface.DEFAULT);
     }
 }
