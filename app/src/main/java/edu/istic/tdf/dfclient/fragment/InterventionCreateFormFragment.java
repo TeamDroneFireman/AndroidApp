@@ -254,14 +254,14 @@ public class InterventionCreateFormFragment extends Fragment {
         elemDrone2.setAction("IN_PROGRESS");
         elemDrone2.setState(MeanState.ASKED);
 
-        elemInterventionMean1.setName("InterventionMean-Jéjé");
+        elemInterventionMean1.setName("IntMean-Jéjé");
         elemInterventionMean1.setRole(Role.DEFAULT);
         elemInterventionMean1.setLocation(intervention.getLocation());
         elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
         elemInterventionMean1.setState(MeanState.ENGAGED);
         elemInterventionMean1.setAction("IN_PROGRESS");
 
-        elemInterventionMean2.setName("InterventionMean-Albert");
+        elemInterventionMean2.setName("IntMean-Albert");
         elemInterventionMean2.setRole(Role.DEFAULT);
         elemInterventionMean2.setLocation(intervention.getLocation());
         elemInterventionMean2.setForm(PictoFactory.ElementForm.MEAN_GROUP);
@@ -327,7 +327,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
         //archived
         intervention.setArchived(false);
-        makeElementsExample(intervention);
+        //makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
             @Override
             public void onSuccess() {
