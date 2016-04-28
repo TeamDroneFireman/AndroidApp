@@ -8,6 +8,8 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * A mean of type drone
@@ -29,7 +31,6 @@ public class Drone extends Element implements IDrone {
      * But not use for the moment !
      */
     private String action;
-    private PictoFactory.ElementForm form = PictoFactory.ElementForm.AIRMEAN;
 
     public Drone() {
         super();
@@ -41,6 +42,7 @@ public class Drone extends Element implements IDrone {
         this.states.put(MeanState.RELEASED, null);
         this.role=Role.DEFAULT;
         this.name="";
+        this.form = PictoFactory.ElementForm.AIRMEAN;
     }
 
     @Override
