@@ -43,6 +43,6 @@ public abstract class ElementRestClient<E extends Entity> extends RestClient<E> 
                 new RestHttpResponseHandler<>(callback, new ArrayListParameterizedType(entityClass));
 
         // Make request
-        httpClient.get(getResourceUri("/intervention/"+interventionId), queryParameters, new HashMap<String,String>(), handler);
+        httpClient.get(getResourceUri("intervention/"+interventionId), queryParameters, new HashMap<String,String>(), handler);
     }
 }
