@@ -195,14 +195,21 @@ public class SitacActivity extends BaseActivity implements
             case POINT_OF_INTEREST:
                 element = new PointOfInterest();
                 break;
+            case WATERPOINT:
+                element = new PointOfInterest();
             default:
                 element = new InterventionMean();
         }
 
-        element.setRole(Role.DEFAULT);
+        if(element.getType() == ElementType.WATERPOINT){
+            element.setRole(Role.WATER);
+        } else {
+            element.setRole(Role.DEFAULT);
+        }
+
         element.setForm(form);
         element.setId("TEST");
-        element.setName("azerty");
+        element.setName("test");
         element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
         this.selectedTool = null;

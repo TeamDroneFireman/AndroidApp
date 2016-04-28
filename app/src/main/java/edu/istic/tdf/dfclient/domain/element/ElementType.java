@@ -10,6 +10,7 @@ public enum ElementType {
     MEAN,
     MEAN_OTHER,
     POINT_OF_INTEREST,
+    WATERPOINT,
     AIRMEAN;
 
     public static ElementType getElementType(PictoFactory.ElementForm form){
@@ -26,12 +27,14 @@ public enum ElementType {
             case MEAN_OTHER_PLANNED:
                 return ElementType.MEAN_OTHER;
 
-            case WATERPOINT:
-            case WATERPOINT_SUPPLY:
-            case WATERPOINT_SUSTAINABLE:
             case SOURCE:
             case TARGET:
                 return ElementType.POINT_OF_INTEREST;
+
+            case WATERPOINT:
+            case WATERPOINT_SUPPLY:
+            case WATERPOINT_SUSTAINABLE:
+                return ElementType.WATERPOINT;
 
             case AIRMEAN:
             case AIRMEAN_PLANNED:
