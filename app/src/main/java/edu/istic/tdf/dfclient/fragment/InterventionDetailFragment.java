@@ -161,31 +161,36 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     private void loadInfos() {
-        if(currentIntervention != null) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(currentIntervention != null) {
 
-            // TODO: 27/04/16 remove name ? and xml
-            // name
-            interventionName.setText(currentIntervention.getName());
+                    // TODO: 27/04/16 remove name ? and xml
+                    // name
+                    interventionName.setText(currentIntervention.getName());
 
-            // TODO: 27/04/16 add sinisterCode ?
+                    // TODO: 27/04/16 add sinisterCode ?
 
-            // TODO: 27/04/16 remove address ? and xml
-            // address
-            interventionAddress.setText(currentIntervention.getLocation().getAddress());
+                    // TODO: 27/04/16 remove address ? and xml
+                    // address
+                    interventionAddress.setText(currentIntervention.getLocation().getAddress());
 
-            // date creation
-            Date date = currentIntervention.getCreationDate();
-            String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
-            interventionDate.setText(strDate);
+                    // date creation
+                    Date date = currentIntervention.getCreationDate();
+                    String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
+                    interventionDate.setText(strDate);
 
-            // TODO: 27/04/16 add map ?
+                    // TODO: 27/04/16 add map ?
 
-            // archived button
-            if(currentIntervention.isArchived()) {
-                interventionArchiveBt.setText("Désarchiver");
-            } else {
-                interventionArchiveBt.setText(" Archiver ");
+                    // archived button
+                    if(currentIntervention.isArchived()) {
+                        interventionArchiveBt.setText("Désarchiver");
+                    } else {
+                        interventionArchiveBt.setText(" Archiver ");
+                    }
+                }
             }
-        }
+        });
     }
 }
