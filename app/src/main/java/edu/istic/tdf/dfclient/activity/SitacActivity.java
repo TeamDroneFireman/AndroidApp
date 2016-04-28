@@ -97,6 +97,9 @@ public class SitacActivity extends BaseActivity implements
         // Inject dagger dependencies
         getApplicationComponent().inject(this);
 
+        // Activity title
+        setTitle(getString(R.string.activity_sitac_title));
+
         // Load data
         String interventionId = (String) getIntent().getExtras().get("interventionId");
         DataLoader dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id

@@ -13,6 +13,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -136,7 +137,7 @@ public class MeansTableFragment extends Fragment {
     }*/
 
     public void updateElement(IElement element) {
-        if (element instanceof IMean){
+        if (element instanceof IMean){//TODO Here change condition
             if(means.contains(element)){
                 updateElem((IMean) element);
             }else{
@@ -145,6 +146,14 @@ public class MeansTableFragment extends Fragment {
             }
         }
     }
+
+    public void updateElements(Collection<IElement> element) {
+        Iterator<IElement> iterator= element.iterator();
+        while (iterator.hasNext()){
+            updateElement(iterator.next());
+        }
+    }
+
 
     private void addElment(IMean element) {
         HashMap<MeanState,Date> currentStates=element.getStates();
