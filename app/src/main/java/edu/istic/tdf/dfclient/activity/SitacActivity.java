@@ -202,7 +202,6 @@ public class SitacActivity extends BaseActivity implements
         }
 
         element.setForm(form);
-        element.setId("TEST");
         element.setName("test");
         element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
