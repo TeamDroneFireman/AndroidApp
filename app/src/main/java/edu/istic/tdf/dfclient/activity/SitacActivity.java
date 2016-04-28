@@ -106,15 +106,20 @@ public class SitacActivity extends BaseActivity implements
         sitacFragment = SitacFragment.newInstance();
         toolbarFragment = ToolbarFragment.newInstance();
         contextualDrawerFragment = ContextualDrawerFragment.newInstance();
+        meansTableFragment=(MeansTableFragment.newInstance());
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);
         observers.add(contextualDrawerFragment);
 
         getSupportFragmentManager().beginTransaction()
+                .add(R.id.sitac_container, meansTableFragment, meansTableFragment.getTag())
+                .hide(meansTableFragment)
                 .add(R.id.sitac_container, sitacFragment, sitacFragment.getTag())
+                .show(sitacFragment)
                 .add(R.id.toolbar_container, toolbarFragment)
                 .add(R.id.contextual_drawer_container, contextualDrawerFragment)
+                .hide(contextualDrawerFragment)
                 .commit();
 
         hideContextualDrawer();
@@ -136,7 +141,7 @@ public class SitacActivity extends BaseActivity implements
         currentFragment = sitacFragment;
 
         //add
-        meansTableFragment=(MeansTableFragment.newInstance());
+
 
     }
 
@@ -180,7 +185,10 @@ public class SitacActivity extends BaseActivity implements
         drone.setName("azerty");
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
+
         this.selectedTool = null;
+        contextualDrawerFragment.setSelectedElement(drone);
+        showContextualDrawer();
         return drone;
     }
 
@@ -191,10 +199,16 @@ public class SitacActivity extends BaseActivity implements
     }
 
     private void showContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .show(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(0);
 
     }
     private void hideContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
@@ -212,12 +226,22 @@ public class SitacActivity extends BaseActivity implements
 
             // action with ID action_refresh was selected
             case R.id.switch_to_means_table:
-                intent = new Intent(this, MeansTableActivity.class);
-                this.startActivity(intent);
-                //switchTo(meansTableFragment);
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .hide(sitacFragment)
+                        .commit();
+                /*intent = new Intent(this, MeansTableActivity.class);
+                this.startActivity(intent);*/
+                switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .show(contextualDrawerFragment)
+                        .show(sitacFragment)
+                        .commit();
                 switchTo(sitacFragment);
                 break;
 
@@ -275,7 +299,11 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void updateElement(IElement element) {
         sitacFragment.updateElement(element);
+        meansTableFragment.updateElement(element);
+
     }
+
+
 
     private class DataLoader {
         private String interventionId;

@@ -32,12 +32,14 @@ public class MeansTableFragment extends Fragment {
 
     private TableLayout meanTab;
 
-    private Intervention intervention;
+    //private Intervention intervention;
 
     //Bouchon
    // private List<List<String>> existedMeans=new ArrayList<>();
 
     private List<IMean> means=new ArrayList<>();
+
+    private HashMap<String,TableRow> link=new HashMap<>();
 
     public MeansTableFragment() {
         // Required empty public constructor
@@ -57,12 +59,13 @@ public class MeansTableFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        getExistedMeans();
+        //this.intervention=mListener.getIntervention();
+        //getExistedMeans();
 
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
         //loadMeans(existedMeans);
-        loadMeans();
+        //loadMeans();
 
         return view;
 
@@ -83,31 +86,8 @@ public class MeansTableFragment extends Fragment {
         }*/
 
         for(int i=0;i<means.size();i++){
-            HashMap<MeanState,Date> currentStates=means.get(i).getStates();
-            //HashMap<MeanState,Date> currentStates=new HashMap<>();
-            TableRow tableRow=new TableRow(meanTab.getContext());
-
-            Set<MeanState> stateSet=currentStates.keySet();
-            Iterator<MeanState> iterator=stateSet.iterator();
-
-
-            while(iterator.hasNext()){
-                MeanState current=iterator.next();
-                TextView textView=new TextView(meanTab.getContext());
-                textView.setText(currentStates.get(current).toString());
-                tableRow.addView(textView);
-                textView.setGravity(Gravity.CENTER_HORIZONTAL);
-
-            }
-
-            meanTab.addView(tableRow);
-
-
+            addElment(means.get(i));
         }
-
-
-
-
     }
 
     @Override
@@ -129,7 +109,7 @@ public class MeansTableFragment extends Fragment {
         mListener = null;
     }
 
-    public void getExistedMeans() {
+   /* public void getExistedMeans() {
         /*List<String> element=new ArrayList<>();
         element.add("SAP1");
         element.add("11:15");
@@ -146,14 +126,85 @@ public class MeansTableFragment extends Fragment {
 
         existedMeans.add(element);
         existedMeans.add(element1);*/
-        List<IElement> elements= (List) intervention.getElements();
+       /* List<IElement> elements= (List) intervention.getElements();
         for(int i=0;i<elements.size();i++){
             if(elements.get(i) instanceof IMean){
                 means.add((IMean)elements.get(i));
             }
         }
+    }*/
+
+    public void updateElement(IElement element) {
+        if (element instanceof IMean){
+            if(means.contains(element)){
+                updateElem((IMean) element);
+            }else{
+                addElment((IMean) element);
+                means.add((IMean)element);
+            }
+        }
+    }
+
+    private void addElment(IMean element) {
+        HashMap<MeanState,Date> currentStates=element.getStates();
+        TableRow tableRow=new TableRow(meanTab.getContext());
+
+        TextView name=new TextView(meanTab.getContext());
+        name.setText(element.getName());
+        name.setGravity(Gravity.CENTER_HORIZONTAL);
+        tableRow.addView(name);
+
+        tableRow.setBackgroundColor(element.getRole().getColor());
+
+
+        Set<MeanState> stateSet=currentStates.keySet();
+        Iterator<MeanState> iterator=stateSet.iterator();
+
+
+        while(iterator.hasNext()){
+            MeanState current=iterator.next();
+            TextView textView=new TextView(meanTab.getContext());
+            if(currentStates.get(current)!=null) {
+                textView.setText(currentStates.get(current).toString());
+            }else{
+                textView.setText("");
+            }
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            tableRow.addView(textView);
+
+
+        }
+        link.put(element.getName(),tableRow);
+        meanTab.addView(tableRow);
+    }
+
+    private void updateElem(IMean element) {
+        TableRow tableRow =link.get(element.getName());
+        tableRow.setBackgroundColor(element.getRole().getColor());
+
+        HashMap<MeanState,Date> currentStates=element.getStates();
+        Set<MeanState> stateSet=currentStates.keySet();
+        Iterator<MeanState> iterator=stateSet.iterator();
+
+
+        while(iterator.hasNext()){
+            MeanState current=iterator.next();
+            TextView textView=new TextView(meanTab.getContext());
+            if(currentStates.get(current)!=null) {
+                textView.setText(currentStates.get(current).toString());
+            }else{
+                textView.setText("");
+            }
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            tableRow.addView(textView);
+
+
+        }
+
+
     }
 
     public interface OnFragmentInteractionListener {
+
     }
 }

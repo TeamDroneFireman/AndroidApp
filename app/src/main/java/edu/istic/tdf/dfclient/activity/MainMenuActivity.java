@@ -2,9 +2,11 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -72,25 +74,13 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
-
-        displayWelcome();
-
         // Map
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.intervention_detail_map);
         mapFragment.getMapAsync(this);
 
-    }
+        displayWelcome();
 
-    public void displayWelcome() {
-        // Hide map
-
-        // Unselect from list
-
-        // Display in fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, interventionWelcomeFragment)
-                .commit();
     }
 
     @Override
@@ -138,6 +128,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionCreation() {
+        hideMap();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionCreateFormFragment)
                 .commit();
@@ -145,21 +136,24 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
+        // Display detail in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
+
+        // Load intervention in fragment and display it
         interventionDetailFragment.setIntervention(intervention);
         interventionDetailFragment.displayIntervention();
 
         // Map
         if(intervention.getLocation() != null && intervention.getLocation().getGeopoint() != null) {
-
+            showMap();
             final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
                     intervention.getLocation().getGeopoint().getLongitude());
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
-                    if(mapMarker != null) {
+                    if (mapMarker != null) {
                         mapMarker.remove();
                     }
                     mapMarker = googleMap.addMarker(new MarkerOptions().position(location));
@@ -168,12 +162,15 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 }
             });
 
+        } else {
+            hideMap();
         }
     }
 
     @Override
     public void onCreateIntervention() {
         interventionListFragment.loadAndDisplayInterventions(null);
+        displayWelcome();
     }
 
     @Override
@@ -184,5 +181,38 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Override
     public void onNewInterventionPressed() {
 
+    }
+
+    public void displayWelcome() {
+        // Hide map
+        hideMap();
+
+        // Unselect from list
+        // TODO
+
+        // Display in fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, interventionWelcomeFragment)
+                .commit();
+    }
+
+    public void hideMap() {
+        if(!mapFragment.isHidden()) {
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
+                    .hide(mapFragment)
+                    .commit();
+        }
+    }
+
+    public void showMap() {
+        if(mapFragment.isHidden()) {
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
+                    .show(mapFragment)
+                    .commit();
+        }
     }
 }

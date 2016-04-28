@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v4.content.ContextCompat;
@@ -29,37 +30,46 @@ public class PictoFactory {
     public enum ElementForm {
 
         // Mean
-        MEAN(R.drawable.mean_other),
-        MEAN_PLANNED(R.drawable.mean_planned),
-        MEAN_GROUP(R.drawable.mean_group),
-        MEAN_COLUMN(R.drawable.mean_column),
+        MEAN("Véhicule", R.drawable.mean_other),
+        MEAN_PLANNED("Véhicule prévu", R.drawable.mean_planned),
+        MEAN_GROUP("Groupe de véhicules", R.drawable.mean_group),
+        MEAN_COLUMN("Colonne", R.drawable.mean_column),
 
         // Mean other
-        MEAN_OTHER(R.drawable.mean_other),
-        MEAN_OTHER_PLANNED(R.drawable.mean_other_planned),
+        MEAN_OTHER("Moyen d'intervention", R.drawable.mean_other),
+        MEAN_OTHER_PLANNED("Moyen d'intervention prévu", R.drawable.mean_other_planned),
 
         // Waterpoint
-        WATERPOINT(R.drawable.waterpoint),
-        WATERPOINT_SUPPLY(R.drawable.waterpoint_supply),
-        WATERPOINT_SUSTAINABLE(R.drawable.waterpoint_sustainable),
+        WATERPOINT("Prise d'eau non pérenne", R.drawable.waterpoint),
+        WATERPOINT_SUPPLY("Point de ravitaillement", R.drawable.waterpoint_supply),
+        WATERPOINT_SUSTAINABLE("Prise d'eau pérenne", R.drawable.waterpoint_sustainable),
 
         // Airmean
-        AIRMEAN(R.drawable.airmean),
-        AIRMEAN_PLANNED(R.drawable.airmean_planned),
+        AIRMEAN("Moyen aérien", R.drawable.airmean),
+        AIRMEAN_PLANNED("Moyen aérien prévu", R.drawable.airmean_planned),
 
         // Sources / target
-        SOURCE(R.drawable.source),
-        TARGET(R.drawable.target);
+        SOURCE("Source", R.drawable.source),
+        TARGET("Cible", R.drawable.target);
 
+        private String label;
         private int drawable;
-        private ElementForm(int drawable){
+        private ElementForm(String label, int drawable){
+            this.label = label;
             this.drawable = drawable;
         }
 
         public int getDrawable(){
             return drawable;
         }
+        public String getLabel(){
+            return label;
+        }
 
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     /**
@@ -123,7 +133,10 @@ public class PictoFactory {
     }
 
     public Drawable toDrawable(){
-        return ContextCompat.getDrawable(context, this.drawable);
+        Drawable drawable = ContextCompat.getDrawable(context, this.drawable);
+        drawable.setColorFilter(this.color, PorterDuff.Mode.MULTIPLY);
+        drawable.setBounds(0, 0, size, size);
+        return drawable;
     }
 
     public ImageView toImageView(){
