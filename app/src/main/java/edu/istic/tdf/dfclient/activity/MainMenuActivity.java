@@ -85,13 +85,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
-        final Intervention interventionFinal = intervention;
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                interventionDetailFragment.setCurrentIntervention(interventionFinal);
-            }
-        });
+        interventionDetailFragment.setCurrentIntervention(intervention);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
@@ -102,7 +96,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                if(mapMarker != null) {
+                if (mapMarker != null) {
                     mapMarker.remove();
                 }
                 mapMarker = googleMap.addMarker(new MarkerOptions().position(location));
