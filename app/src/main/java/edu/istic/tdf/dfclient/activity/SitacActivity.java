@@ -114,6 +114,7 @@ public class SitacActivity extends BaseActivity implements
                 .add(R.id.sitac_container, sitacFragment, sitacFragment.getTag())
                 .add(R.id.toolbar_container, toolbarFragment)
                 .add(R.id.contextual_drawer_container, contextualDrawerFragment)
+                .hide(contextualDrawerFragment)
                 .commit();
 
         hideContextualDrawer();
@@ -178,6 +179,8 @@ public class SitacActivity extends BaseActivity implements
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
         this.selectedTool = null;
+        contextualDrawerFragment.setSelectedElement(drone);
+        showContextualDrawer();
         return drone;
     }
 
@@ -188,10 +191,16 @@ public class SitacActivity extends BaseActivity implements
     }
 
     private void showContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .show(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(0);
 
     }
     private void hideContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
