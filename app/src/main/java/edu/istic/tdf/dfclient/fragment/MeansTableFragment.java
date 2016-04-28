@@ -83,8 +83,8 @@ public class MeansTableFragment extends Fragment {
         }*/
 
         for(int i=0;i<means.size();i++){
-            //HashMap<MeanState,Date> currentStates=means.get(i).getHashMap();
-            HashMap<MeanState,Date> currentStates=new HashMap<>();
+            HashMap<MeanState,Date> currentStates=means.get(i).getStates();
+            //HashMap<MeanState,Date> currentStates=new HashMap<>();
             TableRow tableRow=new TableRow(meanTab.getContext());
 
             Set<MeanState> stateSet=currentStates.keySet();
