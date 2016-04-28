@@ -39,12 +39,13 @@ import javax.net.ssl.HttpsURLConnection;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
+import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
-import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
-import edu.istic.tdf.dfclient.domain.element.action.ActionState;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
@@ -87,6 +88,10 @@ public class InterventionCreateFormFragment extends Fragment {
 
     InterventionDao interventionDao;
 
+    DroneDao droneDao;
+
+    InterventionMeanDao interventionMeanDao;
+
     // for listView sinister_code
     private ArrayList<String> sinisters =new ArrayList<String>();
     private ArrayAdapter<String> sinistersAdapter;
@@ -115,9 +120,13 @@ public class InterventionCreateFormFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static InterventionCreateFormFragment newInstance(InterventionDao interventionDao) {
+    public static InterventionCreateFormFragment newInstance(InterventionDao interventionDao,
+                                                             DroneDao droneDao,
+                                                             InterventionMeanDao interventionMeanDao) {
         InterventionCreateFormFragment fragment = new InterventionCreateFormFragment();
         fragment.interventionDao = interventionDao;
+        fragment.droneDao = droneDao;
+        fragment.interventionMeanDao = interventionMeanDao;
         return fragment;
     }
 
@@ -232,7 +241,6 @@ public class InterventionCreateFormFragment extends Fragment {
     // JUST FOR TEST, Elements drone or mean examples
     public void makeElementsExample(Intervention intervention){
 
-
         Drone elemDrone1 = new Drone();
         Drone elemDrone2 = new Drone();
 
@@ -327,6 +335,9 @@ public class InterventionCreateFormFragment extends Fragment {
 
         //archived
         intervention.setArchived(false);
+
+        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
+
         //makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
             @Override
@@ -334,8 +345,9 @@ public class InterventionCreateFormFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                         cleanForm();
-                         mListener.onCreateIntervention();
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                        cleanForm();
+                        mListener.onCreateIntervention();
                     }
                 });
             }
