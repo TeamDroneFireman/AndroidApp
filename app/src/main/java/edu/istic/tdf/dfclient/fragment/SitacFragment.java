@@ -143,7 +143,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         public Tool getSelectedTool();
 
-        public void setSelectedElement(IElement element);
         public void setSelectedElement(Element element);
         public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
         public void handleCancelSelection();
