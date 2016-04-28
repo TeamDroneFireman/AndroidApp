@@ -68,7 +68,7 @@ public class Drone extends Element implements IDrone {
 
     @Override
     public HashMap<MeanState, Date> getStates() {
-        return null;
+        return this.states;
     }
 
     @Override
