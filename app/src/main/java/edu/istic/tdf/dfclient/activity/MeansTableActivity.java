@@ -49,8 +49,5 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
         return true;
     }
 
-    @Override
-    public Intervention getIntervention() {
-        return null;
-    }
+
 }

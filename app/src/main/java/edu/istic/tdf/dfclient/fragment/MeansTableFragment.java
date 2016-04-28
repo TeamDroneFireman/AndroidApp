@@ -152,11 +152,11 @@ public class MeansTableFragment extends Fragment {
 
 
         while(iterator.hasNext()){
-            MeanState current=iterator.next();
+/*            MeanState current=iterator.next();
             TextView textView=new TextView(meanTab.getContext());
             textView.setText(currentStates.get(current).toString());
             tableRow.addView(textView);
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);*/
 
         }
 

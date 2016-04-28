@@ -181,6 +181,7 @@ public class SitacActivity extends BaseActivity implements
         drone.setName("azerty");
         drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
+        //meansTableFragment.updateElement(drone);
         this.selectedTool = null;
         return drone;
     }
