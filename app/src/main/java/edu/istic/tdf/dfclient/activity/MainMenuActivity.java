@@ -25,15 +25,24 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         OnMapReadyCallback {
 
     // UI
-    SupportMapFragment mapFragment;
-    Marker mapMarker;
+    SupportMapFragment mapFragment; // Map
+    Marker mapMarker; // Map marker
 
+    /**
+     * The right bottom fragment (intervention details)
+     */
     @Inject
     InterventionDetailFragment interventionDetailFragment;
 
+    /**
+     * The left fragment (list)
+     */
     @Inject
     InterventionListFragment interventionListFragment;
 
+    /**
+     * Intervention creation fragment, displayed instead of detail fragment
+     */
     @Inject
     InterventionCreateFormFragment interventionCreateFormFragment;
 
@@ -60,8 +69,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     }
 
+    /**
+     * Called when select button is touched. Goes to the next activity
+     * @param intervention The selected intervention
+     */
     @Override
-    public void onInterventionSelect(Intervention intervention) {
+    public void onInterventionSelection(Intervention intervention) {
         if(intervention != null)
         {
             // Detail fragment
@@ -71,6 +84,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         }
     }
 
+    /**
+     * Called when archive button is touched.
+     */
     @Override
     public void onInterventionArchived() {
         interventionListFragment.loadInterventions(null);
@@ -97,19 +113,23 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .commit();
 
         // Map
-        final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
-                intervention.getLocation().getGeopoint().getLongitude());
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                if(mapMarker != null) {
-                    mapMarker.remove();
+        if(intervention.getLocation() != null && intervention.getLocation().getGeopoint() != null) {
+
+            final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
+                    intervention.getLocation().getGeopoint().getLongitude());
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    if(mapMarker != null) {
+                        mapMarker.remove();
+                    }
+                    mapMarker = googleMap.addMarker(new MarkerOptions().position(location));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                    googleMap.moveCamera(CameraUpdateFactory.zoomTo(16));
                 }
-                mapMarker = googleMap.addMarker(new MarkerOptions().position(location));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                googleMap.moveCamera(CameraUpdateFactory.zoomTo(13));
-            }
-        });
+            });
+
+        }
     }
 
     @Override
