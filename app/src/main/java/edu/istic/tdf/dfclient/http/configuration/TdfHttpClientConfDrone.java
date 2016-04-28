@@ -8,9 +8,4 @@ public class TdfHttpClientConfDrone extends TdfHttpClientConf {
     public int getPort() {
         return 12349;
     }
-
-    @Override
-    public String getPath() {
-        return "";
-    }
 }

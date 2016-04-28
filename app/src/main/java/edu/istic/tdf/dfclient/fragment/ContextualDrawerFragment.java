@@ -11,12 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
+import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -73,9 +76,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         });
 
-        roleSpinner.setAdapter(new ArrayAdapter<Role>(getContext(), android.R.layout.simple_spinner_item, Role.values()));
-        formSpinner.setAdapter(new ArrayAdapter<PictoFactory.ElementForm>(getContext(), android.R.layout.simple_spinner_item, PictoFactory.ElementForm.values()));
-        return view;
+        roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
+        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), PictoFactory.ElementForm.values()));
+       return view;
     }
 
     @Override
@@ -103,6 +106,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     public void setSelectedElement(IElement element) {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
+        roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
+        formSpinner.setSelection(Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm()));
     }
 
     public interface OnFragmentInteractionListener {

@@ -8,9 +8,4 @@ public class TdfHttpClientConfSinister extends TdfHttpClientConf {
     public int getPort() {
         return 12348;
     }
-
-    @Override
-    public String getPath() {
-        return "";
-    }
 }

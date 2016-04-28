@@ -17,6 +17,6 @@ public class PointOfInterestRestClient extends ElementRestClient<PointOfInterest
 
     @Override
     public String getRestEndpoint() {
-        return "pointsofinterest/";
+        return "SIGs/";
     }
 }

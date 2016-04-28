@@ -8,9 +8,4 @@ public class TdfHttpClientConfIntervention extends TdfHttpClientConf {
     public int getPort() {
         return 12345;
     }
-
-    @Override
-    public String getPath() {
-        return "api/";
-    }
 }

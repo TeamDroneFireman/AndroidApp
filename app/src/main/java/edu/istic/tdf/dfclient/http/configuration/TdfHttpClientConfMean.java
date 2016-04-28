@@ -8,9 +8,4 @@ public class TdfHttpClientConfMean extends TdfHttpClientConf {
     public int getPort() {
         return 12347;
     }
-
-    @Override
-    public String getPath() {
-        return "";
-    }
 }

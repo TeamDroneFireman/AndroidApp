@@ -92,7 +92,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.logout_button:
                 logout();

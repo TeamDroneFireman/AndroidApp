@@ -10,6 +10,7 @@
 
     <!-- Main menu -->
     <string name="intervention_selection_button">Sélectionner</string>
+    <string name="intervention_archive_button">Archiver</string>
 
     <!-- Creation form -->
     <string name="intervention_creation_validation_button">Valider</string>
