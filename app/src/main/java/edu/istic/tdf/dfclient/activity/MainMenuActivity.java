@@ -88,8 +88,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         Intent intent;
         switch (item.getItemId()) {
             case R.id.logout_button:
-                intent = new Intent(this, LoginActivity.class);
-                this.startActivity(intent);
+                logout();
                 break;
             default:
                 break;
