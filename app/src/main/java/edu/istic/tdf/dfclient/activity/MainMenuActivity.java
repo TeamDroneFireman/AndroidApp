@@ -14,6 +14,9 @@ import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
 public class MainMenuActivity extends BaseActivity implements InterventionDetailFragment.OnFragmentInteractionListener, InterventionListFragment.OnFragmentInteractionListener, InterventionCreateFormFragment.OnFragmentInteractionListener {
 
     @Inject
+    InterventionDetailFragment interventionDetailFragment;
+
+    @Inject
     InterventionListFragment interventionListFragment;
 
     @Inject
@@ -32,19 +35,27 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .commit();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, InterventionDetailFragment.newInstance())
+                .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
 
     }
 
     @Override
     public void onInterventionSelect(Intervention intervention) {
+        Intent intent = new Intent(this, SitacActivity.class);
+        this.startActivity(intent);
+        /*
         if(intervention != null)
         {
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
             this.startActivity(intent);
-        }
+        }*/
+    }
+
+    @Override
+    public void onInterventionArchived() {
+        interventionListFragment.loadInterventions(null);
     }
 
     @Override
@@ -56,8 +67,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleInterventionSelected(Intervention intervention) {
+        interventionDetailFragment.setCurrentIntervention(intervention);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, InterventionDetailFragment.newInstance(intervention))
+                .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
     }
 

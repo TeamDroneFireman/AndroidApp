@@ -7,8 +7,6 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
-import edu.istic.tdf.dfclient.domain.geo.Location;
-import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * A mean of type drone
@@ -32,13 +30,11 @@ public class Drone extends Element implements IDrone {
     private String action;
 
     public Drone() {
-        /*
         this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
         this.states.put(MeanState.ENGAGED, null);
         this.states.put(MeanState.RELEASED, null);
-        */
         this.role=Role.DEFAULT;
         this.name="";
     }
@@ -71,8 +67,13 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
+    public HashMap<MeanState, Date> getStates() {
+        return null;
+    }
+
+    @Override
     public void setAction(String action) {
-        this.action=action;
+        this.action = action;
     }
 
     @Override
@@ -94,5 +95,4 @@ public class Drone extends Element implements IDrone {
     public boolean hasMission() {
         return (this.mission != null);
     }
-
 }
