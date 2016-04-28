@@ -33,6 +33,10 @@
     <string name="column_2">arrivé à</string>
     <string name="column_3">engagé à</string>
     <string name="column_4">liberé à</string>
+    <string name="intervention_detail_unarchive">Désarchiver</string>
+    <string name="intervention_detail_archive">Archiver</string>
+    <string name="intervention_detail_dateformat">yyyy-MM-dd\'-\'HH:mm:ss</string>
+    <string name="intervention_welcome_pleaseselect">Sélectionnez une intervention</string>
 
 
 </resources>

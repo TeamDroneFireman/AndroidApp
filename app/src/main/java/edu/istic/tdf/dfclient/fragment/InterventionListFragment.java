@@ -30,37 +30,24 @@ import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
-import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
 
 public class InterventionListFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
+    // UI
+    @Bind(R.id.interventionCreationButton) Button interventionCreationBt;
+    @Bind(R.id.interventions_list) ListView interventionsList;
+    @Bind(R.id.pull_to_refresh_interventions) SwipeRefreshLayout pullToRefresh;
 
-    @Bind(R.id.interventionCreationButton)
-    Button interventionCreationBt;
-
-    @Bind(R.id.interventions_list)
-    ListView interventionsList;
-
-    @Bind(R.id.pull_to_refresh_interventions)
-    SwipeRefreshLayout pullToRefresh;
-
+    // Data
     InterventionDao interventionDao;
-
-    // for listView intervention
-    private ArrayList<String> interventions = new ArrayList<>();
+    private ArrayList<String> interventions = new ArrayList<>();    // for listView intervention
     private ArrayAdapter<String> interventionsAdapter;
+    ArrayList<Intervention> interventionArrayList = new ArrayList<>();    // the collection of all object interventions
 
-    // the collection of all object interventions
-    ArrayList<Intervention> interventionArrayList = new ArrayList<>();
+    // Fragment listener
+    private OnFragmentInteractionListener fragmentInteractionListener;
 
-    private TextView currentSelectedView;
-
-    public InterventionListFragment() {
-        // Required empty public constructor
-    }
 
     public static InterventionListFragment newInstance(InterventionDao interventionDao) {
         InterventionListFragment fragment = new InterventionListFragment();
@@ -80,42 +67,42 @@ public class InterventionListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_intervention_list, container, false);
         ButterKnife.bind(this, view);// Inflate the layout for this fragment
 
-        //interventionCreationBt
-        interventionCreationBt.setEnabled(isCodis());
+        // Toggle creation button
+        displayCreationBt();
 
-        interventionCreationBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.handleInterventionCreation();
-            }
-        });
-
-        //interventionsList
+        //Data
         interventionsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1,
                 interventions);
+        interventionsList.setAdapter(interventionsAdapter);
+
+        // Events
+        interventionCreationBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentInteractionListener.handleInterventionCreation();
+            }
+        });
 
         interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!view.equals(currentSelectedView)) {
-                    if (currentSelectedView != null) {
+                view.setSelected(true);
+                //if (!view.equals(currentSelectedView)) {
+                    //if (currentSelectedView != null) {
                         //reset color of last selected item
-                        unhighlight(currentSelectedView,parent);
-                    }
+                        //unhighlight(currentSelectedView, parent);
+                    //}
 
-                    selectItem(position, (TextView) view);
+                    selectItem(position);
                 }
-            }
+            //}
         });
 
-        interventionsList.setAdapter(interventionsAdapter);
-
-        // Pull to refresh
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadInterventions(new Runnable() {
+                loadAndDisplayInterventions(new Runnable() {
                     @Override
                     public void run() {
                         InterventionListFragment.this.getActivity().runOnUiThread(new Runnable() {
@@ -129,8 +116,7 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
-        // TODO : Runnable that selects the first item when loaded ?  -> it's done biatch
-        loadInterventions(null);
+        loadAndDisplayInterventions(null);
 
         return view;
     }
@@ -139,7 +125,7 @@ public class InterventionListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            fragmentInteractionListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -149,7 +135,7 @@ public class InterventionListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        fragmentInteractionListener = null;
     }
 
     public interface OnFragmentInteractionListener {
@@ -161,25 +147,18 @@ public class InterventionListFragment extends Fragment {
         void handleInterventionSelected(Intervention intervention);
     }
 
+    private void displayCreationBt() {
+        interventionCreationBt.setEnabled(isCodis());
+    }
+
     private boolean isCodis(){
         Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
         return credentials.isCodisUser();
     }
 
-    public void loadInterventions(final Runnable onLoaded){
+    public void loadAndDisplayInterventions(final Runnable onLoaded){
         interventions.clear();
         interventionArrayList.clear();
-
-        // TODO: 27/04/16 bouchon à enlever
-        Intervention interventionBouchon = new Intervention();
-        interventionBouchon.setName("Bouchon");
-        interventionBouchon.setCreationDate(new Date());
-        interventionBouchon.setSinisterCode(SinisterCode.FDF);
-        Location location = new Location();
-        location.setAddress("12 rue de papouille, 777 BisounoursLand");
-        interventionBouchon.setLocation(location);
-        interventionBouchon.setArchived(true);
-        interventionArrayList.add(interventionBouchon);
 
         interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
             @Override
@@ -195,27 +174,39 @@ public class InterventionListFragment extends Fragment {
                     interventionArrayList.add(intervention);
                 }
 
-                addSortedInterventions();
+                sortInterventions();
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        interventionsAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                //select the first intervention
+                if(interventionsList.getCount() > 0)
+                {
+                    //selectFirstItem();
+                }
 
                 // Run callback
-                if(onLoaded != null) {
+                if (onLoaded != null) {
                     onLoaded.run();
                 }
             }
 
             @Override
             public void onRepositoryFailure(Throwable e) {
-                Log.e("", "REPO FAILURE");
             }
 
             @Override
             public void onRestFailure(Throwable e) {
-                Log.e("", "REST FAILURE");
+                // TODO : display toast error
             }
         });
     }
 
-    private void addSortedInterventions(){
+    private void sortInterventions(){
         ArrayList<Intervention> interventionArrayListNotArchived = new ArrayList<>();
         ArrayList<Intervention> interventionArrayListArchived = new ArrayList<>();
 
@@ -268,19 +259,6 @@ public class InterventionListFragment extends Fragment {
             // TODO: 28/04/16 better address
             interventions.add(intervention.getName() + "\n" + intervention.getLocation().getAddress());
         }
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                interventionsAdapter.notifyDataSetChanged();
-            }
-        });
-
-        //select the first intervention
-        if(interventionsList.getCount() > 0 && currentSelectedView == null)
-        {
-            selectFirstItem();
-        }
     }
 
     private void selectFirstItem(){
@@ -302,16 +280,12 @@ public class InterventionListFragment extends Fragment {
             view = (TextView)interventionsList.getChildAt(childIndex);
         }*/
 
-        selectItem(firstListItemPosition, view);
+        selectItem(firstListItemPosition);
     }
 
-    private void selectItem(int i, TextView view){
+    private void selectItem(int i){
         // TODO: 28/04/16 bug, when call on create, doesn't select the first intervention 
-        mListener.handleInterventionSelected(interventionArrayList.get(i));
-        currentSelectedView = view;
-
-        //color the selected item
-        highlight(view);
+        fragmentInteractionListener.handleInterventionSelected(interventionArrayList.get(i));
     }
 
     private void highlight(TextView view) {
