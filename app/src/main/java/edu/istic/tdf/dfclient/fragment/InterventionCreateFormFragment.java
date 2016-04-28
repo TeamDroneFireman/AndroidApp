@@ -37,6 +37,7 @@ import javax.net.ssl.HttpsURLConnection;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -263,6 +264,8 @@ public class InterventionCreateFormFragment extends Fragment {
         //archived
         intervention.setArchived(false);
 
+        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
+
         interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
             @Override
             public void onSuccess() {
@@ -270,6 +273,7 @@ public class InterventionCreateFormFragment extends Fragment {
                     @Override
                     public void run() {
                         mListener.onCreateIntervention();
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
                     }
                 });
             }
