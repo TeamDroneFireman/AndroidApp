@@ -101,6 +101,7 @@ public class InterventionCreateFormFragment extends Fragment {
     private ArrayAdapter<String> meansAdapter;
 
     // use to handle the geopoints from an address
+    // TODO : Fix this to avoid memory leaks
     private Handler myHandler = new Handler() {
 
         @Override
