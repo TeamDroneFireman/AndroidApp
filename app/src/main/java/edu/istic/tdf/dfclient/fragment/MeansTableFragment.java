@@ -39,6 +39,8 @@ public class MeansTableFragment extends Fragment {
 
     private List<IMean> means=new ArrayList<>();
 
+    private HashMap<String,TableRow> link=new HashMap<>();
+
     public MeansTableFragment() {
         // Required empty public constructor
     }
@@ -172,12 +174,34 @@ public class MeansTableFragment extends Fragment {
 
 
         }
-
+        link.put(element.getName(),tableRow);
         meanTab.addView(tableRow);
     }
 
     private void updateElem(IMean element) {
-        //TODO
+        TableRow tableRow =link.get(element.getName());
+        tableRow.setBackgroundColor(element.getRole().getColor());
+
+        HashMap<MeanState,Date> currentStates=element.getStates();
+        Set<MeanState> stateSet=currentStates.keySet();
+        Iterator<MeanState> iterator=stateSet.iterator();
+
+
+        while(iterator.hasNext()){
+            MeanState current=iterator.next();
+            TextView textView=new TextView(meanTab.getContext());
+            if(currentStates.get(current)!=null) {
+                textView.setText(currentStates.get(current).toString());
+            }else{
+                textView.setText("");
+            }
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            tableRow.addView(textView);
+
+
+        }
+
+
     }
 
     public interface OnFragmentInteractionListener {
