@@ -66,6 +66,8 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        setTitle(getString(R.string.activity_main_menu_title));
+
         progressOverlay = findViewById(R.id.progress_overlay);
 
 

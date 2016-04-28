@@ -39,5 +39,9 @@
     <string name="intervention_detail_dateformat">yyyy-MM-dd\'-\'HH:mm:ss</string>
     <string name="intervention_welcome_pleaseselect">Sélectionnez une intervention</string>
 
+    <!-- Activity titles -->
+    <string name="activity_main_menu_title">Interventions</string>
+    <string name="activity_sitac_title">SITAC</string>
+
 
 </resources>
