@@ -230,7 +230,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
 
     // JUST FOR TEST, Elements drone or mean examples
-  /*  public void makeElementsExample(Intervention intervention){
+    public void makeElementsExample(Intervention intervention){
 
 
         Drone elemDrone1 = new Drone();
@@ -277,9 +277,14 @@ public class InterventionCreateFormFragment extends Fragment {
 
         Collection<IElement> elements = new HashSet<IElement>();
         elements.add(elemDrone1);
+        elements.add(elemDrone2);
+        elements.add(elemInterventionMean1);
+        elements.add(elemInterventionMean2);
+        elements.add(elemInterventionMean3);
+
         intervention.setElements(elements);
 
-    }*/
+    }
 
     private void computeIntervention() {
         final Intervention intervention = new Intervention();
@@ -322,7 +327,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
         //archived
         intervention.setArchived(false);
-        //makeElementsExample(intervention);
+        makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
             @Override
             public void onSuccess() {
@@ -541,8 +546,6 @@ public class InterventionCreateFormFragment extends Fragment {
         this.address.setText("");
         this.lat.setText("");
         this.lng.setText("");
-        this.sinisters.clear();
-        this.means.clear();
     }
 
 }
