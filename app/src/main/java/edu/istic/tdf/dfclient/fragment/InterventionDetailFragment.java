@@ -77,9 +77,13 @@ public class InterventionDetailFragment extends Fragment {
         
         if(currentIntervention != null) {
 
+            // TODO: 27/04/16 remove name ? and xml
             // name
             interventionName.setText(currentIntervention.getName());
 
+            // TODO: 27/04/16 add sinisterCode ? 
+
+            // TODO: 27/04/16 remove address ? and xml
             // address
             interventionAddress.setText(currentIntervention.getLocation().getAddress());
 
@@ -87,6 +91,8 @@ public class InterventionDetailFragment extends Fragment {
             Date date = currentIntervention.getCreationDate();
             String strDate = new SimpleDateFormat("yyyy-MM-dd'-'HH:mm:ss", Locale.FRANCE).format(date);
             interventionDate.setText(strDate);
+
+            // TODO: 27/04/16 add map ?
         }
 
         return view;

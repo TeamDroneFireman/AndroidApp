@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.domain.element.mean;
 
+import java.util.Date;
+
 import edu.istic.tdf.dfclient.domain.element.IElement;
 
 /**
@@ -14,10 +16,18 @@ public interface IMean extends IElement {
     public void setState(MeanState state);
 
     /**
-     *
+     * Get current state
      * @return state
      */
     public MeanState getState();
+
+    /**
+     * Get timestamp for the state passed as parameter
+     * @param state
+     * @return
+     */
+    public Date getStateDate(MeanState state);
+
 
     /**
      * change the current action (defence, move...)
