@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -16,6 +18,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
+
+import static edu.istic.tdf.dfclient.domain.element.Role.values;
 
 public class ContextualDrawerFragment extends Fragment implements Observer {
 
@@ -26,6 +32,12 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     @Bind(R.id.ElementSubmitButton)
     Button ElementSubmitButton;
+
+    @Bind(R.id.RoleSpinner)
+    Spinner roleSpinner;
+
+    @Bind(R.id.FormSpinner)
+    Spinner formSpinner;
 
     private IElement element;
 
@@ -55,9 +67,14 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 element.setName(ElementLabelEdit.getText().toString());
+                element.setRole((Role) roleSpinner.getSelectedItem());
+                element.setForm((PictoFactory.ElementForm) formSpinner.getSelectedItem());
                 mListener.updateElement(element);
             }
         });
+
+        roleSpinner.setAdapter(new ArrayAdapter<Role>(getContext(), android.R.layout.simple_spinner_item, Role.values()));
+        formSpinner.setAdapter(new ArrayAdapter<PictoFactory.ElementForm>(getContext(), android.R.layout.simple_spinner_item, PictoFactory.ElementForm.values()));
         return view;
     }
 
@@ -85,6 +102,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     public void setSelectedElement(IElement element) {
         this.element = element;
+        ElementLabelEdit.setText(element.getName());
     }
 
     public interface OnFragmentInteractionListener {

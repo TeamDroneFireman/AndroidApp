@@ -17,15 +17,6 @@ public enum Role {
     DEFAULT("default", 0xFF000000),
     COMMAND("command", 0xFFC51162);
 
-    private static final List<Role> VALUES =
-            Collections.unmodifiableList(Arrays.asList(values()));
-    private static final int SIZE = VALUES.size();
-    private static final Random RANDOM = new Random();
-
-    public static int getRandomColor()  {
-        return VALUES.get(RANDOM.nextInt(SIZE)).getColor();
-    }
-
     private String title;
     private int color;
 

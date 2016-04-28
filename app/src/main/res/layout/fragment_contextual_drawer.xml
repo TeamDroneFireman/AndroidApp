@@ -2,18 +2,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment">
+    tools:context="edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment"
+    android:background="#424242">
 
-    <EditText
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ElementLabelEdit"
-        android:layout_gravity="center_horizontal|top" />
+        android:layout_height="match_parent"
+        android:padding="15dp">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enregistrer"
-        android:id="@+id/ElementSubmitButton"
-        android:layout_gravity="center_horizontal|bottom" />
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/RoleSpinner"
+            android:layout_gravity="center_horizontal|top"
+            android:spinnerMode="dropdown" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/FormSpinner"
+            android:layout_gravity="center_horizontal|top"
+            android:spinnerMode="dropdown" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ElementLabelEdit"
+            android:layout_gravity="center_horizontal|top" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enregistrer"
+            android:id="@+id/ElementSubmitButton"
+            android:layout_gravity="center_horizontal|bottom" />
+    </LinearLayout>
 </FrameLayout>

@@ -117,6 +117,22 @@ public class SitacActivity extends BaseActivity implements
                 .add(R.id.contextual_drawer_container, contextualDrawerFragment)
                 .commit();
 
+        hideContextualDrawer();
+        List<IElement> elements = new ArrayList<>();
+/*
+        IElement interventionMean = new InterventionMean();
+        interventionMean.setName("CC3");
+        interventionMean.setLocation(new Location("", new GeoPoint(48.1152739, -1.6381364, 12.0)));
+*/
+        IElement drone = new Drone();
+        drone.setName("Drone1");
+        drone.setLocation(new Location("", new GeoPoint(49.1152739, -1.6381364, 12.0)));
+        drone.setForm(PictoFactory.ElementForm.AIRMEAN);
+
+        //elements.add(interventionMean);
+        elements.add(drone);
+//        sitacFragment.updateElements(elements);
+
         currentFragment = sitacFragment;
 
         //add
@@ -141,36 +157,20 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public Collection<IElement> getInterventionElements() {
-        Collection<IElement> liste = new ArrayList<>();
-        /*
-        IElement element = new DroneObs();
-        element.setForm(PictoFactory.ElementForm.MEAN_COLUMN);
-        //element.setRole(Role.COMMAND);
-        //element.setRole(Role.FIRE);
-        element.setName("DRONE");
-        android.location.Location location =  new android.location.Location("");
-        location.setLongitude(12.2);
-        location.setLatitude(12.2);
-        element.setLocation(location);
-        liste.add(element);*/
-        return liste;
-    }
-
-    @Override
     public Tool getSelectedTool() {
         return selectedTool;
     }
 
     @Override
     public void setSelectedElement(IElement element) {
-        showContextualDrawer();
         contextualDrawerFragment.setSelectedElement(element);
+        showContextualDrawer();
     }
 
     @Override
     public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
 
+        //Todo: Rendre tout ça dynamique ;^)
         IElement drone = new Drone();
         drone.setRole(Role.FIRE);
         drone.setForm(form);

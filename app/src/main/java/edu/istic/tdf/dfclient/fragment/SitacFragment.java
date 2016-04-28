@@ -25,20 +25,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
-import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.domain.element.Role;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
-import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
@@ -80,11 +73,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void initMap(){
-/*
-        for(IElement element : mListener.getInterventionElements()){
-            markersList.put(createMarker(element), element);
-        }
-*/
+
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -147,7 +136,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         public Double getInterventionLatitude();
         public Double getInterventionLongitude();
-        public Collection<IElement> getInterventionElements();
 
         public Tool getSelectedTool();
 
