@@ -1,6 +1,9 @@
 package edu.istic.tdf.dfclient.domain.element;
 
 import edu.istic.tdf.dfclient.domain.Entity;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import lombok.Getter;
@@ -40,4 +43,33 @@ public abstract class Element extends Entity implements IElement {
     @Getter
     @Setter
     protected PictoFactory.ElementForm form;
+
+    public ElementType getType(){
+
+        switch (this.getForm()){
+
+            case MEAN:
+            case MEAN_PLANNED:
+            case MEAN_GROUP:
+            case MEAN_COLUMN:
+                return ElementType.MEAN;
+
+            case MEAN_OTHER:
+            case MEAN_OTHER_PLANNED:
+                return ElementType.MEAN_OTHER;
+
+            case WATERPOINT:
+            case WATERPOINT_SUPPLY:
+            case WATERPOINT_SUSTAINABLE:
+            case SOURCE:
+            case TARGET:
+                return ElementType.POINT_OF_INTEREST;
+
+            case AIRMEAN:
+            case AIRMEAN_PLANNED:
+                return ElementType.AIRMEAN;
+        }
+
+        return ElementType.MEAN;
+    }
 }

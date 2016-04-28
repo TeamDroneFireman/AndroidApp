@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
@@ -153,14 +155,14 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Double getInterventionLatitude() {
-        return this.intervention.getLocation().getGeopoint().getLatitude();
-        //return 48.1151489;
+        //return this.intervention.getLocation().getGeopoint().getLatitude();
+        return 48.1151489;
     }
 
     @Override
     public Double getInterventionLongitude() {
-        return this.intervention.getLocation().getGeopoint().getLongitude();
-        //return -1.6380783;
+        //return this.intervention.getLocation().getGeopoint().getLongitude();
+        return -1.6380783;
     }
 
     @Override
@@ -177,19 +179,33 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
 
-        //Todo: Rendre tout ça dynamique ;^)
-        IElement drone = new Drone();
-        drone.setRole(Role.DEFAULT);
-        drone.setForm(form);
-        drone.setId("TEST");
-        drone.setName("azerty");
-        drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+        IElement element = null;
 
+        switch(ElementType.getElementType(form)){
+            case AIRMEAN:
+                element = new Drone();
+                break;
+            case MEAN:
+                element = new InterventionMean();
+                break;
+            case MEAN_OTHER:
+            case POINT_OF_INTEREST:
+                element = new PointOfInterest();
+                break;
+            default:
+                element = new InterventionMean();
+        }
+
+        element.setRole(Role.DEFAULT);
+        element.setForm(form);
+        element.setId("TEST");
+        element.setName("azerty");
+        element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
         this.selectedTool = null;
-        contextualDrawerFragment.setSelectedElement(drone);
+        contextualDrawerFragment.setSelectedElement(element);
         showContextualDrawer();
-        return drone;
+        return element;
     }
 
     @Override
@@ -300,9 +316,8 @@ public class SitacActivity extends BaseActivity implements
     public void updateElement(IElement element) {
         sitacFragment.updateElement(element);
         meansTableFragment.updateElement(element);
+        //TODO: push to persist
     }
-
-
 
     private class DataLoader {
         private String interventionId;
