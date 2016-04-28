@@ -22,6 +22,7 @@ import java.util.Set;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
@@ -39,7 +40,7 @@ public class MeansTableFragment extends Fragment {
 
     private List<IMean> means=new ArrayList<>();
 
-    private HashMap<String,TableRow> link=new HashMap<>();
+    private HashMap<IMean,TableRow> link=new HashMap<>();
 
     public MeansTableFragment() {
         // Required empty public constructor
@@ -156,52 +157,54 @@ public class MeansTableFragment extends Fragment {
 
         tableRow.setBackgroundColor(element.getRole().getColor());
 
+        Date d=currentStates.get(MeanState.ASKED);
+        addMeanState(tableRow,d);
+        d=currentStates.get(MeanState.ARRIVED);
+        addMeanState(tableRow,d);
+        d=currentStates.get(MeanState.ENGAGED);
+        addMeanState(tableRow,d);
+        d=currentStates.get(MeanState.RELEASED);
+        addMeanState(tableRow,d);
 
-        Set<MeanState> stateSet=currentStates.keySet();
-        Iterator<MeanState> iterator=stateSet.iterator();
-
-
-        while(iterator.hasNext()){
-            MeanState current=iterator.next();
-            TextView textView=new TextView(meanTab.getContext());
-            if(currentStates.get(current)!=null) {
-                textView.setText(currentStates.get(current).toString());
-            }else{
-                textView.setText("");
-            }
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            tableRow.addView(textView);
-
-
-        }
-        link.put(element.getName(),tableRow);
+        link.put(element,tableRow);
         meanTab.addView(tableRow);
     }
 
     private void updateElem(IMean element) {
-        TableRow tableRow =link.get(element.getName());
+        TableRow tableRow =link.get(element);
+        tableRow.removeAllViews();
         tableRow.setBackgroundColor(element.getRole().getColor());
 
+        TextView name=new TextView(meanTab.getContext());
+        name.setText(element.getName());
+        name.setGravity(Gravity.CENTER_HORIZONTAL);
+        tableRow.addView(name);
+
         HashMap<MeanState,Date> currentStates=element.getStates();
-        Set<MeanState> stateSet=currentStates.keySet();
-        Iterator<MeanState> iterator=stateSet.iterator();
+
+        Date d=currentStates.get(MeanState.ASKED);
+        addMeanState(tableRow,d);
+        d=currentStates.get(MeanState.ARRIVED);
+        addMeanState(tableRow,d);
+        d=currentStates.get(MeanState.ENGAGED);
+        addMeanState(tableRow,d);
+        d=currentStates.get(MeanState.RELEASED);
+        addMeanState(tableRow,d);
 
 
-        while(iterator.hasNext()){
-            MeanState current=iterator.next();
-            TextView textView=new TextView(meanTab.getContext());
-            if(currentStates.get(current)!=null) {
-                textView.setText(currentStates.get(current).toString());
-            }else{
-                textView.setText("");
-            }
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            tableRow.addView(textView);
 
+    }
 
+    private void addMeanState(TableRow tableRow,Date d){
+
+        TextView textView=new TextView(meanTab.getContext());
+        if(d!=null) {
+            textView.setText(d.toString());
+        }else{
+            textView.setText("");
         }
-
-
+        textView.setGravity(Gravity.CENTER_HORIZONTAL);
+        tableRow.addView(textView);
     }
 
     public interface OnFragmentInteractionListener {
