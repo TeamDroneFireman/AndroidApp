@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
@@ -16,6 +19,7 @@ import edu.istic.tdf.dfclient.http.exception.HttpException;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.service.logout.LogoutRestService;
 import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
+import edu.istic.tdf.dfclient.util.AndroidUtils;
 import eu.inloop.easygcm.EasyGcm;
 
 /**
@@ -24,6 +28,11 @@ import eu.inloop.easygcm.EasyGcm;
  * Base activity that manages injection
  */
 public class BaseActivity extends AppCompatActivity {
+
+    private final static String TAG = "BaseActivity";
+
+    View progressOverlay;
+
     @Inject
     LogoutRestService logoutRestService;
     @Override
@@ -100,5 +109,17 @@ public class BaseActivity extends AppCompatActivity {
                 onEnd();
             }
         });
+    }
+
+    public void showProgress(){
+        if(progressOverlay != null){
+            AndroidUtils.animateView(progressOverlay, View.VISIBLE, 0.4f, 200);
+        }
+    }
+
+    public void hideProgress() {
+        if(progressOverlay != null) {
+            AndroidUtils.animateView(progressOverlay, View.GONE, 0, 200);
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
@@ -64,6 +66,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        progressOverlay = findViewById(R.id.progress_overlay);
+
+
         // Inject dagger dependencies
         getApplicationComponent().inject(this);
 
@@ -80,7 +85,6 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         mapFragment.getMapAsync(this);
 
         displayWelcome();
-
     }
 
     @Override

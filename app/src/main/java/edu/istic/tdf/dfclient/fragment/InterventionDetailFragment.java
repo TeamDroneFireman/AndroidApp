@@ -18,6 +18,7 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
@@ -141,9 +142,12 @@ public class InterventionDetailFragment extends Fragment {
     private void archiveCurrentIntervention(){
         if (intervention != null){
             intervention.setArchived(!intervention.isArchived());
+            ((MainMenuActivity) InterventionDetailFragment.this.getActivity()).showProgress();
+
             interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
                 @Override
                 public void onSuccess() {
+                    ((MainMenuActivity) InterventionDetailFragment.this.getActivity()).hideProgress();
                     displayIntervention();
                     fragmentInteractionListener.onInterventionArchived();
                 }
@@ -173,6 +177,7 @@ public class InterventionDetailFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            displayIntervention();
                             fragmentInteractionListener.onInterventionArchived();
                         }
                     });

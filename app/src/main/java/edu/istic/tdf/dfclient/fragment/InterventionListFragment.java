@@ -27,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
@@ -152,6 +153,7 @@ public class InterventionListFragment extends Fragment {
     }
 
     public void loadAndDisplayInterventions(final Runnable onLoaded){
+        ((MainMenuActivity) InterventionListFragment.this.getActivity()).showProgress();
         interventions.clear();
         interventionArrayList.clear();
 
@@ -174,6 +176,7 @@ public class InterventionListFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
                         interventionsAdapter.notifyDataSetChanged();
                     }
                 });
@@ -195,6 +198,7 @@ public class InterventionListFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
                         Toast.makeText(InterventionListFragment.this.getActivity(),
                                 "Network error when loading interventions", Toast.LENGTH_SHORT).show();
                     }

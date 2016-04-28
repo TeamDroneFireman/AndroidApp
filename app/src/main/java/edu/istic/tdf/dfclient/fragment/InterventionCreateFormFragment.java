@@ -39,6 +39,7 @@ import javax.net.ssl.HttpsURLConnection;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
@@ -100,6 +101,7 @@ public class InterventionCreateFormFragment extends Fragment {
     private ArrayAdapter<String> meansAdapter;
 
     // use to handle the geopoints from an address
+    // TODO : Fix this to avoid memory leaks
     private Handler myHandler = new Handler() {
 
         @Override
@@ -334,6 +336,9 @@ public class InterventionCreateFormFragment extends Fragment {
 
         //archived
         intervention.setArchived(false);
+
+        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
+
         //makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
             @Override
@@ -341,8 +346,9 @@ public class InterventionCreateFormFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                         cleanForm();
-                         mListener.onCreateIntervention();
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                        cleanForm();
+                        mListener.onCreateIntervention();
                     }
                 });
             }
