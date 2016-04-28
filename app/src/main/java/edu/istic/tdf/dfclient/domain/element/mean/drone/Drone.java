@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
@@ -16,7 +15,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
  * A mean of type drone
  */
 @Table(database = TdfDatabase.class)
-public class Drone implements IElement {
+public class Drone extends Element implements IDrone {
 
     /**
      * represent the list of states with the corresponding timestamp

@@ -345,35 +345,32 @@ public class SitacActivity extends BaseActivity implements
         private void loadDrones() {
             SitacActivity.this.droneDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
                     new IDaoSelectReturnHandler<List<Drone>>() {
-                @Override
-                public void onRepositoryResult(List<Drone> r) {
-                    // Nothing
-                }
+                        @Override
+                        public void onRepositoryResult(List<Drone> r) {
+                            // Nothing
+                        }
 
-                @Override
-                public void onRestResult(List<Drone> r) {
-                    // Cast to collection of elements
-                    Collection<IElement> colR = new ArrayList<IElement>();
-                    colR.addAll(r);
+                        @Override
+                        public void onRestResult(List<Drone> r) {
+                            // Cast to collection of elements
+                            Collection<IElement> colR = new ArrayList<IElement>();
+                            colR.addAll(r);
 
-                    // Update Map
-                    SitacActivity.this.sitacFragment.updateElements(colR);
+                            updateElementsInUi(colR);
 
-                    // Update Means table
+                        }
 
-                }
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+                            // Nothing
+                        }
 
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    Log.e("DRONE", " --> DNE");
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
+                        @Override
+                        public void onRestFailure(Throwable e) {
+                            Log.e("DRONE", " --> DNE");
+                            SitacActivity.this.displayNetworkError();
+                        }
+                    });
         }
 
         private void loadMeans() {
@@ -386,9 +383,11 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<InterventionMean> r) {
-                            // TODO : Update elements
-                                //SitacActivity.this.meansTableFragment.updateElement();
-                            // TODO : What to do when these are loaded ?
+                            // Cast to collection of elements
+                            Collection<IElement> colR = new ArrayList<IElement>();
+                            colR.addAll(r);
+
+                            updateElementsInUi(colR);
                         }
 
                         @Override
@@ -414,6 +413,11 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<PointOfInterest> r) {
+                            // Cast to collection of elements
+                            Collection<IElement> colR = new ArrayList<IElement>();
+                            colR.addAll(r);
+
+                            updateElementsInUi(colR);
                         }
 
                         @Override
@@ -427,6 +431,14 @@ public class SitacActivity extends BaseActivity implements
                             SitacActivity.this.displayNetworkError();
                         }
                     });
+        }
+
+        private void updateElementsInUi(Collection<IElement> elements) {
+            // Update Map
+            SitacActivity.this.sitacFragment.updateElements(elements);
+
+            // Update Means table
+            SitacActivity.this.meansTableFragment.updateElements(elements);
         }
     }
 
