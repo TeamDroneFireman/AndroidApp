@@ -9,10 +9,8 @@ import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * A mean of type drone
@@ -28,7 +26,7 @@ public class Drone extends Element implements IDrone {
     /**
      * represent the current mission of the drone
      */
-    private IMission mission;
+    private Mission mission;
 
     /**
      * represent the current action
@@ -92,12 +90,12 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
-    public IMission getMission() {
+    public Mission getMission() {
         return this.mission;
     }
 
     @Override
-    public void setMission(IMission mission) {
+    public void setMission(Mission mission) {
         this.mission = mission;
     }
 
