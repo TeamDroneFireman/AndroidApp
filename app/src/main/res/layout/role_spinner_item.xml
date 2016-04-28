@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+    <ImageView
+        android:id="@+id/spinner_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/waterpoint_sustainable"
+        android:tint="#ffffff" />
+    <TextView
+        android:id="@+id/spinner_name"
+        android:layout_width="fill_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="48dp"
+        android:textSize="20sp"
+        android:text="test"
+        android:gravity="center_vertical|fill_vertical" />
+</LinearLayout>

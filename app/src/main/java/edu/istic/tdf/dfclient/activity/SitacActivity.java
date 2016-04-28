@@ -118,6 +118,7 @@ public class SitacActivity extends BaseActivity implements
                 .show(sitacFragment)
                 .add(R.id.toolbar_container, toolbarFragment)
                 .add(R.id.contextual_drawer_container, contextualDrawerFragment)
+                .hide(contextualDrawerFragment)
                 .commit();
 
         hideContextualDrawer();
@@ -183,6 +184,8 @@ public class SitacActivity extends BaseActivity implements
 
         //meansTableFragment.updateElement(drone);
         this.selectedTool = null;
+        contextualDrawerFragment.setSelectedElement(drone);
+        showContextualDrawer();
         return drone;
     }
 
@@ -193,10 +196,16 @@ public class SitacActivity extends BaseActivity implements
     }
 
     private void showContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .show(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(0);
 
     }
     private void hideContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
