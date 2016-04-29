@@ -42,6 +42,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private OnFragmentInteractionListener mListener;
     private GoogleMap googleMap;
 
+    private Double latitude = 0.0;
+    private Double longitude = 0.0;
+
     // Liste d'association marker <--> element
     private HashMap<Marker, Element> markersList = new HashMap<>();
 
@@ -100,10 +103,18 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         });
 
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latitude, this.longitude), 18));
+
     }
 
     public void setLocation(GeoPoint geoPoint){
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
+
+        this.latitude = geoPoint.getLatitude();
+        this.longitude = geoPoint.getLongitude();
+
+        if(googleMap != null ){
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
+        }
     }
 
     private Element createElementFromLatLng(LatLng latLng){
