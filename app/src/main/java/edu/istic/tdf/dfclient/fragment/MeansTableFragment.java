@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -18,16 +17,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 
 public class MeansTableFragment extends Fragment {
 
@@ -219,5 +215,13 @@ public class MeansTableFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
 
+    }
+
+    public void removeElement(Element element){
+        // TODO: 29/04/16  
+    }
+
+    public void removeElements(Collection<Element> elements){
+        // TODO: 29/04/16  
     }
 }
