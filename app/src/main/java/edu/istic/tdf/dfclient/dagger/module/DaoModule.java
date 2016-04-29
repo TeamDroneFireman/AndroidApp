@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.dagger.module;
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
@@ -37,5 +38,10 @@ public class DaoModule {
     @Provides
     PointOfInterestDao providePointOfInterestDao(TdfHttpClient httpClient) {
         return new PointOfInterestDao(httpClient);
+    }
+
+    @Provides
+    SinisterDao provideSinisterDao(TdfHttpClient httpClient) {
+        return new SinisterDao(httpClient);
     }
 }

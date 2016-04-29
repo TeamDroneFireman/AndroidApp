@@ -41,6 +41,7 @@ import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
@@ -91,6 +92,8 @@ public class InterventionCreateFormFragment extends Fragment {
 
     InterventionMeanDao interventionMeanDao;
 
+    SinisterDao sinisterDao;
+
     // for listView sinister_code
     private ArrayList<String> sinisters =new ArrayList<String>();
     private ArrayAdapter<String> sinistersAdapter;
@@ -122,8 +125,10 @@ public class InterventionCreateFormFragment extends Fragment {
 
     public static InterventionCreateFormFragment newInstance(InterventionDao interventionDao,
                                                              DroneDao droneDao,
-                                                             InterventionMeanDao interventionMeanDao) {
+                                                             InterventionMeanDao interventionMeanDao,
+                                                             SinisterDao sinisterDao) {
         InterventionCreateFormFragment fragment = new InterventionCreateFormFragment();
+        fragment.sinisterDao = sinisterDao;
         fragment.interventionDao = interventionDao;
         fragment.droneDao = droneDao;
         fragment.interventionMeanDao = interventionMeanDao;

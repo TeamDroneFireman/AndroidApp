@@ -13,11 +13,11 @@ public class SinisterRestClient extends RestClient<Sinister> implements IRestCli
 
 public SinisterRestClient(TdfHttpClient httpClient) {
         super(Sinister.class, httpClient);
-        httpClient.setConf(new TdfHttpClientConfSinister()); // Hack because no load balancer
+                httpClient.setConf(new TdfHttpClientConfSinister()); // Hack because no load balancer
         }
 
 @Override
 public String getRestEndpoint() {
-        return "sinisters/";
+        return "api/sinisters/";
         }
 }

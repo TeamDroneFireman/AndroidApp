@@ -22,24 +22,6 @@ public class SinisterDao extends Dao<Sinister, SinisterRepository, SinisterRestC
         super(new SinisterRepository(), new SinisterRestClient(httpClient));
     }
 
-    @Override
-    public void findAll(DaoSelectionParameters selectionParameters, IDaoSelectReturnHandler<List<Sinister>> result) {
 
-    }
-
-    @Override
-    public void find(String id, IDaoSelectReturnHandler<Sinister> result) {
-
-    }
-
-    @Override
-    public void persist(Sinister entity, IDaoWriteReturnHandler result) {
-
-    }
-
-    @Override
-    public void delete(Sinister entity, IDaoWriteReturnHandler result) {
-
-    }
 }
 
