@@ -14,6 +14,10 @@ import lombok.Setter;
  */
 public abstract class Element extends Entity implements IElement {
 
+    @Getter
+    @Setter
+    protected String intervention;
+
     /**
      *it's the current fonctionnality of the InterventionMean: water,fire, sap...
      */

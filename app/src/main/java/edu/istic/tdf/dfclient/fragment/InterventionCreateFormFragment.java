@@ -44,6 +44,7 @@ import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
@@ -249,14 +250,14 @@ public class InterventionCreateFormFragment extends Fragment {
         InterventionMean elemInterventionMean2 = new InterventionMean();
         InterventionMean elemInterventionMean3 = new InterventionMean();
 
-        elemDrone1.setName("Drone1-Patrick");
+        elemDrone1.setName("Drone1-Patou");
         elemDrone1.setRole(Role.DEFAULT);
         elemDrone1.setLocation(intervention.getLocation());
         elemDrone1.setForm(PictoFactory.ElementForm.AIRMEAN);
         elemDrone1.setAction("IN_PROGRESS");
         elemDrone1.setState(MeanState.ASKED);
 
-        elemDrone2.setName("Drone1-Michel");
+        elemDrone2.setName("Drone1-Michou");
         elemDrone2.setRole(Role.DEFAULT);
         elemDrone2.setLocation(intervention.getLocation());
         elemDrone2.setForm(PictoFactory.ElementForm.AIRMEAN);
@@ -284,15 +285,47 @@ public class InterventionCreateFormFragment extends Fragment {
         elemInterventionMean3.setState(MeanState.VALIDATED);
         elemInterventionMean3.setAction("IN_PROGRESS");
 
-        Collection<IElement> elements = new HashSet<IElement>();
-        elements.add(elemDrone1);
-        elements.add(elemDrone2);
-        elements.add(elemInterventionMean1);
-        elements.add(elemInterventionMean2);
-        elements.add(elemInterventionMean3);
+        Collection<Drone> drones = new HashSet<Drone>();
+        Collection<IElement> interventionMeans = new HashSet<IElement>();
+        drones.add(elemDrone1);
+        drones.add(elemDrone2);
+        interventionMeans.add(elemInterventionMean1);
+        interventionMeans.add(elemInterventionMean2);
+        interventionMeans.add(elemInterventionMean3);
 
-        intervention.setElements(elements);
+        // TODO : Has to be implemented as ".persist(List<Drone>" and not ".persist(Drone"
+        for(Drone drone : drones){
+            Log.w("", "Persist drone");
+            drone.setIntervention(intervention.getId());
+            droneDao.persist(drone, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    for (int i = 0; i < 50; i++) {
+                        Log.i("", "SUCCESS");
+                    }
 
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
+        }
+        
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                cleanForm();
+                mListener.onCreateIntervention();
+            }
+        });
     }
 
     private void computeIntervention() {
@@ -340,17 +373,11 @@ public class InterventionCreateFormFragment extends Fragment {
         ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
 
         //makeElementsExample(intervention);
-        interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+        interventionDao.persist(intervention, new IDaoWriteReturnHandler<Intervention>() {
             @Override
-            public void onSuccess() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
-                        cleanForm();
-                        mListener.onCreateIntervention();
-                    }
-                });
+            public void onSuccess(Intervention r) {
+                intervention.setLocation(null);
+                makeElementsExample(r);
             }
 
             @Override

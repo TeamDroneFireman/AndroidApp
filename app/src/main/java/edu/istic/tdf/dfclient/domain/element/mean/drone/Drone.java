@@ -10,6 +10,9 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +22,7 @@ import lombok.Setter;
  */
 @Table(database = TdfDatabase.class)
 public class Drone extends Element implements IDrone {
+
 
     /**
      * represent the list of states with the corresponding timestamp
