@@ -429,7 +429,6 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestFailure(Throwable e) {
-                    Log.e("INTER", " --> DNE");
                     SitacActivity.this.displayNetworkError();
                 }
             });
@@ -460,7 +459,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
-                            Log.e("DRONE", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
@@ -490,7 +488,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
-                            Log.e("MEANS", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
@@ -520,7 +517,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
-                            Log.e("POINT", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
