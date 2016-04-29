@@ -8,9 +8,4 @@ public class TdfHttpClientConfUser extends TdfHttpClientConf {
     public int getPort() {
         return 12346;
     }
-
-    @Override
-    public String getPath() {
-        return "";
-    }
 }

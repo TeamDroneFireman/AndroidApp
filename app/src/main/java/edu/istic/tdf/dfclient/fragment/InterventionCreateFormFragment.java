@@ -29,7 +29,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -37,16 +39,21 @@ import javax.net.ssl.HttpsURLConnection;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
+import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * Created by btessiau on 25/04/16.
@@ -80,6 +87,10 @@ public class InterventionCreateFormFragment extends Fragment {
 
     InterventionDao interventionDao;
 
+    DroneDao droneDao;
+
+    InterventionMeanDao interventionMeanDao;
+
     // for listView sinister_code
     private ArrayList<String> sinisters =new ArrayList<String>();
     private ArrayAdapter<String> sinistersAdapter;
@@ -89,6 +100,7 @@ public class InterventionCreateFormFragment extends Fragment {
     private ArrayAdapter<String> meansAdapter;
 
     // use to handle the geopoints from an address
+    // TODO : Fix this to avoid memory leaks
     private Handler myHandler = new Handler() {
 
         @Override
@@ -108,9 +120,13 @@ public class InterventionCreateFormFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static InterventionCreateFormFragment newInstance(InterventionDao interventionDao) {
+    public static InterventionCreateFormFragment newInstance(InterventionDao interventionDao,
+                                                             DroneDao droneDao,
+                                                             InterventionMeanDao interventionMeanDao) {
         InterventionCreateFormFragment fragment = new InterventionCreateFormFragment();
         fragment.interventionDao = interventionDao;
+        fragment.droneDao = droneDao;
+        fragment.interventionMeanDao = interventionMeanDao;
         return fragment;
     }
 
@@ -199,13 +215,14 @@ public class InterventionCreateFormFragment extends Fragment {
 
         switch (sinisterCode) {
             case "SAP":
-                means.add("VSAV");
+                means.add("Drone1");
+                means.add("Drone2");
+                //means.add("IntMean1");
                 break;
             case "INC":
-                means.add("FTP");
-                means.add("FTP");
-                means.add("EPA");
-                means.add("VLCG");
+                means.add("Drone1");
+                means.add("Drone2");
+                //means.add("IntMean1");
                 break;
         }
         meansAdapter.notifyDataSetChanged();
@@ -221,8 +238,127 @@ public class InterventionCreateFormFragment extends Fragment {
 
     }
 
+
+    // JUST FOR TEST, Elements drone or mean examples
+    public void makeElementsExample(Intervention intervention){
+
+        Drone elemDrone1 = new Drone();
+
+        InterventionMean elemInterventionMean1 = new InterventionMean();
+
+        elemDrone1.setName("Drone1");
+        elemDrone1.setRole(Role.DEFAULT);
+        elemDrone1.setLocation(intervention.getLocation());
+        elemDrone1.setForm(PictoFactory.ElementForm.AIRMEAN);
+        elemDrone1.setAction("IN_PROGRESS");
+        elemDrone1.setState(MeanState.ASKED);
+
+        elemInterventionMean1.setName("IntMean1");
+        elemInterventionMean1.setRole(Role.DEFAULT);
+
+        //new location
+        Location location2 = new Location();
+        location2.setAddress(intervention.getLocation().getAddress());
+
+        //new geopoint
+        GeoPoint geoPoint2 = new GeoPoint();
+        geoPoint2.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0021);
+        geoPoint2.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0021);
+        location2.setGeopoint(geoPoint2);
+
+        elemInterventionMean1.setLocation(location2);
+        elemInterventionMean1.setLocation(intervention.getLocation());
+        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
+        elemInterventionMean1.setState(MeanState.ENGAGED);
+        elemInterventionMean1.setAction("IN_PROGRESS");
+
+        Collection<Drone> drones = new HashSet<>();
+        Collection<InterventionMean> interventionMeans = new HashSet<>();
+        drones.add(elemDrone1);
+
+
+        Drone elemDrone2 = new Drone();
+        elemDrone2.setName("Drone2");
+        elemDrone2.setRole(Role.DEFAULT);
+
+        //new location
+        Location location = new Location();
+        location.setAddress(intervention.getLocation().getAddress());
+
+        //new geopoint
+        GeoPoint geoPoint = new GeoPoint();
+        geoPoint.setLongitude(intervention.getLocation().getGeopoint().getLongitude() + 0.0011);
+        geoPoint.setLatitude(intervention.getLocation().getGeopoint().getLatitude() - 0.0011);
+        location.setGeopoint(geoPoint);
+
+        elemDrone2.setLocation(location);
+        elemDrone2.setForm(PictoFactory.ElementForm.AIRMEAN);
+        elemDrone2.setAction("IN_PROGRESS");
+        elemDrone2.setState(MeanState.ASKED);
+        drones.add(elemDrone2);
+
+        interventionMeans.add(elemInterventionMean1);
+
+        for(Drone drone : drones){
+            Log.w("", "Persist drone");
+            drone.setIntervention(intervention.getId());
+            droneDao.persist(drone, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    for (int i = 0; i < 50; i++) {
+                        Log.i("", "SUCCESS");
+                    }
+
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
+        }
+
+        /*for(InterventionMean interventionMean : interventionMeans){
+            Log.w("", "Persist interventionMean");
+            interventionMean.setIntervention(intervention.getId());
+            interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    for (int i = 0; i < 50; i++) {
+                        Log.i("", "SUCCESS");
+                    }
+
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
+        }*/
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                cleanForm();
+                mListener.onCreateIntervention();
+            }
+        });
+    }
+
     private void computeIntervention() {
-        Intervention intervention = new Intervention();
+        final Intervention intervention = new Intervention();
 
         // TODO: 26/04/16 when model ok
 
@@ -256,22 +392,21 @@ public class InterventionCreateFormFragment extends Fragment {
                 intervention.setSinisterCode(SinisterCode.INC);
                 break;
         }
-        
+
         //name
         intervention.setName(str_sinister_code + "-" + strNow);
 
         //archived
         intervention.setArchived(false);
 
-        interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
+
+        //makeElementsExample(intervention);
+        interventionDao.persist(intervention, new IDaoWriteReturnHandler<Intervention>() {
             @Override
-            public void onSuccess() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.onCreateIntervention();
-                    }
-                });
+            public void onSuccess(Intervention r) {
+                intervention.setLocation(null);
+                makeElementsExample(r);
             }
 
             @Override
@@ -414,9 +549,9 @@ public class InterventionCreateFormFragment extends Fragment {
                         .getDouble("lat");
 
                 String formatted_address = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-                .getString("formatted_address");
+                        .getString("formatted_address");
 
-                                Log.d("latitude", "" + lat);
+                Log.d("latitude", "" + lat);
                 Log.d("longitude", "" + lng);
 
 
@@ -474,6 +609,12 @@ public class InterventionCreateFormFragment extends Fragment {
         Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
         t.getView().setBackgroundColor(Color.RED);
         t.show();
+    }
+
+    private void cleanForm(){
+        this.address.setText("");
+        this.lat.setText("");
+        this.lng.setText("");
     }
 
 }

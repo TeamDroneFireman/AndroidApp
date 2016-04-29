@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.activity.BaseActivity;
 import edu.istic.tdf.dfclient.activity.LoginActivity;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.activity.SitacActivity;
@@ -32,6 +33,7 @@ import edu.istic.tdf.dfclient.dagger.scope.AppScope;
         PushModule.class
 })
 public interface ApplicationComponent {
+    void inject(BaseActivity activity);
     void inject(LoginActivity activity);
     void inject(MainMenuActivity activity);
     void inject(SitacActivity activity);

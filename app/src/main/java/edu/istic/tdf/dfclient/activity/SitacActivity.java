@@ -1,8 +1,8 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Element;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -21,14 +21,20 @@ import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
@@ -40,7 +46,6 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
-import eu.inloop.easygcm.EasyGcm;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -59,13 +64,9 @@ public class SitacActivity extends BaseActivity implements
     private MeansTableFragment meansTableFragment;
 
     // Data
-    // TODO : Remove elemnts
-    private List<Element> elements;
+    private DataLoader dataLoader;
 
     private Intervention intervention;
-    private Collection<Drone> drones;
-    private Collection<InterventionMean> means;
-    private Collection<PointOfInterest> pointsOfInterest;
 
     private Element selectedElement;
 
@@ -78,6 +79,7 @@ public class SitacActivity extends BaseActivity implements
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -88,8 +90,12 @@ public class SitacActivity extends BaseActivity implements
         // Inject dagger dependencies
         getApplicationComponent().inject(this);
 
+        // Activity title
+        setTitle(getString(R.string.activity_sitac_title));
+
         // Load data
-        DataLoader dataLoader = new DataLoader("5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        String interventionId = (String) getIntent().getExtras().get("interventionId");
+        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
@@ -98,55 +104,59 @@ public class SitacActivity extends BaseActivity implements
         sitacFragment = SitacFragment.newInstance();
         toolbarFragment = ToolbarFragment.newInstance();
         contextualDrawerFragment = ContextualDrawerFragment.newInstance();
+        meansTableFragment=(MeansTableFragment.newInstance());
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);
         observers.add(contextualDrawerFragment);
 
         getSupportFragmentManager().beginTransaction()
+                .add(R.id.sitac_container, meansTableFragment, meansTableFragment.getTag())
+                .hide(meansTableFragment)
                 .add(R.id.sitac_container, sitacFragment, sitacFragment.getTag())
+                .show(sitacFragment)
                 .add(R.id.toolbar_container, toolbarFragment)
                 .add(R.id.contextual_drawer_container, contextualDrawerFragment)
+                .hide(contextualDrawerFragment)
                 .commit();
+
+        hideContextualDrawer();
+        List<IElement> elements = new ArrayList<>();
+/*
+        IElement interventionMean = new InterventionMean();
+        interventionMean.setName("CC3");
+        interventionMean.setLocation(new Location("", new GeoPoint(48.1152739, -1.6381364, 12.0)));
+*/
+        IElement drone = new Drone();
+        drone.setName("Drone1");
+        drone.setLocation(new Location("", new GeoPoint(49.1152739, -1.6381364, 12.0)));
+        drone.setForm(PictoFactory.ElementForm.AIRMEAN);
+
+        //elements.add(interventionMean);
+        elements.add(drone);
+//        sitacFragment.updateElements(elements);
 
         currentFragment = sitacFragment;
 
         //add
-        meansTableFragment=(MeansTableFragment.newInstance());
+
 
     }
 
     @Override
     public void handleSelectedTool(Tool tool) {
         this.selectedTool = tool;
-        Toast.makeText(SitacActivity.this, tool.getTitle(), Toast.LENGTH_SHORT).show();
+        hideContextualDrawer();
     }
 
     @Override
     public Double getInterventionLatitude() {
-        return 48.1151489;
+        return this.intervention.getLocation().getGeopoint().getLatitude();
     }
 
     @Override
     public Double getInterventionLongitude() {
-        return -1.6380783;
-    }
-
-    @Override
-    public Collection<IElement> getInterventionElements() {
-        Collection<IElement> liste = new ArrayList<>();
-        /*
-        IElement element = new DroneObs();
-        element.setForm(PictoFactory.ElementForm.MEAN_COLUMN);
-        //element.setRole(Role.COMMAND);
-        //element.setRole(Role.FIRE);
-        element.setName("DRONE");
-        android.location.Location location =  new android.location.Location("");
-        location.setLongitude(12.2);
-        location.setLatitude(12.2);
-        element.setLocation(location);
-        liste.add(element);*/
-        return liste;
+        return this.intervention.getLocation().getGeopoint().getLongitude();
     }
 
     @Override
@@ -155,23 +165,55 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void setSelectedElement(IElement element) {
-        showContextualDrawer();
+    public void setSelectedElement(Element element) {
         contextualDrawerFragment.setSelectedElement(element);
+        showContextualDrawer();
     }
 
     @Override
-    public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
+    public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
 
-        IElement drone = new Drone();
-        drone.setRole(Role.FIRE);
-        drone.setForm(form);
-        drone.setId("TEST");
-        drone.setName("azerty");
-        drone.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+        Element element = null;
+
+        switch(ElementType.getElementType(form)){
+
+            case AIRMEAN:
+                element = new Drone();
+                element.setName("Drone");
+                ((IMean)element).setState(MeanState.ASKED);
+                break;
+
+            case MEAN:
+                element = new InterventionMean();
+                element.setName("Moyen SP");
+                ((IMean)element).setState(MeanState.ASKED);
+                break;
+
+            case MEAN_OTHER:
+            case POINT_OF_INTEREST:
+                element = new PointOfInterest();
+                element.setForm(form);
+                element.setName("Moyen");
+                break;
+
+            case WATERPOINT:
+                element = new PointOfInterest();
+                element.setRole(Role.WATER);
+                element.setName("Point d'eau");
+                break;
+
+            default:
+                element = new InterventionMean();
+                element.setName("Moyen");
+        }
+
+        element.setForm(form);
+        element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
         this.selectedTool = null;
-        return drone;
+        contextualDrawerFragment.setSelectedElement(element);
+        showContextualDrawer();
+        return element;
     }
 
     @Override
@@ -181,10 +223,16 @@ public class SitacActivity extends BaseActivity implements
     }
 
     private void showContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .show(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(0);
 
     }
     private void hideContextualDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(contextualDrawerFragment)
+                .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
@@ -202,22 +250,30 @@ public class SitacActivity extends BaseActivity implements
 
             // action with ID action_refresh was selected
             case R.id.switch_to_means_table:
-                intent = new Intent(this, MeansTableActivity.class);
-                this.startActivity(intent);
-                //switchTo(meansTableFragment);
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .hide(sitacFragment)
+                        .commit();
+                /*intent = new Intent(this, MeansTableActivity.class);
+                this.startActivity(intent);*/
+                switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .show(contextualDrawerFragment)
+                        .show(sitacFragment)
+                        .commit();
                 switchTo(sitacFragment);
                 break;
-
-            case R.id.switch_to_drones_map:
-                intent = new Intent(this, DronesMapActivity.class);
-                this.startActivity(intent);
-                break;
+            
             case R.id.logout_button:
-                intent = new Intent(this, LoginActivity.class);
-                this.startActivity(intent);
+                logout();
+                break;
+            case R.id.refresh_datas:
+                dataLoader.loadData();
                 break;
             default:
                 break;
@@ -264,8 +320,53 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void updateElement(IElement element) {
+    public void updateElement(final Element element) {
+
         sitacFragment.updateElement(element);
+        meansTableFragment.updateElement(element);
+        element.setIntervention(intervention.getId());
+
+        dataLoader.persistElement(element, new IDaoWriteReturnHandler<Element>() {
+            @Override
+            public void onSuccess(final Element element) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        sitacFragment.updateElement(element);
+                        meansTableFragment.updateElement(element);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                     @Override
+                     public void run() {
+                         Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+
+                     }
+                 });
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+
+        //TODO: push to persist
     }
 
     private class DataLoader {
@@ -282,6 +383,33 @@ public class SitacActivity extends BaseActivity implements
             this.loadPointsOfInterest();
         }
 
+        public Dao getDaoOfElement(IElement element) {
+            Dao dao = null;
+            switch (element.getType()) {
+                case MEAN:
+                    dao = SitacActivity.this.interventionMeanDao;
+                    break;
+                case POINT_OF_INTEREST:
+                case MEAN_OTHER:
+                case WATERPOINT:
+                    dao = SitacActivity.this.pointOfInterestDao;
+                    break;
+                case AIRMEAN:
+                    dao = SitacActivity.this.droneDao;
+                    break;
+            }
+
+            return dao;
+        }
+
+        public void persistElement(Element element, IDaoWriteReturnHandler handler) {
+            Dao dao = getDaoOfElement(element);
+            if(dao != null){
+                dao.persist(element, handler);
+            }
+
+        }
+
         private void loadIntervention() {
             SitacActivity.this.interventionDao.find(this.interventionId, new IDaoSelectReturnHandler<Intervention>() {
                 @Override
@@ -290,8 +418,15 @@ public class SitacActivity extends BaseActivity implements
                 }
 
                 @Override
-                public void onRestResult(Intervention r) {
-                    SitacActivity.this.intervention = r;
+                public void onRestResult(final Intervention r) {
+
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            SitacActivity.this.intervention = r;
+                            sitacFragment.setLocation(r.getLocation().getGeopoint());
+                        }
+                    });
 
                     // TODO : What to do when it is loaded ?
                 }
@@ -311,28 +446,31 @@ public class SitacActivity extends BaseActivity implements
         private void loadDrones() {
             SitacActivity.this.droneDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
                     new IDaoSelectReturnHandler<List<Drone>>() {
-                @Override
-                public void onRepositoryResult(List<Drone> r) {
-                    // Nothing
-                }
+                        @Override
+                        public void onRepositoryResult(List<Drone> r) {
+                            // Nothing
+                        }
 
-                @Override
-                public void onRestResult(List<Drone> r) {
-                    SitacActivity.this.drones = r;
+                        @Override
+                        public void onRestResult(List<Drone> r) {
+                            // Cast to collection of elements
+                            Collection<Element> colR = new ArrayList<Element>();
+                            colR.addAll(r);
 
-                    // TODO : What to do when these are loaded ?
-                }
+                            updateElementsInUi(colR);
 
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
+                        }
 
-                @Override
-                public void onRestFailure(Throwable e) {
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+                            SitacActivity.this.displayNetworkError();
+                        }
+                    });
         }
 
         private void loadMeans() {
@@ -345,9 +483,11 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<InterventionMean> r) {
-                            SitacActivity.this.means = r;
+                            // Cast to collection of elements
+                            Collection<Element> colR = new ArrayList<Element>();
+                            colR.addAll(r);
 
-                            // TODO : What to do when these are loaded ?
+                            updateElementsInUi(colR);
                         }
 
                         @Override
@@ -372,7 +512,11 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestResult(List<PointOfInterest> r) {
-                            SitacActivity.this.pointsOfInterest = r;
+                            // Cast to collection of elements
+                            Collection<Element> colR = new ArrayList<Element>();
+                            colR.addAll(r);
+
+                            updateElementsInUi(colR);
                         }
 
                         @Override
@@ -385,6 +529,21 @@ public class SitacActivity extends BaseActivity implements
                             SitacActivity.this.displayNetworkError();
                         }
                     });
+        }
+
+        private void updateElementsInUi(final Collection<Element> elements) {
+
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update Map
+                    SitacActivity.this.sitacFragment.updateElements(elements);
+
+                    // Update Means table
+                    SitacActivity.this.meansTableFragment.updateElements(elements);
+                }
+            });
+
         }
     }
 

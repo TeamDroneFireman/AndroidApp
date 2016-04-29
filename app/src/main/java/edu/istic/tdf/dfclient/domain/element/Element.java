@@ -11,6 +11,10 @@ import lombok.Setter;
  */
 public abstract class Element extends Entity implements IElement {
 
+    @Getter
+    @Setter
+    protected String intervention;
+
     /**
      *it's the current fonctionnality of the InterventionMean: water,fire, sap...
      */
@@ -40,4 +44,33 @@ public abstract class Element extends Entity implements IElement {
     @Getter
     @Setter
     protected PictoFactory.ElementForm form;
+
+    public ElementType getType(){
+
+        switch (this.getForm()){
+
+            case MEAN:
+            case MEAN_PLANNED:
+            case MEAN_GROUP:
+            case MEAN_COLUMN:
+                return ElementType.MEAN;
+
+            case MEAN_OTHER:
+            case MEAN_OTHER_PLANNED:
+                return ElementType.MEAN_OTHER;
+
+            case WATERPOINT:
+            case WATERPOINT_SUPPLY:
+            case WATERPOINT_SUSTAINABLE:
+            case SOURCE:
+            case TARGET:
+                return ElementType.POINT_OF_INTEREST;
+
+            case AIRMEAN:
+            case AIRMEAN_PLANNED:
+                return ElementType.AIRMEAN;
+        }
+
+        return ElementType.MEAN;
+    }
 }

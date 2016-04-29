@@ -106,10 +106,10 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
             @Override
             public void onSuccess(E r) {
                 // Local persist
-                repository.persist(entity, new IDbReturnHandler<E>() {
+                repository.persist(r, new IDbReturnHandler<E>() {
                     @Override
                     public void onSuccess(E r) {
-                        handler.onSuccess();
+                        handler.onSuccess(r);
                     }
 
                     @Override
@@ -135,7 +135,7 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
                 repository.delete(entity, new IDbReturnHandler<Void>() {
                     @Override
                     public void onSuccess(Void r) {
-                        handler.onSuccess();
+                        handler.onSuccess(r);
                     }
 
                     @Override

@@ -3,9 +3,6 @@ package edu.istic.tdf.dfclient.http;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfUser;
 import okhttp3.Callback;
@@ -93,10 +90,10 @@ public class TdfHttpClient {
     /**
      * {@inheritDoc}
      */
-    public void patch(String url, HashMap<String, String> queryParameters, String body, HashMap<String, String> headers, Callback handler) {
+    public void put(String url, HashMap<String, String> queryParameters, String body, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(getAbsoluteUrl(url, queryParameters))
-                .patch(RequestBody.create(MediaType.parse(HTTP_CONTENT_TYPE), body));
+                .put(RequestBody.create(MediaType.parse(HTTP_CONTENT_TYPE), body));
 
         TdfHttpRequestBuilder tdfRequestBuilder = new TdfHttpRequestBuilder(requestBuilder);
         tdfRequestBuilder.appendHeaders(headers);
@@ -111,8 +108,8 @@ public class TdfHttpClient {
     /**
      * {@inheritDoc}
      */
-    public void patch(String url, String body, Callback handler) {
-        this.patch(url, new HashMap<String, String>(), body, new HashMap<String, String>(), handler);
+    public void put(String url, String body, Callback handler) {
+        this.put(url, new HashMap<String, String>(), body, new HashMap<String, String>(), handler);
     }
 
     /**

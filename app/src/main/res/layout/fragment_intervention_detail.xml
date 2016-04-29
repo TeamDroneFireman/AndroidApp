@@ -1,27 +1,32 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="edu.istic.tdf.dfclient.fragment.InterventionDetailFragment">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/interventionSelectionButton">
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/interventionSelectionButton"
+            android:id="@+id/scrollView2">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/intervention_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:text=""
@@ -29,7 +34,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="20dp"
                     android:text="Nom de code"
@@ -37,7 +42,7 @@
 
                 <TextView
                     android:id="@+id/intervention_address"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:textSize="16sp"
@@ -45,7 +50,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="20dp"
                     android:text="Adresse"
@@ -53,7 +58,7 @@
 
                 <TextView
                     android:id="@+id/intervention_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:textSize="16sp"
@@ -61,7 +66,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="20dp"
                     android:text="Date"
@@ -71,17 +76,25 @@
         </ScrollView>
 
         <Button
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/intervention_selection_button"
             android:id="@+id/interventionSelectionButton"
             android:layout_gravity="right|bottom"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/intervention_archive_button"
+            android:id="@+id/interventionArchiveButton"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/interventionSelectionButton"
+            android:layout_toStartOf="@+id/interventionSelectionButton"
+            android:layout_below="@+id/scrollView2" />
 
     </RelativeLayout>
 
-</FrameLayout>
+</LinearLayout>

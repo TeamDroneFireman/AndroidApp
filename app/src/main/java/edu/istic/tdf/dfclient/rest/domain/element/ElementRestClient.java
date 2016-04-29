@@ -24,7 +24,7 @@ public abstract class ElementRestClient<E extends Entity> extends RestClient<E> 
      * Constructs a REST Client
      *
      * @param entityClass The class of the entity
-     * @param httpClient
+     * @param httpClient The http client
      */
     public ElementRestClient(Class<E> entityClass, TdfHttpClient httpClient) {
         super(entityClass, httpClient);
@@ -43,7 +43,6 @@ public abstract class ElementRestClient<E extends Entity> extends RestClient<E> 
                 new RestHttpResponseHandler<>(callback, new ArrayListParameterizedType(entityClass));
 
         // Make request
-        // TODO
-        httpClient.get(getResourceUri("TODOHERE"), queryParameters, new HashMap<String,String>(), handler);
+        httpClient.get(getResourceUri("intervention/"+interventionId), queryParameters, new HashMap<String,String>(), handler);
     }
 }

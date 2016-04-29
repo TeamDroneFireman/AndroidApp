@@ -1,18 +1,21 @@
 package edu.istic.tdf.dfclient.domain.element.mean.drone;
 
+import com.raizlabs.android.dbflow.annotation.Table;
+
 import java.util.Date;
 import java.util.HashMap;
 
+import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.IMission;
-import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * A mean of type drone
  */
+@Table(database = TdfDatabase.class)
 public class Drone extends Element implements IDrone {
 
     /**
@@ -23,7 +26,7 @@ public class Drone extends Element implements IDrone {
     /**
      * represent the current mission of the drone
      */
-    private IMission mission;
+    private Mission mission;
 
     /**
      * represent the current action
@@ -32,6 +35,8 @@ public class Drone extends Element implements IDrone {
     private String action;
 
     public Drone() {
+        super();
+        this.states = new HashMap<>();
         this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
@@ -39,6 +44,7 @@ public class Drone extends Element implements IDrone {
         this.states.put(MeanState.RELEASED, null);
         this.role=Role.DEFAULT;
         this.name="";
+        this.form = PictoFactory.ElementForm.AIRMEAN;
     }
 
     @Override
@@ -69,8 +75,13 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
+    public HashMap<MeanState, Date> getStates() {
+        return this.states;
+    }
+
+    @Override
     public void setAction(String action) {
-        this.action=action;
+        this.action = action;
     }
 
     @Override
@@ -79,57 +90,17 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
-    public IMission getMission() {
+    public Mission getMission() {
         return this.mission;
     }
 
     @Override
-    public void setMission(IMission mission) {
+    public void setMission(Mission mission) {
         this.mission = mission;
     }
 
     @Override
     public boolean hasMission() {
         return (this.mission != null);
-    }
-
-    @Override
-    public void setRole(Role role) {
-
-    }
-
-    @Override
-    public Role getRole() {
-        return null;
-    }
-
-    @Override
-    public void setLocation(Location location) {
-
-    }
-
-    @Override
-    public Location getLocation() {
-        return null;
-    }
-
-    @Override
-    public void setName(String name) {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public PictoFactory.ElementForm getForm() {
-        return null;
-    }
-
-    @Override
-    public void setForm(PictoFactory.ElementForm form) {
-
     }
 }

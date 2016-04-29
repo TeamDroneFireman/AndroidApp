@@ -5,5 +5,7 @@ package edu.istic.tdf.dfclient.http.configuration;
  */
 public abstract class TdfHttpClientConf {
     abstract public int getPort();
-    abstract public String getPath();
+    public String getPath(){
+        return "api/";
+    }
 }

@@ -1,8 +1,11 @@
 package edu.istic.tdf.dfclient.domain.element.mean.interventionMean;
 
+import com.raizlabs.android.dbflow.annotation.Table;
+
 import java.util.Date;
 import java.util.HashMap;
 
+import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.Element;
 
 import edu.istic.tdf.dfclient.domain.geo.Location;
@@ -15,6 +18,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
  * InterventionMean represent things like trucks... during an intervention (
  * Created by guerin on 21/04/16.
  */
+@Table(database = TdfDatabase.class)
 public class InterventionMean extends Element implements IInterventionMean {
 
     /**
@@ -29,12 +33,15 @@ public class InterventionMean extends Element implements IInterventionMean {
     private String action;
 
     public InterventionMean() {
-        this.states.put(MeanState.ASKED, new Date());
+        super();
+        states = new HashMap<MeanState, Date>();
+        this.states.put(MeanState.ASKED, null);
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
         this.states.put(MeanState.ENGAGED, null);
         this.states.put(MeanState.RELEASED, null);
         this.role=Role.DEFAULT;
+        this.form= PictoFactory.ElementForm.MEAN;
         this.name="";
     }
 
@@ -63,6 +70,11 @@ public class InterventionMean extends Element implements IInterventionMean {
     @Override
     public Date getStateDate(MeanState state) {
         return this.states.get(state);
+    }
+
+    @Override
+    public HashMap<MeanState, Date> getStates() {
+        return this.states;
     }
 
     @Override

@@ -50,4 +50,18 @@ public class AuthHelper {
 
         return credentials;
     }
+
+    public static void deleteCredentials() {
+        Context context = TdfApplication.getAppContext();
+        if(context == null) {
+            return;
+        }
+
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFENCES_LOGIN_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(SHARED_PREFERENCE_USERID, "");
+        editor.putString(SHARED_PREFERENCE_TOKEN, "");
+        editor.putBoolean(SHARED_PREFERENCE_ISCODIS, false);
+        editor.commit();
+    }
 }

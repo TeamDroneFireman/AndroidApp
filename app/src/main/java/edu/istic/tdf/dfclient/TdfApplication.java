@@ -117,4 +117,8 @@ public class TdfApplication extends Application implements GcmListener {
     public Credentials loadCredentials() {
         return AuthHelper.loadCredentials();
     }
+
+    public void deleteCredentials(){
+        AuthHelper.deleteCredentials();
+    }
 }

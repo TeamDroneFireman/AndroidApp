@@ -23,22 +23,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
@@ -46,8 +44,13 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private OnFragmentInteractionListener mListener;
     private GoogleMap googleMap;
 
+    private Double latitude = 0.0;
+    private Double longitude = 0.0;
+
+    private List<Element> elementsToSync = new ArrayList<>();
+
     // Liste d'association marker <--> element
-    private HashMap<Marker, IElement> markersList = new HashMap<>();
+    private HashMap<Marker, Element> markersList = new HashMap<>();
 
     public SitacFragment() {
     }
@@ -76,22 +79,23 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         this.googleMap = googleMap;
         initMap();
+        syncMarker();
 
     }
 
     private void initMap(){
-/*
-        for(IElement element : mListener.getInterventionElements()){
-            markersList.put(createMarker(element), element);
-        }
-*/
+        googleMap.getUiSettings().setTiltGesturesEnabled(false);
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(hasElementSelected()){
-                    IElement element = createElementFromLatLng(latLng);
-                    addMarker(element);
+                if (hasElementSelected()) {
+                    Element element = createElementFromLatLng(latLng);
+                    Marker marker = addMarker(element);
+                    if(marker != null){
+                        addMarker(element).showInfoWindow();
+                    }
                 } else {
+
                     cancelSelection();
                 }
             }
@@ -106,16 +110,28 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
 
         });
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mListener.getInterventionLatitude(), mListener.getInterventionLongitude()), 18));
+
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latitude, this.longitude), 18));
 
     }
 
-    private IElement createElementFromLatLng(LatLng latLng){
+    public void setLocation(GeoPoint geoPoint){
+
+        this.latitude = geoPoint.getLatitude();
+        this.longitude = geoPoint.getLongitude();
+
+        if(googleMap != null ){
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
+        }
+    }
+
+    private Element createElementFromLatLng(LatLng latLng){
         Tool tool = mListener.getSelectedTool();
         return mListener.handleElementAdded(tool.getForm(), latLng.latitude, latLng.longitude);
     }
 
     private void cancelSelection(){
+
         mListener.handleCancelSelection();
     }
 
@@ -147,22 +163,23 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         public Double getInterventionLatitude();
         public Double getInterventionLongitude();
-        public Collection<IElement> getInterventionElements();
 
         public Tool getSelectedTool();
 
-        public void setSelectedElement(IElement element);
-        public IElement handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        public void setSelectedElement(Element element);
+        public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
         public void handleCancelSelection();
 
     }
 
     private Marker getMarker(IElement element){
         if(markersList.containsValue(element)){
-            for (Map.Entry<Marker, IElement> entry : markersList.entrySet()) {
+            for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
                 Marker marker = entry.getKey();
                 IElement elementValue = entry.getValue();
                 if(elementValue.equals(element)){
+                    return marker;
+                } else if (elementValue.getId() == element.getId()){
                     return marker;
                 }
             }
@@ -170,23 +187,42 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
-    private void addMarker(IElement element){
-
-        Marker marker = googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
-                .title(element.getName())
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.fromBitmap(
-                        PictoFactory.createPicto(getContext())
-                                .setDrawable(element.getForm().getDrawable())
-                                .setColor(element.getRole().getColor())
-                                .toBitmap()
-                )));
-
-        markersList.put(marker, element);
+    private void syncMarker(){
+        for (Element element : elementsToSync){
+            updateElement(element);
+        }
     }
 
-    private void updateMarker(Marker marker, IElement element){
+    private Marker addMarker(Element element){
+
+        if(element.getRole() == null ){
+            element.setRole(Role.DEFAULT);
+        }
+        if(element.getForm() == null){
+            element.setForm(PictoFactory.ElementForm.MEAN);
+        }
+
+        if(googleMap != null) {
+
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
+                    .title(element.getName())
+                    .icon(BitmapDescriptorFactory.fromBitmap(
+                            PictoFactory.createPicto(getContext())
+                                    .setLabel(element.getName())
+                                    .setDrawable(element.getForm().getDrawable())
+                                    .setColor(element.getRole().getColor())
+                                    .toBitmap()
+                    )));
+
+            markersList.put(marker, element);
+            return marker;
+        }
+        elementsToSync.add(element);
+        return null;
+    }
+
+    private void updateMarker(Marker marker, Element element){
 
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).toBitmap()));
         marker.setPosition(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()));
@@ -197,7 +233,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     }
 
-    public void updateElement(IElement element){
+    public void updateElement(Element element){
         Marker marker = getMarker(element);
         if(marker == null){
             addMarker(element);
@@ -206,8 +242,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
-    public void updateElements(Collection<IElement> elements){
-        for(IElement element : elements){
+    public void updateElements(Collection<Element> elements){
+        for(Element element : elements){
             updateElement(element);
         }
     }

@@ -1,19 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
-    android:showDividers="middle"
-    tools:context="edu.istic.tdf.dfclient.activity.MainMenuActivity">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edu.istic.tdf.dfclient.activity.MainMenuActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <!-- Progress bar overlay; shown while login is in progress -->
+    <include layout="@layout/include_progress_overlay"/>
 
-    <FrameLayout android:id="@+id/list_container"
-        android:layout_width="0dp"
+    <LinearLayout
+         android:baselineAligned="false"
+        android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
+        android:showDividers="middle"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2" />
+        >
 
-    <FrameLayout android:id="@+id/detail_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3" />
+        <FrameLayout android:id="@+id/list_container"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
 
-</LinearLayout>
+        <FrameLayout
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="3">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <fragment
+                    android:id="@+id/intervention_detail_map"
+                    class="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"/>
+                <FrameLayout android:id="@+id/detail_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"/>
+            </LinearLayout>
+
+        </FrameLayout>
+
+
+
+    </LinearLayout>
+</RelativeLayout>

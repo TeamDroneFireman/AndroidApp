@@ -51,4 +51,5 @@ public interface IElement extends IEntity {
     public PictoFactory.ElementForm getForm();
     public void setForm(PictoFactory.ElementForm form);
 
+    ElementType getType();
 }

@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 
 public class MeansTableActivity extends BaseActivity implements MeansTableFragment.OnFragmentInteractionListener {
@@ -39,8 +40,7 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
                 this.startActivity(intent);
                 break;
             case R.id.logout_button:
-                intent = new Intent(this, LoginActivity.class);
-                this.startActivity(intent);
+                logout();
                 break;
             default:
                 break;
@@ -48,4 +48,6 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
 
         return true;
     }
+
+
 }

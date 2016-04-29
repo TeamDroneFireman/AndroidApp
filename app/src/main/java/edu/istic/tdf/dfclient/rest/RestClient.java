@@ -86,7 +86,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
 
         // If entity has an ID, its a PATCH, else its a POST
         if(entity.getId() != null){
-            httpClient.patch(getResourceUri(entity.getId() + "/"), body, handler);
+            httpClient.put(getResourceUri(entity.getId() + "/"), body, handler);
         } else {
             httpClient.post(getResourceUri(""), body, handler);
         }
