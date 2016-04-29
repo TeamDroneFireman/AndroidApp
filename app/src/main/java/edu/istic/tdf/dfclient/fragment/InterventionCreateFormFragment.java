@@ -44,7 +44,6 @@ import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
@@ -246,8 +245,6 @@ public class InterventionCreateFormFragment extends Fragment {
         Drone elemDrone2 = new Drone();
 
         InterventionMean elemInterventionMean1 = new InterventionMean();
-        InterventionMean elemInterventionMean2 = new InterventionMean();
-        InterventionMean elemInterventionMean3 = new InterventionMean();
 
         elemDrone1.setName("Drone1-Patou");
         elemDrone1.setRole(Role.DEFAULT);
@@ -276,13 +273,6 @@ public class InterventionCreateFormFragment extends Fragment {
 
         elemInterventionMean1.setName("IntMean-Jéjé");
         elemInterventionMean1.setRole(Role.DEFAULT);
-        elemInterventionMean1.setLocation(intervention.getLocation());
-        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
-        elemInterventionMean1.setState(MeanState.ENGAGED);
-        elemInterventionMean1.setAction("IN_PROGRESS");
-
-        elemInterventionMean2.setName("IntMean-Albert");
-        elemInterventionMean2.setRole(Role.DEFAULT);
 
         //new location
         Location location2 = new Location();
@@ -290,31 +280,22 @@ public class InterventionCreateFormFragment extends Fragment {
 
         //new geopoint
         GeoPoint geoPoint2 = new GeoPoint();
-        geoPoint.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0011);
-        geoPoint.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0011);
-        location.setGeopoint(geoPoint);
+        geoPoint2.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0011);
+        geoPoint2.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0011);
+        location2.setGeopoint(geoPoint2);
 
-        elemInterventionMean2.setLocation(location);
-        elemInterventionMean2.setForm(PictoFactory.ElementForm.MEAN_GROUP);
-        elemInterventionMean2.setState(MeanState.RELEASED);
-        elemInterventionMean2.setAction("IN_PROGRESS");
+        elemInterventionMean1.setLocation(location2);
+        elemInterventionMean1.setLocation(intervention.getLocation());
+        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
+        elemInterventionMean1.setState(MeanState.ENGAGED);
+        elemInterventionMean1.setAction("IN_PROGRESS");
 
-        elemInterventionMean3.setName("InterventionMean-JosephJeanMie");
-        elemInterventionMean3.setRole(Role.DEFAULT);
-        elemInterventionMean3.setLocation(intervention.getLocation());
-        elemInterventionMean3.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
-        elemInterventionMean3.setState(MeanState.VALIDATED);
-        elemInterventionMean3.setAction("IN_PROGRESS");
-
-        Collection<Drone> drones = new HashSet<Drone>();
-        Collection<IElement> interventionMeans = new HashSet<IElement>();
+        Collection<Drone> drones = new HashSet<>();
+        Collection<InterventionMean> interventionMeans = new HashSet<>();
         drones.add(elemDrone1);
         drones.add(elemDrone2);
         interventionMeans.add(elemInterventionMean1);
-        interventionMeans.add(elemInterventionMean2);
-        interventionMeans.add(elemInterventionMean3);
 
-        // TODO : Has to be implemented as ".persist(List<Drone>" and not ".persist(Drone"
         for(Drone drone : drones){
             Log.w("", "Persist drone");
             drone.setIntervention(intervention.getId());
@@ -339,7 +320,29 @@ public class InterventionCreateFormFragment extends Fragment {
             });
         }
 
+        for(InterventionMean interventionMean : interventionMeans){
+            Log.w("", "Persist interventionMean");
+            interventionMean.setIntervention(intervention.getId());
+            interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    for (int i = 0; i < 50; i++) {
+                        Log.i("", "SUCCESS");
+                    }
 
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    Log.e("", "REPO FAILURE");
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    Log.e("", "REST FAILURE");
+                }
+            });
+        }
         
         getActivity().runOnUiThread(new Runnable() {
             @Override
