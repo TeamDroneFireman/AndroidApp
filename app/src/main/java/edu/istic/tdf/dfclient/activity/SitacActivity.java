@@ -506,10 +506,10 @@ public class SitacActivity extends BaseActivity implements
                             for (int i = 0; i < r.size(); i++) {
                                 Drone drone;
                                 Iterator<Drone> it = r.iterator();
-                                while(it.hasNext()){
+                                while (it.hasNext()) {
                                     drone = it.next();
                                     Drone droneR = r.get(i);
-                                    if(droneR.getId().equals(drone.getId())){
+                                    if (droneR.getId().equals(drone.getId())) {
                                         colRRemove.remove(droneR);
                                     }
                                 }
@@ -548,8 +548,23 @@ public class SitacActivity extends BaseActivity implements
                             Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
-                            // TODO: 29/04/16 handle deleted element
+                            Collection<Element> colRRemove = new ArrayList<Element>();
+                            colRRemove.addAll(interventionMeans);
+                            for (int i = 0; i < r.size(); i++) {
+                                InterventionMean interventionMean;
+                                Iterator<InterventionMean> it = r.iterator();
+                                while(it.hasNext()){
+                                    interventionMean = it.next();
+                                    InterventionMean interventionMeanR = r.get(i);
+                                    if(interventionMeanR.getId().equals(interventionMean.getId())){
+                                        colRRemove.remove(interventionMeanR);
+                                    }
+                                }
+                            }
 
+                            interventionMeans = r;
+
+                            removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
                         }
 
@@ -579,7 +594,23 @@ public class SitacActivity extends BaseActivity implements
                             Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
-                            // TODO: 29/04/16 handle deleted element
+                            Collection<Element> colRRemove = new ArrayList<Element>();
+                            colRRemove.addAll(pointOfInterests);
+                            for (int i = 0; i < r.size(); i++) {
+                                PointOfInterest pointOfInterest;
+                                Iterator<PointOfInterest> it = r.iterator();
+                                while(it.hasNext()){
+                                    pointOfInterest = it.next();
+                                    PointOfInterest pointOfInterestR = r.get(i);
+                                    if(pointOfInterestR.getId().equals(pointOfInterest.getId())){
+                                        colRRemove.remove(pointOfInterestR);
+                                    }
+                                }
+                            }
+
+                            pointOfInterests = r;
+
+                            removeElementsInUi(colRRemove);
 
                             updateElementsInUi(colR);
                         }
