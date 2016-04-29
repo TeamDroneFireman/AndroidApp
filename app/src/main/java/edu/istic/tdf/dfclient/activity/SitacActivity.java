@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -99,8 +100,8 @@ public class SitacActivity extends BaseActivity implements
         setTitle(getString(R.string.activity_sitac_title));
 
         // Load data
-        String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        //String interventionId = (String) getIntent().getExtras().get("interventionId");
+        dataLoader = new DataLoader("5720c3b8358423010064ca33"); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
@@ -151,7 +152,7 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void handleSelectedTool(Tool tool) {
         this.selectedTool = tool;
-        Toast.makeText(SitacActivity.this, tool.getTitle(), Toast.LENGTH_SHORT).show();
+        hideContextualDrawer();
     }
 
     @Override
@@ -186,27 +187,33 @@ public class SitacActivity extends BaseActivity implements
 
             case AIRMEAN:
                 element = new Drone();
+                element.setName("Drone");
                 break;
 
             case MEAN:
                 element = new InterventionMean();
+                element.setName("Moyen SP");
                 break;
 
             case MEAN_OTHER:
             case POINT_OF_INTEREST:
                 element = new PointOfInterest();
+                element.setForm(form);
+                element.setName("Moyen");
                 break;
 
             case WATERPOINT:
                 element = new PointOfInterest();
                 element.setRole(Role.WATER);
+                element.setName("Point d'eau");
                 break;
+
             default:
                 element = new InterventionMean();
+                element.setName("Moyen");
         }
 
         element.setForm(form);
-        element.setName("test");
         element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
         this.selectedTool = null;

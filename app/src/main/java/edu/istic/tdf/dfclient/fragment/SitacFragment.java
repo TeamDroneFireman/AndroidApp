@@ -75,7 +75,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void initMap(){
-
+        googleMap.getUiSettings().setTiltGesturesEnabled(false);
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -166,6 +166,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         if(element.getRole() == null ){
             element.setRole(Role.DEFAULT);
+        }
+        if(element.getForm() == null){
+            element.setForm(PictoFactory.ElementForm.MEAN);
         }
 
         Marker marker = googleMap.addMarker(new MarkerOptions()
