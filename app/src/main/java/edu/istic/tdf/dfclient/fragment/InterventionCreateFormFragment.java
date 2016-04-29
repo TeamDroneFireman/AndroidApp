@@ -215,13 +215,14 @@ public class InterventionCreateFormFragment extends Fragment {
 
         switch (sinisterCode) {
             case "SAP":
-                means.add("VSAV");
+                means.add("Drone1");
+                means.add("Drone2");
+                //means.add("IntMean1");
                 break;
             case "INC":
-                means.add("FTP");
-                means.add("FTP");
-                means.add("EPA");
-                means.add("VLCG");
+                means.add("Drone1");
+                means.add("Drone2");
+                //means.add("IntMean1");
                 break;
         }
         meansAdapter.notifyDataSetChanged();
@@ -242,18 +243,42 @@ public class InterventionCreateFormFragment extends Fragment {
     public void makeElementsExample(Intervention intervention){
 
         Drone elemDrone1 = new Drone();
-        Drone elemDrone2 = new Drone();
 
         InterventionMean elemInterventionMean1 = new InterventionMean();
 
-        elemDrone1.setName("Drone1-Patou");
+        elemDrone1.setName("Drone1");
         elemDrone1.setRole(Role.DEFAULT);
         elemDrone1.setLocation(intervention.getLocation());
         elemDrone1.setForm(PictoFactory.ElementForm.AIRMEAN);
         elemDrone1.setAction("IN_PROGRESS");
         elemDrone1.setState(MeanState.ASKED);
 
-        elemDrone2.setName("Drone1-Michou");
+        elemInterventionMean1.setName("IntMean1");
+        elemInterventionMean1.setRole(Role.DEFAULT);
+
+        //new location
+        Location location2 = new Location();
+        location2.setAddress(intervention.getLocation().getAddress());
+
+        //new geopoint
+        GeoPoint geoPoint2 = new GeoPoint();
+        geoPoint2.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0021);
+        geoPoint2.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0021);
+        location2.setGeopoint(geoPoint2);
+
+        elemInterventionMean1.setLocation(location2);
+        elemInterventionMean1.setLocation(intervention.getLocation());
+        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
+        elemInterventionMean1.setState(MeanState.ENGAGED);
+        elemInterventionMean1.setAction("IN_PROGRESS");
+
+        Collection<Drone> drones = new HashSet<>();
+        Collection<InterventionMean> interventionMeans = new HashSet<>();
+        drones.add(elemDrone1);
+
+
+        Drone elemDrone2 = new Drone();
+        elemDrone2.setName("Drone2");
         elemDrone2.setRole(Role.DEFAULT);
 
         //new location
@@ -270,30 +295,8 @@ public class InterventionCreateFormFragment extends Fragment {
         elemDrone2.setForm(PictoFactory.ElementForm.AIRMEAN);
         elemDrone2.setAction("IN_PROGRESS");
         elemDrone2.setState(MeanState.ASKED);
-
-        elemInterventionMean1.setName("IntMean-Jéjé");
-        elemInterventionMean1.setRole(Role.DEFAULT);
-
-        //new location
-        Location location2 = new Location();
-        location.setAddress(intervention.getLocation().getAddress());
-
-        //new geopoint
-        GeoPoint geoPoint2 = new GeoPoint();
-        geoPoint2.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0011);
-        geoPoint2.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0011);
-        location2.setGeopoint(geoPoint2);
-
-        elemInterventionMean1.setLocation(location2);
-        elemInterventionMean1.setLocation(intervention.getLocation());
-        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
-        elemInterventionMean1.setState(MeanState.ENGAGED);
-        elemInterventionMean1.setAction("IN_PROGRESS");
-
-        Collection<Drone> drones = new HashSet<>();
-        Collection<InterventionMean> interventionMeans = new HashSet<>();
-        drones.add(elemDrone1);
         drones.add(elemDrone2);
+
         interventionMeans.add(elemInterventionMean1);
 
         for(Drone drone : drones){
@@ -320,7 +323,7 @@ public class InterventionCreateFormFragment extends Fragment {
             });
         }
 
-        for(InterventionMean interventionMean : interventionMeans){
+        /*for(InterventionMean interventionMean : interventionMeans){
             Log.w("", "Persist interventionMean");
             interventionMean.setIntervention(intervention.getId());
             interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
@@ -342,8 +345,8 @@ public class InterventionCreateFormFragment extends Fragment {
                     Log.e("", "REST FAILURE");
                 }
             });
-        }
-        
+        }*/
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -389,7 +392,7 @@ public class InterventionCreateFormFragment extends Fragment {
                 intervention.setSinisterCode(SinisterCode.INC);
                 break;
         }
-        
+
         //name
         intervention.setName(str_sinister_code + "-" + strNow);
 
@@ -546,9 +549,9 @@ public class InterventionCreateFormFragment extends Fragment {
                         .getDouble("lat");
 
                 String formatted_address = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-                .getString("formatted_address");
+                        .getString("formatted_address");
 
-                                Log.d("latitude", "" + lat);
+                Log.d("latitude", "" + lat);
                 Log.d("longitude", "" + lng);
 
 
