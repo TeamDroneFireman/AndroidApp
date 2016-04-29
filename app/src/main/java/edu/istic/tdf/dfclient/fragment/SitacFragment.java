@@ -161,9 +161,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
-        public Double getInterventionLatitude();
-        public Double getInterventionLongitude();
-
         public Tool getSelectedTool();
 
         public void setSelectedElement(Element element);
@@ -204,6 +201,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
 
         if(googleMap != null) {
+
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
