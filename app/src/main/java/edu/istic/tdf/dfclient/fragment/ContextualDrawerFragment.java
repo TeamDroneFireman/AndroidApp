@@ -38,6 +38,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.ElementSubmitButton)
     Button ElementSubmitButton;
 
+    @Bind(R.id.ElementCancelButton)
+    Button elementCancelButton;
+
     @Bind(R.id.RoleSpinner)
     Spinner roleSpinner;
 
@@ -75,6 +78,13 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 element.setRole((Role) roleSpinner.getSelectedItem());
                 element.setForm((PictoFactory.ElementForm) formSpinner.getSelectedItem());
                 mListener.updateElement(element);
+            }
+        });
+
+        elementCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.cancelUpdate();
             }
         });
 
@@ -131,5 +141,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     public interface OnFragmentInteractionListener {
         void updateElement(Element element);
+        void cancelUpdate();
     }
 }

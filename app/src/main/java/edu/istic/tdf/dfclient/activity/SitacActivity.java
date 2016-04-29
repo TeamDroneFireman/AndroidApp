@@ -359,6 +359,12 @@ public class SitacActivity extends BaseActivity implements
         //TODO: push to persist
     }
 
+    @Override
+    public void cancelUpdate() {
+        hideContextualDrawer();
+        sitacFragment.cancelSelection();
+    }
+
     private class DataLoader {
         private String interventionId;
 

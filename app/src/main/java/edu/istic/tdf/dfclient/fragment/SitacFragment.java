@@ -95,7 +95,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                         addMarker(element).showInfoWindow();
                     }
                 } else {
-
                     cancelSelection();
                 }
             }
@@ -130,8 +129,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return mListener.handleElementAdded(tool.getForm(), latLng.latitude, latLng.longitude);
     }
 
-    private void cancelSelection(){
-
+    public void cancelSelection(){
+        for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
+            Marker marker = entry.getKey();
+            IElement elementValue = entry.getValue();
+            if (elementValue.getId() == null){
+                marker.remove();
+            }
+        }
         mListener.handleCancelSelection();
     }
 
@@ -161,11 +166,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
-        public Tool getSelectedTool();
+        Tool getSelectedTool();
 
-        public void setSelectedElement(Element element);
-        public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
-        public void handleCancelSelection();
+        void setSelectedElement(Element element);
+        Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        void handleCancelSelection();
 
     }
 
@@ -176,7 +181,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 IElement elementValue = entry.getValue();
                 if(elementValue.equals(element)){
                     return marker;
-                } else if (element.getId() != null && elementValue.getId() == element.getId()){
+                } else if (elementValue.getId() != null && elementValue.getId() == element.getId()){
                     return marker;
                 }
             }
