@@ -156,6 +156,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 IElement elementValue = entry.getValue();
                 if(elementValue.equals(element)){
                     return marker;
+                } else if (elementValue.getId() == element.getId()){
+                    return marker;
                 }
             }
         }

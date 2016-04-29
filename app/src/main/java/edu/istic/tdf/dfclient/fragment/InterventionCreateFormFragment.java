@@ -258,7 +258,18 @@ public class InterventionCreateFormFragment extends Fragment {
 
         elemDrone2.setName("Drone1-Michou");
         elemDrone2.setRole(Role.DEFAULT);
-        elemDrone2.setLocation(intervention.getLocation());
+
+        //new location
+        Location location = new Location();
+        location.setAddress(intervention.getLocation().getAddress());
+
+        //new geopoint
+        GeoPoint geoPoint = new GeoPoint();
+        geoPoint.setLongitude(intervention.getLocation().getGeopoint().getLongitude() + 0.0011);
+        geoPoint.setLatitude(intervention.getLocation().getGeopoint().getLatitude() - 0.0011);
+        location.setGeopoint(geoPoint);
+
+        elemDrone2.setLocation(location);
         elemDrone2.setForm(PictoFactory.ElementForm.AIRMEAN);
         elemDrone2.setAction("IN_PROGRESS");
         elemDrone2.setState(MeanState.ASKED);
@@ -272,7 +283,18 @@ public class InterventionCreateFormFragment extends Fragment {
 
         elemInterventionMean2.setName("IntMean-Albert");
         elemInterventionMean2.setRole(Role.DEFAULT);
-        elemInterventionMean2.setLocation(intervention.getLocation());
+
+        //new location
+        Location location2 = new Location();
+        location.setAddress(intervention.getLocation().getAddress());
+
+        //new geopoint
+        GeoPoint geoPoint2 = new GeoPoint();
+        geoPoint.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0011);
+        geoPoint.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0011);
+        location.setGeopoint(geoPoint);
+
+        elemInterventionMean2.setLocation(location);
         elemInterventionMean2.setForm(PictoFactory.ElementForm.MEAN_GROUP);
         elemInterventionMean2.setState(MeanState.RELEASED);
         elemInterventionMean2.setAction("IN_PROGRESS");
@@ -316,6 +338,8 @@ public class InterventionCreateFormFragment extends Fragment {
                 }
             });
         }
+
+
         
         getActivity().runOnUiThread(new Runnable() {
             @Override
