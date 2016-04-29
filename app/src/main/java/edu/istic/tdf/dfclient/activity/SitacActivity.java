@@ -150,16 +150,6 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public Double getInterventionLatitude() {
-        return this.intervention.getLocation().getGeopoint().getLatitude();
-    }
-
-    @Override
-    public Double getInterventionLongitude() {
-        return this.intervention.getLocation().getGeopoint().getLongitude();
-    }
-
-    @Override
     public Tool getSelectedTool() {
         return selectedTool;
     }
