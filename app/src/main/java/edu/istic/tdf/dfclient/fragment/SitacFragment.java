@@ -179,7 +179,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 IElement elementValue = entry.getValue();
                 if(elementValue.equals(element)){
                     return marker;
-                } else if (elementValue.getId() == element.getId()){
+                } else if (element.getId() != null && elementValue.getId() == element.getId()){
                     return marker;
                 }
             }
@@ -191,6 +191,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         for (Element element : elementsToSync){
             updateElement(element);
         }
+        elementsToSync.clear();
     }
 
     private Marker addMarker(Element element){
@@ -203,10 +204,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
 
         if(googleMap != null) {
-
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
+                    .draggable(true)
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())
@@ -251,6 +252,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     public void removeElement(IElement element){
         Marker marker = getMarker(element);
         if(marker != null){
+            marker.remove();
             markersList.remove(marker);
         }
     }
