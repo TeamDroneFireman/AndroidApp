@@ -1,11 +1,9 @@
 package edu.istic.tdf.dfclient.activity;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observer;
 
@@ -78,7 +77,6 @@ public class SitacActivity extends BaseActivity implements
     @Inject PointOfInterestDao pointOfInterestDao;
 
     private ArrayList<Observer> observers = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -324,6 +322,7 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        addElement(element);
                         sitacFragment.updateElement(element);
                         meansTableFragment.updateElement(element);
                     }
@@ -335,12 +334,12 @@ public class SitacActivity extends BaseActivity implements
             public void onRepositoryFailure(Throwable e) {
                 // TODO: Handle this better
                 SitacActivity.this.runOnUiThread(new Runnable() {
-                     @Override
-                     public void run() {
-                         Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
 
-                     }
-                 });
+                    }
+                });
             }
 
             @Override
@@ -365,8 +364,57 @@ public class SitacActivity extends BaseActivity implements
         sitacFragment.cancelSelection();
     }
 
+    private void addElement(Element element){
+        switch (element.getType()) {
+            case MEAN:
+                this.dataLoader.getInterventionMeans().add((InterventionMean)element);
+                break;
+            case POINT_OF_INTEREST:
+                this.dataLoader.getPointOfInterests().add((PointOfInterest)element);
+                break;
+            case MEAN_OTHER:
+                // TODO: 29/04/16
+                break;
+            case WATERPOINT:
+                // TODO: 29/04/16
+                break;
+            case AIRMEAN:
+                this.dataLoader.getDrones().add((Drone)element);
+                break;
+        }
+    }
+
     private class DataLoader {
         private String interventionId;
+
+        public Collection<Drone> getDrones() {
+            return drones;
+        }
+
+        public void setDrones(Collection<Drone> drones) {
+            this.drones = drones;
+        }
+
+        public Collection<InterventionMean> getInterventionMeans() {
+            return interventionMeans;
+        }
+
+        public void setInterventionMeans(Collection<InterventionMean> interventionMeans) {
+            this.interventionMeans = interventionMeans;
+        }
+
+        public Collection<PointOfInterest> getPointOfInterests() {
+            return pointOfInterests;
+        }
+
+        public void setPointOfInterests(Collection<PointOfInterest> pointOfInterests) {
+            this.pointOfInterests = pointOfInterests;
+        }
+
+        // collection to save previous load datas
+        private Collection<Drone> drones = new ArrayList<>();
+        private Collection<InterventionMean> interventionMeans = new ArrayList<>();
+        private Collection<PointOfInterest> pointOfInterests = new ArrayList<>();
 
         public DataLoader(String interventionId) {
             this.interventionId = interventionId;
@@ -453,6 +501,23 @@ public class SitacActivity extends BaseActivity implements
                             Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
+                            Collection<Element> colRRemove = new ArrayList<Element>();
+                            colRRemove.addAll(drones);
+                            for (int i = 0; i < r.size(); i++) {
+                                Drone drone;
+                                Iterator<Drone> it = r.iterator();
+                                while(it.hasNext()){
+                                    drone = it.next();
+                                    Drone droneR = r.get(i);
+                                    if(droneR.getId().equals(drone.getId())){
+                                        colRRemove.remove(droneR);
+                                    }
+                                }
+                            }
+
+                            drones = r;
+
+                            removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
 
                         }
@@ -483,6 +548,8 @@ public class SitacActivity extends BaseActivity implements
                             Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
+                            // TODO: 29/04/16 handle deleted element
+
                             updateElementsInUi(colR);
                         }
 
@@ -512,6 +579,8 @@ public class SitacActivity extends BaseActivity implements
                             Collection<Element> colR = new ArrayList<Element>();
                             colR.addAll(r);
 
+                            // TODO: 29/04/16 handle deleted element
+
                             updateElementsInUi(colR);
                         }
 
@@ -537,6 +606,21 @@ public class SitacActivity extends BaseActivity implements
 
                     // Update Means table
                     SitacActivity.this.meansTableFragment.updateElements(elements);
+                }
+            });
+
+        }
+
+        private void removeElementsInUi(final Collection<Element> elements) {
+
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update Map
+                    SitacActivity.this.sitacFragment.removeElements(elements);
+
+                    // Update Means table
+                    SitacActivity.this.meansTableFragment.removeElements(elements);
                 }
             });
 
