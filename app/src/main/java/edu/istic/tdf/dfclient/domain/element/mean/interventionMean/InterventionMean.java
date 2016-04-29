@@ -1,8 +1,11 @@
 package edu.istic.tdf.dfclient.domain.element.mean.interventionMean;
 
+import com.raizlabs.android.dbflow.annotation.Table;
+
 import java.util.Date;
 import java.util.HashMap;
 
+import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.element.Element;
 
 import edu.istic.tdf.dfclient.domain.geo.Location;
@@ -15,6 +18,7 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
  * InterventionMean represent things like trucks... during an intervention (
  * Created by guerin on 21/04/16.
  */
+@Table(database = TdfDatabase.class)
 public class InterventionMean extends Element implements IInterventionMean {
 
     /**

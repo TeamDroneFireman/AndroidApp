@@ -23,8 +23,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -34,12 +36,18 @@ import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
 
     private OnFragmentInteractionListener mListener;
     private GoogleMap googleMap;
+
+    private Double latitude = 0.0;
+    private Double longitude = 0.0;
+
+    private List<Element> elementsToSync = new ArrayList<>();
 
     // Liste d'association marker <--> element
     private HashMap<Marker, Element> markersList = new HashMap<>();
@@ -71,6 +79,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         this.googleMap = googleMap;
         initMap();
+        syncMarker();
 
     }
 
@@ -79,9 +88,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(hasElementSelected()){
+                if (hasElementSelected()) {
                     Element element = createElementFromLatLng(latLng);
-                    addMarker(element).showInfoWindow();
+                    Marker marker = addMarker(element);
+                    if(marker != null){
+                        addMarker(element).showInfoWindow();
+                    }
                 } else {
 
                     cancelSelection();
@@ -98,8 +110,19 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
 
         });
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mListener.getInterventionLatitude(), mListener.getInterventionLongitude()), 18));
 
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latitude, this.longitude), 18));
+
+    }
+
+    public void setLocation(GeoPoint geoPoint){
+
+        this.latitude = geoPoint.getLatitude();
+        this.longitude = geoPoint.getLongitude();
+
+        if(googleMap != null ){
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
+        }
     }
 
     private Element createElementFromLatLng(LatLng latLng){
@@ -164,6 +187,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
+    private void syncMarker(){
+        for (Element element : elementsToSync){
+            updateElement(element);
+        }
+    }
+
     private Marker addMarker(Element element){
 
         if(element.getRole() == null ){
@@ -173,19 +202,24 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             element.setForm(PictoFactory.ElementForm.MEAN);
         }
 
-        Marker marker = googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
-                .title(element.getName())
-                .icon(BitmapDescriptorFactory.fromBitmap(
-                        PictoFactory.createPicto(getContext())
-                                .setLabel(element.getName())
-                                .setDrawable(element.getForm().getDrawable())
-                                .setColor(element.getRole().getColor())
-                                .toBitmap()
-                )));
+        if(googleMap != null) {
 
-        markersList.put(marker, element);
-        return marker;
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
+                    .title(element.getName())
+                    .icon(BitmapDescriptorFactory.fromBitmap(
+                            PictoFactory.createPicto(getContext())
+                                    .setLabel(element.getName())
+                                    .setDrawable(element.getForm().getDrawable())
+                                    .setColor(element.getRole().getColor())
+                                    .toBitmap()
+                    )));
+
+            markersList.put(marker, element);
+            return marker;
+        }
+        elementsToSync.add(element);
+        return null;
     }
 
     private void updateMarker(Marker marker, Element element){
