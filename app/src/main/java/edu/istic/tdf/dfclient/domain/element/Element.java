@@ -1,9 +1,6 @@
 package edu.istic.tdf.dfclient.domain.element;
 
 import edu.istic.tdf.dfclient.domain.Entity;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
-import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
-import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import lombok.Getter;
@@ -13,6 +10,10 @@ import lombok.Setter;
  * Created by maxime on 27/04/2016.
  */
 public abstract class Element extends Entity implements IElement {
+
+    @Getter
+    @Setter
+    protected String intervention;
 
     /**
      *it's the current fonctionnality of the InterventionMean: water,fire, sap...

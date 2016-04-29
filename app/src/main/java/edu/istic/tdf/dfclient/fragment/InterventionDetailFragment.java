@@ -144,9 +144,10 @@ public class InterventionDetailFragment extends Fragment {
             intervention.setArchived(!intervention.isArchived());
             ((MainMenuActivity) InterventionDetailFragment.this.getActivity()).showProgress();
 
-            interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+            
+            interventionDao.persist(intervention, new IDaoWriteReturnHandler<Intervention>() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(Intervention intervention) {
                     ((MainMenuActivity) InterventionDetailFragment.this.getActivity()).hideProgress();
                     displayIntervention();
                     fragmentInteractionListener.onInterventionArchived();
@@ -171,9 +172,9 @@ public class InterventionDetailFragment extends Fragment {
     private void toggleArchiveIntervention(){
         if(intervention != null) {
             intervention.setArchived(!intervention.isArchived());
-            interventionDao.persist(intervention, new IDaoWriteReturnHandler() {
+            interventionDao.persist(intervention, new IDaoWriteReturnHandler<Intervention>() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(Intervention intervention) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

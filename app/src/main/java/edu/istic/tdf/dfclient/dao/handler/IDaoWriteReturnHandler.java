@@ -4,12 +4,12 @@ package edu.istic.tdf.dfclient.dao.handler;
  * Handler for DAO Results
  * @param <Result> The result type
  */
-public interface IDaoWriteReturnHandler {
+public interface IDaoWriteReturnHandler<E> {
 
     /**
      * Callback called after REST request result
      */
-    void onSuccess();
+    void onSuccess(E r);
 
     /**
      * Callback called if something goes wrong with repository

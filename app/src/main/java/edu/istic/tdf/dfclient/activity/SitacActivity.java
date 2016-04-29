@@ -2,7 +2,6 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -10,9 +9,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,7 +19,6 @@ import java.util.Observer;
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
-import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
@@ -48,10 +43,6 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
-import edu.istic.tdf.dfclient.http.exception.HttpException;
-import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
-import edu.istic.tdf.dfclient.rest.service.logout.LogoutRestService;
-import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -324,9 +315,9 @@ public class SitacActivity extends BaseActivity implements
         sitacFragment.updateElement(element);
         meansTableFragment.updateElement(element);
 
-        dataLoader.persistElement(element, new IDaoWriteReturnHandler() {
+        dataLoader.persistElement(element, new IDaoWriteReturnHandler<DataLoader>() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(DataLoader dataLoader) {
                 // TODO: Handle this better
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
