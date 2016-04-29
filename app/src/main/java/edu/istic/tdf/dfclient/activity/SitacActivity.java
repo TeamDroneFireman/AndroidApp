@@ -268,11 +268,7 @@ public class SitacActivity extends BaseActivity implements
                         .commit();
                 switchTo(sitacFragment);
                 break;
-
-            case R.id.switch_to_drones_map:
-                intent = new Intent(this, DronesMapActivity.class);
-                this.startActivity(intent);
-                break;
+            
             case R.id.logout_button:
                 logout();
                 break;
