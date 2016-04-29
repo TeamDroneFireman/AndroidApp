@@ -79,6 +79,7 @@ public class SitacActivity extends BaseActivity implements
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -275,6 +276,9 @@ public class SitacActivity extends BaseActivity implements
             case R.id.logout_button:
                 logout();
                 break;
+            case R.id.refresh_datas:
+                dataLoader.loadData();
+                break;
             default:
                 break;
         }
@@ -438,7 +442,6 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestFailure(Throwable e) {
-                    Log.e("INTER", " --> DNE");
                     SitacActivity.this.displayNetworkError();
                 }
             });
@@ -469,7 +472,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
-                            Log.e("DRONE", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
@@ -499,7 +501,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
-                            Log.e("MEANS", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
@@ -529,7 +530,6 @@ public class SitacActivity extends BaseActivity implements
 
                         @Override
                         public void onRestFailure(Throwable e) {
-                            Log.e("POINT", " --> DNE");
                             SitacActivity.this.displayNetworkError();
                         }
                     });
