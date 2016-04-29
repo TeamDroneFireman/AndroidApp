@@ -33,6 +33,8 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
@@ -177,11 +179,13 @@ public class SitacActivity extends BaseActivity implements
             case AIRMEAN:
                 element = new Drone();
                 element.setName("Drone");
+                ((IMean)element).setState(MeanState.ASKED);
                 break;
 
             case MEAN:
                 element = new InterventionMean();
                 element.setName("Moyen SP");
+                ((IMean)element).setState(MeanState.ASKED);
                 break;
 
             case MEAN_OTHER:
@@ -317,12 +321,14 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void updateElement(final Element element) {
+
         sitacFragment.updateElement(element);
         meansTableFragment.updateElement(element);
+        element.setIntervention(intervention.getId());
 
-        dataLoader.persistElement(element, new IDaoWriteReturnHandler<DataLoader>() {
+        dataLoader.persistElement(element, new IDaoWriteReturnHandler<Element>() {
             @Override
-            public void onSuccess(DataLoader dataLoader) {
+            public void onSuccess(final Element element) {
                 // TODO: Handle this better
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -412,8 +418,15 @@ public class SitacActivity extends BaseActivity implements
                 }
 
                 @Override
-                public void onRestResult(Intervention r) {
-                    SitacActivity.this.intervention = r;
+                public void onRestResult(final Intervention r) {
+
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            SitacActivity.this.intervention = r;
+                            sitacFragment.setLocation(r.getLocation().getGeopoint());
+                        }
+                    });
 
                     // TODO : What to do when it is loaded ?
                 }

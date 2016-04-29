@@ -34,6 +34,7 @@ import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
@@ -79,7 +80,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(hasElementSelected()){
+                if (hasElementSelected()) {
                     Element element = createElementFromLatLng(latLng);
                     addMarker(element).showInfoWindow();
                 } else {
@@ -98,8 +99,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
 
         });
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mListener.getInterventionLatitude(), mListener.getInterventionLongitude()), 18));
 
+    }
+
+    public void setLocation(GeoPoint geoPoint){
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
     }
 
     private Element createElementFromLatLng(LatLng latLng){
@@ -172,6 +176,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         if(element.getForm() == null){
             element.setForm(PictoFactory.ElementForm.MEAN);
         }
+
 
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
