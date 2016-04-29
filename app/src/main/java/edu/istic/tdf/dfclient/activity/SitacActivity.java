@@ -91,8 +91,8 @@ public class SitacActivity extends BaseActivity implements
         setTitle(getString(R.string.activity_sitac_title));
 
         // Load data
-        //String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader("5720c3b8358423010064ca33"); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        String interventionId = (String) getIntent().getExtras().get("interventionId");
+        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
@@ -148,14 +148,12 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Double getInterventionLatitude() {
-        //return this.intervention.getLocation().getGeopoint().getLatitude();
-        return 48.1151489;
+        return this.intervention.getLocation().getGeopoint().getLatitude();
     }
 
     @Override
     public Double getInterventionLongitude() {
-        //return this.intervention.getLocation().getGeopoint().getLongitude();
-        return -1.6380783;
+        return this.intervention.getLocation().getGeopoint().getLongitude();
     }
 
     @Override
