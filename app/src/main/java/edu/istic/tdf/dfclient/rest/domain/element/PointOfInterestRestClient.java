@@ -1,23 +1,16 @@
 package edu.istic.tdf.dfclient.rest.domain.element;
 
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
-import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfIntervention;
-import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfPointOfInterest;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.rest.IRestClient;
-import edu.istic.tdf.dfclient.rest.RestClient;
+import edu.istic.tdf.dfclient.rest.RestEndpoints;
 
 
 public class PointOfInterestRestClient extends ElementRestClient<PointOfInterest> implements IRestClient<PointOfInterest> {
 
     public PointOfInterestRestClient(TdfHttpClient httpClient) {
         super(PointOfInterest.class, httpClient);
-        httpClient.setConf(new TdfHttpClientConfPointOfInterest()); // Hack because no load balancer
-    }
-
-    @Override
-    public String getRestEndpoint() {
-        return "SIGs/";
+        httpClient.setConf(new TdfHttpClientConf(RestEndpoints.Sig)); // Hack because no load balancer
     }
 }

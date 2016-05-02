@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
-import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfUser;
+import edu.istic.tdf.dfclient.rest.RestEndpoints;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -26,7 +26,7 @@ public class TdfHttpClient {
 
     public TdfHttpClient(OkHttpClient client) {
         this.client = client;
-        this.conf = new TdfHttpClientConfUser(); // TODO : Remove this ugly default
+        this.conf = new TdfHttpClientConf(RestEndpoints.Empty); // TODO : Remove this ugly default
     }
 
     public TdfHttpClientConf getConf() {
@@ -49,6 +49,7 @@ public class TdfHttpClient {
         tdfRequestBuilder.appendHeaders(headers);
         tdfRequestBuilder.setAcceptHeaders(HTTP_ACCEPT);
         tdfRequestBuilder.setAuth();
+        tdfRequestBuilder.setHost(resolveHost());
 
         Request request = tdfRequestBuilder.getBuilder().build();
 
@@ -74,6 +75,7 @@ public class TdfHttpClient {
         tdfRequestBuilder.appendHeaders(headers);
         tdfRequestBuilder.setAcceptHeaders(HTTP_ACCEPT);
         tdfRequestBuilder.setAuth();
+        tdfRequestBuilder.setHost(resolveHost());
 
         Request request = tdfRequestBuilder.getBuilder().build();
 
@@ -99,6 +101,7 @@ public class TdfHttpClient {
         tdfRequestBuilder.appendHeaders(headers);
         tdfRequestBuilder.setAcceptHeaders(HTTP_ACCEPT);
         tdfRequestBuilder.setAuth();
+        tdfRequestBuilder.setHost(resolveHost());
 
         Request request = tdfRequestBuilder.getBuilder().build();
 
@@ -124,10 +127,62 @@ public class TdfHttpClient {
         tdfRequestBuilder.appendHeaders(headers);
         tdfRequestBuilder.setAcceptHeaders(HTTP_ACCEPT);
         tdfRequestBuilder.setAuth();
+        tdfRequestBuilder.setHost(resolveHost());
 
         Request request = tdfRequestBuilder.getBuilder().build();
 
         client.newCall(request).enqueue(handler);
+    }
+
+    private String resolveHost(){
+        String host;
+        switch (getConf().getRestEndpoints()){
+            case Intervention:
+                host = "intervention";
+                break;
+            case Sig:
+                host = "sig";
+                break;
+            case Drone:
+                host = "drone";
+                break;
+            case Mean:
+                host = "mean";
+                break;
+            case Sinister:
+                host = "sinister";
+                break;
+            case User:
+                host = "user";
+                break;
+            default:
+                return "";
+        }
+        return host + ".docker.localhost";
+    }
+
+    private String resolvePath(){
+        String path;
+        switch (getConf().getRestEndpoints()){
+            case Intervention:
+                path = "interventions";
+                break;
+            case Sig:
+                path = "SIGs";
+                break;
+            case Drone:
+                path = "Drones";
+                break;
+            case Mean:
+                path = "means";
+                break;
+            case Sinister:
+                path = "sinisters";
+                break;
+            default:
+                return "";
+        }
+        return "api/" + path + "/";
     }
 
     /**
@@ -149,7 +204,7 @@ public class TdfHttpClient {
                 .scheme(SCHEME)
                 .host(HOST)
                 .port(this.conf.getPort())
-                .addPathSegments(this.conf.getPath())
+                .addPathSegments(resolvePath())
                 .addPathSegments(relativeUrl);
 
         for (Map.Entry<String, String> entry : queryParameters.entrySet()) {

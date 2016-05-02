@@ -1,15 +1,12 @@
 package edu.istic.tdf.dfclient.rest.service.login;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
-import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfUser;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.http.handler.RestHttpResponseHandler;
+import edu.istic.tdf.dfclient.rest.RestEndpoints;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
-import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import edu.istic.tdf.dfclient.rest.service.login.request.LoginRequest;
 import edu.istic.tdf.dfclient.rest.service.login.response.LoginResponse;
 
@@ -18,7 +15,7 @@ import edu.istic.tdf.dfclient.rest.service.login.response.LoginResponse;
  */
 public class LoginRestService {
 
-    private final static String LOGIN_URI = "SITUsers/login";
+    private final static String LOGIN_URI = "api/SITUsers/login";
 
     TdfHttpClient httpClient;
     Gson serializer;
@@ -26,7 +23,7 @@ public class LoginRestService {
     public LoginRestService(TdfHttpClient httpClient, Gson serializer) {
         this.httpClient = httpClient;
         this.serializer = serializer;
-        this.httpClient.setConf(new TdfHttpClientConfUser());
+        this.httpClient.setConf(new TdfHttpClientConf(RestEndpoints.User));
     }
 
     /**
