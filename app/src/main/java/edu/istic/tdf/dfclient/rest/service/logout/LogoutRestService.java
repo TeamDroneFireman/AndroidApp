@@ -5,8 +5,9 @@ import java.util.HashMap;
 import edu.istic.tdf.dfclient.auth.AuthHelper;
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
-import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConfUser;
+import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.http.handler.RestHttpResponseHandler;
+import edu.istic.tdf.dfclient.rest.RestEndpoints;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
 
@@ -15,13 +16,13 @@ import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
  */
 public class LogoutRestService {
 
-    private final static String LOGOUT_URI = "SITUsers/logout";
+    private final static String LOGOUT_URI = "api/SITUsers/logout";
 
     TdfHttpClient httpClient;
 
     public LogoutRestService(TdfHttpClient httpClient) {
         this.httpClient = httpClient;
-        this.httpClient.setConf(new TdfHttpClientConfUser());
+        this.httpClient.setConf(new TdfHttpClientConf(RestEndpoints.User));
     }
 
     /**

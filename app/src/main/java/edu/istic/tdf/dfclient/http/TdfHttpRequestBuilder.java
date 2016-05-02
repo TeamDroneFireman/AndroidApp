@@ -57,6 +57,12 @@ public class TdfHttpRequestBuilder {
         }
     }
 
+    public void setHost(String host){
+        HashMap<String, String> hostHeader = new HashMap<>();
+        hostHeader.put("Host", host);
+        this.appendHeaders(hostHeader);
+    }
+
     /**
      * Sets the Accept header
      * @param accept The accept content type
