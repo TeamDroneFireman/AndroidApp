@@ -107,13 +107,7 @@ public abstract class RestClient<E extends Entity> implements IRestClient<E> {
         httpClient.delete(getResourceUri(entity.getId() + "/"), handler);
     }
 
-    /**
-     * Gets the URL of the REST endpoint
-     * @return The endpoint URL
-     */
-    public abstract String getRestEndpoint();
-
     protected String getResourceUri(String relativeUri) {
-        return getRestEndpoint() + relativeUri;
+        return relativeUri;
     }
 }
