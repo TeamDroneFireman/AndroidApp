@@ -35,7 +35,7 @@ public class InterventionMean extends Element implements IInterventionMean {
     public InterventionMean() {
         super();
         states = new HashMap<MeanState, Date>();
-        this.states.put(MeanState.ASKED, null);
+        this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
         this.states.put(MeanState.ENGAGED, null);

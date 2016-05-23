@@ -175,6 +175,8 @@ public class SitacActivity extends BaseActivity implements
                 element = new InterventionMean();
                 element.setName("Moyen SP");
                 ((IMean)element).setState(MeanState.ASKED);
+                // TODO: 23/05/16 action bouchon
+                ((IMean)element).setAction("Action par défaut");
                 break;
 
             case MEAN_OTHER:
@@ -314,20 +316,31 @@ public class SitacActivity extends BaseActivity implements
         meansTableFragment.updateElement(element);
         element.setIntervention(intervention.getId());
 
-        dataLoader.persistElement(element, new IDaoWriteReturnHandler<Element>() {
-            @Override
-            public void onSuccess(final Element element) {
-                // TODO: Handle this better
-                SitacActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
-                        addElement(element);
-                        sitacFragment.updateElement(element);
-                        meansTableFragment.updateElement(element);
-                    }
-                });
+        switch (element.getType()) {
+            case MEAN:
+                this.updateInterventionMean((InterventionMean)element);
+                break;
+            case POINT_OF_INTEREST:
+                // TODO: 23/05/16
+                break;
+            case MEAN_OTHER:
+                // TODO: 29/04/16
+                break;
+            case WATERPOINT:
+                // TODO: 29/04/16
+                break;
+            case AIRMEAN:
+                this.updateDrone((Drone)element);
+                break;
+        }
+    }
 
+    private void updateInterventionMean(final InterventionMean interventionMean) {
+
+        interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler<InterventionMean>() {
+            @Override
+            public void onSuccess(InterventionMean r) {
+                dataLoader.loadMeans();
             }
 
             @Override
@@ -353,9 +366,39 @@ public class SitacActivity extends BaseActivity implements
                 });
             }
         });
+    }
 
+    private void updateDrone(final Drone drone) {
 
-        //TODO: push to persist
+        droneDao.persist(drone, new IDaoWriteReturnHandler<Drone>() {
+            @Override
+            public void onSuccess(Drone r) {
+                dataLoader.loadDrones();
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     @Override
