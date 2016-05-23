@@ -160,7 +160,6 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-
         Element element = null;
 
         switch(ElementType.getElementType(form)){
@@ -207,8 +206,8 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public Element handleUpdatedElement(Element element) {
-        return null;
+    public void handleUpdatedElement(Element element) {
+        updateElement(element);
     }
 
     @Override
@@ -316,7 +315,6 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void updateElement(final Element element) {
-
         sitacFragment.updateElement(element);
         meansTableFragment.updateElement(element);
         element.setIntervention(intervention.getId());

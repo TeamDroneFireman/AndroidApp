@@ -117,6 +117,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             public void onMarkerDragEnd(Marker marker) {
                 Element element = markersList.get(marker);
 
+                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
+                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
+
+                mListener.handleUpdatedElement(element);
             }
         });
 
@@ -180,7 +184,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         void setSelectedElement(Element element);
         Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
-        Element handleUpdatedElement(Element element);
+        void handleUpdatedElement(Element element);
         void handleCancelSelection();
 
     }
