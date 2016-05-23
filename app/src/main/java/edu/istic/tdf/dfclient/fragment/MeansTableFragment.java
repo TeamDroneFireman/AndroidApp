@@ -35,6 +35,8 @@ public class MeansTableFragment extends Fragment {
 
     private HashMap<String,TableRow> link=new HashMap<>();
 
+    private final int NBCOLUMS=6;
+
     public MeansTableFragment() {
         // Required empty public constructor
     }
@@ -122,7 +124,7 @@ public class MeansTableFragment extends Fragment {
         TableRow tableRow =link.get(element.getId());
         tableRow.removeAllViews();
 
-        addTextViews(element,tableRow);
+        addTextViews(element, tableRow);
 
     }
 
@@ -136,6 +138,8 @@ public class MeansTableFragment extends Fragment {
         HashMap<MeanState, Date> currentStates = element.getStates();
 
         Date d = currentStates.get(MeanState.ASKED);
+        addMeanState(tableRow, d);
+        d = currentStates.get(MeanState.VALIDATED);
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.ARRIVED);
         addMeanState(tableRow, d);
@@ -157,7 +161,29 @@ public class MeansTableFragment extends Fragment {
         tableRow.addView(textView);
     }
 
+    private TableRow createEmptyRow(){
+        TableRow tableRow=new TableRow(meanTab.getContext());
+        //TODO mettre le premier élément en liste déroulante
+        addTextViewsEditable(tableRow);
+
+        return tableRow;
+    }
+
+    private void addTextViewsEditable(TableRow tableRow) {
+        for(int i=0;i<NBCOLUMS;i++){
+            TextView textView=new TextView(meanTab.getContext());
+            textView.setText("");
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            textView.setEnabled(true);
+            tableRow.addView(textView);
+        }
+    }
+
+
+
     public interface OnFragmentInteractionListener {
+
+        public void handleValidation(Element element);
 
     }
 

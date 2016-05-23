@@ -463,6 +463,11 @@ public class SitacActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void handleValidation(Element element) {
+
+    }
+
     private class DataLoader {
         private String interventionId;
 
