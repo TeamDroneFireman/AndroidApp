@@ -321,7 +321,7 @@ public class SitacActivity extends BaseActivity implements
                 this.updateInterventionMean((InterventionMean)element);
                 break;
             case POINT_OF_INTEREST:
-                // TODO: 23/05/16
+                this.updatePointOfInterest((PointOfInterest)element);
                 break;
             case MEAN_OTHER:
                 // TODO: 29/04/16
@@ -374,6 +374,39 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void onSuccess(Drone r) {
                 dataLoader.loadDrones();
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                // TODO: Handle this better
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private void updatePointOfInterest(final PointOfInterest pointOfInterest) {
+
+        pointOfInterestDao.persist(pointOfInterest, new IDaoWriteReturnHandler<PointOfInterest>() {
+            @Override
+            public void onSuccess(PointOfInterest r) {
+                dataLoader.loadPointsOfInterest();
             }
 
             @Override
