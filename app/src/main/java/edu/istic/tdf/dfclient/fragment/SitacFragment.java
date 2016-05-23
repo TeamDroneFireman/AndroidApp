@@ -225,7 +225,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
-                    .draggable(true)
+                    .draggable(element.getId() != null)
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())

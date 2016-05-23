@@ -465,7 +465,7 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void handleValidation(Element element) {
-
+        updateElement(element);
     }
 
     private class DataLoader {
@@ -603,7 +603,6 @@ public class SitacActivity extends BaseActivity implements
 
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
-
                         }
 
                         @Override
