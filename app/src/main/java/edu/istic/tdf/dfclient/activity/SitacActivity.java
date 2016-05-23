@@ -207,6 +207,11 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
+    public Element handleUpdatedElement(Element element) {
+        return null;
+    }
+
+    @Override
     public void handleCancelSelection() {
         this.selectedTool = null;
         hideContextualDrawer();

@@ -83,7 +83,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 if (hasElementSelected()) {
                     Element element = createElementFromLatLng(latLng);
                     Marker marker = addMarker(element);
-                    if(marker != null){
+                    if (marker != null) {
                         addMarker(element).showInfoWindow();
                     }
                 } else {
@@ -100,6 +100,24 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 return false;
             }
 
+        });
+
+        googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                Element element = markersList.get(marker);
+
+            }
         });
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latitude, this.longitude), 18));
@@ -162,6 +180,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         void setSelectedElement(Element element);
         Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        Element handleUpdatedElement(Element element);
         void handleCancelSelection();
 
     }
