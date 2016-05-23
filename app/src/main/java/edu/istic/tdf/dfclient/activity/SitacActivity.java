@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observer;
@@ -22,6 +23,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
+import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
@@ -362,6 +364,34 @@ public class SitacActivity extends BaseActivity implements
     public void cancelUpdate() {
         hideContextualDrawer();
         sitacFragment.cancelSelection();
+    }
+
+    @Override
+    public void deleteElement(Element element){
+        hideContextualDrawer();
+        System.out.println("________DELETE ELEMENT FROM DB _________");
+        IDao dao = this.dataLoader.getDaoOfElement(element);
+        dao.delete(element, new IDaoWriteReturnHandler() {
+            @Override
+            public void onSuccess(Object r) {
+                System.out.println("SUCCESS");
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+                System.out.println("FAIL REPO");
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                System.out.println("FAIL REST");
+            }
+        });
+        // System.out.println("________DELETE ELEMENT FROM MEANS TABLE_________");
+        // TODO change Date (for DateTime?)
+        ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
+
+        sitacFragment.removeElement(element);
     }
 
     private void addElement(Element element){

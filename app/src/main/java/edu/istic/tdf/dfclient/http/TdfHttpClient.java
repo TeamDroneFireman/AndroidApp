@@ -26,7 +26,7 @@ public class TdfHttpClient {
 
     public TdfHttpClient(OkHttpClient client) {
         this.client = client;
-        this.conf = new TdfHttpClientConf(RestEndpoints.Empty); // TODO : Remove this ugly default
+        this.conf = new TdfHttpClientConf(RestEndpoints.Empty);
     }
 
     public TdfHttpClientConf getConf() {
@@ -52,7 +52,6 @@ public class TdfHttpClient {
         tdfRequestBuilder.setHost(resolveHost());
 
         Request request = tdfRequestBuilder.getBuilder().build();
-
         client.newCall(request).enqueue(handler);
     }
 
@@ -121,7 +120,7 @@ public class TdfHttpClient {
     public void delete(String url, HashMap<String, String> queryParameters, HashMap<String, String> headers, Callback handler) {
         Request.Builder requestBuilder = new Request.Builder()
                 .url(getAbsoluteUrl(url, queryParameters))
-                .get();
+                .delete();
 
         TdfHttpRequestBuilder tdfRequestBuilder = new TdfHttpRequestBuilder(requestBuilder);
         tdfRequestBuilder.appendHeaders(headers);
@@ -131,6 +130,7 @@ public class TdfHttpClient {
 
         Request request = tdfRequestBuilder.getBuilder().build();
 
+        System.out.println("____^^____" + request.url().toString());
         client.newCall(request).enqueue(handler);
     }
 

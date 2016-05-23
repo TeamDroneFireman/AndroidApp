@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -21,12 +20,8 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
 import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.element.ElementType;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
-
-import static edu.istic.tdf.dfclient.domain.element.Role.values;
 
 public class ContextualDrawerFragment extends Fragment implements Observer {
 
@@ -36,10 +31,13 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     EditText ElementLabelEdit;
 
     @Bind(R.id.ElementSubmitButton)
-    Button ElementSubmitButton;
+    Button elementSubmitButton;
 
     @Bind(R.id.ElementCancelButton)
     Button elementCancelButton;
+
+    @Bind(R.id.ElementDeleteButton)
+    Button elementDeleteButton;
 
     @Bind(R.id.RoleSpinner)
     Spinner roleSpinner;
@@ -71,7 +69,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         ButterKnife.bind(this, view);
 
-        ElementSubmitButton.setOnClickListener(new View.OnClickListener() {
+        elementSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 element.setName(ElementLabelEdit.getText().toString());
@@ -88,6 +86,12 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         });
 
+        elementDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.deleteElement(element);
+            }
+        });
 
         roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), PictoFactory.ElementForm.values()));
@@ -142,5 +146,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     public interface OnFragmentInteractionListener {
         void updateElement(Element element);
         void cancelUpdate();
+        void deleteElement(Element element);
     }
 }
