@@ -2,10 +2,14 @@ package edu.istic.tdf.dfclient.drawable;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
@@ -127,6 +131,7 @@ public class PictoFactory {
 
     public Drawable toDrawable(){
         Drawable drawable = ContextCompat.getDrawable(context, this.drawable);
+
         drawable.setColorFilter(this.color, PorterDuff.Mode.MULTIPLY);
         drawable.setBounds(0, 0, size, size);
         return drawable;
@@ -134,6 +139,36 @@ public class PictoFactory {
 
     public Bitmap toBitmap(){
 
+        Bitmap bitmap = getOptimizedBitmap();
+        Canvas canvas = new Canvas(bitmap);
+        // new antialised Paint
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        // text color - #3D3D3D
+        paint.setColor(this.color);
+        // text size in pixels
+        int textSize = 30;
+        paint.setTextSize((int) (textSize));
+
+        // text shadow
+        paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
+        if(paint.measureText(this.label) > bitmap.getWidth()){
+            while(paint.measureText(this.label) > bitmap.getWidth()){
+                textSize--;
+                paint.setTextSize((int) (textSize));
+            }
+        }
+        // draw text to the Canvas center
+        Rect bounds = new Rect();
+        paint.getTextBounds(this.label, 0, this.label.length(), bounds);
+        int x = (bitmap.getWidth()) / 2;
+        int y = (bitmap.getHeight()) / 2;
+
+        paint.setTextAlign(Paint.Align.CENTER);
+
+        canvas.drawText(this.label, x, y, paint);
+
+        return bitmap;
+/*
         View view = getView();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -146,7 +181,7 @@ public class PictoFactory {
         imageView.setColorFilter(this.color);
 
         AutoScaleTextView textView = (AutoScaleTextView) view.findViewById(R.id.icon_text);
-        textView.setText(this.label);
+        //textView.setText(this.label);
         textView.setTextColor(this.color);
 
         view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
@@ -155,9 +190,41 @@ public class PictoFactory {
         Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
+
+        // new antialised Paint
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        // text color - #3D3D3D
+        paint.setColor(this.color);
+
+        // text shadow
+        paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+        paint.setTextAlign(Paint.Align.CENTER);
+        int x = (bitmap.getWidth())/2;
+        int y = (bitmap.getHeight())/2;
+
+        canvas.drawText(label, x, y, paint);
         view.draw(canvas);
 
-        return bitmap;
+        return bitmap;*/
+    }
+
+    private Bitmap getOptimizedBitmap() {
+
+        Resources resources = context.getResources();
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeResource(resources, this.drawable, options);
+        options.inSampleSize = calculateInSampleSize(options, this.size, this.size);
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeResource(resources, this.drawable, options);
+
+        android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+        if(bitmapConfig == null) {
+            bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+        }
+       return bitmap.copy(bitmapConfig, true);
     }
 
     /**
@@ -168,4 +235,26 @@ public class PictoFactory {
         return  ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.icon_layout, null);
     }
 
+    private int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
 }
