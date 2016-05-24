@@ -91,11 +91,6 @@ public class SitacActivity extends BaseActivity implements
         // Activity title
         setTitle(getString(R.string.activity_sitac_title));
 
-        // Load data
-        String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
-        dataLoader.loadData();
-
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
 
@@ -136,43 +131,17 @@ public class SitacActivity extends BaseActivity implements
 
         currentFragment = sitacFragment;
 
-        //add
-
-
+        // Load data
+        String interventionId = (String) getIntent().getExtras().get("interventionId");
+        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        dataLoader.loadData();
     }
 
     @Override
     public void handleSelectedToolUtils(Tool tool) {
+        this.sitacFragment.cancelSelection();
         this.selectedTool = tool;
         hideContextualDrawer();
-    }
-
-    @Override
-    public void handleSelectedToolAsked(Tool tool) {
-        this.selectedTool = tool;
-        hideContextualDrawer();
-        // TODO: 24/05/16
-    }
-
-    @Override
-    public void handleSelectedToolInTransit(Tool tool) {
-        this.selectedTool = tool;
-        hideContextualDrawer();
-        // TODO: 24/05/16
-    }
-
-    @Override
-    public void handleSelectedToolInactif(Tool tool) {
-        this.selectedTool = tool;
-        hideContextualDrawer();
-        // TODO: 24/05/16
-    }
-
-    @Override
-    public void handleSelectedToolActif(Tool tool) {
-        this.selectedTool = tool;
-        hideContextualDrawer();
-        // TODO: 24/05/16
     }
 
     @Override
@@ -199,49 +168,62 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-        Element element;
+        Element element = this.toolbarFragment.getElementFromTool();
 
-        switch(ElementType.getElementType(form)){
+        if(element != null)
+        {
+            switch (element.getType())
+            {
+                case MEAN:
+                    break;
+                case AIRMEAN:
+                    break;
+            }
+        }
+        else {
+            switch (ElementType.getElementType(form)) {
 
-            case AIRMEAN:
-                element = new Drone();
-                element.setName("Drone");
-                ((IMean)element).setState(MeanState.ASKED);
-                break;
+                case AIRMEAN:
+                    element = new Drone();
+                    element.setName("Drone");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    break;
 
-            case MEAN:
-                element = new InterventionMean();
-                element.setName("Moyen SP");
-                ((IMean)element).setState(MeanState.ASKED);
-                // TODO: 23/05/16 action bouchon
-                ((IMean)element).setAction("Action par défaut");
-                break;
+                case MEAN:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    // TODO: 23/05/16 action bouchon
+                    ((IMean) element).setAction("Action par défaut");
+                    break;
 
-            case MEAN_OTHER:
-            case POINT_OF_INTEREST:
-                element = new PointOfInterest();
-                element.setForm(form);
-                element.setName("Moyen");
-                ((PointOfInterest)element).setExternal(false);
-                break;
+                case MEAN_OTHER:
+                case POINT_OF_INTEREST:
+                    element = new PointOfInterest();
+                    element.setForm(form);
+                    element.setName("Moyen");
+                    ((PointOfInterest) element).setExternal(false);
+                    break;
 
-            case WATERPOINT:
-                element = new PointOfInterest();
-                element.setRole(Role.WATER);
-                element.setName("Point d'eau");
-                break;
+                case WATERPOINT:
+                    element = new PointOfInterest();
+                    element.setRole(Role.WATER);
+                    element.setName("Point d'eau");
+                    break;
 
-            default:
-                element = new InterventionMean();
-                element.setName("Moyen");
+                default:
+                    element = new InterventionMean();
+                    element.setName("Moyen");
+            }
+
+            element.setForm(form);
+            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+
+            this.selectedTool = null;
+            contextualDrawerFragment.setSelectedElement(element);
+            showContextualDrawer();
         }
 
-        element.setForm(form);
-        element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
-
-        this.selectedTool = null;
-        contextualDrawerFragment.setSelectedElement(element);
-        showContextualDrawer();
         return element;
     }
 
@@ -537,7 +519,7 @@ public class SitacActivity extends BaseActivity implements
 
     private void dispatchMeanByState()
     {
-        toolbarFragment.dispatchMeanByState(this.dataLoader.getInterventionMeans(), this.dataLoader.getDrones());
+        this.toolbarFragment.dispatchMeanByState(this.dataLoader.getInterventionMeans(), this.dataLoader.getDrones());
     }
 
     private class DataLoader {
@@ -675,6 +657,8 @@ public class SitacActivity extends BaseActivity implements
 
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
+
+                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
                         }
 
                         @Override
@@ -721,6 +705,8 @@ public class SitacActivity extends BaseActivity implements
 
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
+
+                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
                         }
 
                         @Override
@@ -809,7 +795,6 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.meansTableFragment.removeElements(elements);
                 }
             });
-
         }
     }
 

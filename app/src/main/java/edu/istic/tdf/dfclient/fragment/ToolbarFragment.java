@@ -22,6 +22,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.UI.adapter.ToolsListAdapter;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
@@ -85,28 +86,8 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         mListener = null;
     }
 
-    public void handleSelectedToolUtils(Tool tool){
+    public void handleSelectedTools(Tool tool){
         mListener.handleSelectedToolUtils(tool);
-    }
-
-    public void handleSelectedToolAsked(Tool tool){
-        // TODO: 24/05/16
-        mListener.handleSelectedToolAsked(tool);
-    }
-
-    public void handleSelectedToolInTransit(Tool tool){
-        // TODO: 24/05/16
-        mListener.handleSelectedToolInTransit(tool);
-    }
-
-    public void handleSelectedToolInactif(Tool tool){
-        // TODO: 24/05/16
-        mListener.handleSelectedToolInactif(tool);
-    }
-
-    public void handleSelectedToolActif(Tool tool){
-        // TODO: 24/05/16
-        mListener.handleSelectedToolActif(tool);
     }
 
     public void createData() {
@@ -154,10 +135,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
     public interface OnFragmentInteractionListener {
         void handleSelectedToolUtils(Tool tool);
-        void handleSelectedToolAsked(Tool tool);
-        void handleSelectedToolInTransit(Tool tool);
-        void handleSelectedToolInactif(Tool tool);
-        void handleSelectedToolActif(Tool tool);
     }
 
     public void dispatchMeanByState(Collection<InterventionMean> interventionMeans, Collection<Drone> drones)
@@ -268,5 +245,15 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groups.remove(4);
         groups.append(4, groupActif);
+    }
+
+    /**
+     *
+     * @return an element of type Drone or Mean that is present in the toolbar
+     */
+    public Element getElementFromTool()
+    {
+        // TODO: 24/05/16
+        return null;
     }
 }
