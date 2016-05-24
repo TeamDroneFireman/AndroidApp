@@ -1,9 +1,7 @@
 package edu.istic.tdf.dfclient.UI.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +9,11 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
-import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
  * Created by Alexandre on 22/04/2016.
@@ -111,12 +106,53 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
         icon.setColorFilter(Color.WHITE);
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.handleSelectedTool(children);
-            }
-        });
+        View.OnClickListener onClickListener = null;
+        switch (groupPosition)
+        {
+            case 0:
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.handleSelectedToolUtils(children);
+                    }
+                };
+                break;
+            case 1:
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.handleSelectedToolAsked(children);
+                    }
+                };
+                break;
+            case 2:
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.handleSelectedToolInTransit(children);
+                    }
+                };
+                break;
+            case 3:
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.handleSelectedToolInactif(children);
+                    }
+                };
+                break;
+            case 4:
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.handleSelectedToolActif(children);
+                    }
+                };
+                break;
+        }
+
+        convertView.setOnClickListener(onClickListener);
+
         return convertView;
     }
 
@@ -126,6 +162,10 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     public interface OnToolsListAdapterInteractionListener {
-        void handleSelectedTool(Tool tool);
+        void handleSelectedToolUtils(Tool tool);
+        void handleSelectedToolAsked(Tool tool);
+        void handleSelectedToolInTransit(Tool tool);
+        void handleSelectedToolInactif(Tool tool);
+        void handleSelectedToolActif(Tool tool);
     }
 }

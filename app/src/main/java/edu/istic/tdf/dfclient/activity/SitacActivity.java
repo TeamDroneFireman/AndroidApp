@@ -142,7 +142,31 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void handleSelectedTool(Tool tool) {
+    public void handleSelectedToolUtils(Tool tool) {
+        this.selectedTool = tool;
+        hideContextualDrawer();
+    }
+
+    @Override
+    public void handleSelectedToolAsked(Tool tool) {
+        this.selectedTool = tool;
+        hideContextualDrawer();
+    }
+
+    @Override
+    public void handleSelectedToolInTransit(Tool tool) {
+        this.selectedTool = tool;
+        hideContextualDrawer();
+    }
+
+    @Override
+    public void handleSelectedToolInactif(Tool tool) {
+        this.selectedTool = tool;
+        hideContextualDrawer();
+    }
+
+    @Override
+    public void handleSelectedToolActif(Tool tool) {
         this.selectedTool = tool;
         hideContextualDrawer();
     }
@@ -359,6 +383,7 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadMeans();
+                        dispatchMeanByState();
                         hideContextualDrawer();
                         sitacFragment.cancelSelection();
                     }
@@ -399,6 +424,7 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadDrones();
+                        dispatchMeanByState();
                         hideContextualDrawer();
                         sitacFragment.cancelSelection();
                     }
@@ -499,6 +525,11 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void handleValidation(Element element) {
         updateElement(element);
+    }
+
+    private void dispatchMeanByState()
+    {
+        toolbarFragment.dispatchMeanByState(this.dataLoader.getInterventionMeans(), this.dataLoader.getDrones());
     }
 
     private class DataLoader {
