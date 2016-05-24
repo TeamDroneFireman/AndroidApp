@@ -369,27 +369,40 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void deleteElement(Element element){
         hideContextualDrawer();
-        System.out.println("________DELETE ELEMENT FROM DB _________");
+        // TODO change Date (for DateTime?)
+        ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
         IDao dao = this.dataLoader.getDaoOfElement(element);
-        dao.delete(element, new IDaoWriteReturnHandler() {
+        dao.persist(element, new IDaoWriteReturnHandler() {
             @Override
             public void onSuccess(Object r) {
-                System.out.println("SUCCESS");
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onRepositoryFailure(Throwable e) {
-                System.out.println("FAIL REPO");
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onRestFailure(Throwable e) {
-                System.out.println("FAIL REST");
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
-        // System.out.println("________DELETE ELEMENT FROM MEANS TABLE_________");
-        // TODO change Date (for DateTime?)
-        ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
 
         sitacFragment.removeElement(element);
     }

@@ -28,6 +28,9 @@ import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -240,6 +243,16 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void updateElements(Collection<Element> elements){
         for(Element element : elements){
+            switch (element.getType()){
+                case MEAN:
+                    if (((IMean) element).getStates().get(MeanState.RELEASED) != null)
+                        return;
+                    break;
+                case AIRMEAN:
+                    if (((IDrone) element).getStates().get(MeanState.RELEASED) != null)
+                        return;
+                    break;
+            }
             updateElement(element);
         }
     }
