@@ -36,7 +36,7 @@ public class PictoFactory {
     public enum ElementForm {
 
         // Mean
-        MEAN("Véhicule", R.drawable.mean_other),
+        MEAN("Véhicule", R.drawable.mean),
         MEAN_PLANNED("Véhicule prévu", R.drawable.mean_planned),
         MEAN_GROUP("Groupe de véhicules", R.drawable.mean_group),
         MEAN_COLUMN("Colonne", R.drawable.mean_column),
@@ -183,9 +183,9 @@ public class PictoFactory {
         imageView.setImageResource(this.drawable);
         imageView.setColorFilter(this.color);
 
-        AutoScaleTextView textView = (AutoScaleTextView) view.findViewById(R.id.icon_text);
+       // AutoScaleTextView textView = (AutoScaleTextView) view.findViewById(R.id.icon_text);
         //textView.setText(this.label);
-        textView.setTextColor(this.color);
+        //textView.setTextColor(this.color);
 
         view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
         view.buildDrawingCache();
