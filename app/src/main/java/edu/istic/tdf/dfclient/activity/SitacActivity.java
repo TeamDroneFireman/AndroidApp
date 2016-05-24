@@ -157,12 +157,23 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(Element element) {
         contextualDrawerFragment.setSelectedElement(element);
-        showContextualDrawer();
+        switch (element.getType())
+        {
+            case POINT_OF_INTEREST:
+                //disable contextual drawer for external SIG
+                if(!((PointOfInterest)element).isExternal())
+                {
+                    showContextualDrawer();
+                }
+                break;
+            default:
+                showContextualDrawer();
+        }
     }
 
     @Override
     public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-        Element element = null;
+        Element element;
 
         switch(ElementType.getElementType(form)){
 
@@ -185,6 +196,7 @@ public class SitacActivity extends BaseActivity implements
                 element = new PointOfInterest();
                 element.setForm(form);
                 element.setName("Moyen");
+                ((PointOfInterest)element).setExternal(false);
                 break;
 
             case WATERPOINT:
@@ -264,7 +276,7 @@ public class SitacActivity extends BaseActivity implements
                         .commit();
                 switchTo(sitacFragment);
                 break;
-            
+
             case R.id.logout_button:
                 logout();
                 break;
@@ -345,7 +357,14 @@ public class SitacActivity extends BaseActivity implements
         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler<InterventionMean>() {
             @Override
             public void onSuccess(InterventionMean r) {
-                dataLoader.loadMeans();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadMeans();
+                        hideContextualDrawer();
+                        sitacFragment.cancelSelection();
+                    }
+                });
             }
 
             @Override
@@ -378,7 +397,14 @@ public class SitacActivity extends BaseActivity implements
         droneDao.persist(drone, new IDaoWriteReturnHandler<Drone>() {
             @Override
             public void onSuccess(Drone r) {
-                dataLoader.loadDrones();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadDrones();
+                        hideContextualDrawer();
+                        sitacFragment.cancelSelection();
+                    }
+                });
             }
 
             @Override
@@ -411,7 +437,14 @@ public class SitacActivity extends BaseActivity implements
         pointOfInterestDao.persist(pointOfInterest, new IDaoWriteReturnHandler<PointOfInterest>() {
             @Override
             public void onSuccess(PointOfInterest r) {
-                dataLoader.loadPointsOfInterest();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadPointsOfInterest();
+                        hideContextualDrawer();
+                        sitacFragment.cancelSelection();
+                    }
+                });
             }
 
             @Override
