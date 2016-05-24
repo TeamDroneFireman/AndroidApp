@@ -269,7 +269,7 @@ public class InterventionCreateFormFragment extends Fragment {
         sinisters.clear();
         means.clear();
         sinistersAssociationWithMeans.clear();
-
+        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
         sinisterDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Sinister>>() {
             @Override
             public void onRepositoryResult(List<Sinister> r) {
@@ -293,11 +293,12 @@ public class InterventionCreateFormFragment extends Fragment {
                         meansAdapter.notifyDataSetChanged();
                         sinistersAdapter.notifyDataSetChanged();
                         meansAvailableAdapter.notifyDataSetChanged();
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
                     }
                 });
             }
             @Override
-            public void onRepositoryFailure(Throwable e) { Log.e("LoadMeans", "restrsult3");}
+            public void onRepositoryFailure(Throwable e) {Log.e("LoadMeans", "restrsult3");}
             @Override
             public void onRestFailure(Throwable e) {Log.e("ERROR", e.getMessage());}
         });
@@ -323,8 +324,9 @@ public class InterventionCreateFormFragment extends Fragment {
          *
          */
         void onCreateIntervention();
-
     }
+
+
 
 
     // JUST FOR TEST, Elements drone or mean examples
@@ -341,9 +343,6 @@ public class InterventionCreateFormFragment extends Fragment {
         elemDrone1.setAction("IN_PROGRESS");
         elemDrone1.setState(MeanState.ASKED);
 
-        elemInterventionMean1.setName("IntMean1");
-        elemInterventionMean1.setRole(Role.DEFAULT);
-
         //new location
         Location location2 = new Location();
         location2.setAddress(intervention.getLocation().getAddress());
@@ -353,12 +352,6 @@ public class InterventionCreateFormFragment extends Fragment {
         geoPoint2.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0021);
         geoPoint2.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0021);
         location2.setGeopoint(geoPoint2);
-
-        elemInterventionMean1.setLocation(location2);
-        elemInterventionMean1.setLocation(intervention.getLocation());
-        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
-        elemInterventionMean1.setState(MeanState.ENGAGED);
-        elemInterventionMean1.setAction("IN_PROGRESS");
 
         Collection<Drone> drones = new HashSet<>();
         Collection<InterventionMean> interventionMeans = new HashSet<>();
@@ -390,25 +383,7 @@ public class InterventionCreateFormFragment extends Fragment {
         for(Drone drone : drones){
             Log.w("", "Persist drone");
             drone.setIntervention(intervention.getId());
-            droneDao.persist(drone, new IDaoWriteReturnHandler() {
-                @Override
-                public void onSuccess(Object r) {
-                    for (int i = 0; i < 50; i++) {
-                        Log.i("", "SUCCESS");
-                    }
 
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    Log.e("", "REPO FAILURE");
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    Log.e("", "REST FAILURE");
-                }
-            });
         }
 
         /*for(InterventionMean interventionMean : interventionMeans){
@@ -434,7 +409,66 @@ public class InterventionCreateFormFragment extends Fragment {
                 }
             });
         }*/
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                cleanForm();
+                mListener.onCreateIntervention();
+            }
+        });
+    }
 
+    public void createElementsFromMeans(Intervention intervention){
+        Location location = new Location();
+        location.setAddress(intervention.getLocation().getAddress());
+        for(String mean : means) {
+            Log.e("Create Elements", mean);
+            switch (mean) {
+                //Default drone creation
+                case "DRONE":
+                    Drone drone = new Drone();
+                    drone.setName(mean + " disguised in drone");
+                    drone.setIntervention(intervention.getId());
+                    drone.setRole(Role.DEFAULT);
+                    drone.setLocation(location);
+
+                    drone.setForm(PictoFactory.ElementForm.AIRMEAN);
+                    drone.setAction("IN_PROGRESS");
+                    drone.setState(MeanState.ASKED);
+
+                    intervention.addElement(drone);
+                    droneDao.persist(drone, new IDaoWriteReturnHandler() {
+                        @Override
+                        public void onSuccess(Object r) {Log.d("Persist drone","Drone persisted");}
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {Log.e("Persist drone", "Repository failure");}
+                        @Override
+                        public void onRestFailure(Throwable e) {Log.e("Persist drone", "Rest failure");}
+                    });
+                    break;
+                default:
+                    InterventionMean interventionMean = new InterventionMean();
+                    interventionMean.setIntervention(intervention.getId());
+                    interventionMean.setName(mean);
+                    interventionMean.setRole(Role.DEFAULT);
+                    interventionMean.setLocation(location);
+                    interventionMean.setState(MeanState.ASKED);
+
+                    interventionMean.setAction("IN_PROGRESS");
+
+                    intervention.addElement(interventionMean);
+                    interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
+                        @Override
+                        public void onSuccess(Object r) {Log.d("Persist mean","Mean persisted");}
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {Log.e("Persist mean", "Repository failure");}
+                        @Override
+                        public void onRestFailure(Throwable e) {Log.e("Persist mean", "Repository failure");}
+                    });
+                    break;
+            }
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -447,12 +481,6 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private void computeIntervention() {
         final Intervention intervention = new Intervention();
-
-        // TODO: 26/04/16 when model ok
-
-        /*for(String mean:means) {
-            intervention.addElement(compute(mean));
-        }*/
 
         // address and geopoint inside location
         Location location = new Location();
@@ -472,14 +500,10 @@ public class InterventionCreateFormFragment extends Fragment {
 
         // TODO: 27/04/16 intervention code
         //intervention code
-        switch (str_sinister_code) {
-            case "SAP":
-                intervention.setSinisterCode(SinisterCode.SAP);
-                break;
-            case "INC":
-                intervention.setSinisterCode(SinisterCode.INC);
-                break;
-        }
+
+
+        intervention.setSinisterCode(str_sinister_code);
+
 
         //name
         intervention.setName(str_sinister_code + "-" + strNow);
@@ -489,23 +513,18 @@ public class InterventionCreateFormFragment extends Fragment {
 
         ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
 
+
+
         //makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler<Intervention>() {
             @Override
-            public void onSuccess(Intervention r) {
-                intervention.setLocation(null);
-                makeElementsExample(r);
+            public void onSuccess(Intervention intervention) {
+                createElementsFromMeans(intervention);
             }
-
             @Override
-            public void onRepositoryFailure(Throwable e) {
-                Log.e("", "REPO FAILURE");
-            }
-
+            public void onRepositoryFailure(Throwable e) {}
             @Override
-            public void onRestFailure(Throwable e) {
-                Log.e("", "REST FAILURE");
-            }
+            public void onRestFailure(Throwable e) {}
         });
     }
 
@@ -616,7 +635,6 @@ public class InterventionCreateFormFragment extends Fragment {
                 String url = "http://maps.google.com/maps/api/geocode/json?address=" + params[0] + "&sensor=false";
                 url = url.replaceAll(" ", "%20");
                 response = getLatLongByURL(url);
-                Log.d("response", "" + response);
                 return new String[]{response};
             } catch (Exception e) {
                 return new String[]{"error"};
