@@ -86,7 +86,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 if (hasElementSelected()) {
                     Element element = createElementFromLatLng(latLng);
                     Marker marker = addMarker(element);
-                    if(marker != null){
+                    if (marker != null) {
                         addMarker(element).showInfoWindow();
                     }
                 } else {
@@ -103,6 +103,28 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 return false;
             }
 
+        });
+
+        googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                Element element = markersList.get(marker);
+
+                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
+                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
+
+                mListener.handleUpdatedElement(element);
+            }
         });
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(this.latitude, this.longitude), 18));
@@ -165,6 +187,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         void setSelectedElement(Element element);
         Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        void handleUpdatedElement(Element element);
         void handleCancelSelection();
 
     }
@@ -205,7 +228,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
-                    .draggable(true)
+                    .draggable(element.getId() != null)
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())

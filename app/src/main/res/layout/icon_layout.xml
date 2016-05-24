@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="80dp"
-    android:layout_height="80dp" >
+    android:layout_width="64dp"
+    android:layout_height="64dp" >
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
     <ImageView
         android:id="@+id/icon_image_view"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:src="@drawable/mean_planned"
         android:tint="#ffffff"
         android:layout_gravity="center" />
