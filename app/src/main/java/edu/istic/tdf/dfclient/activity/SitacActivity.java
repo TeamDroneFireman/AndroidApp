@@ -151,24 +151,28 @@ public class SitacActivity extends BaseActivity implements
     public void handleSelectedToolAsked(Tool tool) {
         this.selectedTool = tool;
         hideContextualDrawer();
+        // TODO: 24/05/16
     }
 
     @Override
     public void handleSelectedToolInTransit(Tool tool) {
         this.selectedTool = tool;
         hideContextualDrawer();
+        // TODO: 24/05/16
     }
 
     @Override
     public void handleSelectedToolInactif(Tool tool) {
         this.selectedTool = tool;
         hideContextualDrawer();
+        // TODO: 24/05/16
     }
 
     @Override
     public void handleSelectedToolActif(Tool tool) {
         this.selectedTool = tool;
         hideContextualDrawer();
+        // TODO: 24/05/16
     }
 
     @Override
@@ -351,7 +355,11 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void updateElement(final Element element) {
-        sitacFragment.updateElement(element);
+        if(element.getLocation().getGeopoint() != null)
+        {
+            sitacFragment.updateElement(element);
+        }
+
         meansTableFragment.updateElement(element);
         element.setIntervention(intervention.getId());
 

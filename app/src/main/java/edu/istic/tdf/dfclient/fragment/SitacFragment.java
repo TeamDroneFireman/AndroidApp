@@ -263,7 +263,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void updateElements(Collection<Element> elements){
         for(Element element : elements){
-            updateElement(element);
+            if(element.getLocation().getGeopoint() != null) {
+                updateElement(element);
+            }
         }
     }
 
