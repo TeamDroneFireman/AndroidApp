@@ -106,50 +106,12 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
         icon.setColorFilter(Color.WHITE);
 
-        View.OnClickListener onClickListener = null;
-        switch (groupPosition)
-        {
-            case 0:
-                onClickListener = new View.OnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        listener.handleSelectedToolUtils(children);
+                        listener.handleSelectedTools(children);
                     }
                 };
-                break;
-            case 1:
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        listener.handleSelectedToolAsked(children);
-                    }
-                };
-                break;
-            case 2:
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        listener.handleSelectedToolInTransit(children);
-                    }
-                };
-                break;
-            case 3:
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        listener.handleSelectedToolInactif(children);
-                    }
-                };
-                break;
-            case 4:
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        listener.handleSelectedToolActif(children);
-                    }
-                };
-                break;
-        }
 
         convertView.setOnClickListener(onClickListener);
 
@@ -162,10 +124,6 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     public interface OnToolsListAdapterInteractionListener {
-        void handleSelectedToolUtils(Tool tool);
-        void handleSelectedToolAsked(Tool tool);
-        void handleSelectedToolInTransit(Tool tool);
-        void handleSelectedToolInactif(Tool tool);
-        void handleSelectedToolActif(Tool tool);
+        void handleSelectedTools(Tool tool);
     }
 }
