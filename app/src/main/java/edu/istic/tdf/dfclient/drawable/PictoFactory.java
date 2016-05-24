@@ -7,8 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -138,19 +140,19 @@ public class PictoFactory {
     }
 
     public Bitmap toBitmap(){
-
+/*
         Bitmap bitmap = getOptimizedBitmap();
         Canvas canvas = new Canvas(bitmap);
         // new antialised Paint
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         // text color - #3D3D3D
-        paint.setColor(this.color);
+        paint.setColor(Color.WHITE);
         // text size in pixels
         int textSize = 30;
         paint.setTextSize((int) (textSize));
 
         // text shadow
-        paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
+        paint.setShadowLayer(1f, 0f, 1f, Color.BLACK);
         if(paint.measureText(this.label) > bitmap.getWidth()){
             while(paint.measureText(this.label) > bitmap.getWidth()){
                 textSize--;
@@ -164,11 +166,12 @@ public class PictoFactory {
         int y = (bitmap.getHeight()) / 2;
 
         paint.setTextAlign(Paint.Align.CENTER);
-
+        paint.setColor(this.color);
+        paint.setColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.MULTIPLY));
+        //canvas.drawColor(this.color);
         canvas.drawText(this.label, x, y, paint);
-
         return bitmap;
-/*
+*/
         View view = getView();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -205,7 +208,8 @@ public class PictoFactory {
         canvas.drawText(label, x, y, paint);
         view.draw(canvas);
 
-        return bitmap;*/
+        return bitmap;
+
     }
 
     private Bitmap getOptimizedBitmap() {
@@ -224,6 +228,7 @@ public class PictoFactory {
         if(bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
         }
+
        return bitmap.copy(bitmapConfig, true);
     }
 
