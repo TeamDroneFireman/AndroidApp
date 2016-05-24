@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,7 +32,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -40,10 +44,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
@@ -54,6 +60,7 @@ import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
+import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -77,8 +84,14 @@ public class InterventionCreateFormFragment extends Fragment {
     @Bind(R.id.sinister_code)
     Spinner sinister_code;
 
+    @Bind(R.id.means_available_list)
+    Spinner means_available_list;
+
+    @Bind(R.id.mean_add_button)
+    Button meanAddButton;
+
     @Bind(R.id.means_list)
-    Spinner means_list;
+    ListView means_list;
 
     // UI
     @Bind(R.id.interventionCreationValidationButton)
@@ -94,13 +107,21 @@ public class InterventionCreateFormFragment extends Fragment {
 
     SinisterDao sinisterDao;
 
+
+
     // for listView sinister_code
-    private ArrayList<String> sinisters =new ArrayList<String>();
+    private ArrayList<String> sinisters =new ArrayList<>();
     private ArrayAdapter<String> sinistersAdapter;
 
+    // for spinner means_available_list
+    private ArrayAdapter<String> meansAvailableAdapter;
+    public String meanSelected;
+
     // for listView means_list
-    private ArrayList<String> means =new ArrayList<String>();
+    private ArrayList<String> means =new ArrayList<>();
+    private ArrayList<String> meansAvailable = new ArrayList<>();
     private ArrayAdapter<String> meansAdapter;
+    private HashMap<String, ArrayList<String>> sinistersAssociationWithMeans = new HashMap<String, ArrayList<String>>();
 
     // use to handle the geopoints from an address
     // TODO : Fix this to avoid memory leaks
@@ -147,16 +168,7 @@ public class InterventionCreateFormFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_intervention_create_form, container, false);
         ButterKnife.bind(this, view);
 
-        interventionCreationValidationBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (IsValideForm())
-                {
-                    computeIntervention();
-                }
-            }
-        });
-
+        // When you click on the button generate position, convert a position from an address
         generateLatLngFromAddressBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,28 +176,74 @@ public class InterventionCreateFormFragment extends Fragment {
             }
         });
 
-        meansAdapter = new ArrayAdapter<String>(getActivity(),
+
+
+
+        meansAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1,
                 means);
-        means_list.setAdapter(meansAdapter);
-
-        sinistersAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sinisters);
+        meansAvailableAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1,
+                meansAvailable);
+        sinistersAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item,
+                sinisters);
         sinistersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Load the default means for a sinister
+        loadDefaultSinistersProperties(null);
+        means_list.setAdapter(meansAdapter);
+        sinister_code.setAdapter(sinistersAdapter);
+        means_available_list.setAdapter(meansAvailableAdapter);
+
+
+
+        meanAddButton.setOnClickListener(new AdapterView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                means.add(meanSelected);
+                meansAdapter.notifyDataSetChanged();
+            }
+        });
+
+        // When you click on a sinister, load the default means associated
         sinister_code.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 loadMeanFromSinisterCode(sinisters.get(position));
             }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        means_available_list.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                meanSelected = meansAvailable.get(position);
+            }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
-        sinister_code.setAdapter(sinistersAdapter);
 
-        loadSinisters();
-
+        means_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                view.setSelected(true);
+                means.remove(position);
+                meansAdapter.notifyDataSetChanged();
+            }
+        });
+        // When you click on the validation button
+        interventionCreationValidationBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (IsValideForm()) {
+                    computeIntervention();
+                }
+            }
+        });
         return view;
     }
 
@@ -206,29 +264,54 @@ public class InterventionCreateFormFragment extends Fragment {
         mListener = null;
     }
 
-    // TODO: 26/04/16
-    private void loadSinisters()
-    {
-        sinisters.add("SAP");
-        sinisters.add("INC");
-        sinistersAdapter.notifyDataSetChanged();
+    private void loadDefaultSinistersProperties(final Runnable onLoaded){
+        meansAvailable.clear();
+        sinisters.clear();
+        means.clear();
+        sinistersAssociationWithMeans.clear();
+
+        sinisterDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Sinister>>() {
+            @Override
+            public void onRepositoryResult(List<Sinister> r) {
+                Log.e("LoadMeans", "onRepositoryResult List<Sinister> r");
+            }
+            @Override
+            public void onRestResult(List<Sinister> sinisterList) {
+                Log.e("LoadMeans", "onRestResult List<Sinister> sinisterList");
+                Iterator<Sinister> sinisterIterator = sinisterList.iterator();
+                // The first element of the list is the list of the means you can add
+                Sinister sinister = sinisterIterator.next();
+                meansAvailable.addAll(sinister.getMeans());
+                while (sinisterIterator.hasNext()) {
+                    sinister = sinisterIterator.next();
+                    sinistersAssociationWithMeans.put(sinister.getCode(), (ArrayList<String>) sinister.getMeans());
+                    sinisters.add(sinister.getCode());
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        meansAdapter.notifyDataSetChanged();
+                        sinistersAdapter.notifyDataSetChanged();
+                        meansAvailableAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            @Override
+            public void onRepositoryFailure(Throwable e) { Log.e("LoadMeans", "restrsult3");}
+            @Override
+            public void onRestFailure(Throwable e) {Log.e("ERROR", e.getMessage());}
+        });
+
     }
 
     public void loadMeanFromSinisterCode(String sinisterCode)
     {
         means.clear();
-
-        switch (sinisterCode) {
-            case "SAP":
-                means.add("Drone1");
-                means.add("Drone2");
-                //means.add("IntMean1");
-                break;
-            case "INC":
-                means.add("Drone1");
-                means.add("Drone2");
-                //means.add("IntMean1");
-                break;
+        if(sinistersAssociationWithMeans!=null){
+            for(String a : sinistersAssociationWithMeans.get(sinisterCode)){
+                means.add(a);
+                Log.e("Load means", "mean : "+a+", sinister : "+sinisterCode);
+            }
         }
         meansAdapter.notifyDataSetChanged();
     }
