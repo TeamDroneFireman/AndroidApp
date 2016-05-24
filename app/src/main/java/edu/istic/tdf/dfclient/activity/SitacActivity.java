@@ -155,12 +155,23 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(Element element) {
         contextualDrawerFragment.setSelectedElement(element);
-        showContextualDrawer();
+        switch (element.getType())
+        {
+            case POINT_OF_INTEREST:
+                //disable contextual drawer for external SIG
+                if(!((PointOfInterest)element).isExternal())
+                {
+                    showContextualDrawer();
+                }
+                break;
+            default:
+                showContextualDrawer();
+        }
     }
 
     @Override
     public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-        Element element = null;
+        Element element;
 
         switch(ElementType.getElementType(form)){
 
@@ -183,6 +194,7 @@ public class SitacActivity extends BaseActivity implements
                 element = new PointOfInterest();
                 element.setForm(form);
                 element.setName("Moyen");
+                ((PointOfInterest)element).setExternal(false);
                 break;
 
             case WATERPOINT:
@@ -262,7 +274,7 @@ public class SitacActivity extends BaseActivity implements
                         .commit();
                 switchTo(sitacFragment);
                 break;
-            
+
             case R.id.logout_button:
                 logout();
                 break;
