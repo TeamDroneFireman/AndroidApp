@@ -355,7 +355,14 @@ public class SitacActivity extends BaseActivity implements
         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler<InterventionMean>() {
             @Override
             public void onSuccess(InterventionMean r) {
-                dataLoader.loadMeans();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadMeans();
+                        hideContextualDrawer();
+                        sitacFragment.cancelSelection();
+                    }
+                });
             }
 
             @Override
@@ -388,7 +395,14 @@ public class SitacActivity extends BaseActivity implements
         droneDao.persist(drone, new IDaoWriteReturnHandler<Drone>() {
             @Override
             public void onSuccess(Drone r) {
-                dataLoader.loadDrones();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadDrones();
+                        hideContextualDrawer();
+                        sitacFragment.cancelSelection();
+                    }
+                });
             }
 
             @Override
@@ -421,7 +435,14 @@ public class SitacActivity extends BaseActivity implements
         pointOfInterestDao.persist(pointOfInterest, new IDaoWriteReturnHandler<PointOfInterest>() {
             @Override
             public void onSuccess(PointOfInterest r) {
-                dataLoader.loadPointsOfInterest();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadPointsOfInterest();
+                        hideContextualDrawer();
+                        sitacFragment.cancelSelection();
+                    }
+                });
             }
 
             @Override
