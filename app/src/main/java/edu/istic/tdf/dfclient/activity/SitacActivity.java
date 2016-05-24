@@ -167,20 +167,16 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-        Element element = this.toolbarFragment.getElementFromTool();
+    public Element handleElementAdded(Tool tool, Double latitude, Double longitude) {
+        Element element = this.toolbarFragment.tryGetElementFromTool(tool);
 
         if(element != null)
         {
-            switch (element.getType())
-            {
-                case MEAN:
-                    break;
-                case AIRMEAN:
-                    break;
-            }
+            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+            updateElement(element);
         }
         else {
+            PictoFactory.ElementForm form = tool.getForm();
             switch (ElementType.getElementType(form)) {
 
                 case AIRMEAN:
@@ -416,7 +412,6 @@ public class SitacActivity extends BaseActivity implements
                         dataLoader.loadDrones();
                         dispatchMeanByState();
                         hideContextualDrawer();
-                        sitacFragment.cancelSelection();
                     }
                 });
             }
@@ -658,7 +653,13 @@ public class SitacActivity extends BaseActivity implements
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
 
-                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
@@ -706,7 +707,13 @@ public class SitacActivity extends BaseActivity implements
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
 
-                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
