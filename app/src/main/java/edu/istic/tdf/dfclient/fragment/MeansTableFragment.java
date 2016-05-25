@@ -7,6 +7,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -24,6 +27,12 @@ import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
+import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 
 public class MeansTableFragment extends Fragment {
 
@@ -33,9 +42,12 @@ public class MeansTableFragment extends Fragment {
 
     private List<IMean> means=new ArrayList<>();
 
+    private Spinner spinner;
+
     private HashMap<String,TableRow> link=new HashMap<>();
 
     private final int NBCOLUMS=6;
+    private List meanList;
 
     public MeansTableFragment() {
         // Required empty public constructor
@@ -52,13 +64,45 @@ public class MeansTableFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
 
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
 
+
+        spinner=(Spinner)view.findViewById(R.id.spinner);
+
+
+        final List meanList = getDefaultMeanList();
+        ArrayAdapter adapter = new ArrayAdapter(this.getContext(),android.R.layout.simple_spinner_item,meanList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+
+        Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
+        validation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Element element;
+                if(spinner.getSelectedItem().toString().equals("DRONE")){
+                    Drone mean=new Drone();
+                    mean.setState(MeanState.ASKED);
+                    mean.setLocation(new Location());
+                    element=mean;
+                }else{
+                    InterventionMean mean=new InterventionMean();
+                    mean.setState(MeanState.ASKED);
+                    //TODO voir comment gerer les différents type d'intervention mean
+                    mean.setName(spinner.getSelectedItem().toString());
+                    mean.setLocation(new Location());
+                    element=mean;
+                }
+                mListener.handleValidation(element);
+            }
+        });
+        //meanTab.addView(createEmptyRow());
         return view;
 
     }
@@ -161,24 +205,41 @@ public class MeansTableFragment extends Fragment {
         tableRow.addView(textView);
     }
 
+    @Deprecated
     private TableRow createEmptyRow(){
         TableRow tableRow=new TableRow(meanTab.getContext());
-        //TODO mettre le premier élément en liste déroulante
         addTextViewsEditable(tableRow);
 
         return tableRow;
     }
 
+    @Deprecated
     private void addTextViewsEditable(TableRow tableRow) {
         for(int i=0;i<NBCOLUMS;i++){
             TextView textView=new TextView(meanTab.getContext());
             textView.setText("");
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            textView.setEnabled(true);
+
             tableRow.addView(textView);
+            if(i==0) {
+                textView.setEnabled(true);
+            }
         }
     }
 
+    public List getDefaultMeanList() {
+        //TODO recup dans la base la liste des moyens
+        List<String> list=new ArrayList<>();
+        list.add("FPT");
+        list.add("VSAV");
+        list.add("EPA");
+        list.add("VLCG");
+        list.add("CCF");
+        list.add("CCGC");
+        list.add("VLHR");
+        list.add("DRONE");
+        return list;
+    }
 
 
     public interface OnFragmentInteractionListener {
