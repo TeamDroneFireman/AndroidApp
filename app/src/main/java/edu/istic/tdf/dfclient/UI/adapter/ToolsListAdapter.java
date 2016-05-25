@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -103,8 +104,19 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
         ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
 
-        icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
-        icon.setColorFilter(Color.WHITE);
+        Element element = listener.tryGetElementFromTool(children);
+
+        if(element == null)
+        {
+            icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
+            icon.setColorFilter(Color.WHITE);
+        }
+        else
+        {
+            icon.setImageDrawable(PictoFactory.createPicto(context).setElement(element).toDrawable());
+            icon.setColorFilter(element.getRole().getColor());
+
+        }
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
                     @Override
@@ -125,5 +137,6 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
     public interface OnToolsListAdapterInteractionListener {
         void handleSelectedTools(Tool tool);
+        Element tryGetElementFromTool(Tool tool);
     }
 }

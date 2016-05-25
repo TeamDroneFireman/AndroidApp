@@ -47,7 +47,6 @@ import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.push.IPushCommand;
-import edu.istic.tdf.dfclient.push.PushHandler;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -187,6 +186,7 @@ public class SitacActivity extends BaseActivity implements
                     element = new Drone();
                     element.setName("Drone");
                     ((IMean) element).setState(MeanState.ASKED);
+                    element.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
                     break;
 
                 case MEAN:
@@ -195,6 +195,7 @@ public class SitacActivity extends BaseActivity implements
                     ((IMean) element).setState(MeanState.ASKED);
                     // TODO: 23/05/16 action bouchon
                     ((IMean) element).setAction("Action par défaut");
+                    element.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                     break;
 
                 case MEAN_OTHER:
@@ -203,20 +204,22 @@ public class SitacActivity extends BaseActivity implements
                     element.setForm(form);
                     element.setName("Moyen");
                     ((PointOfInterest) element).setExternal(false);
+                    element.setForm(form);
                     break;
 
                 case WATERPOINT:
                     element = new PointOfInterest();
                     element.setRole(Role.WATER);
                     element.setName("Point d'eau");
+                    element.setForm(form);
                     break;
 
                 default:
                     element = new InterventionMean();
                     element.setName("Moyen");
+                    element.setForm(form);
             }
 
-            element.setForm(form);
             element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
 
             this.selectedTool = null;
