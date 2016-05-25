@@ -30,10 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +57,6 @@ import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionM
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
 import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -354,10 +351,12 @@ public class InterventionCreateFormFragment extends Fragment {
                     InterventionMean interventionMean = new InterventionMean();
                     interventionMean.setIntervention(intervention.getId());
                     interventionMean.setName(mean);
-                    interventionMean.setRole(Role.DEFAULT);
+                    interventionMean.setRole(Role.PEOPLE);
                     interventionMean.setLocation(location);
                     interventionMean.setState(MeanState.ASKED);
                     interventionMean.setAction("IN_PROGRESS");
+
+                    interventionMean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
 
                     intervention.addElement(interventionMean);
                     interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
