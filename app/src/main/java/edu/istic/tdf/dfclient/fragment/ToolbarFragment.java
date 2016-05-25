@@ -34,6 +34,8 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     // UI
     @Bind(R.id.toolbar_listview) ExpandableListView listView;
 
+    ToolsListAdapter toolsListAdapter;
+
     private SparseArray<ToolsGroup> groups = new SparseArray<ToolsGroup>();
     private OnFragmentInteractionListener mListener;
 
@@ -63,8 +65,9 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         ButterKnife.bind(this, view);
 
         createData();
-        ToolsListAdapter adapter = new ToolsListAdapter(getContext(), groups, this);
-        listView.setAdapter(adapter);
+        toolsListAdapter = new ToolsListAdapter(getContext(), groups, this);
+        listView.setAdapter(toolsListAdapter);
+        refreshGroups();
 
         return view;
     }
@@ -245,15 +248,65 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groups.remove(4);
         groups.append(4, groupActif);
+
+        if(toolsListAdapter != null)
+        {
+            toolsListAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
      *
      * @return an element of type Drone or Mean that is present in the toolbar
      */
-    public Element getElementFromTool()
+    public Element tryGetElementFromTool(Tool tool)
     {
-        // TODO: 24/05/16
+        Element element;
+
+        element = tryGetElementAskedFromTool(tool);
+        if(element != null)
+        {
+            return element;
+        }
+
+        element = tryGetElementInTransitFromTool(tool);
+        if(element != null)
+        {
+            return element;
+        }
+
+        element = tryGetElementInactifFromTool(tool);
+        if(element != null)
+        {
+            return element;
+        }
+
+        element = tryGetElementActifFromTool(tool);
+        if(element != null)
+        {
+            return element;
+        }
+
         return null;
+    }
+
+    private Element tryGetElementAskedFromTool(Tool tool)
+    {
+        return (Element)this.mapGroupAsked.get(tool);
+    }
+
+    private Element tryGetElementInTransitFromTool(Tool tool)
+    {
+        return (Element)this.mapGroupInTransit.get(tool);
+    }
+
+    private Element tryGetElementInactifFromTool(Tool tool)
+    {
+        return (Element)this.mapGroupInactif.get(tool);
+    }
+
+    private Element tryGetElementActifFromTool(Tool tool)
+    {
+        return (Element)this.mapGroupActif.get(tool);
     }
 }

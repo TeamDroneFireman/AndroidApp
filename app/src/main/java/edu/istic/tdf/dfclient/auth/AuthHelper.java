@@ -28,7 +28,7 @@ public class AuthHelper {
         editor.putString(SHARED_PREFERENCE_USERID, credentials.getUserId());
         editor.putString(SHARED_PREFERENCE_TOKEN, credentials.getToken());
         editor.putBoolean(SHARED_PREFERENCE_ISCODIS, credentials.isCodisUser());
-        editor.commit();
+        editor.apply();
     }
 
     public static Credentials loadCredentials() {
@@ -62,6 +62,6 @@ public class AuthHelper {
         editor.putString(SHARED_PREFERENCE_USERID, "");
         editor.putString(SHARED_PREFERENCE_TOKEN, "");
         editor.putBoolean(SHARED_PREFERENCE_ISCODIS, false);
-        editor.commit();
+        editor.apply();
     }
 }

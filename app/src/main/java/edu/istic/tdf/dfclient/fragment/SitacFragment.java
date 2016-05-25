@@ -140,7 +140,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private Element createElementFromLatLng(LatLng latLng){
         Tool tool = mListener.getSelectedTool();
-        return mListener.handleElementAdded(tool.getForm(), latLng.latitude, latLng.longitude);
+        return mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
     }
 
     public void cancelSelection(){
@@ -183,7 +183,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         Tool getSelectedTool();
 
         void setSelectedElement(Element element);
-        Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        Element handleElementAdded(Tool tool, Double latitude, Double longitude);
         void handleUpdatedElement(Element element);
         void handleCancelSelection();
 
