@@ -326,7 +326,6 @@ public class InterventionCreateFormFragment extends Fragment {
     // Persist all the means
     public void createElementsFromMeans(Intervention intervention){
         Location location = new Location();
-        location.setAddress(intervention.getLocation().getAddress());
         for(String mean : means) {
             switch (mean) {
                 case "DRONE":
