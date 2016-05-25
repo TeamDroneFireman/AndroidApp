@@ -508,7 +508,7 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadMeans();
-                Toast.makeText(SitacActivity.this, "Push update received for element id " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -517,7 +517,7 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadDrones();
-                Toast.makeText(SitacActivity.this, "Push update received for drone id " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -526,8 +526,7 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointsOfInterest();
-                String id = bundle.getString("id");
-                Toast.makeText(SitacActivity.this, "Push update received for sig id " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -536,8 +535,7 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointsOfInterest();
-                String id = bundle.getString("id");
-                Toast.makeText(SitacActivity.this, "Push update received for sigextern id " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
             }
         });
     }
