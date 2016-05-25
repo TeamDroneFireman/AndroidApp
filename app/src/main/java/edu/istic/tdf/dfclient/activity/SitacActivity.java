@@ -534,7 +534,7 @@ public class SitacActivity extends BaseActivity implements
 
                     @Override
                     public void onRestResult(InterventionMean r) {
-                        SitacActivity.this.DataLoader //UpdateelemntonUi
+                        // TODO : Update targeted mean
                     }
 
                     @Override
