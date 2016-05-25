@@ -10,5 +10,5 @@ public class TdfDatabase {
     public static final String NAME = "TDF";
 
     //increment when modify table
-    public static final int VERSION = 4;
+    public static final int VERSION = 5;
 }

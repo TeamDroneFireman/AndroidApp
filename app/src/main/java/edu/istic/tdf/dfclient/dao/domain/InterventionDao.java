@@ -18,4 +18,8 @@ public class InterventionDao extends Dao<Intervention, InterventionRepository, I
     public InterventionDao(TdfHttpClient httpClient) {
         super(new InterventionRepository(), new InterventionRestClient(httpClient));
     }
+
+    public void subscribe(Intervention intervention, String registrationId){
+        //this.restClient.subscribe(registrationId, intervention);
+    }
 }

@@ -10,22 +10,7 @@
         android:strokeColor="#000000"
         android:strokeMiterLimit="10" />
     <path
-        android:pathData="M216 26l0 98"
-        android:strokeWidth="25"
-        android:strokeMiterLimit="10"
-        android:strokeColor="#000000" />
-    <path
         android:pathData="M283.5 26l0 98"
-        android:strokeWidth="25"
-        android:strokeMiterLimit="10"
-        android:strokeColor="#000000" />
-    <path
-        android:pathData="M283.5 26l0 98"
-        android:strokeWidth="25"
-        android:strokeMiterLimit="10"
-        android:strokeColor="#000000" />
-    <path
-        android:pathData="M350.89999 26l0 98"
         android:strokeWidth="25"
         android:strokeMiterLimit="10"
         android:strokeColor="#000000" />

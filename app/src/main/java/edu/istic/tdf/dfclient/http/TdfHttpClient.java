@@ -130,7 +130,6 @@ public class TdfHttpClient {
 
         Request request = tdfRequestBuilder.getBuilder().build();
 
-        System.out.println("____^^____" + request.url().toString());
         client.newCall(request).enqueue(handler);
     }
 

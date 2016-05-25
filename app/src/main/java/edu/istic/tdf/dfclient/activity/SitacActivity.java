@@ -22,6 +22,7 @@ import java.util.Observer;
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
@@ -49,6 +50,7 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
+import edu.istic.tdf.dfclient.push.IPushCommand;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -65,6 +67,7 @@ public class SitacActivity extends BaseActivity implements
     private ToolbarFragment toolbarFragment;
     private ContextualDrawerFragment contextualDrawerFragment;
     private MeansTableFragment meansTableFragment;
+    private android.support.v4.app.Fragment currentFragment;
 
     // Data
     private DataLoader dataLoader;
@@ -73,7 +76,6 @@ public class SitacActivity extends BaseActivity implements
 
     private Element selectedElement;
 
-    private android.support.v4.app.Fragment currentFragment;
 
     @Inject InterventionDao interventionDao;
     @Inject DroneDao droneDao;
@@ -94,11 +96,6 @@ public class SitacActivity extends BaseActivity implements
 
         // Activity title
         setTitle(getString(R.string.activity_sitac_title));
-
-        // Load data
-        String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
-        dataLoader.loadData();
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
@@ -140,13 +137,15 @@ public class SitacActivity extends BaseActivity implements
 
         currentFragment = sitacFragment;
 
-        //add
-
-
+        // Load data
+        String interventionId = (String) getIntent().getExtras().get("interventionId");
+        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        dataLoader.loadData();
     }
 
     @Override
-    public void handleSelectedTool(Tool tool) {
+    public void handleSelectedToolUtils(Tool tool) {
+        this.sitacFragment.cancelSelection();
         this.selectedTool = tool;
         hideContextualDrawer();
     }
@@ -158,6 +157,7 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void setSelectedElement(Element element) {
+        sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
         switch (element.getType())
         {
@@ -174,50 +174,64 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-        Element element;
+    public Element handleElementAdded(Tool tool, Double latitude, Double longitude) {
+        Element element = this.toolbarFragment.tryGetElementFromTool(tool);
 
-        switch(ElementType.getElementType(form)){
+        if(element != null)
+        {
+            //It's an element that as been asked but never put on the map
+            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+            updateElement(element);
+        }
+        else {
+            PictoFactory.ElementForm form = tool.getForm();
+            switch (ElementType.getElementType(form)) {
 
-            case AIRMEAN:
-                element = new Drone();
-                element.setName("Drone");
-                ((IMean)element).setState(MeanState.ASKED);
-                break;
+                case AIRMEAN:
+                    element = new Drone();
+                    element.setName("Drone");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    element.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
+                    break;
 
-            case MEAN:
-                element = new InterventionMean();
-                element.setName("Moyen SP");
-                ((IMean)element).setState(MeanState.ASKED);
-                // TODO: 23/05/16 action bouchon
-                ((IMean)element).setAction("Action par défaut");
-                break;
+                case MEAN:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    // TODO: 23/05/16 action bouchon
+                    ((IMean) element).setAction("Action par défaut");
+                    element.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                    break;
 
-            case MEAN_OTHER:
-            case POINT_OF_INTEREST:
-                element = new PointOfInterest();
-                element.setForm(form);
-                element.setName("Moyen");
-                ((PointOfInterest)element).setExternal(false);
-                break;
+                case MEAN_OTHER:
+                case POINT_OF_INTEREST:
+                    element = new PointOfInterest();
+                    element.setForm(form);
+                    element.setName("Moyen");
+                    ((PointOfInterest) element).setExternal(false);
+                    element.setForm(form);
+                    break;
 
-            case WATERPOINT:
-                element = new PointOfInterest();
-                element.setRole(Role.WATER);
-                element.setName("Point d'eau");
-                break;
+                case WATERPOINT:
+                    element = new PointOfInterest();
+                    element.setRole(Role.WATER);
+                    element.setName("Point d'eau");
+                    element.setForm(form);
+                    break;
 
-            default:
-                element = new InterventionMean();
-                element.setName("Moyen");
+                default:
+                    element = new InterventionMean();
+                    element.setName("Moyen");
+                    element.setForm(form);
+            }
+
+            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+
+            this.selectedTool = null;
+            contextualDrawerFragment.setSelectedElement(element);
+            showContextualDrawer();
         }
 
-        element.setForm(form);
-        element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
-
-        this.selectedTool = null;
-        contextualDrawerFragment.setSelectedElement(element);
-        showContextualDrawer();
         return element;
     }
 
@@ -331,10 +345,7 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void updateElement(final Element element) {
-        sitacFragment.updateElement(element);
-        meansTableFragment.updateElement(element);
         element.setIntervention(intervention.getId());
-
         switch (element.getType()) {
             case MEAN:
                 this.updateInterventionMean((InterventionMean)element);
@@ -359,12 +370,12 @@ public class SitacActivity extends BaseActivity implements
         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler<InterventionMean>() {
             @Override
             public void onSuccess(InterventionMean r) {
+                final String meanId = r.getId();
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadMeans();
+                        dataLoader.loadMean(meanId);
                         hideContextualDrawer();
-                        sitacFragment.cancelSelection();
                     }
                 });
             }
@@ -399,12 +410,12 @@ public class SitacActivity extends BaseActivity implements
         droneDao.persist(drone, new IDaoWriteReturnHandler<Drone>() {
             @Override
             public void onSuccess(Drone r) {
+                final String droneId = r.getId();
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadDrones();
+                        dataLoader.loadDrone(droneId);
                         hideContextualDrawer();
-                        sitacFragment.cancelSelection();
                     }
                 });
             }
@@ -439,12 +450,12 @@ public class SitacActivity extends BaseActivity implements
         pointOfInterestDao.persist(pointOfInterest, new IDaoWriteReturnHandler<PointOfInterest>() {
             @Override
             public void onSuccess(PointOfInterest r) {
+                final String pointOfInterestId = r.getId();
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadPointsOfInterest();
+                        dataLoader.loadPointOfInterest(pointOfInterestId);
                         hideContextualDrawer();
-                        sitacFragment.cancelSelection();
                     }
                 });
             }
@@ -538,17 +549,26 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void onSuccess(Object r) {
                         deleteFromUI(element);
-                        Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onRepositoryFailure(Throwable e) {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                        SitacActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onRestFailure(Throwable e) {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        SitacActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
             }
@@ -598,6 +618,48 @@ public class SitacActivity extends BaseActivity implements
     public void handleValidation(Element element) {
         updateElement(element);
     }
+
+    private void registerPushHandlers() {
+
+        TdfApplication application = (TdfApplication) this.getApplication();
+
+        // Means
+        application.getPushHandler().addCatcher("mean/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadMeans();
+                Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Drones
+        application.getPushHandler().addCatcher("drone/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadDrones();
+                Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // SIG
+        application.getPushHandler().addCatcher("sig/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadPointsOfInterest();
+                Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // SIG Extern
+        application.getPushHandler().addCatcher("sigextern/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadPointsOfInterest();
+                Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     private class DataLoader {
         private String interventionId;
@@ -666,7 +728,13 @@ public class SitacActivity extends BaseActivity implements
             if(dao != null){
                 dao.persist(element, handler);
             }
+        }
 
+        private void subscribeToIntervention() {
+            TdfApplication tdfApplication = (TdfApplication) SitacActivity.this.getApplication();
+            String pushRegistrationId = tdfApplication.getPushRegistrationId();
+
+            SitacActivity.this.interventionDao.subscribe(SitacActivity.this.intervention, pushRegistrationId);
         }
 
         private void loadIntervention() {
@@ -686,6 +754,9 @@ public class SitacActivity extends BaseActivity implements
                             sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }
                     });
+
+                    // Subscribe to intervention
+                    DataLoader.this.subscribeToIntervention();
 
                     // TODO : What to do when it is loaded ?
                 }
@@ -718,22 +789,19 @@ public class SitacActivity extends BaseActivity implements
 
                             Collection<Element> colRRemove = new ArrayList<Element>();
                             colRRemove.addAll(drones);
-                            for (int i = 0; i < r.size(); i++) {
-                                Drone drone;
-                                Iterator<Drone> it = r.iterator();
-                                while (it.hasNext()) {
-                                    drone = it.next();
-                                    Drone droneR = r.get(i);
-                                    if (droneR.getId().equals(drone.getId())) {
-                                        colRRemove.remove(droneR);
-                                    }
-                                }
-                            }
 
                             drones = r;
 
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
+
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
@@ -746,6 +814,65 @@ public class SitacActivity extends BaseActivity implements
                             SitacActivity.this.displayNetworkError();
                         }
                     });
+        }
+
+        private void loadDrone(String droneId) {
+            SitacActivity.this.droneDao.find(droneId, new IDaoSelectReturnHandler<Drone>() {
+                @Override
+                public void onRepositoryResult(Drone r) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestResult(Drone r) {
+                    Element elemToRemove = null;
+
+                    //Collection usefull for remove in the loop
+                    Collection<Drone> dronesCopy = new ArrayList<>();
+                    dronesCopy.addAll(drones);
+
+                    Iterator<Drone> it = drones.iterator();
+                    Drone drone;
+                    while (it.hasNext()) {
+                        drone = it.next();
+                        if (r.getId().equals(drone.getId())) {
+                            elemToRemove = drone;
+                            dronesCopy.remove(drone);
+                        }
+                    }
+
+                    drones = dronesCopy;
+                    drones.add(r);
+
+                    if (elemToRemove != null) {
+                        Collection<Element> elementsRemove = new ArrayList<Element>();
+                        elementsRemove.add(elemToRemove);
+                        removeElementsInUi(elementsRemove);
+                    }
+
+                    Collection<Element> elementsUpdate = new ArrayList<Element>();
+                    elementsUpdate.add(r);
+                    updateElementsInUi(elementsUpdate);
+
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                            sitacFragment.cancelSelection();
+                        }
+                    });
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.displayNetworkError();
+                }
+            });
         }
 
         private void loadMeans() {
@@ -764,22 +891,19 @@ public class SitacActivity extends BaseActivity implements
 
                             Collection<Element> colRRemove = new ArrayList<Element>();
                             colRRemove.addAll(interventionMeans);
-                            for (int i = 0; i < r.size(); i++) {
-                                InterventionMean interventionMean;
-                                Iterator<InterventionMean> it = r.iterator();
-                                while(it.hasNext()){
-                                    interventionMean = it.next();
-                                    InterventionMean interventionMeanR = r.get(i);
-                                    if(interventionMeanR.getId().equals(interventionMean.getId())){
-                                        colRRemove.remove(interventionMeanR);
-                                    }
-                                }
-                            }
 
                             interventionMeans = r;
 
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
+
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
@@ -792,6 +916,65 @@ public class SitacActivity extends BaseActivity implements
                             SitacActivity.this.displayNetworkError();
                         }
                     });
+        }
+
+        private void loadMean(String meanId) {
+            SitacActivity.this.interventionMeanDao.find(meanId, new IDaoSelectReturnHandler<InterventionMean>() {
+                @Override
+                public void onRepositoryResult(InterventionMean r) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestResult(InterventionMean r) {
+                    Element elemToRemove = null;
+
+                    //Collection usefull for remove in the loop
+                    Collection<InterventionMean> interventionMeansCopy = new ArrayList<>();
+                    interventionMeansCopy.addAll(interventionMeans);
+
+                    Iterator<InterventionMean> it = interventionMeans.iterator();
+                    InterventionMean interventionMean;
+                    while (it.hasNext()) {
+                        interventionMean = it.next();
+                        if (r.getId().equals(interventionMean.getId())) {
+                            elemToRemove = interventionMean;
+                            interventionMeansCopy.remove(interventionMean);
+                        }
+                    }
+
+                    interventionMeans = interventionMeansCopy;
+                    interventionMeans.add(r);
+
+                    if (elemToRemove != null) {
+                        Collection<Element> elementsRemove = new ArrayList<Element>();
+                        elementsRemove.add(elemToRemove);
+                        removeElementsInUi(elementsRemove);
+                    }
+
+                    Collection<Element> elementsUpdate = new ArrayList<Element>();
+                    elementsUpdate.add(r);
+                    updateElementsInUi(elementsUpdate);
+
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                            sitacFragment.cancelSelection();
+                        }
+                    });
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.displayNetworkError();
+                }
+            });
         }
 
         private void loadPointsOfInterest() {
@@ -810,23 +993,18 @@ public class SitacActivity extends BaseActivity implements
 
                             Collection<Element> colRRemove = new ArrayList<Element>();
                             colRRemove.addAll(pointOfInterests);
-                            for (int i = 0; i < r.size(); i++) {
-                                PointOfInterest pointOfInterest;
-                                Iterator<PointOfInterest> it = r.iterator();
-                                while(it.hasNext()){
-                                    pointOfInterest = it.next();
-                                    PointOfInterest pointOfInterestR = r.get(i);
-                                    if(pointOfInterestR.getId().equals(pointOfInterest.getId())){
-                                        colRRemove.remove(pointOfInterestR);
-                                    }
-                                }
-                            }
 
                             pointOfInterests = r;
 
                             removeElementsInUi(colRRemove);
-
                             updateElementsInUi(colR);
+
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
@@ -841,7 +1019,65 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void updateElementsInUi(final Collection<Element> elements) {
+        private void loadPointOfInterest(String pointOfInterestId) {
+            SitacActivity.this.pointOfInterestDao.find(pointOfInterestId, new IDaoSelectReturnHandler<PointOfInterest>() {
+                @Override
+                public void onRepositoryResult(PointOfInterest r) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestResult(PointOfInterest r) {
+                    Element elemToRemove = null;
+
+                    //Collection usefull for remove in the loop
+                    Collection<PointOfInterest> pointOfInterestsCopy = new ArrayList<>();
+                    pointOfInterestsCopy.addAll(pointOfInterests);
+
+                    Iterator<PointOfInterest> it = pointOfInterests.iterator();
+                    PointOfInterest pointOfInterest;
+                    while (it.hasNext()) {
+                        pointOfInterest = it.next();
+                        if (r.getId().equals(pointOfInterest.getId())) {
+                            elemToRemove = pointOfInterest;
+                            pointOfInterestsCopy.remove(pointOfInterest);
+                        }
+                    }
+
+                    pointOfInterests = pointOfInterestsCopy;
+                    pointOfInterests.add(r);
+
+                    if (elemToRemove != null) {
+                        Collection<Element> elementsRemove = new ArrayList<>();
+                        elementsRemove.add(elemToRemove);
+                        removeElementsInUi(elementsRemove);
+                    }
+
+                    Collection<Element> elementsUpdate = new ArrayList<>();
+                    elementsUpdate.add(r);
+                    updateElementsInUi(elementsUpdate);
+
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            sitacFragment.cancelSelection();
+                        }
+                    });
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.displayNetworkError();
+                }
+            });
+        }
+
+        public void updateElementsInUi(final Collection<Element> elements) {
 
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -856,7 +1092,7 @@ public class SitacActivity extends BaseActivity implements
 
         }
 
-        private void removeElementsInUi(final Collection<Element> elements) {
+        public void removeElementsInUi(final Collection<Element> elements) {
 
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -868,8 +1104,6 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.meansTableFragment.removeElements(elements);
                 }
             });
-
         }
     }
-
 }

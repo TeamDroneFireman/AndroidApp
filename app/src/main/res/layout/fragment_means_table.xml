@@ -3,75 +3,114 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.istic.tdf.dfclient.fragment.MeansTableFragment">
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:foregroundGravity="center_horizontal"
+            android:id="@+id/scrollView3">
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:stretchColumns="*"
+                android:baselineAligned="false"
+                android:shrinkColumns="*"
+                android:theme="@style/Base.Theme.AppCompat"
+                android:id="@+id/meanTab">
+
+                <TableRow
+                        android:text="@string/mean_id"
+                        android:padding="3dip"
+                        android:gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mean_id"
+                        android:id="@+id/textView5"
+                        android:gravity="center_horizontal"
+                        android:textStyle="bold"
+                        android:singleLine="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/column_1"
+                        android:id="@+id/textView6"
+                        android:gravity="center_horizontal"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/column_1bis"
+                        android:id="@+id/textView4"
+                        android:gravity="center_horizontal"
+                        android:textStyle="bold" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/column_2"
+                            android:id="@+id/textView"
+                            android:gravity="center_horizontal"
+                        android:textStyle="bold" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/column_3"
+                            android:id="@+id/textView2"
+                            android:gravity="center_horizontal"
+                        android:textStyle="bold" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/column_4"
+                            android:id="@+id/textView3"
+                            android:gravity="center_horizontal"
+                        android:textStyle="bold" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/row_info_layout"></RelativeLayout>
+
+
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:stretchColumns="*"
-            android:baselineAligned="false"
-            android:shrinkColumns="*"
-            android:theme="@style/Base.Theme.AppCompat"
-            android:id="@+id/meanTab">
+            android:gravity="bottom"
+            android:layout_below="@+id/scrollView3">
 
-            <TableRow
-                    android:text="@string/mean_id"
-                    android:padding="3dip"
-                    android:gravity="center_horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OK"
+                android:id="@+id/meanTableValidationbtn"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:clickable="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mean_id"
-                    android:id="@+id/textView5"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold"
-                    android:singleLine="false" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner"
+                android:layout_toLeftOf="@+id/meanTableValidationbtn"
+                android:layout_alignTop="@+id/meanTableValidationbtn" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/column_1bis"
-                    android:id="@+id/textView6"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/column_1"
-                    android:id="@+id/textView4"
-                    android:gravity="center_horizontal"
-                    android:textStyle="bold" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/column_2"
-                        android:id="@+id/textView"
-                        android:gravity="center_horizontal"
-                    android:textStyle="bold" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/column_3"
-                        android:id="@+id/textView2"
-                        android:gravity="center_horizontal"
-                    android:textStyle="bold" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/column_4"
-                        android:id="@+id/textView3"
-                        android:gravity="center_horizontal"
-                    android:textStyle="bold" />
-
-
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
+        </RelativeLayout>
+    </RelativeLayout>
 
 </FrameLayout>

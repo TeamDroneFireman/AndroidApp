@@ -1,9 +1,7 @@
 package edu.istic.tdf.dfclient.UI.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
-import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
  * Created by Alexandre on 22/04/2016.
@@ -108,15 +104,29 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
         ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
 
-        icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
-        icon.setColorFilter(Color.WHITE);
+        Element element = listener.tryGetElementFromTool(children);
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.handleSelectedTool(children);
-            }
-        });
+        if(element == null)
+        {
+            icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
+            icon.setColorFilter(Color.WHITE);
+        }
+        else
+        {
+            icon.setImageDrawable(PictoFactory.createPicto(context).setElement(element).toDrawable());
+            icon.setColorFilter(element.getRole().getColor());
+
+        }
+
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.handleSelectedTools(children);
+                    }
+                };
+
+        convertView.setOnClickListener(onClickListener);
+
         return convertView;
     }
 
@@ -126,6 +136,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     public interface OnToolsListAdapterInteractionListener {
-        void handleSelectedTool(Tool tool);
+        void handleSelectedTools(Tool tool);
+        Element tryGetElementFromTool(Tool tool);
     }
 }

@@ -17,7 +17,9 @@ import edu.istic.tdf.dfclient.dagger.module.ActivitiesModule;
 import edu.istic.tdf.dfclient.dagger.module.DaoModule;
 import edu.istic.tdf.dfclient.dagger.module.FragmentsModule;
 import edu.istic.tdf.dfclient.dagger.module.RestModule;
+import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.push.PushHandler;
+import edu.istic.tdf.dfclient.push.PushHelper;
 import eu.inloop.easygcm.GcmListener;
 
 /**
@@ -43,14 +45,20 @@ public class TdfApplication extends Application implements GcmListener {
      */
     private PushHandler pushHandler;
 
+    /**
+     * HTTP Client
+     */
+    private TdfHttpClient httpClient;
+
     public TdfApplication() {
         super();
     }
 
     @Inject
-    public TdfApplication(PushHandler pushHandler) {
+    public TdfApplication(PushHandler pushHandler, TdfHttpClient httpClient) {
         super();
         this.pushHandler = pushHandler;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -107,7 +115,13 @@ public class TdfApplication extends Application implements GcmListener {
     public void sendRegistrationIdToBackend(String registrationId) {
         Log.v(TAG, "### registration id: " + registrationId);
 
-        // TODO : Send registration to backend
+        // Store reg id in shared preferences
+        PushHelper.storeRegistrationId(registrationId);
+
+    }
+
+    public String getPushRegistrationId() {
+        return PushHelper.getRegistrationId();
     }
 
     public void storeCredentials(Credentials credentials) {
@@ -120,5 +134,9 @@ public class TdfApplication extends Application implements GcmListener {
 
     public void deleteCredentials(){
         AuthHelper.deleteCredentials();
+    }
+
+    public PushHandler getPushHandler() {
+        return pushHandler;
     }
 }
