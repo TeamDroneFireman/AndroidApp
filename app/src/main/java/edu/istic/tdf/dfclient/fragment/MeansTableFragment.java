@@ -177,7 +177,7 @@ public class MeansTableFragment extends Fragment {
 
         TableRow tableRow=new TableRow(meanTab.getContext());
 
-        addTextViews(element,tableRow);
+        addTextViews(element, tableRow);
 
         link.put(element.getId(), tableRow);
         meanTab.addView(tableRow);
@@ -188,7 +188,7 @@ public class MeansTableFragment extends Fragment {
         tableRow.removeAllViews();
 
         addTextViews(element, tableRow);
-        elementsMean.put(element.getId(),element);
+        elementsMean.put(element.getId(), element);
     }
 
     private void addTextViews(IMean element,TableRow tableRow) {
@@ -206,6 +206,7 @@ public class MeansTableFragment extends Fragment {
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.VALIDATED);
         addMeanState(tableRow, d);
+        addCancelButton(relativeLayout,element,d,currentStates.get(MeanState.RELEASED));
         addValidationButtonForCodis(relativeLayout, element, d,currentStates.get(MeanState.RELEASED));
         d = currentStates.get(MeanState.ARRIVED);
         addMeanState(tableRow, d);
@@ -215,6 +216,22 @@ public class MeansTableFragment extends Fragment {
         addMeanState(tableRow, d);
 
         tableRow.addView(relativeLayout);
+    }
+
+    private void addCancelButton(LinearLayout relativeLayout, final IElement element, Date validated, Date released) {
+        if(!isCodis()&&validated==null &&released==null){
+            Button cancelButton=new Button(relativeLayout.getContext());
+            cancelButton.setText("Annuler");
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMean mean = (IMean)element;
+                    mean.setState(MeanState.RELEASED);
+                    mListener.handleValidation((Element) mean);
+                }
+            });
+            relativeLayout.addView(cancelButton);
+        }
     }
 
     private void addValidationButtonForCodis(LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
