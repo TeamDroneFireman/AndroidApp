@@ -94,11 +94,6 @@ public class SitacActivity extends BaseActivity implements
         // Activity title
         setTitle(getString(R.string.activity_sitac_title));
 
-        // Load data
-        String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
-        dataLoader.loadData();
-
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
 
@@ -139,16 +134,15 @@ public class SitacActivity extends BaseActivity implements
 
         currentFragment = sitacFragment;
 
-        //add
-
-        // Register push handler
-        this.registerPushHandlers();
-
-
+        // Load data
+        String interventionId = (String) getIntent().getExtras().get("interventionId");
+        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        dataLoader.loadData();
     }
 
     @Override
-    public void handleSelectedTool(Tool tool) {
+    public void handleSelectedToolUtils(Tool tool) {
+        this.sitacFragment.cancelSelection();
         this.selectedTool = tool;
         hideContextualDrawer();
     }
@@ -161,53 +155,75 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(Element element) {
         contextualDrawerFragment.setSelectedElement(element);
-        showContextualDrawer();
+        switch (element.getType())
+        {
+            case POINT_OF_INTEREST:
+                //disable contextual drawer for external SIG
+                if(!((PointOfInterest)element).isExternal())
+                {
+                    showContextualDrawer();
+                }
+                break;
+            default:
+                showContextualDrawer();
+        }
     }
 
     @Override
-    public Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude) {
-        Element element = null;
+    public Element handleElementAdded(Tool tool, Double latitude, Double longitude) {
+        Element element = this.toolbarFragment.tryGetElementFromTool(tool);
 
-        switch(ElementType.getElementType(form)){
+        if(element != null)
+        {
+            //It's an element that as been asked but never put on the map
+            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+            updateElement(element);
+        }
+        else {
+            PictoFactory.ElementForm form = tool.getForm();
+            switch (ElementType.getElementType(form)) {
 
-            case AIRMEAN:
-                element = new Drone();
-                element.setName("Drone");
-                ((IMean)element).setState(MeanState.ASKED);
-                break;
+                case AIRMEAN:
+                    element = new Drone();
+                    element.setName("Drone");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    break;
 
-            case MEAN:
-                element = new InterventionMean();
-                element.setName("Moyen SP");
-                ((IMean)element).setState(MeanState.ASKED);
-                // TODO: 23/05/16 action bouchon
-                ((IMean)element).setAction("Action par défaut");
-                break;
+                case MEAN:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    // TODO: 23/05/16 action bouchon
+                    ((IMean) element).setAction("Action par défaut");
+                    break;
 
-            case MEAN_OTHER:
-            case POINT_OF_INTEREST:
-                element = new PointOfInterest();
-                element.setForm(form);
-                element.setName("Moyen");
-                break;
+                case MEAN_OTHER:
+                case POINT_OF_INTEREST:
+                    element = new PointOfInterest();
+                    element.setForm(form);
+                    element.setName("Moyen");
+                    ((PointOfInterest) element).setExternal(false);
+                    break;
 
-            case WATERPOINT:
-                element = new PointOfInterest();
-                element.setRole(Role.WATER);
-                element.setName("Point d'eau");
-                break;
+                case WATERPOINT:
+                    element = new PointOfInterest();
+                    element.setRole(Role.WATER);
+                    element.setName("Point d'eau");
+                    break;
 
-            default:
-                element = new InterventionMean();
-                element.setName("Moyen");
+                default:
+                    element = new InterventionMean();
+                    element.setName("Moyen");
+            }
+
+            element.setForm(form);
+            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
+
+            this.selectedTool = null;
+            contextualDrawerFragment.setSelectedElement(element);
+            showContextualDrawer();
         }
 
-        element.setForm(form);
-        element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
-
-        this.selectedTool = null;
-        contextualDrawerFragment.setSelectedElement(element);
-        showContextualDrawer();
         return element;
     }
 
@@ -321,9 +337,13 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void updateElement(final Element element) {
-        sitacFragment.updateElement(element);
-        meansTableFragment.updateElement(element);
         element.setIntervention(intervention.getId());
+        if(element.getLocation().getGeopoint() != null)
+        {
+            sitacFragment.updateElement(element);
+        }
+
+        meansTableFragment.updateElement(element);
 
         switch (element.getType()) {
             case MEAN:
@@ -349,7 +369,13 @@ public class SitacActivity extends BaseActivity implements
         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler<InterventionMean>() {
             @Override
             public void onSuccess(InterventionMean r) {
-                dataLoader.loadMeans();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadMeans();
+                        hideContextualDrawer();
+                    }
+                });
             }
 
             @Override
@@ -382,7 +408,13 @@ public class SitacActivity extends BaseActivity implements
         droneDao.persist(drone, new IDaoWriteReturnHandler<Drone>() {
             @Override
             public void onSuccess(Drone r) {
-                dataLoader.loadDrones();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadDrones();
+                        hideContextualDrawer();
+                    }
+                });
             }
 
             @Override
@@ -415,7 +447,13 @@ public class SitacActivity extends BaseActivity implements
         pointOfInterestDao.persist(pointOfInterest, new IDaoWriteReturnHandler<PointOfInterest>() {
             @Override
             public void onSuccess(PointOfInterest r) {
-                dataLoader.loadPointsOfInterest();
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataLoader.loadPointsOfInterest();
+                        hideContextualDrawer();
+                    }
+                });
             }
 
             @Override
@@ -467,6 +505,16 @@ public class SitacActivity extends BaseActivity implements
                 this.dataLoader.getDrones().add((Drone)element);
                 break;
         }
+    }
+
+    @Override
+    public void handleValidation(Element element) {
+        updateElement(element);
+    }
+
+    private void dispatchMeanByState()
+    {
+        this.toolbarFragment.dispatchMeanByState(this.dataLoader.getInterventionMeans(), this.dataLoader.getDrones());
     }
 
     private void registerPushHandlers() {
@@ -539,9 +587,6 @@ public class SitacActivity extends BaseActivity implements
             }
         });
     }
-
-
-
 
 
     private class DataLoader {
@@ -689,6 +734,13 @@ public class SitacActivity extends BaseActivity implements
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
 
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
@@ -735,6 +787,14 @@ public class SitacActivity extends BaseActivity implements
 
                             removeElementsInUi(colRRemove);
                             updateElementsInUi(colR);
+
+                            SitacActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
+                                    sitacFragment.cancelSelection();
+                                }
+                            });
                         }
 
                         @Override
@@ -823,7 +883,6 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.meansTableFragment.removeElements(elements);
                 }
             });
-
         }
     }
 }

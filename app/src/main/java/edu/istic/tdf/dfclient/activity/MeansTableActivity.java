@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 
@@ -50,4 +51,8 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
     }
 
 
+    @Override
+    public void handleValidation(Element element) {
+
+    }
 }

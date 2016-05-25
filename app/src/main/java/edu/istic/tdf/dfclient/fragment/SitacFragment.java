@@ -140,7 +140,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private Element createElementFromLatLng(LatLng latLng){
         Tool tool = mListener.getSelectedTool();
-        return mListener.handleElementAdded(tool.getForm(), latLng.latitude, latLng.longitude);
+        return mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
     }
 
     public void cancelSelection(){
@@ -183,7 +183,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         Tool getSelectedTool();
 
         void setSelectedElement(Element element);
-        Element handleElementAdded(PictoFactory.ElementForm form, Double latitude, Double longitude);
+        Element handleElementAdded(Tool tool, Double latitude, Double longitude);
         void handleUpdatedElement(Element element);
         void handleCancelSelection();
 
@@ -225,7 +225,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
-                    .draggable(true)
+                    .draggable(element.getId() != null)
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())
@@ -263,7 +263,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void updateElements(Collection<Element> elements){
         for(Element element : elements){
-            updateElement(element);
+            if(element.getLocation().getGeopoint() != null) {
+                updateElement(element);
+            }
         }
     }
 

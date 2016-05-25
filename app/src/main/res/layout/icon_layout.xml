@@ -13,15 +13,5 @@
         android:tint="#ffffff"
         android:layout_gravity="center" />
 
-        <edu.istic.tdf.dfclient.UI.AutoScaleTextView
-            android:id="@+id/icon_text"
-            android:text="azert"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:gravity="center"
-            android:textSize="30sp" />
-
     </FrameLayout>
 </RelativeLayout>
