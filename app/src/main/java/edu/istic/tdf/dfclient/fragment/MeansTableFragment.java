@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -33,11 +32,8 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
-import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.geo.Location;
-import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class MeansTableFragment extends Fragment {
@@ -109,6 +105,8 @@ public class MeansTableFragment extends Fragment {
                         mean.setLocation(new Location());
                         mean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                         mean.setRole(Role.DEFAULT);
+                        // TODO: 25/05/16  action bouchon
+                        mean.setAction("Action par défaut");
                         //TODO mettre les couleurs plus spécifiquement
                         element=mean;
                     }

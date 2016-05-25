@@ -342,13 +342,6 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void updateElement(final Element element) {
         element.setIntervention(intervention.getId());
-        if(element.getLocation().getGeopoint() != null)
-        {
-            sitacFragment.updateElement(element);
-        }
-
-        meansTableFragment.updateElement(element);
-
         switch (element.getType()) {
             case MEAN:
                 this.updateInterventionMean((InterventionMean)element);
