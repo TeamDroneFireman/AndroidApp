@@ -98,20 +98,20 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         ToolsGroup group;
 
         group = new ToolsGroup("Outils", false);
-        group.addTool(new Tool(PictoFactory.ElementForm.MEAN, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_GROUP, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_COLUMN, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN, Role.WHITE));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_GROUP, Role.WHITE));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_COLUMN, Role.WHITE));
 
-        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_OTHER, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_OTHER, Role.WHITE));
 
-        group.addTool(new Tool(PictoFactory.ElementForm.AIRMEAN, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.AIRMEAN, Role.WHITE));
 
-        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUPPLY, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT, Role.WHITE));
+        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE, Role.WHITE));
+        group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUPPLY, Role.WHITE));
 
-        group.addTool(new Tool(PictoFactory.ElementForm.SOURCE, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.TARGET, Role.DEFAULT));
+        group.addTool(new Tool(PictoFactory.ElementForm.SOURCE, Role.WHITE));
+        group.addTool(new Tool(PictoFactory.ElementForm.TARGET, Role.WHITE));
 
         groups.append(0, group);
 
@@ -131,6 +131,10 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
     @Override
     public void update(Observable observable, Object data) {
+    }
+
+    public void cancelSelection() {
+        this.toolsListAdapter.cancelSelection();
     }
 
     public interface OnFragmentInteractionListener {

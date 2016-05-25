@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,6 +15,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +50,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     // Liste d'association marker <--> element
     private HashMap<Marker, Element> markersList = new HashMap<>();
+
+    // Gestion des chemins de drone
+    private boolean isDronePathMode;
+    private ArrayList<LatLng> currentPath;
+    private Polyline currentPolyline;
 
     public SitacFragment() {
     }
@@ -84,7 +92,18 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if (hasElementSelected()) {
+                if(isDronePathMode){
+
+                    currentPath.add(latLng);
+
+                    PolylineOptions rectOptions = new PolylineOptions().addAll(currentPath);
+                    if(currentPolyline != null){
+                        currentPolyline.remove();
+                    }
+
+                    currentPolyline = googleMap.addPolyline(rectOptions);
+
+                }else if (hasElementSelected()) {
                     Element element = createElementFromLatLng(latLng);
                     Marker marker = addMarker(element);
                     if (marker != null) {
@@ -100,7 +119,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                mListener.setSelectedElement(markersList.get(marker));
+                if(!isDronePathMode){
+                    mListener.setSelectedElement(markersList.get(marker));
+                }
                 return false;
             }
 
@@ -148,6 +169,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     public void cancelSelection(){
+        if(currentPolyline != null){
+            currentPolyline.remove();
+        }
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
@@ -181,6 +205,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     @Override
     public void update(Observable observable, Object data) {}
+
+    public void setDronePathMode(boolean isDronePathMode) {
+        this.currentPath = new ArrayList<LatLng>();
+        this.isDronePathMode = isDronePathMode;
+    }
 
     public interface OnFragmentInteractionListener {
 
