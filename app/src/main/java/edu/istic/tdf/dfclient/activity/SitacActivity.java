@@ -172,6 +172,7 @@ public class SitacActivity extends BaseActivity implements
 
         if(element != null)
         {
+            //It's an element that as been asked but never put on the map
             element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
             updateElement(element);
         }
@@ -333,13 +334,13 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void updateElement(final Element element) {
+        element.setIntervention(intervention.getId());
         if(element.getLocation().getGeopoint() != null)
         {
             sitacFragment.updateElement(element);
         }
 
         meansTableFragment.updateElement(element);
-        element.setIntervention(intervention.getId());
 
         switch (element.getType()) {
             case MEAN:
@@ -369,9 +370,7 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadMeans();
-                        dispatchMeanByState();
                         hideContextualDrawer();
-                        sitacFragment.cancelSelection();
                     }
                 });
             }
@@ -410,7 +409,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadDrones();
-                        dispatchMeanByState();
                         hideContextualDrawer();
                     }
                 });
@@ -451,7 +449,6 @@ public class SitacActivity extends BaseActivity implements
                     public void run() {
                         dataLoader.loadPointsOfInterest();
                         hideContextualDrawer();
-                        sitacFragment.cancelSelection();
                     }
                 });
             }
