@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -73,35 +75,40 @@ public class MeansTableFragment extends Fragment {
 
 
         spinner=(Spinner)view.findViewById(R.id.spinner);
-
-
-        final List meanList = getDefaultMeanList();
-        ArrayAdapter adapter = new ArrayAdapter(this.getContext(),android.R.layout.simple_spinner_item,meanList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-
         Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
-        validation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Element element;
-                if(spinner.getSelectedItem().toString().equals("DRONE")){
-                    Drone mean=new Drone();
-                    mean.setState(MeanState.ASKED);
-                    mean.setLocation(new Location());
-                    element=mean;
-                }else{
-                    InterventionMean mean=new InterventionMean();
-                    mean.setState(MeanState.ASKED);
-                    //TODO voir comment gerer les différents type d'intervention mean
-                    mean.setName(spinner.getSelectedItem().toString());
-                    mean.setLocation(new Location());
-                    element=mean;
+
+        if(isCodis()){
+            spinner.setVisibility(View.INVISIBLE);
+            validation.setVisibility(View.INVISIBLE);
+        }else{
+            final List meanList = getDefaultMeanList();
+            ArrayAdapter adapter = new ArrayAdapter(this.getContext(),android.R.layout.simple_spinner_item,meanList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            validation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Element element;
+                    if(spinner.getSelectedItem().toString().equals("DRONE")){
+                        Drone mean=new Drone();
+                        mean.setState(MeanState.ASKED);
+                        mean.setLocation(new Location());
+                        element=mean;
+                    }else{
+                        InterventionMean mean=new InterventionMean();
+                        mean.setState(MeanState.ASKED);
+                        //TODO voir comment gerer les différents type d'intervention mean
+                        mean.setName(spinner.getSelectedItem().toString());
+                        mean.setLocation(new Location());
+                        element=mean;
+                    }
+                    mListener.handleValidation(element);
                 }
-                mListener.handleValidation(element);
-            }
-        });
+            });
+        }
+
+
+
         //meanTab.addView(createEmptyRow());
         return view;
 
@@ -254,5 +261,10 @@ public class MeansTableFragment extends Fragment {
 
     public void removeElements(Collection<Element> elements){
         // TODO: 29/04/16  
+    }
+
+    private boolean isCodis(){
+        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
+        return credentials.isCodisUser();
     }
 }
