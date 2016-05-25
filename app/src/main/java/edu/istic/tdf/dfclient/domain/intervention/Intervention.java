@@ -32,7 +32,7 @@ public class Intervention extends Entity implements IIntervention {
     /**
      * The corresponding sinister code
      */
-    private SinisterCode sinisterCode;
+    private String sinisterCode;
 
     /**
      * The collection of elements on the intervention
@@ -141,12 +141,12 @@ public class Intervention extends Entity implements IIntervention {
     }
 
     @Override
-    public SinisterCode getSinisterCode() {
+    public String getSinisterCode() {
         return sinisterCode;
     }
 
     @Override
-    public void setSinisterCode(SinisterCode sinisterCode) {
+    public void setSinisterCode(String sinisterCode) {
         this.sinisterCode = sinisterCode;
     }
 }

@@ -108,12 +108,12 @@ public interface IIntervention extends IEntity {
      *
      * @return
      */
-    public SinisterCode getSinisterCode();
+    public String getSinisterCode();
 
     /**
      *
      * @param sinisterCode
      */
-    public void setSinisterCode(SinisterCode sinisterCode);
+    public void setSinisterCode(String sinisterCode);
 
 }

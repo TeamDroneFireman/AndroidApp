@@ -73,28 +73,8 @@
             android:layout_below="@+id/scrollView"
             android:layout_above="@+id/interventionCreationValidationButton">
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_mean_list_view_layout"
-                android:layout_below="@+id/add_mean_linear_layout">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Liste des moyens choisis"
-                    android:id="@+id/means_available_header" />
-                <ListView
-                    android:id="@+id/means_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-
-                     />
-            </LinearLayout>
-            <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/add_mean_linear_layout">
 
@@ -106,13 +86,32 @@
                     android:layout_below="@+id/means_available_list"/>
 
                 <Spinner
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/means_available_list"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     />
             </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_mean_list_view_layout"
+                android:layout_below="@+id/add_mean_linear_layout">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Liste des moyens choisis"
+                    android:id="@+id/means_available_header" />
+                <ListView
+                    android:id="@+id/means_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+            </LinearLayout>
+
         </RelativeLayout>
         <Button
             android:layout_width="match_parent"

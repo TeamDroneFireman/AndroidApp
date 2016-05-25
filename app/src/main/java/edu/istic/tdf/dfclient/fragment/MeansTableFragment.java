@@ -7,6 +7,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -19,11 +24,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.IInterventionMean;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
+import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.intervention.IIntervention;
+import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class MeansTableFragment extends Fragment {
 
@@ -33,9 +48,14 @@ public class MeansTableFragment extends Fragment {
 
     private List<IMean> means=new ArrayList<>();
 
+    private Spinner spinner;
+
+    private HashMap<String,IElement> elementsMean=new HashMap<>();
+
     private HashMap<String,TableRow> link=new HashMap<>();
 
-    private final int NBCOLUMS=6;
+    private final int NBCOLUMS=7;
+    private List meanList;
 
     public MeansTableFragment() {
         // Required empty public constructor
@@ -52,17 +72,59 @@ public class MeansTableFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
 
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
 
+
+        spinner=(Spinner)view.findViewById(R.id.spinner);
+        Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
+
+        if(isCodis()){
+            spinner.setVisibility(View.INVISIBLE);
+            validation.setVisibility(View.INVISIBLE);
+        }else{
+            final List meanList = getDefaultMeanList();
+            ArrayAdapter adapter = new ArrayAdapter(this.getContext(),android.R.layout.simple_spinner_item,meanList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            validation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Element element;
+                    if(spinner.getSelectedItem().toString().equals("DRONE")){
+                        Drone mean=new Drone();
+                        mean.setState(MeanState.ASKED);
+                        mean.setLocation(new Location());
+                        mean.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
+                        mean.setRole(Role.DEFAULT);
+                        element=mean;
+                    }else{
+                        InterventionMean mean=new InterventionMean();
+                        mean.setState(MeanState.ASKED);
+                        mean.setName(spinner.getSelectedItem().toString());
+                        mean.setLocation(new Location());
+                        mean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                        mean.setRole(Role.DEFAULT);
+                        //TODO mettre les couleurs plus spécifiquement
+                        element=mean;
+                    }
+                    mListener.handleValidation(element);
+                }
+            });
+        }
+
+
+
+        //meanTab.addView(createEmptyRow());
         return view;
 
     }
 
+    @Deprecated
     private void loadMeans(/*List<List<String>> means*/) {
 
         for(int i=0;i<means.size();i++){
@@ -97,7 +159,8 @@ public class MeansTableFragment extends Fragment {
                 updateElem((IMean) element);
             }else{
                 addElment((IMean) element);
-                means.add((IMean)element);
+                //means.add((IMean)element);
+                elementsMean.put(element.getId(),element);
             }
         }
     }
@@ -114,9 +177,9 @@ public class MeansTableFragment extends Fragment {
 
         TableRow tableRow=new TableRow(meanTab.getContext());
 
-        addTextViews(element,tableRow);
+        addTextViews(element, tableRow);
 
-        link.put(element.getId(),tableRow);
+        link.put(element.getId(), tableRow);
         meanTab.addView(tableRow);
     }
 
@@ -125,10 +188,12 @@ public class MeansTableFragment extends Fragment {
         tableRow.removeAllViews();
 
         addTextViews(element, tableRow);
-
+        elementsMean.put(element.getId(), element);
     }
 
     private void addTextViews(IMean element,TableRow tableRow) {
+        LinearLayout relativeLayout=new LinearLayout(tableRow.getContext());
+
         TextView name = new TextView(meanTab.getContext());
         name.setText(element.getName());
         name.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -141,12 +206,61 @@ public class MeansTableFragment extends Fragment {
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.VALIDATED);
         addMeanState(tableRow, d);
+        addCancelButton(relativeLayout,element,d,currentStates.get(MeanState.RELEASED));
+        addValidationButtonForCodis(relativeLayout, element, d,currentStates.get(MeanState.RELEASED));
         d = currentStates.get(MeanState.ARRIVED);
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.ENGAGED);
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.RELEASED);
         addMeanState(tableRow, d);
+
+        tableRow.addView(relativeLayout);
+    }
+
+    private void addCancelButton(LinearLayout relativeLayout, final IElement element, Date validated, Date released) {
+        if(!isCodis()&&validated==null &&released==null){
+            Button cancelButton=new Button(relativeLayout.getContext());
+            cancelButton.setText("Annuler");
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMean mean = (IMean)element;
+                    mean.setState(MeanState.RELEASED);
+                    mListener.handleValidation((Element) mean);
+                }
+            });
+            relativeLayout.addView(cancelButton);
+        }
+    }
+
+    private void addValidationButtonForCodis(LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
+        if(isCodis()&& valided==null && released==null){
+            Button validationButton=new Button(relativeLayout.getContext());
+            validationButton.setText("Valider");
+            validationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMean mean = (IMean) element;
+                    mean.setState(MeanState.VALIDATED);
+                    mListener.handleValidation((Element) mean);
+                }
+            });
+
+            Button refuseButton=new Button(relativeLayout.getContext());
+            refuseButton.setText("Refuser");
+            refuseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMean mean = (IMean) element;
+                    mean.setState(MeanState.RELEASED);
+                    mListener.handleValidation((Element) mean);
+                }
+            });
+            relativeLayout.addView(validationButton);
+
+            relativeLayout.addView(refuseButton);
+        }
     }
 
     private void addMeanState(TableRow tableRow,Date d){
@@ -161,24 +275,41 @@ public class MeansTableFragment extends Fragment {
         tableRow.addView(textView);
     }
 
+    @Deprecated
     private TableRow createEmptyRow(){
         TableRow tableRow=new TableRow(meanTab.getContext());
-        //TODO mettre le premier élément en liste déroulante
         addTextViewsEditable(tableRow);
 
         return tableRow;
     }
 
+    @Deprecated
     private void addTextViewsEditable(TableRow tableRow) {
         for(int i=0;i<NBCOLUMS;i++){
             TextView textView=new TextView(meanTab.getContext());
             textView.setText("");
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            textView.setEnabled(true);
+
             tableRow.addView(textView);
+            if(i==0) {
+                textView.setEnabled(true);
+            }
         }
     }
 
+    public List getDefaultMeanList() {
+        //TODO recup dans la base la liste des moyens
+        List<String> list=new ArrayList<>();
+        list.add("FPT");
+        list.add("VSAV");
+        list.add("EPA");
+        list.add("VLCG");
+        list.add("CCF");
+        list.add("CCGC");
+        list.add("VLHR");
+        list.add("DRONE");
+        return list;
+    }
 
 
     public interface OnFragmentInteractionListener {
@@ -193,5 +324,10 @@ public class MeansTableFragment extends Fragment {
 
     public void removeElements(Collection<Element> elements){
         // TODO: 29/04/16  
+    }
+
+    private boolean isCodis(){
+        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
+        return credentials.isCodisUser();
     }
 }

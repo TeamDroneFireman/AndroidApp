@@ -99,15 +99,12 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         group = new ToolsGroup("Outils", false);
         group.addTool(new Tool(PictoFactory.ElementForm.MEAN, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_PLANNED, Role.DEFAULT));
         group.addTool(new Tool(PictoFactory.ElementForm.MEAN_GROUP, Role.DEFAULT));
         group.addTool(new Tool(PictoFactory.ElementForm.MEAN_COLUMN, Role.DEFAULT));
 
         group.addTool(new Tool(PictoFactory.ElementForm.MEAN_OTHER, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.MEAN_OTHER_PLANNED, Role.DEFAULT));
 
         group.addTool(new Tool(PictoFactory.ElementForm.AIRMEAN, Role.DEFAULT));
-        group.addTool(new Tool(PictoFactory.ElementForm.AIRMEAN_PLANNED, Role.DEFAULT));
 
         group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT, Role.DEFAULT));
         group.addTool(new Tool(PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE, Role.DEFAULT));

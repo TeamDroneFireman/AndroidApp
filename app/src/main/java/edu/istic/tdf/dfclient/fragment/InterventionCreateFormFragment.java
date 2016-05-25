@@ -30,10 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +57,6 @@ import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionM
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import edu.istic.tdf.dfclient.domain.intervention.SinisterCode;
 import edu.istic.tdf.dfclient.domain.sinister.Sinister;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -106,8 +103,6 @@ public class InterventionCreateFormFragment extends Fragment {
     InterventionMeanDao interventionMeanDao;
 
     SinisterDao sinisterDao;
-
-
 
     // for listView sinister_code
     private ArrayList<String> sinisters =new ArrayList<>();
@@ -176,9 +171,7 @@ public class InterventionCreateFormFragment extends Fragment {
             }
         });
 
-
-
-
+        // Initializing adapters
         meansAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1,
                 means);
@@ -196,8 +189,7 @@ public class InterventionCreateFormFragment extends Fragment {
         sinister_code.setAdapter(sinistersAdapter);
         means_available_list.setAdapter(meansAvailableAdapter);
 
-
-
+        // Add a mean to the mean list, which will be then added to the intervention
         meanAddButton.setOnClickListener(new AdapterView.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,6 +208,7 @@ public class InterventionCreateFormFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // When you click on a mean in the spinner of available means, select it before adding it
         means_available_list.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -226,7 +219,7 @@ public class InterventionCreateFormFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
+        // Remove the mean in the list when you click on it
         means_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -264,22 +257,21 @@ public class InterventionCreateFormFragment extends Fragment {
         mListener = null;
     }
 
+    // Load the list of sinisters with means associated, and the list of all the means you can add to the intervention
     private void loadDefaultSinistersProperties(final Runnable onLoaded){
         meansAvailable.clear();
         sinisters.clear();
         means.clear();
         sinistersAssociationWithMeans.clear();
-
+        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
         sinisterDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Sinister>>() {
             @Override
-            public void onRepositoryResult(List<Sinister> r) {
-                Log.e("LoadMeans", "onRepositoryResult List<Sinister> r");
-            }
+            public void onRepositoryResult(List<Sinister> r) {}
             @Override
             public void onRestResult(List<Sinister> sinisterList) {
-                Log.e("LoadMeans", "onRestResult List<Sinister> sinisterList");
                 Iterator<Sinister> sinisterIterator = sinisterList.iterator();
-                // The first element of the list is the list of the means you can add
+                // The first sinister contain the list of the means available
+                // TODO : This first item should be in mean database and not in sinister database
                 Sinister sinister = sinisterIterator.next();
                 meansAvailable.addAll(sinister.getMeans());
                 while (sinisterIterator.hasNext()) {
@@ -293,148 +285,95 @@ public class InterventionCreateFormFragment extends Fragment {
                         meansAdapter.notifyDataSetChanged();
                         sinistersAdapter.notifyDataSetChanged();
                         meansAvailableAdapter.notifyDataSetChanged();
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
                     }
                 });
             }
             @Override
-            public void onRepositoryFailure(Throwable e) { Log.e("LoadMeans", "restrsult3");}
+            public void onRepositoryFailure(Throwable e) {
+                Log.e("Load Sinisters", "couldn't load sinister properties");
+                Log.e("Load Sinisters", e.getMessage());
+            }
             @Override
-            public void onRestFailure(Throwable e) {Log.e("ERROR", e.getMessage());}
+            public void onRestFailure(Throwable e) {
+                Log.e("Load Sinisters", "couldn't load sinister properties");
+                Log.e("Load Sinisters", e.getMessage());
+            }
         });
 
     }
 
+    // Load default means associated to the sinisterCode in parameter
     public void loadMeanFromSinisterCode(String sinisterCode)
     {
         means.clear();
         if(sinistersAssociationWithMeans!=null){
             for(String a : sinistersAssociationWithMeans.get(sinisterCode)){
                 means.add(a);
-                Log.e("Load means", "mean : "+a+", sinister : "+sinisterCode);
             }
         }
         meansAdapter.notifyDataSetChanged();
     }
 
     public interface OnFragmentInteractionListener {
-
-        /**
-         * Called iff the form is complete
-         *
-         */
+        // Called iff the form is complete
         void onCreateIntervention();
-
     }
 
-
-    // JUST FOR TEST, Elements drone or mean examples
-    public void makeElementsExample(Intervention intervention){
-
-        Drone elemDrone1 = new Drone();
-
-        InterventionMean elemInterventionMean1 = new InterventionMean();
-
-        elemDrone1.setName("Drone1");
-        elemDrone1.setRole(Role.DEFAULT);
-        elemDrone1.setLocation(intervention.getLocation());
-        elemDrone1.setForm(PictoFactory.ElementForm.AIRMEAN);
-        elemDrone1.setAction("IN_PROGRESS");
-        elemDrone1.setState(MeanState.ASKED);
-
-        elemInterventionMean1.setName("IntMean1");
-        elemInterventionMean1.setRole(Role.DEFAULT);
-
-        //new location
-        Location location2 = new Location();
-        location2.setAddress(intervention.getLocation().getAddress());
-
-        //new geopoint
-        GeoPoint geoPoint2 = new GeoPoint();
-        geoPoint2.setLongitude(intervention.getLocation().getGeopoint().getLongitude() - 0.0021);
-        geoPoint2.setLatitude(intervention.getLocation().getGeopoint().getLatitude() + 0.0021);
-        location2.setGeopoint(geoPoint2);
-
-        elemInterventionMean1.setLocation(location2);
-        elemInterventionMean1.setLocation(intervention.getLocation());
-        elemInterventionMean1.setForm(PictoFactory.ElementForm.WATERPOINT);
-        elemInterventionMean1.setState(MeanState.ENGAGED);
-        elemInterventionMean1.setAction("IN_PROGRESS");
-
-        Collection<Drone> drones = new HashSet<>();
-        Collection<InterventionMean> interventionMeans = new HashSet<>();
-        drones.add(elemDrone1);
-
-
-        Drone elemDrone2 = new Drone();
-        elemDrone2.setName("Drone2");
-        elemDrone2.setRole(Role.DEFAULT);
-
-        //new location
+    // Persist all the means
+    public void createElementsFromMeans(Intervention intervention){
         Location location = new Location();
-        location.setAddress(intervention.getLocation().getAddress());
+        for(String mean : means) {
+            switch (mean) {
+                case "DRONE":
+                    Drone drone = new Drone();
+                    drone.setName(mean + " disguised in drone");
+                    drone.setIntervention(intervention.getId());
+                    drone.setRole(Role.DEFAULT);
+                    drone.setLocation(location);
+                    drone.setAction("IN_PROGRESS");
 
-        //new geopoint
-        GeoPoint geoPoint = new GeoPoint();
-        geoPoint.setLongitude(intervention.getLocation().getGeopoint().getLongitude() + 0.0011);
-        geoPoint.setLatitude(intervention.getLocation().getGeopoint().getLatitude() - 0.0011);
-        location.setGeopoint(geoPoint);
+                    drone.setForm(PictoFactory.ElementForm.AIRMEAN);
 
-        elemDrone2.setLocation(location);
-        elemDrone2.setForm(PictoFactory.ElementForm.AIRMEAN);
-        elemDrone2.setAction("IN_PROGRESS");
-        elemDrone2.setState(MeanState.ASKED);
-        drones.add(elemDrone2);
+                    drone.setState(MeanState.ASKED);
 
-        interventionMeans.add(elemInterventionMean1);
+                    intervention.addElement(drone);
+                    droneDao.persist(drone, new IDaoWriteReturnHandler() {
+                        @Override
+                        public void onSuccess(Object r) {Log.d("Persist drone","Drone persisted");}
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {Log.e("Persist drone", "Repository failure");}
+                        @Override
+                        public void onRestFailure(Throwable e) {Log.e("Persist drone", "Rest failure");}
+                    });
+                    break;
+                default:
+                    InterventionMean interventionMean = new InterventionMean();
+                    interventionMean.setIntervention(intervention.getId());
+                    interventionMean.setName(mean);
+                    interventionMean.setRole(Role.PEOPLE);
+                    interventionMean.setLocation(location);
+                    interventionMean.setState(MeanState.ASKED);
+                    interventionMean.setAction("IN_PROGRESS");
 
-        for(Drone drone : drones){
-            Log.w("", "Persist drone");
-            drone.setIntervention(intervention.getId());
-            droneDao.persist(drone, new IDaoWriteReturnHandler() {
-                @Override
-                public void onSuccess(Object r) {
-                    for (int i = 0; i < 50; i++) {
-                        Log.i("", "SUCCESS");
-                    }
+                    interventionMean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
 
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    Log.e("", "REPO FAILURE");
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    Log.e("", "REST FAILURE");
-                }
-            });
+                    intervention.addElement(interventionMean);
+                    interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
+                        @Override
+                        public void onSuccess(Object r) {Log.d("Persist mean","Mean persisted");}
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+                            Log.e("Persist Means", "couldn't persist mean ");
+                            Log.e("Persist Means", e.getMessage());}
+                        @Override
+                        public void onRestFailure(Throwable e) {
+                            Log.e("Persist Means", "couldn't persist mean ");
+                            Log.e("Persist Means", e.getMessage());}
+                    });
+                    break;
+            }
         }
-
-        /*for(InterventionMean interventionMean : interventionMeans){
-            Log.w("", "Persist interventionMean");
-            interventionMean.setIntervention(intervention.getId());
-            interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
-                @Override
-                public void onSuccess(Object r) {
-                    for (int i = 0; i < 50; i++) {
-                        Log.i("", "SUCCESS");
-                    }
-
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    Log.e("", "REPO FAILURE");
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    Log.e("", "REST FAILURE");
-                }
-            });
-        }*/
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -447,12 +386,6 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private void computeIntervention() {
         final Intervention intervention = new Intervention();
-
-        // TODO: 26/04/16 when model ok
-
-        /*for(String mean:means) {
-            intervention.addElement(compute(mean));
-        }*/
 
         // address and geopoint inside location
         Location location = new Location();
@@ -470,16 +403,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
         String str_sinister_code = sinister_code.getSelectedItem().toString();
 
-        // TODO: 27/04/16 intervention code
-        //intervention code
-        switch (str_sinister_code) {
-            case "SAP":
-                intervention.setSinisterCode(SinisterCode.SAP);
-                break;
-            case "INC":
-                intervention.setSinisterCode(SinisterCode.INC);
-                break;
-        }
+        intervention.setSinisterCode(str_sinister_code);
 
         //name
         intervention.setName(str_sinister_code + "-" + strNow);
@@ -489,23 +413,19 @@ public class InterventionCreateFormFragment extends Fragment {
 
         ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).showProgress();
 
-        //makeElementsExample(intervention);
         interventionDao.persist(intervention, new IDaoWriteReturnHandler<Intervention>() {
             @Override
-            public void onSuccess(Intervention r) {
-                intervention.setLocation(null);
-                makeElementsExample(r);
+            public void onSuccess(Intervention intervention) {
+                createElementsFromMeans(intervention);
             }
-
             @Override
             public void onRepositoryFailure(Throwable e) {
-                Log.e("", "REPO FAILURE");
-            }
-
+                Log.e("Persist Intervention", "couldn't persist intervention ");
+                Log.e("Persist Intervention", e.getMessage());}
             @Override
             public void onRestFailure(Throwable e) {
-                Log.e("", "REST FAILURE");
-            }
+                Log.e("Persist Intervention", "couldn't persist intervention ");
+                Log.e("Persist Intervention", e.getMessage());}
         });
     }
 
@@ -519,11 +439,9 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private boolean IsValideForm() {
         boolean isValid = true;
-
         isValid = checkLat();
         isValid = checkLng() && isValid;
         isValid = checkSinisterCode() && isValid;
-
         return isValid;
     }
 
@@ -552,32 +470,23 @@ public class InterventionCreateFormFragment extends Fragment {
     }
 
     private boolean checkLng() {
-        try
-        {
+        try {
             Double lng = Double.parseDouble(this.lng.getText().toString());
-            if(lng > 180 || lng < -180)
-            {
+            if(lng > 180 || lng < -180){
                 showErrorMsg("Longitude non valide");
-
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            else {return true;}
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e){
             e.printStackTrace();
             showErrorMsg("Longitude non valide");
         }
-
         return false;
     }
 
     private boolean checkSinisterCode(){
-        if (this.sinisters.isEmpty())
-        {
+        if (this.sinisters.isEmpty()){
             showErrorMsg("Pas de code sinistre");
             return false;
         };
@@ -600,7 +509,6 @@ public class InterventionCreateFormFragment extends Fragment {
 
     private class DataLongOperationAsynchTask extends AsyncTask<String, Void, String[]> {
         ProgressDialog dialog = new ProgressDialog(getActivity());
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -608,7 +516,6 @@ public class InterventionCreateFormFragment extends Fragment {
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
         }
-
         @Override
         protected String[] doInBackground(String... params) {
             String response;
@@ -616,33 +523,25 @@ public class InterventionCreateFormFragment extends Fragment {
                 String url = "http://maps.google.com/maps/api/geocode/json?address=" + params[0] + "&sensor=false";
                 url = url.replaceAll(" ", "%20");
                 response = getLatLongByURL(url);
-                Log.d("response", "" + response);
                 return new String[]{response};
             } catch (Exception e) {
                 return new String[]{"error"};
             }
         }
-
         @Override
         protected void onPostExecute(String... result) {
             try {
                 JSONObject jsonObject = new JSONObject(result[0]);
-
                 double lng = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
                         .getJSONObject("geometry").getJSONObject("location")
                         .getDouble("lng");
-
                 double lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
                         .getJSONObject("geometry").getJSONObject("location")
                         .getDouble("lat");
-
                 String formatted_address = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
                         .getString("formatted_address");
-
                 Log.d("latitude", "" + lat);
                 Log.d("longitude", "" + lng);
-
-
                 Message message = new Message();
                 Bundle bundle = new Bundle();
                 bundle.putDouble("lat", lat);
@@ -651,7 +550,6 @@ public class InterventionCreateFormFragment extends Fragment {
                 message.setData(bundle);
                 message.what = 1;
                 myHandler.sendMessage(message);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -666,7 +564,6 @@ public class InterventionCreateFormFragment extends Fragment {
         String response = "";
         try {
             url = new URL(requestURL);
-
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
@@ -676,7 +573,6 @@ public class InterventionCreateFormFragment extends Fragment {
                     "application/x-www-form-urlencoded");
             conn.setDoOutput(true);
             int responseCode = conn.getResponseCode();
-
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -686,7 +582,6 @@ public class InterventionCreateFormFragment extends Fragment {
             } else {
                 response = "";
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
