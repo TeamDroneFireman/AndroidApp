@@ -139,26 +139,21 @@ public class PictoFactory {
     }
 
     public Bitmap toBitmap(){
-/*
+
         Bitmap bitmap = getOptimizedBitmap();
+
         Canvas canvas = new Canvas(bitmap);
-        // new antialised Paint
+        canvas.drawColor(this.color, PorterDuff.Mode.SRC_IN);
+
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        // text color - #3D3D3D
-        paint.setColor(Color.WHITE);
-        // text size in pixels
         int textSize = 30;
         paint.setTextSize((int) (textSize));
-
-        // text shadow
-        paint.setShadowLayer(1f, 0f, 1f, Color.BLACK);
         if(paint.measureText(this.label) > bitmap.getWidth()){
             while(paint.measureText(this.label) > bitmap.getWidth()){
                 textSize--;
                 paint.setTextSize((int) (textSize));
             }
         }
-        // draw text to the Canvas center
         Rect bounds = new Rect();
         paint.getTextBounds(this.label, 0, this.label.length(), bounds);
         int x = (bitmap.getWidth()) / 2;
@@ -166,11 +161,11 @@ public class PictoFactory {
 
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setColor(this.color);
-        paint.setColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.MULTIPLY));
+       // paint.setColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.DST_ATOP));
         //canvas.drawColor(this.color);
         canvas.drawText(this.label, x, y, paint);
         return bitmap;
-*/
+/*
         View view = getView();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -212,6 +207,7 @@ public class PictoFactory {
         view.draw(canvas);
 
         return bitmap;
+        */
 
     }
 

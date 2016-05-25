@@ -93,6 +93,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         elementCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mListener.setCreateDronePathMode(false);
                 mListener.cancelUpdate();
             }
         });

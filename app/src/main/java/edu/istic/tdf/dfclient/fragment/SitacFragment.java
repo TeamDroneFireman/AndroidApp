@@ -115,7 +115,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                mListener.setSelectedElement(markersList.get(marker));
+                if(!isDronePathMode){
+                    mListener.setSelectedElement(markersList.get(marker));
+                }
                 return false;
             }
 
@@ -163,6 +165,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     public void cancelSelection(){
+        if(currentPolyline != null){
+            currentPolyline.remove();
+        }
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
