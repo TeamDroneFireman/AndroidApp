@@ -26,6 +26,7 @@ import java.util.Observer;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
@@ -266,14 +267,18 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void updateElements(Collection<Element> elements){
         for(Element element : elements){
-            switch (element.getType()){
+            switch (ElementType.getElementType(element.getForm())){
                 case MEAN:
-                    if (((IMean) element).getStates().get(MeanState.RELEASED) != null)
-                        return;
+                    if (((IMean) element).getStates().get(MeanState.RELEASED) != null){
+                        continue;
+                    }
                     break;
                 case AIRMEAN:
-                    if (((IDrone) element).getStates().get(MeanState.RELEASED) != null)
-                        return;
+                    if (((IDrone) element).getStates().get(MeanState.RELEASED) != null) {
+                        continue;
+                    }
+                    break;
+                default:
                     break;
             }
             updateElement(element);

@@ -1,9 +1,11 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -479,44 +481,97 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
-    public void deleteElement(Element element){
-        hideContextualDrawer();
-        // TODO change Date (for DateTime?)
-        ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
-        IDao dao = this.dataLoader.getDaoOfElement(element);
-        dao.persist(element, new IDaoWriteReturnHandler() {
-            @Override
-            public void onSuccess(Object r) {
+    public void deleteElement(final Element element){
+        new AlertDialog.Builder(this)
+                .setTitle("Supprimer")
+                .setMessage("Attention !\nCette action va libérer l'élément actuel et celui ci ne sera plus disponible.\nVoulez-vous continuer ?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteIfMean(element);
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
+    }
+
+    private void deleteIfMean(final Element element){
+        if (isMeanFromMeanTable(element)) {
+            ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
+            IDao dao = this.dataLoader.getDaoOfElement(element);
+            dao.persist(element, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    deleteFromUI(element);
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } else {
+            if (element.getType() == ElementType.POINT_OF_INTEREST && ((PointOfInterest) element).isExternal()) {
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                IDao dao = this.dataLoader.getDaoOfElement(element);
+                dao.delete(element, new IDaoWriteReturnHandler() {
+                    @Override
+                    public void onSuccess(Object r) {
+                        deleteFromUI(element);
                         Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     }
-                });
-            }
 
-            @Override
-            public void onRepositoryFailure(Throwable e) {
-                SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
+                    public void onRepositoryFailure(Throwable e) {
                         Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
                     }
-                });
-            }
 
-            @Override
-            public void onRestFailure(Throwable e) {
-                SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
+                    public void onRestFailure(Throwable e) {
                         Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
-        });
+        }
+    }
 
-        sitacFragment.removeElement(element);
+    private boolean isMeanFromMeanTable(Element element){
+        ElementType elementType = element.getType();
+        boolean isMean = elementType == ElementType.MEAN;
+        isMean |= elementType == ElementType.AIRMEAN;
+        return isMean;
+    }
+
+    private void deleteFromUI(final Element element){
+        SitacActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sitacFragment.cancelSelection();
+                hideContextualDrawer();
+                sitacFragment.removeElement(element);
+                Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void addElement(Element element){
