@@ -20,6 +20,6 @@ public class InterventionDao extends Dao<Intervention, InterventionRepository, I
     }
 
     public void subscribe(Intervention intervention, String registrationId){
-        this.restClient.subscribe(registrationId, intervention);
+        //this.restClient.subscribe(registrationId, intervention);
     }
 }
