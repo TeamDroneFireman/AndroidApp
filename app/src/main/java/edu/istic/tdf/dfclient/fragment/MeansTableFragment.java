@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -191,7 +192,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addTextViews(IMean element,TableRow tableRow) {
-        RelativeLayout relativeLayout=new RelativeLayout(tableRow.getContext());
+        LinearLayout relativeLayout=new LinearLayout(tableRow.getContext());
 
         TextView name = new TextView(meanTab.getContext());
         name.setText(element.getName());
@@ -205,7 +206,7 @@ public class MeansTableFragment extends Fragment {
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.VALIDATED);
         addMeanState(tableRow, d);
-        addValidationButtonForCodis(relativeLayout,element,d);
+        addValidationButtonForCodis(relativeLayout, element, d,currentStates.get(MeanState.RELEASED));
         d = currentStates.get(MeanState.ARRIVED);
         addMeanState(tableRow, d);
         d = currentStates.get(MeanState.ENGAGED);
@@ -216,19 +217,32 @@ public class MeansTableFragment extends Fragment {
         tableRow.addView(relativeLayout);
     }
 
-    private void addValidationButtonForCodis(RelativeLayout relativeLayout, final IElement element,Date d) {
-        if(isCodis()&& d==null){
+    private void addValidationButtonForCodis(LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
+        if(isCodis()&& valided==null && released==null){
             Button validationButton=new Button(relativeLayout.getContext());
             validationButton.setText("Valider");
             validationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    IMean mean=(IMean)element;
+                    IMean mean = (IMean) element;
                     mean.setState(MeanState.VALIDATED);
-                    mListener.handleValidation((Element)mean);
+                    mListener.handleValidation((Element) mean);
+                }
+            });
+
+            Button refuseButton=new Button(relativeLayout.getContext());
+            refuseButton.setText("Refuser");
+            refuseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IMean mean = (IMean) element;
+                    mean.setState(MeanState.RELEASED);
+                    mListener.handleValidation((Element) mean);
                 }
             });
             relativeLayout.addView(validationButton);
+
+            relativeLayout.addView(refuseButton);
         }
     }
 
