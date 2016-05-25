@@ -19,6 +19,7 @@ import java.util.Observer;
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
@@ -45,6 +46,8 @@ import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
+import edu.istic.tdf.dfclient.push.IPushCommand;
+import edu.istic.tdf.dfclient.push.PushHandler;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -61,6 +64,7 @@ public class SitacActivity extends BaseActivity implements
     private ToolbarFragment toolbarFragment;
     private ContextualDrawerFragment contextualDrawerFragment;
     private MeansTableFragment meansTableFragment;
+    private android.support.v4.app.Fragment currentFragment;
 
     // Data
     private DataLoader dataLoader;
@@ -69,7 +73,6 @@ public class SitacActivity extends BaseActivity implements
 
     private Element selectedElement;
 
-    private android.support.v4.app.Fragment currentFragment;
 
     @Inject InterventionDao interventionDao;
     @Inject DroneDao droneDao;
@@ -137,6 +140,9 @@ public class SitacActivity extends BaseActivity implements
         currentFragment = sitacFragment;
 
         //add
+
+        // Register push handler
+        this.registerPushHandlers();
 
 
     }
@@ -262,7 +268,7 @@ public class SitacActivity extends BaseActivity implements
                         .commit();
                 switchTo(sitacFragment);
                 break;
-            
+
             case R.id.logout_button:
                 logout();
                 break;
@@ -463,6 +469,81 @@ public class SitacActivity extends BaseActivity implements
         }
     }
 
+    private void registerPushHandlers() {
+
+        TdfApplication application = (TdfApplication) this.getApplication();
+
+        // Means
+        application.getPushHandler().addCatcher("mean/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                String id = bundle.getString("id");
+                SitacActivity.this.interventionMeanDao.find(id, new IDaoSelectReturnHandler<InterventionMean>() {
+                    @Override
+                    public void onRepositoryResult(InterventionMean r) {
+
+                    }
+
+                    @Override
+                    public void onRestResult(InterventionMean r) {
+                        SitacActivity.this.DataLoader //UpdateelemntonUi
+                    }
+
+                    @Override
+                    public void onRepositoryFailure(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onRestFailure(Throwable e) {
+
+                    }
+                });
+                Toast.makeText(SitacActivity.this, "Push update received for element id " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Sinisters
+        application.getPushHandler().addCatcher("sinister/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                String id = bundle.getString("id");
+                Toast.makeText(SitacActivity.this, "Push update received for sinister id " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Drones
+        application.getPushHandler().addCatcher("drone/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                String id = bundle.getString("id");
+                Toast.makeText(SitacActivity.this, "Push update received for drone id " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // SIG
+        application.getPushHandler().addCatcher("sig/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                String id = bundle.getString("id");
+                Toast.makeText(SitacActivity.this, "Push update received for sig id " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // SIG Extern
+        application.getPushHandler().addCatcher("sigextern/update/", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                String id = bundle.getString("id");
+                Toast.makeText(SitacActivity.this, "Push update received for sigextern id " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
+
     private class DataLoader {
         private String interventionId;
 
@@ -530,7 +611,13 @@ public class SitacActivity extends BaseActivity implements
             if(dao != null){
                 dao.persist(element, handler);
             }
+        }
 
+        private void subscribeToIntervention() {
+            TdfApplication tdfApplication = (TdfApplication) SitacActivity.this.getApplication();
+            String pushRegistrationId = tdfApplication.getPushRegistrationId();
+
+            SitacActivity.this.interventionDao.subscribe(SitacActivity.this.intervention, pushRegistrationId);
         }
 
         private void loadIntervention() {
@@ -550,6 +637,9 @@ public class SitacActivity extends BaseActivity implements
                             sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }
                     });
+
+                    // Subscribe to intervention
+                    DataLoader.this.subscribeToIntervention();
 
                     // TODO : What to do when it is loaded ?
                 }
@@ -706,7 +796,7 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void updateElementsInUi(final Collection<Element> elements) {
+        public void updateElementsInUi(final Collection<Element> elements) {
 
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -721,7 +811,7 @@ public class SitacActivity extends BaseActivity implements
 
         }
 
-        private void removeElementsInUi(final Collection<Element> elements) {
+        public void removeElementsInUi(final Collection<Element> elements) {
 
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -736,5 +826,4 @@ public class SitacActivity extends BaseActivity implements
 
         }
     }
-
 }
