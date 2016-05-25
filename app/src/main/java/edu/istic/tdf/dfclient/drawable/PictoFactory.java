@@ -133,8 +133,7 @@ public class PictoFactory {
 
     public Drawable toDrawable(){
         Drawable drawable = ContextCompat.getDrawable(context, this.drawable);
-
-        drawable.setColorFilter(this.color, PorterDuff.Mode.MULTIPLY);
+        drawable.setColorFilter(this.color, PorterDuff.Mode.DST_ATOP);
         drawable.setBounds(0, 0, size, size);
         return drawable;
     }
@@ -204,6 +203,10 @@ public class PictoFactory {
         paint.setTextAlign(Paint.Align.CENTER);
         int x = (bitmap.getWidth())/2;
         int y = (bitmap.getHeight())/2;
+
+        if(this.drawable == ElementForm.AIRMEAN_PLANNED.getDrawable()){
+            y += 50;
+        }
 
         canvas.drawText(label, x, y, paint);
         view.draw(canvas);

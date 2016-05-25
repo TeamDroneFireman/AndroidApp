@@ -238,6 +238,7 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void handleCancelSelection() {
         this.selectedTool = null;
+        this.toolbarFragment.cancelSelection();
         hideContextualDrawer();
     }
 
@@ -365,6 +366,11 @@ public class SitacActivity extends BaseActivity implements
                 this.updateDrone((Drone)element);
                 break;
         }
+    }
+
+    @Override
+    public void setCreateDronePathMode(boolean isDronePathMode) {
+        sitacFragment.setDronePathMode(isDronePathMode);
     }
 
     private void updateInterventionMean(final InterventionMean interventionMean) {
