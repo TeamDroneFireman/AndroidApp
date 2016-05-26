@@ -182,7 +182,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         mListener.handleCancelSelection();
     }
 
-    public void cancelSelectionIfRequire(Element element, Element currentElement){
+    public void cancelSelectionAfterPushIfRequire(Element element, Element currentElement){
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
