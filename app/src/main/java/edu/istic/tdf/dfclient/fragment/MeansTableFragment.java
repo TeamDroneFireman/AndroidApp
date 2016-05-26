@@ -24,8 +24,6 @@ import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
-import edu.istic.tdf.dfclient.activity.SitacActivity;
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -74,8 +72,6 @@ public class MeansTableFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        isCodis=isCodis();
-
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
 
@@ -120,8 +116,10 @@ public class MeansTableFragment extends Fragment {
                 }
             });
         }
-        return view;
 
+        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
+        
+        return view;
     }
 
     @Deprecated
@@ -349,10 +347,5 @@ public class MeansTableFragment extends Fragment {
         while(it.hasNext()){
             removeElement(it.next());
         }
-    }
-
-    private boolean isCodis(){
-        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
-        return credentials.isCodisUser();
     }
 }
