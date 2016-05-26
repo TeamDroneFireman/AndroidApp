@@ -119,6 +119,7 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.isCodis = ((TdfApplication)this.getApplication()).loadCredentials().isCodisUser();
 
         //intervention = createInterventionBouton();
         super.onCreate(savedInstanceState);
@@ -180,8 +181,6 @@ public class SitacActivity extends BaseActivity implements
         String interventionId = (String) getIntent().getExtras().get("interventionId");
         dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
-
-        this.isCodis = ((TdfApplication)this.getApplication()).loadCredentials().isCodisUser();
     }
 
     @Override

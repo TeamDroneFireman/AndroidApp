@@ -65,6 +65,8 @@ public class InterventionListFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
+
         View view = inflater.inflate(R.layout.fragment_intervention_list, container, false);
         ButterKnife.bind(this, view);// Inflate the layout for this fragment
 
@@ -112,8 +114,6 @@ public class InterventionListFragment extends Fragment {
                 });
             }
         });
-
-        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
 
         return view;
     }
