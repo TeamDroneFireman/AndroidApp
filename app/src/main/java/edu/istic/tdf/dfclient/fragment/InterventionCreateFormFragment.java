@@ -53,6 +53,8 @@ import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
@@ -294,22 +296,17 @@ public class InterventionCreateFormFragment extends Fragment {
         void onCreateIntervention();
     }
 
+
     // Persist all the means
     public void createElementsFromMeans(Intervention intervention){
-        Location location = new Location();
         for(Mean mean : means) {
             switch (mean.name) {
                 case "DRONE":
                     Drone drone = new Drone();
-                    drone.setName(mean.name + " disguised in drone");
-                    drone.setIntervention(intervention.getId());
-                    drone.setRole(Role.SPECIFIC);
-                    drone.setLocation(location);
                     drone.setAction("IN_PROGRESS");
-
-                    drone.setForm(PictoFactory.ElementForm.AIRMEAN);
-
                     drone.setState(MeanState.ASKED);
+
+                    Element.setDefaultElementValues(drone, mean.name, intervention);
 
                     intervention.addElement(drone);
                     for(int i = 0; i<mean.number;i++){
@@ -324,37 +321,12 @@ public class InterventionCreateFormFragment extends Fragment {
                     }
                     break;
                 default:
-
                     InterventionMean interventionMean = new InterventionMean();
-                    interventionMean.setIntervention(intervention.getId());
-                    interventionMean.setName(mean.name);
-                    interventionMean.setLocation(location);
                     interventionMean.setState(MeanState.ASKED);
-                    interventionMean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                     interventionMean.setAction("IN_PROGRESS");
-                    switch (mean.name){
-                        case "VSAV":
-                            interventionMean.setRole(Role.PEOPLE);
-                            break;
-                        case "CCGC":
-                            interventionMean.setRole(Role.WATER);
-                            break;
-                        case "CCF":
-                            interventionMean.setRole(Role.WATER);
-                            break;
-                        case "VLHR":
-                            interventionMean.setRole(Role.WATER);
-                            break;
-                        case "FPT":
-                            interventionMean.setRole(Role.PEOPLE);
-                            break;
-                        case "EPA":
-                            interventionMean.setRole(Role.PEOPLE);
-                            break;
-                        default:
-                            interventionMean.setRole(Role.DEFAULT);
-                            break;
-                    }
+
+                    Element.setDefaultElementValues(interventionMean, mean.name, intervention);
+
                     intervention.addElement(interventionMean);
                     for(int i = 0;i<mean.number;i++){
                         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
@@ -426,14 +398,6 @@ public class InterventionCreateFormFragment extends Fragment {
                 Log.e("Persist Intervention", "couldn't persist intervention ");
                 Log.e("Persist Intervention", e.getMessage());}
         });
-    }
-
-    private IMean compute(String mean) {
-        IMean m = new InterventionMean();
-        m.setState(MeanState.ASKED);
-        m.setRole(Role.DEFAULT);
-
-        return m;
     }
 
     private boolean IsValideForm() {
