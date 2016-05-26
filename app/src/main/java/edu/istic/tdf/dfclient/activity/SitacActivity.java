@@ -746,7 +746,8 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             SitacActivity.this.intervention = r;
-                            sitacFragment.setLocation(r.getLocation().getGeopoint());
+                            if (sitacFragment.isLocationEmpty())
+                                sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }
                     });
 

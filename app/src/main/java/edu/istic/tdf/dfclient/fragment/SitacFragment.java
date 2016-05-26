@@ -163,6 +163,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
+    public boolean isLocationEmpty(){
+        return this.longitude == 0.0 || this.latitude == 0.0;
+    }
+
     private Element createElementFromLatLng(LatLng latLng){
         Tool tool = mListener.getSelectedTool();
         return mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
