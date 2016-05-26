@@ -46,6 +46,7 @@ public class InterventionListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = super.getView(position, convertView, parent);
+
         switch (getItemViewType(position)) {
             case TYPE_ITEM_COLORED:
                 v.setAlpha(fa);
