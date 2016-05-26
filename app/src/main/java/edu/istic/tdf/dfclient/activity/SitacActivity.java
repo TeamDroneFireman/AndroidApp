@@ -1129,7 +1129,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.sitacFragment.removeElements(elements);
 
                     // Update Means table
-                    SitacActivity.this.meansTableFragment.removeElements(elements);
+                    SitacActivity.this.meansTableFragment.removeElementFromUi( elements);
                 }
             });
         }
