@@ -539,8 +539,6 @@ public class InterventionCreateFormFragment extends Fragment {
                         .getDouble("lat");
                 String formatted_address = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
                         .getString("formatted_address");
-                Log.d("latitude", "" + lat);
-                Log.d("longitude", "" + lng);
                 Message message = new Message();
                 Bundle bundle = new Bundle();
                 bundle.putDouble("lat", lat);

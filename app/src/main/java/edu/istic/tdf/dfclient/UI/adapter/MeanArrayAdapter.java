@@ -38,9 +38,6 @@ public class MeanArrayAdapter extends ArrayAdapter<Mean>{
     public MeanArrayAdapter(Context context,ArrayList<Mean> means) {
         super(context, R.layout.item_mean, means);
         inflater = LayoutInflater.from(context);
-        if(means==null){
-            Log.e("ERROR", "Means are null !!!");
-        }
         this.means=means;
     }
 
@@ -49,28 +46,23 @@ public class MeanArrayAdapter extends ArrayAdapter<Mean>{
     public View getCustomView(final int position, View convertView, ViewGroup parent){
         View row = convertView;
         ViewHolder holder = null;
-        Log.d("MeanArrayAdapter", "Get custom view");
         //inflate row layout
         if(row==null){
-            Log.d("MeanArrayAdapter", "  row is null");
             row =inflater.inflate(R.layout.item_mean, parent,false);
             holder = new ViewHolder(row);
             row.setTag(holder);
         }else{
             holder =(ViewHolder) row.getTag();
         }
-        Log.d("MeanArrayAdapter", "  Passed");
         if(means == null){
-            Log.d("MeanArrayAdapter", "  ERROR");
+            Log.d("MeanArrayAdapter", "Means are null");
         }
         final Mean mean = means.get(position);
-        Log.d("MeanArrayAdapter", "  position is " + means.get(position).name);
         //show data
         holder.textViewTitle.setText(mean.name);
         holder.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ON CLICK", "TEST CLICK");
                 mean.number = mean.number + 1;
                 means.set(position, mean);
                 notifyDataSetChanged();
@@ -80,7 +72,6 @@ public class MeanArrayAdapter extends ArrayAdapter<Mean>{
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ON CLICK", "TEST CLICK");
                 if(mean.number>0){
                     mean.number=mean.number-1;
                     means.set(position, mean);
@@ -89,7 +80,6 @@ public class MeanArrayAdapter extends ArrayAdapter<Mean>{
             }
         });
         holder.textViewMeanNumber.setText(String.valueOf(mean.number));
-        Log.d("MeanArrayAdapter", "End of get custom view");
         return row;
     }
 
