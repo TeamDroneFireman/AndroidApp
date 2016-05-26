@@ -110,8 +110,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         });
 
-        roleArrayAdapter.notifyDataSetChanged();
         roleSpinner.setAdapter(roleArrayAdapter);
+        roleArrayAdapter.notifyDataSetChanged();
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), PictoFactory.ElementForm.values()));
        return view;
     }
@@ -142,6 +142,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
+        roleArrayAdapter.notifyDataSetChanged();
 
         PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
 
@@ -159,9 +160,10 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN_OTHER, PictoFactory.ElementForm.MEAN_OTHER_PLANNED,PictoFactory.ElementForm.SOURCE, PictoFactory.ElementForm.TARGET,PictoFactory.ElementForm.WATERPOINT, PictoFactory.ElementForm.WATERPOINT_SUPPLY, PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
                 break;
         }
-
-        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), forms));
+        shapeArrayAdapter = new ShapeArrayAdapter(getContext(), forms);
+        formSpinner.setAdapter(shapeArrayAdapter);
         formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
+        shapeArrayAdapter.notifyDataSetChanged();
     }
 
     public interface OnFragmentInteractionListener {
