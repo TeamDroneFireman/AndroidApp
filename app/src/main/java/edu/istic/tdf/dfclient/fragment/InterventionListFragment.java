@@ -27,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.UI.adapter.InterventionListAdapter;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
@@ -44,9 +45,9 @@ public class InterventionListFragment extends Fragment {
     // Data
     InterventionDao interventionDao;
     private ArrayList<String> interventions = new ArrayList<>();    // for listView intervention
-    private ArrayAdapter<String> interventionsAdapter;
+    private InterventionListAdapter interventionsAdapter;
     ArrayList<Intervention> interventionArrayList = new ArrayList<>();    // the collection of all object interventions
-
+    private int countNotArchived = 0;
     // Fragment listener
     private OnFragmentInteractionListener fragmentInteractionListener;
 
@@ -73,9 +74,9 @@ public class InterventionListFragment extends Fragment {
         displayCreationBt();
 
         //Data
-        interventionsAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1,
+        interventionsAdapter = new InterventionListAdapter(getActivity(),
                 interventions);
+
         interventionsList.setAdapter(interventionsAdapter);
 
         // Events
@@ -86,13 +87,15 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
+        loadAndDisplayInterventions(null);
+
         interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.setSelected(true);
                 selectItem(position);
-                }
-            //}
+            }
+
         });
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -112,7 +115,6 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
-        loadAndDisplayInterventions(null);
 
         return view;
     }
@@ -224,13 +226,13 @@ public class InterventionListFragment extends Fragment {
             }
         }
 
+        interventionsAdapter.setCountNotArchived(interventionArrayListNotArchived.size());
         Comparator<Intervention> interventionComparator = new Comparator<Intervention>() {
             @Override
             public int compare(Intervention lhs, Intervention rhs) {
                 //compare date
                 Date date1 = lhs.getCreationDate();
                 Date date2 = rhs.getCreationDate();
-
                 return date2.compareTo(date1);
             }
         };
