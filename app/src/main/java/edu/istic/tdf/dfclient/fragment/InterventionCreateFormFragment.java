@@ -296,7 +296,6 @@ public class InterventionCreateFormFragment extends Fragment {
         void onCreateIntervention();
     }
 
-
     // Persist all the means
     public void createElementsFromMeans(Intervention intervention){
         for(Mean mean : means) {
