@@ -249,9 +249,6 @@ public class InterventionCreateFormFragment extends Fragment {
                     sinister = sinisterIterator.next();
                     sinistersAssociationWithMeans.put(sinister.getCode(), sinister.getMeans());
                     sinisters.add(sinister.getCode());
-                    for (MeanCount m : sinister.getMeans()) {
-                        means.add(new Mean(m.getName(), m.getCount()));
-                    }
                 }
 
                 getActivity().runOnUiThread(new Runnable() {
