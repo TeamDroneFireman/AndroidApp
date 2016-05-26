@@ -24,6 +24,7 @@ import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.activity.SitacActivity;
 import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
@@ -334,8 +335,8 @@ public class MeansTableFragment extends Fragment {
     }
 
     public void removeElement(Element element){
-
-        ((IMean)element).setState(MeanState.RELEASED);
+        if (element.isMeanFromMeanTable())
+            ((IMean)element).setState(MeanState.RELEASED);
         mListener.handleValidation(element);
     }
 

@@ -73,4 +73,11 @@ public abstract class Element extends Entity implements IElement {
 
         return ElementType.MEAN;
     }
+
+    public boolean isMeanFromMeanTable(){
+        ElementType elementType = this.getType();
+        boolean isMean = elementType == ElementType.MEAN;
+        isMean |= elementType == ElementType.AIRMEAN;
+        return isMean;
+    }
 }
