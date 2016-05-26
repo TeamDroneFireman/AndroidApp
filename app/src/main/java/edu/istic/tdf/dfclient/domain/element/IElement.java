@@ -52,4 +52,6 @@ public interface IElement extends IEntity {
     public void setForm(PictoFactory.ElementForm form);
 
     ElementType getType();
+
+    public boolean isMeanFromMeanTable();
 }

@@ -508,7 +508,7 @@ public class SitacActivity extends BaseActivity implements
     }
 
     private void deleteIfMean(final Element element){
-        if (isMeanFromMeanTable(element)) {
+        if (element.isMeanFromMeanTable()) {
             ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
             IDao dao = this.dataLoader.getDaoOfElement(element);
             dao.persist(element, new IDaoWriteReturnHandler() {
@@ -575,13 +575,6 @@ public class SitacActivity extends BaseActivity implements
                 });
             }
         }
-    }
-
-    private boolean isMeanFromMeanTable(Element element){
-        ElementType elementType = element.getType();
-        boolean isMean = elementType == ElementType.MEAN;
-        isMean |= elementType == ElementType.AIRMEAN;
-        return isMean;
     }
 
     private void deleteFromUI(final Element element){
