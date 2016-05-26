@@ -381,7 +381,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadMean(meanId);
-                        hideContextualDrawer();
                     }
                 });
             }
@@ -421,7 +420,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadDrone(droneId);
-                        hideContextualDrawer();
                     }
                 });
             }
@@ -461,7 +459,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadPointOfInterest(pointOfInterestId);
-                        hideContextualDrawer();
                     }
                 });
             }
@@ -493,7 +490,6 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void cancelUpdate() {
-        hideContextualDrawer();
         sitacFragment.cancelSelection();
     }
 
@@ -860,11 +856,13 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            sitacFragment.cancelSelection();
+                            Element currentElement = contextualDrawerFragment.tryGetElement();
+                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
                         }
                     });
                 }
@@ -962,11 +960,13 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            sitacFragment.cancelSelection();
+                            Element currentElement = contextualDrawerFragment.tryGetElement();
+                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
                         }
                     });
                 }
@@ -1063,10 +1063,12 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            sitacFragment.cancelSelection();
+                            Element currentElement = contextualDrawerFragment.tryGetElement();
+                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
                         }
                     });
                 }

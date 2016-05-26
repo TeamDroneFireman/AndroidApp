@@ -170,4 +170,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         void cancelUpdate();
         void deleteElement(Element element);
     }
+
+    public Element tryGetElement()
+    {
+        return this.element;
+    }
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -180,6 +179,21 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         }
         mListener.handleCancelSelection();
+    }
+
+    public void cancelSelectionIfRequire(Element element, Element currentElement){
+        for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
+            Marker marker = entry.getKey();
+            IElement elementValue = entry.getValue();
+            if (elementValue.getId() == null){
+                marker.remove();
+            }
+        }
+
+        if(currentElement != null && currentElement.getId().equals(element.getId()))
+        {
+            mListener.handleCancelSelection();
+        }
     }
 
     private boolean hasElementSelected(){
