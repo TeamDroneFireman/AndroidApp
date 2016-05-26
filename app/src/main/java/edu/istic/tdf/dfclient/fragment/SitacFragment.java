@@ -135,15 +135,16 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public void onMarkerDrag(Marker marker) {
+                Element element = markersList.get(marker);
+
+                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
+                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 Element element = markersList.get(marker);
-
-                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
-                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
                 mListener.handleUpdatedElement(element);
             }
