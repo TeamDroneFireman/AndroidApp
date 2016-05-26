@@ -12,11 +12,13 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.Mean;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -24,54 +26,70 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 /**
  * Created by tremo on 23/05/16.
  */
-public class MeanArrayAdapter extends BaseAdapter{
+public class MeanArrayAdapter extends ArrayAdapter<Mean>{
 
     private ArrayList<Mean> means = new ArrayList<Mean>();
     private LayoutInflater inflater;
 
+    public MeanArrayAdapter(Context context, int resource, ArrayList<Mean> means) {
+        super(context, resource, means);
+    }
 
-    public MeanArrayAdapter(Context context, ArrayList<Mean> means) {
-        this.inflater = LayoutInflater.from(context);
-        this.means = means;
+    public MeanArrayAdapter(Context context,ArrayList<Mean> means) {
+        super(context, R.layout.item_mean, means);
+        inflater = LayoutInflater.from(context);
+        if(means==null){
+            Log.e("ERROR", "Means are null !!!");
+        }
+        this.means=means;
     }
 
 
 
     public View getCustomView(final int position, View convertView, ViewGroup parent){
-
         View row = convertView;
         ViewHolder holder = null;
-
+        Log.d("MeanArrayAdapter", "Get custom view");
         //inflate row layout
         if(row==null){
+            Log.d("MeanArrayAdapter", "  row is null");
             row =inflater.inflate(R.layout.item_mean, parent,false);
             holder = new ViewHolder(row);
             row.setTag(holder);
         }else{
             holder =(ViewHolder) row.getTag();
         }
-
-        Mean mean = means.get(position);
-
+        Log.d("MeanArrayAdapter", "  Passed");
+        if(means == null){
+            Log.d("MeanArrayAdapter", "  ERROR");
+        }
+        final Mean mean = means.get(position);
+        Log.d("MeanArrayAdapter", "  position is " + means.get(position).name);
         //show data
         holder.textViewTitle.setText(mean.name);
-        holder.textViewMeanNumber.setText(mean.number);
-        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("Test deleteButton", "Test deleteButton");
-                notifyDataSetChanged();
-            }
-        });
         holder.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Test addButton", "Test addButton");
+                Log.d("ON CLICK", "TEST CLICK");
+                mean.number = mean.number + 1;
+                means.set(position, mean);
                 notifyDataSetChanged();
             }
         });
 
-
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("ON CLICK", "TEST CLICK");
+                if(mean.number>0){
+                    mean.number=mean.number-1;
+                    means.set(position, mean);
+                    notifyDataSetChanged();
+                }
+            }
+        });
+        holder.textViewMeanNumber.setText(String.valueOf(mean.number));
+        Log.d("MeanArrayAdapter", "End of get custom view");
         return row;
     }
 
@@ -80,15 +98,6 @@ public class MeanArrayAdapter extends BaseAdapter{
         return getCustomView(position, convertView, parent);
     }
 
-    @Override
-    public int getCount() {
-        return 0;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
 
     @Override
     public long getItemId(int position) {
@@ -97,6 +106,7 @@ public class MeanArrayAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         return getCustomView(position, convertView, parent);
     }
 
@@ -106,15 +116,12 @@ public class MeanArrayAdapter extends BaseAdapter{
         Button deleteButton;
         Button addButton;
         public ViewHolder(View v){
-            textViewTitle =(TextView) v.findViewById(R.id.mean_name);
-            textViewMeanNumber =(TextView) v.findViewById(R.id.mean_count);
+            textViewTitle =(TextView) v.findViewById(R.id.name);
+            textViewMeanNumber =(TextView) v.findViewById(R.id.number);
             deleteButton =(Button) v.findViewById(R.id.delete_btn);
             addButton =(Button) v.findViewById(R.id.add_btn);
         }
     }
 
-    class Mean{
-        String name;
-        int number;
-    }
+
 }
