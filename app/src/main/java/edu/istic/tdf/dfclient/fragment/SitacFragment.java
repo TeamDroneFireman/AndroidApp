@@ -135,15 +135,16 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public void onMarkerDrag(Marker marker) {
+                Element element = markersList.get(marker);
+
+                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
+                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 Element element = markersList.get(marker);
-
-                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
-                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
                 mListener.handleUpdatedElement(element);
             }
@@ -161,6 +162,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         if(googleMap != null ){
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
         }
+    }
+
+    public boolean isLocationEmpty(){
+        return this.longitude == 0.0 || this.latitude == 0.0;
     }
 
     private Element createElementFromLatLng(LatLng latLng){
@@ -182,7 +187,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         mListener.handleCancelSelection();
     }
 
-    public void cancelSelectionIfRequire(Element element, Element currentElement){
+    public void cancelSelectionAfterPushIfRequire(Element element, Element currentElement){
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
@@ -191,7 +196,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         }
 
-        if(currentElement != null && currentElement.getId().equals(element.getId()))
+        if(currentElement != null && currentElement.getId() != null && currentElement.getId().equals(element.getId()))
         {
             mListener.handleCancelSelection();
         }
