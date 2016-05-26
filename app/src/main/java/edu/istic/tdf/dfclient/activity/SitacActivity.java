@@ -380,7 +380,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadMean(meanId);
+                        dataLoader.loadMean(meanId, false);
                     }
                 });
             }
@@ -419,7 +419,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadDrone(droneId);
+                        dataLoader.loadDrone(droneId, false);
                     }
                 });
             }
@@ -458,7 +458,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadPointOfInterest(pointOfInterestId);
+                        dataLoader.loadPointOfInterest(pointOfInterestId, false);
                     }
                 });
             }
@@ -811,7 +811,8 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void loadDrone(String droneId) {
+        private void loadDrone(String droneId, final boolean loadAfterPush)
+        {
             SitacActivity.this.droneDao.find(droneId, new IDaoSelectReturnHandler<Drone>() {
                 @Override
                 public void onRepositoryResult(Drone r) {
@@ -854,8 +855,16 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            Element currentElement = contextualDrawerFragment.tryGetElement();
-                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
+                            if(loadAfterPush)
+                            {
+                                //We keep the selection if modification come from an other tablet
+                                Element currentElement = contextualDrawerFragment.tryGetElement();
+                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
+                            }
+                            else
+                            {
+                                sitacFragment.cancelSelection();
+                            }
                         }
                     });
                 }
@@ -915,7 +924,8 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void loadMean(String meanId) {
+        private void loadMean(String meanId, final boolean loadAfterPush)
+        {
             SitacActivity.this.interventionMeanDao.find(meanId, new IDaoSelectReturnHandler<InterventionMean>() {
                 @Override
                 public void onRepositoryResult(InterventionMean r) {
@@ -958,8 +968,16 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            Element currentElement = contextualDrawerFragment.tryGetElement();
-                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
+                            if(loadAfterPush)
+                            {
+                                //We keep the selection if modification come from an other tablet
+                                Element currentElement = contextualDrawerFragment.tryGetElement();
+                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
+                            }
+                            else
+                            {
+                                sitacFragment.cancelSelection();
+                            }
                         }
                     });
                 }
@@ -1018,7 +1036,7 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void loadPointOfInterest(String pointOfInterestId) {
+        private void loadPointOfInterest(String pointOfInterestId, final boolean loadAfterPush) {
             SitacActivity.this.pointOfInterestDao.find(pointOfInterestId, new IDaoSelectReturnHandler<PointOfInterest>() {
                 @Override
                 public void onRepositoryResult(PointOfInterest r) {
@@ -1060,8 +1078,16 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Element currentElement = contextualDrawerFragment.tryGetElement();
-                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
+                            if(loadAfterPush)
+                            {
+                                //We keep the selection if modification come from an other tablet
+                                Element currentElement = contextualDrawerFragment.tryGetElement();
+                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
+                            }
+                            else
+                            {
+                                sitacFragment.cancelSelection();
+                            }
                         }
                     });
                 }
