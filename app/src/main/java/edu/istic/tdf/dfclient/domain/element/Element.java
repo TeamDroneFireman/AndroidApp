@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.domain.element;
 
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import lombok.Getter;
 import lombok.Setter;
@@ -79,5 +80,77 @@ public abstract class Element extends Entity implements IElement {
         boolean isMean = elementType == ElementType.MEAN;
         isMean |= elementType == ElementType.AIRMEAN;
         return isMean;
+    }
+
+    public void setFormFromMeanType(String meanType){
+        switch(meanType){
+            case "VSAV":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "CCGC":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "CCF":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "VLHR":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "FPT":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "EPA":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "VLCG":
+                this.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                break;
+            case "DRONE":
+                this.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
+                break;
+            default:
+                this.setForm(PictoFactory.ElementForm.MEAN);
+                break;
+        }
+    }
+
+    public void setRoleFromMeanType(String meanType){
+        switch(meanType){
+            case "VSAV":
+                this.setRole(Role.PEOPLE);
+                break;
+            case "CCGC":
+                this.setRole(Role.WATER);
+                break;
+            case "CCF":
+                this.setRole(Role.WATER);
+                break;
+            case "VLHR":
+                this.setRole(Role.WATER);
+                break;
+            case "FPT":
+                this.setRole(Role.PEOPLE);
+                break;
+            case "EPA":
+                this.setRole(Role.PEOPLE);
+                break;
+            case "VLCG":
+                this.setRole(Role.PEOPLE);
+                break;
+            case "DRONE":
+                this.setRole(Role.COMMAND);
+                break;
+            default:
+                this.setRole(Role.DEFAULT);
+                break;
+        }
+    }
+
+    public static void setDefaultElementValues(Element element, String meanType, Intervention intervention){
+        element.setFormFromMeanType(meanType);
+        element.setRoleFromMeanType(meanType);
+        element.setIntervention(intervention.getId());
+        element.setName(meanType);
+        element.setLocation(new Location());
     }
 }

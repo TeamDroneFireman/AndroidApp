@@ -54,12 +54,15 @@ public class MeansTableFragment extends Fragment {
     private final int NBCOLUMS=7;
     private List meanList;
 
+    private boolean isCodis;
+
     public MeansTableFragment() {
         // Required empty public constructor
     }
 
     public static MeansTableFragment newInstance() {
         MeansTableFragment fragment = new MeansTableFragment();
+
         return fragment;
     }
 
@@ -71,7 +74,7 @@ public class MeansTableFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        isCodis=isCodis();
 
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
@@ -80,7 +83,7 @@ public class MeansTableFragment extends Fragment {
         spinner=(Spinner)view.findViewById(R.id.spinner);
         Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
 
-        if(isCodis()){
+        if(isCodis){
             spinner.setVisibility(View.INVISIBLE);
             validation.setVisibility(View.INVISIBLE);
         }else{
@@ -117,10 +120,6 @@ public class MeansTableFragment extends Fragment {
                 }
             });
         }
-
-
-
-        //meanTab.addView(createEmptyRow());
         return view;
 
     }
@@ -234,7 +233,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addCancelButton(LinearLayout relativeLayout, final IElement element, Date validated, Date released) {
-        if(!isCodis()&&validated==null &&released==null){
+        if(!isCodis&&validated==null &&released==null){
             Button cancelButton=new Button(relativeLayout.getContext());
             cancelButton.setText("Annuler");
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +250,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addValidationButtonForCodis(LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
-        if(isCodis()&& valided==null && released==null){
+        if(isCodis&& valided==null && released==null){
             Button validationButton=new Button(relativeLayout.getContext());
             validationButton.setText("Valider");
             validationButton.setOnClickListener(new View.OnClickListener() {
@@ -334,17 +333,18 @@ public class MeansTableFragment extends Fragment {
 
     }
 
-    public void removeElement(Element element){
-
-        // TODO: 26/05/16 il ne faut pas appeler handleValidation, il faut simplement retirer l'élément de meantable
-        // TODO: 26/05/16 sinon cycle : handleValidation -> updateElement -> removeElementsFromUi -> removeElement -> handleValidation
-        // if (element.isMeanFromMeanTable())
-        //((IMean)element).setState(MeanState.RELEASED);
-        //mListener.handleValidation(element);
+    private void removeElement(Element element){
+         if (element.isMeanFromMeanTable()) {
+             ((IMean) element).setState(MeanState.RELEASED);
+             mListener.handleValidation(element);
+         }
     }
 
-    public void removeElements(Collection<Element> elements){
+    public void removeElementFromUi(Collection<Element> element){
 
+    }
+
+    private void removeElements(Collection<Element> elements){
         Iterator<Element> it=elements.iterator();
         while(it.hasNext()){
             removeElement(it.next());

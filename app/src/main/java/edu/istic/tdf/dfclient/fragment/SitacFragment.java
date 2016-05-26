@@ -26,7 +26,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -309,9 +311,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 break;
         }
 
-        result = result && (element.getId() != null);
+        result = result && (element.getId() != null) && !isCodis();
 
         return result;
+    }
+
+    private boolean isCodis(){
+        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
+        return credentials.isCodisUser();
     }
 
     private void updateMarker(Marker marker, Element element){

@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
@@ -120,6 +121,12 @@ public class SitacActivity extends BaseActivity implements
                 .commit();
 
         hideContextualDrawer();
+
+        if(isCodis())
+        {
+            hideContextualToolBar();
+        }
+
         List<IElement> elements = new ArrayList<>();
 /*
         IElement interventionMean = new InterventionMean();
@@ -145,6 +152,11 @@ public class SitacActivity extends BaseActivity implements
         this.registerPushHandlers();
     }
 
+    private boolean isCodis(){
+        Credentials credentials = ((TdfApplication)this.getApplication()).loadCredentials();
+        return credentials.isCodisUser();
+    }
+
     @Override
     public void handleSelectedToolUtils(Tool tool) {
         this.sitacFragment.cancelSelection();
@@ -161,17 +173,20 @@ public class SitacActivity extends BaseActivity implements
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
-        switch (element.getType())
+        if(!isCodis())
         {
-            case POINT_OF_INTEREST:
-                //disable contextual drawer for external SIG
-                if(!((PointOfInterest)element).isExternal())
-                {
+            switch (element.getType())
+            {
+                case POINT_OF_INTEREST:
+                    //disable contextual drawer for external SIG
+                    if(!((PointOfInterest)element).isExternal())
+                    {
+                        showContextualDrawer();
+                    }
+                    break;
+                default:
                     showContextualDrawer();
-                }
-                break;
-            default:
-                showContextualDrawer();
+            }
         }
     }
 
@@ -256,11 +271,18 @@ public class SitacActivity extends BaseActivity implements
         contextualDrawer.animate().translationX(0);
 
     }
+
     private void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
                 .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
+    }
+
+    private void hideContextualToolBar(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(toolbarFragment)
+                .commit();
     }
 
     @Override
@@ -288,12 +310,24 @@ public class SitacActivity extends BaseActivity implements
                 break;
 
             case R.id.switch_to_sitac:
-                getSupportFragmentManager().beginTransaction()
-                        .show(toolbarFragment)
-                        .show(contextualDrawerFragment)
-                        .show(sitacFragment)
-                        .commit();
-                switchTo(sitacFragment);
+                if(isCodis())
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(toolbarFragment)
+                            .hide(contextualDrawerFragment)
+                            .show(sitacFragment)
+                            .commit();
+                    switchTo(sitacFragment);
+                }
+                else
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .show(toolbarFragment)
+                            .show(contextualDrawerFragment)
+                            .show(sitacFragment)
+                            .commit();
+                    switchTo(sitacFragment);
+                }
                 break;
 
             case R.id.logout_button:
@@ -1131,7 +1165,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.sitacFragment.removeElements(elements);
 
                     // Update Means table
-                    SitacActivity.this.meansTableFragment.removeElements(elements);
+                    SitacActivity.this.meansTableFragment.removeElementFromUi( elements);
                 }
             });
         }
