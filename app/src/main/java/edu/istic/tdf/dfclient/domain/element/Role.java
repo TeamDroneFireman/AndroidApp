@@ -19,6 +19,7 @@ public enum Role {
     WATER("Eau", 0xFF2962FF),
     SPECIFIC("Risques particuliers", 0xFFFF6D00),
     DEFAULT("Par défaut", 0xFF000000),
+    WHITE("Par défaut (blanc)", 0xFFFFFFFF),
     COMMAND("Commandement/Sectorisation", 0xFFC51162);
 
     private String title;

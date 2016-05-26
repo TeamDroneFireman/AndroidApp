@@ -14,6 +14,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,8 +28,13 @@ import java.util.Observer;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -43,6 +50,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     // Liste d'association marker <--> element
     private HashMap<Marker, Element> markersList = new HashMap<>();
+
+    // Gestion des chemins de drone
+    private boolean isDronePathMode;
+    private ArrayList<LatLng> currentPath;
+    private Polyline currentPolyline;
 
     public SitacFragment() {
     }
@@ -80,7 +92,18 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if (hasElementSelected()) {
+                if(isDronePathMode){
+
+                    currentPath.add(latLng);
+
+                    PolylineOptions rectOptions = new PolylineOptions().addAll(currentPath);
+                    if(currentPolyline != null){
+                        currentPolyline.remove();
+                    }
+
+                    currentPolyline = googleMap.addPolyline(rectOptions);
+
+                }else if (hasElementSelected()) {
                     Element element = createElementFromLatLng(latLng);
                     Marker marker = addMarker(element);
                     if (marker != null) {
@@ -96,7 +119,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                mListener.setSelectedElement(markersList.get(marker));
+                if(!isDronePathMode){
+                    mListener.setSelectedElement(markersList.get(marker));
+                }
                 return false;
             }
 
@@ -144,6 +169,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     public void cancelSelection(){
+        if(currentPolyline != null){
+            currentPolyline.remove();
+        }
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
@@ -152,6 +180,21 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         }
         mListener.handleCancelSelection();
+    }
+
+    public void cancelSelectionIfRequire(Element element, Element currentElement){
+        for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
+            Marker marker = entry.getKey();
+            IElement elementValue = entry.getValue();
+            if (elementValue.getId() == null){
+                marker.remove();
+            }
+        }
+
+        if(currentElement != null && currentElement.getId().equals(element.getId()))
+        {
+            mListener.handleCancelSelection();
+        }
     }
 
     private boolean hasElementSelected(){
@@ -177,6 +220,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     @Override
     public void update(Observable observable, Object data) {}
+
+    public void setDronePathMode(boolean isDronePathMode) {
+        this.currentPath = new ArrayList<LatLng>();
+        this.isDronePathMode = isDronePathMode;
+    }
 
     public interface OnFragmentInteractionListener {
 
@@ -225,7 +273,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
-                    .draggable(element.getId() != null)
+                    .draggable(isDraggable(element))
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())
@@ -239,6 +287,26 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
         elementsToSync.add(element);
         return null;
+    }
+
+    private boolean isDraggable(Element element)
+    {
+        boolean result = true;
+
+        switch (element.getType())
+        {
+            case POINT_OF_INTEREST:
+                //disable contextual drawer for external SIG
+                if(((PointOfInterest)element).isExternal())
+                {
+                    result = false;
+                }
+                break;
+        }
+
+        result = result && (element.getId() != null);
+
+        return result;
     }
 
     private void updateMarker(Marker marker, Element element){
@@ -263,6 +331,20 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void updateElements(Collection<Element> elements){
         for(Element element : elements){
+            switch (ElementType.getElementType(element.getForm())){
+                case MEAN:
+                    if (((IMean) element).getStates().get(MeanState.RELEASED) != null){
+                        continue;
+                    }
+                    break;
+                case AIRMEAN:
+                    if (((IDrone) element).getStates().get(MeanState.RELEASED) != null) {
+                        continue;
+                    }
+                    break;
+                default:
+                    break;
+            }
             if(element.getLocation().getGeopoint() != null) {
                 updateElement(element);
             }

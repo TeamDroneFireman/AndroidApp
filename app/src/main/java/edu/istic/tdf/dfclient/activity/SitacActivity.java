@@ -1,9 +1,11 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observer;
@@ -23,6 +26,7 @@ import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
+import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
@@ -239,6 +243,7 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void handleCancelSelection() {
         this.selectedTool = null;
+        this.toolbarFragment.cancelSelection();
         hideContextualDrawer();
     }
 
@@ -342,13 +347,6 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void updateElement(final Element element) {
         element.setIntervention(intervention.getId());
-        if(element.getLocation().getGeopoint() != null)
-        {
-            sitacFragment.updateElement(element);
-        }
-
-        meansTableFragment.updateElement(element);
-
         switch (element.getType()) {
             case MEAN:
                 this.updateInterventionMean((InterventionMean)element);
@@ -368,6 +366,11 @@ public class SitacActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void setCreateDronePathMode(boolean isDronePathMode) {
+        sitacFragment.setDronePathMode(isDronePathMode);
+    }
+
     private void updateInterventionMean(final InterventionMean interventionMean) {
 
         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler<InterventionMean>() {
@@ -378,7 +381,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadMean(meanId);
-                        hideContextualDrawer();
                     }
                 });
             }
@@ -418,7 +420,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadDrone(droneId);
-                        hideContextualDrawer();
                     }
                 });
             }
@@ -458,7 +459,6 @@ public class SitacActivity extends BaseActivity implements
                     @Override
                     public void run() {
                         dataLoader.loadPointOfInterest(pointOfInterestId);
-                        hideContextualDrawer();
                     }
                 });
             }
@@ -490,8 +490,130 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void cancelUpdate() {
-        hideContextualDrawer();
         sitacFragment.cancelSelection();
+    }
+
+    @Override
+    public void deleteElement(final Element element){
+        new AlertDialog.Builder(this)
+                .setTitle("Supprimer")
+                .setMessage("Attention !\nCette action va libérer l'élément actuel et celui ci ne sera plus disponible.\nVoulez-vous continuer ?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteIfMean(element);
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
+    }
+
+    private void deleteIfMean(final Element element){
+        if (isMeanFromMeanTable(element)) {
+            ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
+            IDao dao = this.dataLoader.getDaoOfElement(element);
+            dao.persist(element, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    deleteFromUI(element);
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } else {
+            if (element.getType() == ElementType.POINT_OF_INTEREST && ((PointOfInterest) element).isExternal()) {
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                IDao dao = this.dataLoader.getDaoOfElement(element);
+                dao.delete(element, new IDaoWriteReturnHandler() {
+                    @Override
+                    public void onSuccess(Object r) {
+                        deleteFromUI(element);
+                    }
+
+                    @Override
+                    public void onRepositoryFailure(Throwable e) {
+                        SitacActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onRestFailure(Throwable e) {
+                        SitacActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    private boolean isMeanFromMeanTable(Element element){
+        ElementType elementType = element.getType();
+        boolean isMean = elementType == ElementType.MEAN;
+        isMean |= elementType == ElementType.AIRMEAN;
+        return isMean;
+    }
+
+    private void deleteFromUI(final Element element){
+        SitacActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sitacFragment.cancelSelection();
+                hideContextualDrawer();
+                sitacFragment.removeElement(element);
+                Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addElement(Element element){
+        switch (element.getType()) {
+            case MEAN:
+                this.dataLoader.getInterventionMeans().add((InterventionMean)element);
+                break;
+            case POINT_OF_INTEREST:
+                this.dataLoader.getPointOfInterests().add((PointOfInterest)element);
+                break;
+            case MEAN_OTHER:
+                // TODO: 29/04/16
+                break;
+            case WATERPOINT:
+                // TODO: 29/04/16
+                break;
+            case AIRMEAN:
+                this.dataLoader.getDrones().add((Drone)element);
+                break;
+        }
     }
 
     @Override
@@ -734,11 +856,13 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            sitacFragment.cancelSelection();
+                            Element currentElement = contextualDrawerFragment.tryGetElement();
+                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
                         }
                     });
                 }
@@ -836,11 +960,13 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            sitacFragment.cancelSelection();
+                            Element currentElement = contextualDrawerFragment.tryGetElement();
+                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
                         }
                     });
                 }
@@ -937,10 +1063,12 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            sitacFragment.cancelSelection();
+                            Element currentElement = contextualDrawerFragment.tryGetElement();
+                            sitacFragment.cancelSelectionIfRequire(element, currentElement);
                         }
                     });
                 }

@@ -14,6 +14,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -23,6 +24,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
     private SparseArray<ToolsGroup> toolsGroups;
     private Context context;
+    private int selectedChildPosition;
     private LayoutInflater inflater;
     private OnToolsListAdapterInteractionListener listener;
 
@@ -33,6 +35,14 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         this.listener = listener;
     }
 
+    private void setSelectedChildPosition(int position){
+        ((Tool)getChild(0, position)).setRole(Role.PEOPLE);
+        selectedChildPosition = position;
+    }
+
+    private int getSelectedChildPosition(){
+        return selectedChildPosition;
+    }
     @Override
     public int getGroupCount() {
         return toolsGroups.size();
@@ -95,7 +105,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         final Tool children = (Tool) getChild(groupPosition, childPosition);
         if (convertView == null) {
@@ -108,8 +118,10 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
         if(element == null)
         {
-            icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
-            icon.setColorFilter(Color.WHITE);
+            icon.setImageBitmap(PictoFactory.createPicto(context).setLabel("").setColor(children.getRole().getColor()).setDrawable(children.getForm().getDrawable()).toBitmap());
+            //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
+            //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
+            //icon.setColorFilter(children.getRole().getColor());
         }
         else
         {
@@ -121,6 +133,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         View.OnClickListener onClickListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        setSelectedChildPosition(childPosition);
                         listener.handleSelectedTools(children);
                     }
                 };
@@ -133,6 +146,10 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public void cancelSelection() {
+        ((Tool)getChild(0, selectedChildPosition)).setRole(Role.WHITE);
     }
 
     public interface OnToolsListAdapterInteractionListener {

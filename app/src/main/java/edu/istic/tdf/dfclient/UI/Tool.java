@@ -21,7 +21,7 @@ public class Tool {
         this.role = role;
     }
 
-    private Role role = Role.DEFAULT;
+    private Role role = Role.WHITE;
     private String title = "Nom";
 
     public String getTitle() {

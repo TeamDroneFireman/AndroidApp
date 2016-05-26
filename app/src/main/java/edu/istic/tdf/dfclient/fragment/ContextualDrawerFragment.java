@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -21,25 +20,30 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
 import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.element.ElementType;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
-
-import static edu.istic.tdf.dfclient.domain.element.Role.values;
 
 public class ContextualDrawerFragment extends Fragment implements Observer {
 
     private OnFragmentInteractionListener mListener;
 
+    private RoleArrayAdapter roleArrayAdapter;
+    private ShapeArrayAdapter shapeArrayAdapter;
+
     @Bind(R.id.ElementLabelEdit)
     EditText ElementLabelEdit;
 
     @Bind(R.id.ElementSubmitButton)
-    Button ElementSubmitButton;
+    Button elementSubmitButton;
 
     @Bind(R.id.ElementCancelButton)
     Button elementCancelButton;
+
+    @Bind(R.id.ElementDeleteButton)
+    Button elementDeleteButton;
+
+    @Bind(R.id.DroneCreatePathButton)
+    Button droneCreatePathButton;
 
     @Bind(R.id.RoleSpinner)
     Spinner roleSpinner;
@@ -47,6 +51,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.FormSpinner)
     Spinner formSpinner;
 
+    private View view;
     private Element element;
 
     public ContextualDrawerFragment() {
@@ -67,11 +72,13 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_contextual_drawer, container, false);
+        roleArrayAdapter = new RoleArrayAdapter(getContext(), Role.values());
+
+        view = inflater.inflate(R.layout.fragment_contextual_drawer, container, false);
 
         ButterKnife.bind(this, view);
 
-        ElementSubmitButton.setOnClickListener(new View.OnClickListener() {
+        elementSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 element.setName(ElementLabelEdit.getText().toString());
@@ -84,12 +91,27 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         elementCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mListener.setCreateDronePathMode(false);
                 mListener.cancelUpdate();
             }
         });
 
+        elementDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.deleteElement(element);
+            }
+        });
 
-        roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
+        droneCreatePathButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.setCreateDronePathMode(true);
+            }
+        });
+
+        roleArrayAdapter.notifyDataSetChanged();
+        roleSpinner.setAdapter(roleArrayAdapter);
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), PictoFactory.ElementForm.values()));
        return view;
     }
@@ -123,11 +145,14 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
 
+        droneCreatePathButton.setVisibility(View.GONE);
+
         switch (element.getType()){
             case MEAN:
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN, PictoFactory.ElementForm.MEAN_PLANNED,  PictoFactory.ElementForm.MEAN_GROUP,  PictoFactory.ElementForm.MEAN_COLUMN };
                 break;
             case AIRMEAN:
+                droneCreatePathButton.setVisibility(View.VISIBLE);
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.AIRMEAN, PictoFactory.ElementForm.AIRMEAN_PLANNED};
                 break;
             default:
@@ -141,6 +166,13 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     public interface OnFragmentInteractionListener {
         void updateElement(Element element);
+        void setCreateDronePathMode(boolean isDronePathMode);
         void cancelUpdate();
+        void deleteElement(Element element);
+    }
+
+    public Element tryGetElement()
+    {
+        return this.element;
     }
 }
