@@ -18,7 +18,7 @@ import edu.istic.tdf.dfclient.R;
 public class InterventionListAdapter extends ArrayAdapter<String> {
 
     private static final int a = 3;
-    private static final int  b = 5;
+    private static final int  b = 7;
     private static final float fa = (float) a / (float) b;
     private static final float notfa = 1;
     private static int COUNT_NOT_ARCHIVED = 4;
