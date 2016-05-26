@@ -191,7 +191,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         }
 
-        if(currentElement != null && currentElement.getId().equals(element.getId()))
+        if(currentElement != null && currentElement.getId() != null && currentElement.getId().equals(element.getId()))
         {
             mListener.handleCancelSelection();
         }
