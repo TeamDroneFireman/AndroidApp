@@ -34,6 +34,7 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -272,7 +273,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
-                    .draggable(element.getId() != null)
+                    .draggable(isDraggable(element))
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())
@@ -286,6 +287,26 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
         elementsToSync.add(element);
         return null;
+    }
+
+    private boolean isDraggable(Element element)
+    {
+        boolean result = true;
+
+        switch (element.getType())
+        {
+            case POINT_OF_INTEREST:
+                //disable contextual drawer for external SIG
+                if(((PointOfInterest)element).isExternal())
+                {
+                    result = false;
+                }
+                break;
+        }
+
+        result = result && (element.getId() != null);
+
+        return result;
     }
 
     private void updateMarker(Marker marker, Element element){
