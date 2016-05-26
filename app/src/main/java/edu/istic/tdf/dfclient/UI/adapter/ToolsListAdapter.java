@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
@@ -113,6 +114,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         }
 
         ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
+        TextView textView = (TextView) convertView.findViewById(R.id.toolbarItemName);
 
         Element element = listener.tryGetElementFromTool(children);
 
@@ -122,11 +124,13 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
             //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
             //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
             //icon.setColorFilter(children.getRole().getColor());
+            textView.setText("DEFAULT");
         }
         else
         {
             icon.setImageDrawable(PictoFactory.createPicto(context).setElement(element).toDrawable());
             icon.setColorFilter(element.getRole().getColor());
+            textView.setText(element.getName());
 
         }
 
