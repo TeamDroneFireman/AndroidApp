@@ -335,9 +335,12 @@ public class MeansTableFragment extends Fragment {
     }
 
     public void removeElement(Element element){
-        if (element.isMeanFromMeanTable())
-            ((IMean)element).setState(MeanState.RELEASED);
-        mListener.handleValidation(element);
+
+        // TODO: 26/05/16 il ne faut pas appeler handleValidation, il faut simplement retirer l'élément de meantable
+        // TODO: 26/05/16 sinon cycle : handleValidation -> updateElement -> removeElementsFromUi -> removeElement -> handleValidation
+        // if (element.isMeanFromMeanTable())
+        //((IMean)element).setState(MeanState.RELEASED);
+        //mListener.handleValidation(element);
     }
 
     public void removeElements(Collection<Element> elements){
