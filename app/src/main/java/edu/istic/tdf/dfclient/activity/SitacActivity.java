@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -117,7 +118,9 @@ public class SitacActivity extends BaseActivity implements
             this.overridePendingTransition(R.anim.shake, R.anim.shake);
             Bundle intentBundle = new Bundle();
             final Intent intent = new Intent(this, MainMenuActivity.class);
-            ActivityCompat.startActivity(this, intent, intentBundle);
+            //ActivityCompat.startActivity(this, intent, intentBundle);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
         }
     }
 

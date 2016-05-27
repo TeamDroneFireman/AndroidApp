@@ -120,8 +120,14 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             // Detail fragment
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
-            this.startActivity(intent);
+            //this.startActivity(intent);
+            this.startActivityForResult(intent, 1);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO
     }
 
     /**
