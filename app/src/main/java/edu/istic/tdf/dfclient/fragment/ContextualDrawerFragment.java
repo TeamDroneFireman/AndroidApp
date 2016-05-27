@@ -9,11 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
@@ -153,6 +149,10 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     }
 
+    /**
+     * Set the element which can be modify by the drawer
+     * @param element
+     */
     public void setSelectedElement(Element element) {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
@@ -175,10 +175,22 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN_OTHER, PictoFactory.ElementForm.MEAN_OTHER_PLANNED,PictoFactory.ElementForm.SOURCE, PictoFactory.ElementForm.TARGET,PictoFactory.ElementForm.WATERPOINT, PictoFactory.ElementForm.WATERPOINT_SUPPLY, PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
                 break;
         }
+
         shapeArrayAdapter = new ShapeArrayAdapter(getContext(), forms);
         formSpinner.setAdapter(shapeArrayAdapter);
         formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
         shapeArrayAdapter.notifyDataSetChanged();
+
+        if(element.getId() != null)
+        {
+            elementDeleteButton.setVisibility(View.VISIBLE);
+            elementDeleteButton.setEnabled(true);
+        }
+        else
+        {
+            elementDeleteButton.setVisibility(View.INVISIBLE);
+            elementDeleteButton.setEnabled(false);
+        }
     }
 
     public interface OnFragmentInteractionListener {
@@ -189,6 +201,10 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         void deleteElement(Element element);
     }
 
+    /**
+     *
+     * @return the current element if it exist, or null if no current element
+     */
     public Element tryGetElement()
     {
         return this.element;
