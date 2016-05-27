@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.UI.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +8,11 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.UI.ToolsGroup;
 import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -25,25 +22,16 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
     private SparseArray<ToolsGroup> toolsGroups;
     private Context context;
-    private int selectedChildPosition;
     private LayoutInflater inflater;
     private OnToolsListAdapterInteractionListener listener;
 
     public ToolsListAdapter(Context context, SparseArray<ToolsGroup> toolsGroups, OnToolsListAdapterInteractionListener listener) {
         this.context = context;
-        this.toolsGroups = toolsGroups;
+        this.toolsGroups= toolsGroups;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
     }
 
-    private void setSelectedChildPosition(int position){
-        ((Tool)getChild(0, position)).setRole(Role.PEOPLE);
-        selectedChildPosition = position;
-    }
-
-    private int getSelectedChildPosition(){
-        return selectedChildPosition;
-    }
     @Override
     public int getGroupCount() {
         return toolsGroups.size();
@@ -76,12 +64,42 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getGroupId(int groupPosition) {
-        return 0;
+        return groupPosition;
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return 0;
+        int result = 0;
+        switch (groupPosition)
+        {
+            case 0:
+                result = childPosition;
+                break;
+
+            case 1:
+                result = toolsGroups.get(0).getTools().size() + childPosition;
+                break;
+
+            case 2:
+                result = toolsGroups.get(0).getTools().size() +
+                        toolsGroups.get(1).getTools().size() + childPosition;
+                break;
+
+            case 3:
+                result = toolsGroups.get(0).getTools().size() +
+                        toolsGroups.get(1).getTools().size() +
+                        toolsGroups.get(2).getTools().size() + childPosition;
+                break;
+
+            case 4:
+                result = toolsGroups.get(0).getTools().size() +
+                        toolsGroups.get(1).getTools().size() +
+                        toolsGroups.get(2).getTools().size() +
+                        toolsGroups.get(3).getTools().size() + childPosition;
+                break;
+        }
+
+        return result;
     }
 
     @Override
@@ -106,12 +124,11 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, final ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, final ViewGroup parent) {
 
         final Tool children = (Tool) getChild(groupPosition, childPosition);
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.fragment_toolbar_item, null);
-        }
+
+        convertView = inflater.inflate(R.layout.fragment_toolbar_item, null);
 
         ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
 
@@ -139,12 +156,11 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         }
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        setSelectedChildPosition(childPosition);
-                        listener.handleSelectedTools(children);
-                    }
-                };
+            @Override
+            public void onClick(View view) {
+                listener.handleSelectedTools(children);
+            }
+        };
 
         convertView.setOnClickListener(onClickListener);
 
@@ -157,7 +173,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     public void cancelSelection() {
-        ((Tool)getChild(0, selectedChildPosition)).setRole(Role.WHITE);
+
     }
 
     public interface OnToolsListAdapterInteractionListener {

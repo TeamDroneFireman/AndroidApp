@@ -181,7 +181,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
             drone = itDrone.next();
 
             if(drone.getLocation().getGeopoint() == null){
-
                 tool = new Tool(drone.getForm(), drone.getRole());
                 switch (drone.getState())
                 {
