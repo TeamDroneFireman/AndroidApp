@@ -213,9 +213,25 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                             PictoFactory.ElementForm.AIRMEAN};
                 }
                 break;
-            default:
-                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN_OTHER, PictoFactory.ElementForm.MEAN_OTHER_PLANNED,PictoFactory.ElementForm.SOURCE, PictoFactory.ElementForm.TARGET,PictoFactory.ElementForm.WATERPOINT, PictoFactory.ElementForm.WATERPOINT_SUPPLY, PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
+            case MEAN_OTHER:
+                if(((IMean) element).getState().equals(MeanState.ASKED)){
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN_OTHER_PLANNED};
+                }else{
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN_OTHER};
+                }
                 break;
+            default:
+
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.SOURCE,
+                            PictoFactory.ElementForm.TARGET,
+                            PictoFactory.ElementForm.WATERPOINT,
+                            PictoFactory.ElementForm.WATERPOINT_SUPPLY,
+                            PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
+
+
         }
 
         shapeArrayAdapter = new ShapeArrayAdapter(getContext(), forms);
@@ -249,31 +265,70 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         }
     }
 
+
     private void initializeStateSelection() {
-
-        if((element.getType() == ElementType.MEAN ||element.getType() == ElementType.AIRMEAN)){
-            MeanState m = ((IMean) element).getState();
-            stateTextView.setText(m.getMeanAsReadableText());
-            arrivedStateCheckBox.setChecked(false);
-            arrivedStateCheckBox.setEnabled(false);
-            releasedStateCheckBox.setChecked(false);
-            releasedStateCheckBox.setEnabled(false);
-            engagedStateCheckBox.setChecked(false);
-            engagedStateCheckBox.setEnabled(false);
-            if(!m.equals(MeanState.ASKED)){
-                if(m.equals(MeanState.ARRIVED)||m.equals(MeanState.VALIDATED)||m.equals(MeanState.ENGAGED)) {
-                    releasedStateCheckBox.setChecked(false);
-                    releasedStateCheckBox.setEnabled(true);
-                }if(m.equals(MeanState.VALIDATED) || m.equals(MeanState.ARRIVED)) {
-                    engagedStateCheckBox.setChecked(false);
-                    engagedStateCheckBox.setEnabled(true);
-                }if(m.equals(MeanState.VALIDATED)) {
-                    arrivedStateCheckBox.setChecked(false);
-                    arrivedStateCheckBox.setEnabled(true);
+        switch(element.getType()){
+            case MEAN_OTHER:
+            case MEAN:
+            case AIRMEAN:
+                MeanState m = ((IMean) element).getState();
+                stateTextView.setText(m.getMeanAsReadableText());
+                arrivedStateCheckBox.setChecked(false);
+                arrivedStateCheckBox.setEnabled(false);
+                releasedStateCheckBox.setChecked(false);
+                releasedStateCheckBox.setEnabled(false);
+                engagedStateCheckBox.setChecked(false);
+                engagedStateCheckBox.setEnabled(false);
+                switch (m){
+                    case ASKED:
+                        arrivedStateCheckBox.setChecked(false);
+                        arrivedStateCheckBox.setEnabled(false);
+                        engagedStateCheckBox.setChecked(false);
+                        engagedStateCheckBox.setEnabled(false);
+                        releasedStateCheckBox.setChecked(false);
+                        releasedStateCheckBox.setEnabled(false);
+                        break;
+                    case VALIDATED:
+                        arrivedStateCheckBox.setChecked(false);
+                        arrivedStateCheckBox.setEnabled(true);
+                        engagedStateCheckBox.setChecked(false);
+                        engagedStateCheckBox.setEnabled(true);
+                        releasedStateCheckBox.setChecked(false);
+                        releasedStateCheckBox.setEnabled(true);
+                        break;
+                    case ARRIVED:
+                        arrivedStateCheckBox.setChecked(true);
+                        arrivedStateCheckBox.setEnabled(false);
+                        engagedStateCheckBox.setChecked(false);
+                        engagedStateCheckBox.setEnabled(true);
+                        releasedStateCheckBox.setChecked(false);
+                        releasedStateCheckBox.setEnabled(true);
+                        break;
+                    case ENGAGED:
+                        arrivedStateCheckBox.setChecked(true);
+                        arrivedStateCheckBox.setEnabled(true);
+                        engagedStateCheckBox.setChecked(true);
+                        engagedStateCheckBox.setEnabled(true);
+                        releasedStateCheckBox.setChecked(false);
+                        releasedStateCheckBox.setEnabled(true);
+                        break;
+                    case RELEASED:
+                        arrivedStateCheckBox.setChecked(true);
+                        arrivedStateCheckBox.setEnabled(false);
+                        engagedStateCheckBox.setChecked(true);
+                        engagedStateCheckBox.setEnabled(false);
+                        releasedStateCheckBox.setChecked(true);
+                        releasedStateCheckBox.setEnabled(false);
+                        break;
                 }
-            }
+                break;
+            case POINT_OF_INTEREST:
+            case WATERPOINT:
 
+                break;
         }
+
+
     }
 
     public interface OnFragmentInteractionListener {

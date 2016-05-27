@@ -26,6 +26,7 @@ public class InterventionMean extends Element implements IInterventionMean {
      */
     private HashMap<MeanState, Date> states;
 
+    private MeanState currentState;
     /**
      * represent the current action
      * But not use for the moment !
@@ -35,6 +36,7 @@ public class InterventionMean extends Element implements IInterventionMean {
     public InterventionMean() {
         super();
         states = new HashMap<MeanState, Date>();
+        this.currentState=MeanState.ASKED;
         this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
@@ -47,12 +49,13 @@ public class InterventionMean extends Element implements IInterventionMean {
 
     @Override
     public void setState(MeanState state) {
+        this.currentState = state;
         this.states.put(state, new Date());
     }
 
     @Override
     public MeanState getState(){
-        MeanState currentState;
+        /*MeanState currentState;
         if(this.states.get(MeanState.RELEASED) != null){
             currentState = MeanState.RELEASED;
         }else if (this.states.get(MeanState.ENGAGED) != null){
@@ -63,8 +66,8 @@ public class InterventionMean extends Element implements IInterventionMean {
             currentState = MeanState.VALIDATED;
         }else{
             currentState = MeanState.ASKED;
-        }
-        return currentState;
+        }*/
+        return this.currentState;
     }
 
     @Override
