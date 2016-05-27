@@ -85,9 +85,12 @@ public class MeansTableFragment extends Fragment {
         Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
 
         if(isCodis){
+
             spinner.setVisibility(View.INVISIBLE);
             validation.setVisibility(View.INVISIBLE);
+
         }else{
+
             final List meanList = getDefaultMeanList();
             ArrayAdapter adapter = new ArrayAdapter(this.getContext(),android.R.layout.simple_spinner_item,meanList);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

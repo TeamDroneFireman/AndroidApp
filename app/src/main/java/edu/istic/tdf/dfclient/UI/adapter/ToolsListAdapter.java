@@ -34,6 +34,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         this.toolsGroups = toolsGroups;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
+
     }
 
     private void setSelectedChildPosition(int position){
@@ -123,7 +124,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
                     PictoFactory.createPicto(context)
                             .setLabel("")
                             .setRole(children.getRole())
-                            .setDrawable(children.getForm().getDrawable())
+                            .setForm(children.getForm())
                             .toBitmap()
             );
             //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
