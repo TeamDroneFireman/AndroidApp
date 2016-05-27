@@ -3,12 +3,18 @@ package edu.istic.tdf.dfclient.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.Observable;
@@ -17,10 +23,15 @@ import java.util.Observer;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.UI.Mean;
 import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
+import edu.istic.tdf.dfclient.UI.adapter.StateArrayAdapter;
 import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -53,9 +64,19 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.FormSpinner)
     Spinner formSpinner;
 
+    @Bind(R.id.ArrivedState)
+    CheckBox arrivedStateCheckBox;
+    @Bind(R.id.EngagedState)
+    CheckBox engagedStateCheckBox;
+    @Bind(R.id.ReleasedState)
+    CheckBox releasedStateCheckBox;
+    @Bind(R.id.StateView)
+    TextView stateTextView;
+
     private View view;
     private Element element;
     private boolean createDronePathMode = false;
+    private boolean elementToNextState = false;
 
     public ContextualDrawerFragment() {
         // Required empty public constructor
@@ -87,6 +108,13 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 element.setName(ElementLabelEdit.getText().toString());
                 element.setRole((Role) roleSpinner.getSelectedItem());
                 element.setForm((PictoFactory.ElementForm) formSpinner.getSelectedItem());
+                if (releasedStateCheckBox.isChecked()) {
+                    ((IMean) element).setState(MeanState.RELEASED);
+                } else if (engagedStateCheckBox.isChecked()) {
+                    ((IMean) element).setState(MeanState.ENGAGED);
+                } else if (arrivedStateCheckBox.isChecked()) {
+                    ((IMean) element).setState(MeanState.ARRIVED);
+                }
                 mListener.updateElement(element);
             }
         });
@@ -110,8 +138,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         droneCreatePathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(createDronePathMode){
-                    ((Drone)element).setMission(mListener.getCurrentMission());
+                if (createDronePathMode) {
+                    ((Drone) element).setMission(mListener.getCurrentMission());
                     mListener.getCurrentMission();
                     mListener.setCreateDronePathMode(false);
                 } else {
@@ -153,23 +181,37 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
      * Set the element which can be modify by the drawer
      * @param element
      */
-    public void setSelectedElement(Element element) {
+    public void setSelectedElement(final Element element) {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
         roleArrayAdapter.notifyDataSetChanged();
 
         PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
-
+        final MeanState[] states = MeanState.values();
         droneCreatePathButton.setVisibility(View.GONE);
 
         switch (element.getType()){
             case MEAN:
-                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN, PictoFactory.ElementForm.MEAN_PLANNED,  PictoFactory.ElementForm.MEAN_GROUP,  PictoFactory.ElementForm.MEAN_COLUMN };
-                break;
+                if(((IMean) element).getState().equals(MeanState.ASKED)){
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN_PLANNED};
+                }else{
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN,
+                            PictoFactory.ElementForm.MEAN_GROUP,
+                            PictoFactory.ElementForm.MEAN_COLUMN };
+                }
+                 break;
             case AIRMEAN:
                 droneCreatePathButton.setVisibility(View.VISIBLE);
-                forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.AIRMEAN, PictoFactory.ElementForm.AIRMEAN_PLANNED};
+                if(((IMean) element).getState().equals(MeanState.ASKED)){
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.AIRMEAN_PLANNED};
+                }else{
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.AIRMEAN};
+                }
                 break;
             default:
                 forms = new PictoFactory.ElementForm[]{PictoFactory.ElementForm.MEAN_OTHER, PictoFactory.ElementForm.MEAN_OTHER_PLANNED,PictoFactory.ElementForm.SOURCE, PictoFactory.ElementForm.TARGET,PictoFactory.ElementForm.WATERPOINT, PictoFactory.ElementForm.WATERPOINT_SUPPLY, PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
@@ -180,7 +222,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         formSpinner.setAdapter(shapeArrayAdapter);
         formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
         shapeArrayAdapter.notifyDataSetChanged();
-
+        initializeStateSelection();
+        
         //if element has an id we can suppress it
         if(element.getId() != null)
         {
@@ -203,6 +246,33 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         {
             elementDeleteButton.setVisibility(View.INVISIBLE);
             elementDeleteButton.setEnabled(false);
+        }
+    }
+
+    private void initializeStateSelection() {
+
+        if((element.getType() == ElementType.MEAN ||element.getType() == ElementType.AIRMEAN)){
+            MeanState m = ((IMean) element).getState();
+            stateTextView.setText(m.getMeanAsReadableText());
+            arrivedStateCheckBox.setChecked(false);
+            arrivedStateCheckBox.setEnabled(false);
+            releasedStateCheckBox.setChecked(false);
+            releasedStateCheckBox.setEnabled(false);
+            engagedStateCheckBox.setChecked(false);
+            engagedStateCheckBox.setEnabled(false);
+            if(!m.equals(MeanState.ASKED)){
+                if(m.equals(MeanState.ARRIVED)||m.equals(MeanState.VALIDATED)||m.equals(MeanState.ENGAGED)) {
+                    releasedStateCheckBox.setChecked(false);
+                    releasedStateCheckBox.setEnabled(true);
+                }if(m.equals(MeanState.VALIDATED) || m.equals(MeanState.ARRIVED)) {
+                    engagedStateCheckBox.setChecked(false);
+                    engagedStateCheckBox.setEnabled(true);
+                }if(m.equals(MeanState.VALIDATED)) {
+                    arrivedStateCheckBox.setChecked(false);
+                    arrivedStateCheckBox.setEnabled(true);
+                }
+            }
+
         }
     }
 
