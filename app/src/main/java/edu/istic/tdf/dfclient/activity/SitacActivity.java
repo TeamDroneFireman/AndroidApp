@@ -202,6 +202,11 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
+    public Element tryGetSelectedElement() {
+        return toolbarFragment.tryGetElementFromTool(selectedTool);
+    }
+
+    @Override
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
@@ -229,7 +234,6 @@ public class SitacActivity extends BaseActivity implements
         if(element != null)
         {
             //It's an element that as been asked but never put on the map
-            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
             updateElement(element);
         }
         else {
