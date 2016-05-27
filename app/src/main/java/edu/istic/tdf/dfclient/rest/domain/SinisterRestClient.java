@@ -8,7 +8,7 @@ import edu.istic.tdf.dfclient.rest.RestClient;
 import edu.istic.tdf.dfclient.rest.RestEndpoints;
 
 /**
- * Created by tremo on 27/04/16.
+ * The REST client for Sinister
  */
 public class SinisterRestClient extends RestClient<Sinister> implements IRestClient<Sinister> {
 

@@ -1,7 +1,7 @@
 package edu.istic.tdf.dfclient.dao.handler;
 
 /**
- * Handler for DAO Results
+ * Handler for DAO returning Results
  * @param <Result> The result type
  */
 public interface IDaoSelectReturnHandler<Result> {

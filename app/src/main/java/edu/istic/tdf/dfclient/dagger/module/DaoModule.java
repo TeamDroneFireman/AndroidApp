@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.dagger.module;
 
+import com.google.gson.Gson;
+
 import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
@@ -21,8 +23,8 @@ public class DaoModule {
 
     @Provides
     //@Singleton
-    InterventionDao provideInterventionDao(TdfHttpClient httpClient){
-        return new InterventionDao(httpClient);
+    InterventionDao provideInterventionDao(TdfHttpClient httpClient, Gson gson){
+        return new InterventionDao(httpClient, gson);
     }
 
     @Provides
