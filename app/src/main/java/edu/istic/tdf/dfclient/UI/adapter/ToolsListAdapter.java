@@ -105,7 +105,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, final ViewGroup parent) {
 
         final Tool children = (Tool) getChild(groupPosition, childPosition);
         if (convertView == null) {
