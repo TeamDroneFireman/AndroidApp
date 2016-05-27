@@ -120,10 +120,24 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     currentPolyline = googleMap.addPolyline(rectOptions);
 
                 }else if (hasElementSelected()) {
-                    Element element = createElementFromLatLng(latLng);
-                    Marker marker = addMarker(element);
-                    if (marker != null) {
-                        addMarker(element).showInfoWindow();
+                    Element element = mListener.tryGetSelectedElement();
+                    if (element != null)
+                    {
+                        GeoPoint geoPoint = new GeoPoint();
+                        geoPoint.setLatitude(latLng.latitude);
+                        geoPoint.setLongitude(latLng.longitude);
+                        element.getLocation().setGeopoint(geoPoint);
+                        Tool tool = mListener.getSelectedTool();
+                        mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
+                    }
+                    else
+                    {
+                        element = createElementFromLatLng(latLng);
+
+                        Marker marker = addMarker(element);
+                        if (marker != null) {
+                            addMarker(element).showInfoWindow();
+                        }
                     }
                 } else {
                     cancelSelection();
@@ -308,6 +322,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     public interface OnFragmentInteractionListener {
 
         Tool getSelectedTool();
+        Element tryGetSelectedElement();
 
         void setSelectedElement(Element element);
         Element handleElementAdded(Tool tool, Double latitude, Double longitude);
