@@ -124,7 +124,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         roleSpinner.setAdapter(roleArrayAdapter);
         roleArrayAdapter.notifyDataSetChanged();
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), PictoFactory.ElementForm.values()));
-       return view;
+        return view;
     }
 
     @Override
@@ -181,8 +181,21 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
         shapeArrayAdapter.notifyDataSetChanged();
 
+        //if element has an id we can suppress it
         if(element.getId() != null)
         {
+            switch (element.getType()) {
+                //if it's a mean, we don't suppress we juste release, so we change the button label
+                case AIRMEAN:
+                    elementDeleteButton.setText(R.string.supprimer_button_for_mean);
+                    break;
+                case MEAN:
+                    elementDeleteButton.setText(R.string.supprimer_button_for_mean);
+                    break;
+                default:
+                    elementDeleteButton.setText(R.string.supprimer_button_for_defaut);
+            }
+
             elementDeleteButton.setVisibility(View.VISIBLE);
             elementDeleteButton.setEnabled(true);
         }
