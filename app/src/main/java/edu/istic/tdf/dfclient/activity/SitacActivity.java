@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -674,26 +672,6 @@ public class SitacActivity extends BaseActivity implements
         });
     }
 
-    private void addElement(Element element){
-        switch (element.getType()) {
-            case MEAN:
-                this.dataLoader.getInterventionMeans().add((InterventionMean)element);
-                break;
-            case POINT_OF_INTEREST:
-                this.dataLoader.getPointOfInterests().add((PointOfInterest)element);
-                break;
-            case MEAN_OTHER:
-                // TODO: 29/04/16
-                break;
-            case WATERPOINT:
-                // TODO: 29/04/16
-                break;
-            case AIRMEAN:
-                this.dataLoader.getDrones().add((Drone)element);
-                break;
-        }
-    }
-
     @Override
     public void handleValidation(Element element) {
         updateElement(element);
@@ -748,24 +726,12 @@ public class SitacActivity extends BaseActivity implements
             return drones;
         }
 
-        public void setDrones(Collection<Drone> drones) {
-            this.drones = drones;
-        }
-
         public Collection<InterventionMean> getInterventionMeans() {
             return interventionMeans;
         }
 
-        public void setInterventionMeans(Collection<InterventionMean> interventionMeans) {
-            this.interventionMeans = interventionMeans;
-        }
-
         public Collection<PointOfInterest> getPointOfInterests() {
             return pointOfInterests;
-        }
-
-        public void setPointOfInterests(Collection<PointOfInterest> pointOfInterests) {
-            this.pointOfInterests = pointOfInterests;
         }
 
         // collection to save previous load datas
@@ -801,13 +767,6 @@ public class SitacActivity extends BaseActivity implements
             }
 
             return dao;
-        }
-
-        public void persistElement(Element element, IDaoWriteReturnHandler handler) {
-            Dao dao = getDaoOfElement(element);
-            if(dao != null){
-                dao.persist(element, handler);
-            }
         }
 
         private void subscribeToIntervention() {
