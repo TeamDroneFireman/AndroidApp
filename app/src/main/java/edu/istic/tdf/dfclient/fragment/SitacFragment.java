@@ -104,6 +104,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private void initMap(){
         googleMap.getUiSettings().setTiltGesturesEnabled(false);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
