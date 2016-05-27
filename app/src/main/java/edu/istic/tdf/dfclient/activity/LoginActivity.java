@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 
@@ -12,6 +13,13 @@ public class LoginActivity extends BaseActivity implements LoginFragment.OnFragm
 
     @Inject
     LoginFragment loginFragment;
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.addCategory(Intent.CATEGORY_HOME);
+        startActivity(i);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

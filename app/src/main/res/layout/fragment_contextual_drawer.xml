@@ -55,7 +55,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Supprimer"
+            android:text="@string/supprimer_button_for_defaut"
             android:id="@+id/ElementDeleteButton"
             android:layout_gravity="center_horizontal|bottom" />
     </LinearLayout>

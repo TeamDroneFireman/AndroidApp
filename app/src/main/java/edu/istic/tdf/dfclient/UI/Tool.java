@@ -3,6 +3,8 @@ package edu.istic.tdf.dfclient.UI;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by Alexandre on 22/04/2016.

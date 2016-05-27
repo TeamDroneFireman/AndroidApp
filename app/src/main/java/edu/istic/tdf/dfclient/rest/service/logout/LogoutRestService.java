@@ -12,7 +12,7 @@ import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 import edu.istic.tdf.dfclient.rest.service.logout.response.LogoutResponse;
 
 /**
- * Created by maxime on 22/04/2016.
+ * Service used for user logout
  */
 public class LogoutRestService {
 

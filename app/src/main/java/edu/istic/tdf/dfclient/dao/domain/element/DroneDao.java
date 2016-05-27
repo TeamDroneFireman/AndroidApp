@@ -7,7 +7,7 @@ import edu.istic.tdf.dfclient.repository.domain.element.DroneRepository;
 import edu.istic.tdf.dfclient.rest.domain.element.DroneRestClient;
 
 /**
- * The DAO for Sinister
+ * The DAO for Drones
  *
  * {@inheritDoc}
  */

@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -117,7 +118,9 @@ public class SitacActivity extends BaseActivity implements
             this.overridePendingTransition(R.anim.shake, R.anim.shake);
             Bundle intentBundle = new Bundle();
             final Intent intent = new Intent(this, MainMenuActivity.class);
-            ActivityCompat.startActivity(this, intent, intentBundle);
+            //ActivityCompat.startActivity(this, intent, intentBundle);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
         }
     }
 
@@ -185,6 +188,8 @@ public class SitacActivity extends BaseActivity implements
         String interventionId = (String) getIntent().getExtras().get("interventionId");
         dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
         dataLoader.loadData();
+
+        this.registerPushHandlers();
     }
 
     @Override
@@ -703,7 +708,7 @@ public class SitacActivity extends BaseActivity implements
         application.getPushHandler().addCatcher("mean/update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
-                SitacActivity.this.dataLoader.loadMeans();
+                SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
                 Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
             }
         });
@@ -712,7 +717,7 @@ public class SitacActivity extends BaseActivity implements
         application.getPushHandler().addCatcher("drone/update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
-                SitacActivity.this.dataLoader.loadDrones();
+                SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
                 Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
             }
         });
@@ -721,7 +726,7 @@ public class SitacActivity extends BaseActivity implements
         application.getPushHandler().addCatcher("sig/update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
-                SitacActivity.this.dataLoader.loadPointsOfInterest();
+                SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
                 Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
             }
         });
@@ -730,7 +735,7 @@ public class SitacActivity extends BaseActivity implements
         application.getPushHandler().addCatcher("sigextern/update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
-                SitacActivity.this.dataLoader.loadPointsOfInterest();
+                SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
                 Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
             }
         });

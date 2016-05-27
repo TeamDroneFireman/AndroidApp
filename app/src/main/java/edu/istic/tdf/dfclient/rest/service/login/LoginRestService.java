@@ -11,7 +11,7 @@ import edu.istic.tdf.dfclient.rest.service.login.request.LoginRequest;
 import edu.istic.tdf.dfclient.rest.service.login.response.LoginResponse;
 
 /**
- * Created by maxime on 22/04/2016.
+ * A REST service for user login
  */
 public class LoginRestService {
 

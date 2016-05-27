@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -197,6 +198,8 @@ public class MeansTableFragment extends Fragment {
         TextView name = new TextView(meanTab.getContext());
         name.setText(element.getName());
         name.setGravity(Gravity.CENTER_HORIZONTAL);
+        name.setTextSize(20);
+        name.setTypeface(null, Typeface.BOLD);
         tableRow.addView(name);
 
         tableRow.setBackgroundColor(element.getRole().getLightColor());
@@ -221,13 +224,13 @@ public class MeansTableFragment extends Fragment {
     private void addDeleteButton(final LinearLayout relativeLayout, final IMean element, Date released, Date valided) {
         if(!isCodis&& released==null && valided!=null) {
             Button deleteButton = new Button(relativeLayout.getContext());
-            deleteButton.setText("Supprimer");
+            deleteButton.setText(R.string.supprimer_button_mean_table);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new AlertDialog.Builder(relativeLayout.getContext())
-                            .setTitle("Supprimer")
-                            .setMessage("Attention !\n Êtes vous sûr de vouloir supprimer cet élément?")
+                            .setTitle(R.string.supprimer_button_mean_table)
+                            .setMessage(R.string.popup_supprimer_button_mean_table)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -300,6 +303,7 @@ public class MeansTableFragment extends Fragment {
         TextView textView=new TextView(meanTab.getContext());
         if(d!=null) {
             textView.setText(d.toString());
+            textView.setTextSize(20);
         }else{
             textView.setText("");
         }

@@ -16,13 +16,22 @@ import edu.istic.tdf.dfclient.rest.domain.element.ElementRestClient;
 import edu.istic.tdf.dfclient.rest.handler.IRestReturnHandler;
 
 /**
- * Created by maxime on 27/04/2016.
+ * The DAO for an Element
+ * @param <E> Element entity class
+ * @param <R> Repository associated to the element
+ * @param <C> The Rest Client associated to the element
  */
 public abstract class ElementDao<E extends Entity, R extends Repository<E>, C extends ElementRestClient<E>> extends Dao<E,R,C> {
     public ElementDao(R repository, C restClient) {
         super(repository, restClient);
     }
 
+    /**
+     * Finds a collection of elements from an intervention
+     * @param interventionId The id of the intervention to get elements from
+     * @param selectionParameters The selection parameters, such as limit or order by
+     * @param handler The handler called at return
+     */
     public void findByIntervention(String interventionId, DaoSelectionParameters selectionParameters, final IDaoSelectReturnHandler<List<E>> handler) {
         // Make a first query on local data
         try {

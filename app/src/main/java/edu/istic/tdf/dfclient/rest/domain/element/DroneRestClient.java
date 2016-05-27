@@ -8,7 +8,9 @@ import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestEndpoints;
 
-
+/**
+ * The REST client for Drones
+ */
 public class DroneRestClient extends ElementRestClient<Drone> implements IRestClient<Drone> {
 
     public DroneRestClient(TdfHttpClient httpClient) {

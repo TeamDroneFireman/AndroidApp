@@ -6,7 +6,9 @@ import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestEndpoints;
 
-
+/**
+ * The REST client for InterventionMeans
+ */
 public class InterventionMeanRestClient extends ElementRestClient<InterventionMean> implements IRestClient<InterventionMean> {
 
     public InterventionMeanRestClient(TdfHttpClient httpClient) {
