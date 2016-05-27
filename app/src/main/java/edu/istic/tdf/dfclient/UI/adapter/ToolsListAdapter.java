@@ -122,7 +122,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
             icon.setImageBitmap(
                     PictoFactory.createPicto(context)
                             .setLabel("")
-                            .setColor(children.getRole().getColor())
+                            .setRole(children.getRole())
                             .setDrawable(children.getForm().getDrawable())
                             .toBitmap()
             );

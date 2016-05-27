@@ -199,7 +199,7 @@ public class MeansTableFragment extends Fragment {
         name.setGravity(Gravity.CENTER_HORIZONTAL);
         tableRow.addView(name);
 
-        tableRow.setBackgroundColor(element.getRole().getColor());
+        tableRow.setBackgroundColor(element.getRole().getLightColor());
         HashMap<MeanState, Date> currentStates = element.getStates();
 
         Date d = currentStates.get(MeanState.ASKED);

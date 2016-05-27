@@ -306,11 +306,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     .title(element.getName())
                     .draggable(isDraggable(element))
                     .icon(BitmapDescriptorFactory.fromBitmap(
-                            PictoFactory.createPicto(getContext())
-                                    .setLabel(element.getName())
-                                    .setDrawable(element.getForm().getDrawable())
-                                    .setColor(element.getRole().getColor())
-                                    .toBitmap()
+                            PictoFactory.createPicto(getContext()).setElement(element).toBitmap()
                     )));
 
             markersList.put(marker, element);

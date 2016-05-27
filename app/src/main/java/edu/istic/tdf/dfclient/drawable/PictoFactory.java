@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.DrawFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -20,11 +21,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.AutoScaleTextView;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.drawable.element.DomainType;
 
 /**
@@ -32,6 +36,8 @@ import edu.istic.tdf.dfclient.drawable.element.DomainType;
  * Created by guerin on 22/04/16.
  */
 public class PictoFactory {
+
+    private boolean isExternal = false;
 
     public enum ElementForm {
 
@@ -86,7 +92,7 @@ public class PictoFactory {
     /**
      * Picto attributes
      */
-    private int color = Role.DEFAULT.getColor();
+    private Role role = Role.DEFAULT;
     private int drawable = ElementForm.MEAN.getDrawable();
     private int size = 64;
     private String label = "Test";
@@ -106,13 +112,17 @@ public class PictoFactory {
 
     public PictoFactory setElement(IElement element){
         this.setDrawable(element.getForm().getDrawable());
-        this.setColor(element.getRole().getColor());
+        // Check if SIG or not
+        if(element.getType() == ElementType.POINT_OF_INTEREST){
+            this.isExternal = ((PointOfInterest)element).isExternal();
+        }
+        this.setRole(element.getRole());
         this.setLabel(element.getName());
         return this;
     }
 
-    public PictoFactory setColor(int color){
-        this.color = color;
+    public PictoFactory setRole(Role role){
+        this.role = role;
         return this;
     }
 
@@ -133,7 +143,7 @@ public class PictoFactory {
 
     public Drawable toDrawable(){
         Drawable drawable = ContextCompat.getDrawable(context, this.drawable);
-        drawable.setColorFilter(this.color, PorterDuff.Mode.DST_ATOP);
+        drawable.setColorFilter(this.role.getColor(), PorterDuff.Mode.DST_ATOP);
         drawable.setBounds(0, 0, size, size);
         return drawable;
     }
@@ -143,7 +153,6 @@ public class PictoFactory {
         Bitmap bitmap = getOptimizedBitmap();
 
         Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(this.color, PorterDuff.Mode.SRC_IN);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         int textSize = 30;
@@ -160,7 +169,15 @@ public class PictoFactory {
         int y = (bitmap.getHeight()) / 2;
 
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setColor(this.color);
+
+        if(isExternal){
+            canvas.drawColor(this.role.getDarkColor(), PorterDuff.Mode.SRC_IN);
+            paint.setColor(this.role.getDarkColor());
+        } else {
+            canvas.drawColor(this.role.getColor(), PorterDuff.Mode.SRC_IN);
+            paint.setColor(this.role.getColor());
+        }
+
        // paint.setColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.DST_ATOP));
         //canvas.drawColor(this.color);
         canvas.drawText(this.label, x, y, paint);
