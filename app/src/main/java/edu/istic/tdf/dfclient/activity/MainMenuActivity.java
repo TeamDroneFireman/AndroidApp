@@ -1,5 +1,6 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -60,6 +61,13 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
      */
     @Inject
     InterventionWelcomeFragment interventionWelcomeFragment;
+
+    @Override
+    public void onBackPressed() {
+        this.overridePendingTransition(R.anim.shake, R.anim.shake);
+        final Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
