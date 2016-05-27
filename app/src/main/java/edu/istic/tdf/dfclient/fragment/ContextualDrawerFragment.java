@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
@@ -21,6 +25,8 @@ import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class ContextualDrawerFragment extends Fragment implements Observer {
@@ -53,6 +59,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     private View view;
     private Element element;
+    private boolean createDronePathMode = false;
 
     public ContextualDrawerFragment() {
         // Required empty public constructor
@@ -91,6 +98,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         elementCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                createDronePathMode = false;
                 mListener.setCreateDronePathMode(false);
                 mListener.cancelUpdate();
             }
@@ -106,7 +114,14 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         droneCreatePathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.setCreateDronePathMode(true);
+                if(createDronePathMode){
+                    ((Drone)element).setMission(mListener.getCurrentMission());
+                    mListener.getCurrentMission();
+                    mListener.setCreateDronePathMode(false);
+                } else {
+                    mListener.setCreateDronePathMode(true);
+                }
+                createDronePathMode = !createDronePathMode;
             }
         });
 
@@ -168,6 +183,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     public interface OnFragmentInteractionListener {
         void updateElement(Element element);
+        Mission getCurrentMission();
         void setCreateDronePathMode(boolean isDronePathMode);
         void cancelUpdate();
         void deleteElement(Element element);

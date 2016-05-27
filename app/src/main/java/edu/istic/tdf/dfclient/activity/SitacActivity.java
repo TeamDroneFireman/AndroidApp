@@ -3,6 +3,7 @@ package edu.istic.tdf.dfclient.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -10,7 +11,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +28,6 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
@@ -41,6 +44,7 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
@@ -83,10 +87,43 @@ public class SitacActivity extends BaseActivity implements
     @Inject InterventionMeanDao interventionMeanDao;
     @Inject PointOfInterestDao pointOfInterestDao;
 
+    private boolean isCodis;
+
     private ArrayList<Observer> observers = new ArrayList<>();
 
     @Override
+    public void onBackPressed() {
+        if(!sitacFragment.equals(currentFragment))
+        {
+            if(this.isCodis)
+            {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                .commit();
+                switchTo(sitacFragment);
+            }
+            else
+            {
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .commit();
+                switchTo(sitacFragment);
+            }
+        }
+        else
+        {
+            this.overridePendingTransition(R.anim.shake, R.anim.shake);
+            Bundle intentBundle = new Bundle();
+            final Intent intent = new Intent(this, MainMenuActivity.class);
+            ActivityCompat.startActivity(this, intent, intentBundle);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.isCodis = ((TdfApplication)this.getApplication()).loadCredentials().isCodisUser();
 
         //intervention = createInterventionBouton();
         super.onCreate(savedInstanceState);
@@ -122,9 +159,9 @@ public class SitacActivity extends BaseActivity implements
 
         hideContextualDrawer();
 
-        if(isCodis())
+        if(this.isCodis)
         {
-            hideContextualToolBar();
+            hideToolBar();
         }
 
         List<IElement> elements = new ArrayList<>();
@@ -152,11 +189,6 @@ public class SitacActivity extends BaseActivity implements
         this.registerPushHandlers();
     }
 
-    private boolean isCodis(){
-        Credentials credentials = ((TdfApplication)this.getApplication()).loadCredentials();
-        return credentials.isCodisUser();
-    }
-
     @Override
     public void handleSelectedToolUtils(Tool tool) {
         this.sitacFragment.cancelSelection();
@@ -173,7 +205,7 @@ public class SitacActivity extends BaseActivity implements
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
-        if(!isCodis())
+        if(!this.isCodis)
         {
             switch (element.getType())
             {
@@ -279,9 +311,16 @@ public class SitacActivity extends BaseActivity implements
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
-    private void hideContextualToolBar(){
+    private void hideToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .hide(toolbarFragment)
+                .commit();
+    }
+
+    public void showToolBar()
+    {
+        getSupportFragmentManager().beginTransaction()
+                .show(toolbarFragment)
                 .commit();
     }
 
@@ -302,20 +341,19 @@ public class SitacActivity extends BaseActivity implements
                 getSupportFragmentManager().beginTransaction()
                         .hide(toolbarFragment)
                         .hide(contextualDrawerFragment)
-                        .hide(sitacFragment)
+                        .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                         .commit();
-                /*intent = new Intent(this, MeansTableActivity.class);
-                this.startActivity(intent);*/
+
                 switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
-                if(isCodis())
+                if(this.isCodis)
                 {
                     getSupportFragmentManager().beginTransaction()
                             .hide(toolbarFragment)
                             .hide(contextualDrawerFragment)
-                            .show(sitacFragment)
+                            .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                             .commit();
                     switchTo(sitacFragment);
                 }
@@ -323,8 +361,8 @@ public class SitacActivity extends BaseActivity implements
                 {
                     getSupportFragmentManager().beginTransaction()
                             .show(toolbarFragment)
-                            .show(contextualDrawerFragment)
-                            .show(sitacFragment)
+                            .hide(contextualDrawerFragment)
+                            .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                             .commit();
                     switchTo(sitacFragment);
                 }
@@ -351,8 +389,6 @@ public class SitacActivity extends BaseActivity implements
 
     void switchTo (Fragment fragment)
     {
-        if (fragment.isVisible())
-            return;
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out);
 
@@ -400,6 +436,17 @@ public class SitacActivity extends BaseActivity implements
                 this.updateDrone((Drone)element);
                 break;
         }
+    }
+
+    @Override
+    public Mission getCurrentMission() {
+        Mission mission = new Mission();
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        for (LatLng latLng : sitacFragment.getCurrentDronePath()){
+            geoPoints.add(new GeoPoint(latLng.latitude, latLng.longitude, 10));
+        }
+        mission.setPathPoints(geoPoints);
+        return mission;
     }
 
     @Override
@@ -1165,7 +1212,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.sitacFragment.removeElements(elements);
 
                     // Update Means table
-                    SitacActivity.this.meansTableFragment.removeElementFromUi( elements);
+                    SitacActivity.this.meansTableFragment.removeElementFromUi(elements);
                 }
             });
         }

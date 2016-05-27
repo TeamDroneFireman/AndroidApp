@@ -1,8 +1,10 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +26,6 @@ import java.util.List;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
-import edu.istic.tdf.dfclient.activity.SitacActivity;
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -74,7 +74,7 @@ public class MeansTableFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        isCodis=isCodis();
+        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
 
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
@@ -120,8 +120,8 @@ public class MeansTableFragment extends Fragment {
                 }
             });
         }
+        
         return view;
-
     }
 
     @Deprecated
@@ -218,14 +218,23 @@ public class MeansTableFragment extends Fragment {
         tableRow.addView(relativeLayout);
     }
 
-    private void addDeleteButton(LinearLayout relativeLayout, final IMean element, Date released, Date valided) {
-        if(released==null && valided!=null) {
+    private void addDeleteButton(final LinearLayout relativeLayout, final IMean element, Date released, Date valided) {
+        if(!isCodis&& released==null && valided!=null) {
             Button deleteButton = new Button(relativeLayout.getContext());
             deleteButton.setText("Supprimer");
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    removeElement((Element) element);
+                    new AlertDialog.Builder(relativeLayout.getContext())
+                            .setTitle("Supprimer")
+                            .setMessage("Attention !\n Êtes vous sûr de vouloir supprimer cet élément?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    removeElement((Element) element);
+                                }})
+                            .setNegativeButton(android.R.string.no, null).show();
+
                 }
             });
             relativeLayout.addView(deleteButton);
@@ -249,7 +258,7 @@ public class MeansTableFragment extends Fragment {
         }
     }
 
-    private void addValidationButtonForCodis(LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
+    private void addValidationButtonForCodis(final LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
         if(isCodis&& valided==null && released==null){
             Button validationButton=new Button(relativeLayout.getContext());
             validationButton.setText("Valider");
@@ -267,9 +276,17 @@ public class MeansTableFragment extends Fragment {
             refuseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    IMean mean = (IMean) element;
-                    mean.setState(MeanState.RELEASED);
-                    mListener.handleValidation((Element) mean);
+                    new AlertDialog.Builder(relativeLayout.getContext())
+                            .setTitle("Refuser")
+                            .setMessage("Attention !\n Êtes vous sûr de vouloir refuser cette demande?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    IMean mean = (IMean) element;
+                                    mean.setState(MeanState.RELEASED);
+                                    mListener.handleValidation((Element) mean);
+                                }})
+                            .setNegativeButton(android.R.string.no, null).show();
                 }
             });
             relativeLayout.addView(validationButton);
@@ -349,10 +366,5 @@ public class MeansTableFragment extends Fragment {
         while(it.hasNext()){
             removeElement(it.next());
         }
-    }
-
-    private boolean isCodis(){
-        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
-        return credentials.isCodisUser();
     }
 }

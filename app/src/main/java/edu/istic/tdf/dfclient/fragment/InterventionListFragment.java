@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,10 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,7 +26,6 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.adapter.InterventionListAdapter;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
@@ -51,6 +47,8 @@ public class InterventionListFragment extends Fragment {
     // Fragment listener
     private OnFragmentInteractionListener fragmentInteractionListener;
 
+    private boolean isCodis;
+
 
     public static InterventionListFragment newInstance(InterventionDao interventionDao) {
         InterventionListFragment fragment = new InterventionListFragment();
@@ -66,6 +64,8 @@ public class InterventionListFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
 
         View view = inflater.inflate(R.layout.fragment_intervention_list, container, false);
         ButterKnife.bind(this, view);// Inflate the layout for this fragment
@@ -115,7 +115,6 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 
@@ -146,12 +145,7 @@ public class InterventionListFragment extends Fragment {
     }
 
     private void displayCreationBt() {
-        interventionCreationBt.setEnabled(isCodis());
-    }
-
-    private boolean isCodis(){
-        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
-        return credentials.isCodisUser();
+        interventionCreationBt.setEnabled(this.isCodis);
     }
 
     public void loadAndDisplayInterventions(final Runnable onLoaded){

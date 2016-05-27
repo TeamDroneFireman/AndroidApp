@@ -28,11 +28,11 @@ import java.util.Observer;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
-import edu.istic.tdf.dfclient.auth.Credentials;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
@@ -58,6 +58,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private ArrayList<LatLng> currentPath;
     private Polyline currentPolyline;
 
+    private boolean isCodis;
+
     public SitacFragment() {
     }
 
@@ -65,6 +67,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
 
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_sitac, container, false);
@@ -233,6 +237,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         this.isDronePathMode = isDronePathMode;
     }
 
+    public ArrayList<LatLng> getCurrentDronePath(){
+        return this.currentPath;
+    }
+
     public interface OnFragmentInteractionListener {
 
         Tool getSelectedTool();
@@ -275,6 +283,22 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             element.setForm(PictoFactory.ElementForm.MEAN);
         }
 
+        if(element.getForm() == PictoFactory.ElementForm.AIRMEAN || element.getForm() == PictoFactory.ElementForm.AIRMEAN_PLANNED){
+
+            ArrayList<LatLng> pathPoints = new ArrayList<>();
+            if(((Drone)element).getMission() != null){
+
+            for(GeoPoint geoPoint : ((Drone)element).getMission().getPathPoints()){
+                pathPoints.add(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()));
+            }
+
+            PolylineOptions rectOptions = new PolylineOptions().addAll(pathPoints);
+
+            Polyline dronePolyline = googleMap.addPolyline(rectOptions);
+            }
+
+        }
+
         if(googleMap != null) {
 
             Marker marker = googleMap.addMarker(new MarkerOptions()
@@ -311,14 +335,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 break;
         }
 
-        result = result && (element.getId() != null) && !isCodis();
+        result = result && (element.getId() != null) && !this.isCodis;
 
         return result;
-    }
-
-    private boolean isCodis(){
-        Credentials credentials = ((TdfApplication)this.getActivity().getApplication()).loadCredentials();
-        return credentials.isCodisUser();
     }
 
     private void updateMarker(Marker marker, Element element){
