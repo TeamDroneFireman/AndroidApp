@@ -306,7 +306,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                         break;
                     case ENGAGED:
                         arrivedStateCheckBox.setChecked(true);
-                        arrivedStateCheckBox.setEnabled(true);
+                        arrivedStateCheckBox.setEnabled(false);
                         engagedStateCheckBox.setChecked(true);
                         engagedStateCheckBox.setEnabled(true);
                         releasedStateCheckBox.setChecked(false);
