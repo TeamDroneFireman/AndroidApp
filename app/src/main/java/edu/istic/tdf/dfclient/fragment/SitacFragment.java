@@ -401,14 +401,17 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void updateMarker(Marker marker, Element element){
-
-        marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).toBitmap()));
-        marker.setPosition(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()));
-        marker.setTitle(element.getName());
-
         markersList.remove(marker);
-        markersList.put(marker, element);
 
+        marker = googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
+                .title(element.getName())
+                .draggable(isDraggable(element))
+                .icon(BitmapDescriptorFactory.fromBitmap(
+                        PictoFactory.createPicto(getContext()).setElement(element).toBitmap()
+                )));
+
+        markersList.put(marker, element);
     }
 
     public void updateElement(Element element){
