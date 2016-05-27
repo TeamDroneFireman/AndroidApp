@@ -68,6 +68,9 @@ public class Drone extends Element implements IDrone {
         }else{
             currentState = MeanState.ASKED;
         }*/
+        if(this.states.get(MeanState.RELEASED)!=null){
+            return MeanState.RELEASED;
+        }
         return this.currentState;
     }
 

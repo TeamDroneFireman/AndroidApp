@@ -67,6 +67,9 @@ public class InterventionMean extends Element implements IInterventionMean {
         }else{
             currentState = MeanState.ASKED;
         }*/
+        if(this.states.get(MeanState.RELEASED)!=null){
+            return MeanState.RELEASED;
+        }
         return this.currentState;
     }
 
