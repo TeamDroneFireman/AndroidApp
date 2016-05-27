@@ -18,12 +18,21 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 
+/**
+ * The REST client for Interventions
+ */
 public class InterventionRestClient extends RestClient<Intervention> implements IRestClient<Intervention> {
 
     protected static final String TAG = "InterventionRestClient";
 
+    /**
+     * The Push subscription endpoint URL
+     */
     private final static String SUBSCRIPTION_URL = "TODO"; // TODO : Set sub url
 
+    /**
+     * A GSON Serializer
+     */
     private Gson gson;
 
     public InterventionRestClient(TdfHttpClient httpClient, Gson gson) {
@@ -32,6 +41,11 @@ public class InterventionRestClient extends RestClient<Intervention> implements 
         httpClient.setConf(new TdfHttpClientConf(RestEndpoints.Intervention)); // Hack because no load balancer
     }
 
+    /**
+     * Makes the REST request to subscribe to an intervention
+     * @param registrationId The registrationId to subscribe
+     * @param intervention The intervention to subscribe to
+     */
     public void subscribe(final String registrationId, final Intervention intervention) {
         PushSubscriptionData data = new PushSubscriptionData();
         data.setRegistrationId(registrationId);

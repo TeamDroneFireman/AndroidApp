@@ -13,7 +13,7 @@ import edu.istic.tdf.dfclient.repository.domain.SinisterRepository;
 import edu.istic.tdf.dfclient.rest.domain.SinisterRestClient;
 
 /**
- * Created by tremo on 27/04/16.
+* DAO for Sinister
  */
 public class SinisterDao extends Dao<Sinister, SinisterRepository, SinisterRestClient>
         implements IDao<Sinister, SinisterRepository, SinisterRestClient> {

@@ -7,7 +7,7 @@ import edu.istic.tdf.dfclient.repository.domain.element.PointOfInterestRepositor
 import edu.istic.tdf.dfclient.rest.domain.element.PointOfInterestRestClient;
 
 /**
- * The DAO for Point Of Interest
+ * The DAO for Points Of Interest
  *
  * {@inheritDoc}
  */

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Represents an ArrayList parameterized type for deserialization
+ * Required by Gson
  */
 public class ArrayListParameterizedType implements ParameterizedType {
 

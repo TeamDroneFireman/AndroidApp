@@ -7,6 +7,9 @@ import edu.istic.tdf.dfclient.rest.IRestClient;
 import edu.istic.tdf.dfclient.rest.RestEndpoints;
 
 
+/**
+ * The REST client for Points of Interest
+ */
 public class PointOfInterestRestClient extends ElementRestClient<PointOfInterest> implements IRestClient<PointOfInterest> {
 
     public PointOfInterestRestClient(TdfHttpClient httpClient) {

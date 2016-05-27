@@ -10,7 +10,7 @@ import edu.istic.tdf.dfclient.repository.domain.InterventionRepository;
 import edu.istic.tdf.dfclient.rest.domain.InterventionRestClient;
 
 /**
- * The DAO for Sinister
+ * The DAO for Interventions
  *
  * {@inheritDoc}
  */
@@ -21,6 +21,11 @@ public class InterventionDao extends Dao<Intervention, InterventionRepository, I
         super(new InterventionRepository(), new InterventionRestClient(httpClient, gson));
     }
 
+    /**
+     * Subscribes a registrationId of a device to an intervention
+     * @param intervention The intervention to subscribe to
+     * @param registrationId The registration id to subscribe
+     */
     public void subscribe(Intervention intervention, String registrationId){
         //this.restClient.subscribe(registrationId, intervention);
     }

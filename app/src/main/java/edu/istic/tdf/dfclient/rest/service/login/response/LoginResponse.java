@@ -3,7 +3,7 @@ package edu.istic.tdf.dfclient.rest.service.login.response;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by maxime on 22/04/2016.
+ * Result returned by api on login
  */
 public class LoginResponse {
     /**

@@ -4,9 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
- * Created by maxime on 22/04/2016.
+ * Builds a Gson serializer with some parameters
  */
 public class RestSerializerBuilder {
+
+    /**
+     * Builds a Gson serializer
+     * @return A Gson serializer
+     */
     public static Gson build() {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
