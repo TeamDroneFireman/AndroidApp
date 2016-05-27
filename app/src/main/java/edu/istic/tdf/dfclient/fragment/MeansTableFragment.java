@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -197,6 +198,8 @@ public class MeansTableFragment extends Fragment {
         TextView name = new TextView(meanTab.getContext());
         name.setText(element.getName());
         name.setGravity(Gravity.CENTER_HORIZONTAL);
+        name.setTextSize(20);
+        name.setTypeface(null, Typeface.BOLD);
         tableRow.addView(name);
 
         tableRow.setBackgroundColor(element.getRole().getColor());
@@ -300,6 +303,7 @@ public class MeansTableFragment extends Fragment {
         TextView textView=new TextView(meanTab.getContext());
         if(d!=null) {
             textView.setText(d.toString());
+            textView.setTextSize(20);
         }else{
             textView.setText("");
         }
