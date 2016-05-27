@@ -59,7 +59,8 @@ public class RestHttpResponseHandler<Result> implements Callback{
             // Initialize result
             Result result = null;
             try {
-                result = deserializer.fromJson(responseBody, resultType);
+                if (resultType != null)
+                    result = deserializer.fromJson(responseBody, resultType);
             } catch (Exception e) {
                 callback.onError(e);
                 return;

@@ -17,4 +17,5 @@ public class InterventionMeanDao extends ElementDao<InterventionMean, Interventi
     public InterventionMeanDao(TdfHttpClient httpClient) {
         super(new InterventionMeanRepository(), new InterventionMeanRestClient(httpClient));
     }
+
 }

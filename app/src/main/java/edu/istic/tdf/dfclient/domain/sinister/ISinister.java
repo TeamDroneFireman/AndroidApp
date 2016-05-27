@@ -1,5 +1,7 @@
 package edu.istic.tdf.dfclient.domain.sinister;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,11 +12,13 @@ import edu.istic.tdf.dfclient.domain.IEntity;
  */
 public interface ISinister extends IEntity {
 
-    boolean addElement(String mean);
+    boolean addElement(MeanCount mean);
 
-    boolean removeElement(String mean);
+    boolean removeElement(MeanCount mean);
 
-    Iterator<String> getIteratorOnElements();
+    Iterator<MeanCount> getIteratorOnElements();
 
-    void setMeans(List<String> means);
+    void setMeans(ArrayList<MeanCount> means);
+
+    ArrayList<MeanCount> getMeans();
 }

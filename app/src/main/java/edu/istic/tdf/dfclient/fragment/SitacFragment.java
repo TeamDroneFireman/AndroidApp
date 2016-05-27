@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,11 +26,17 @@ import java.util.Observable;
 import java.util.Observer;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
+import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -53,6 +58,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private ArrayList<LatLng> currentPath;
     private Polyline currentPolyline;
 
+    private boolean isCodis;
+
     public SitacFragment() {
     }
 
@@ -60,6 +67,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        this.isCodis = ((TdfApplication)this.getActivity().getApplication()).loadCredentials().isCodisUser();
 
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_sitac, container, false);
@@ -132,15 +141,16 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public void onMarkerDrag(Marker marker) {
+                Element element = markersList.get(marker);
+
+                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
+                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 Element element = markersList.get(marker);
-
-                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
-                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
                 mListener.handleUpdatedElement(element);
             }
@@ -160,6 +170,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
+    public boolean isLocationEmpty(){
+        return this.longitude == 0.0 || this.latitude == 0.0;
+    }
+
     private Element createElementFromLatLng(LatLng latLng){
         Tool tool = mListener.getSelectedTool();
         return mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
@@ -177,6 +191,21 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         }
         mListener.handleCancelSelection();
+    }
+
+    public void cancelSelectionAfterPushIfRequire(Element element, Element currentElement){
+        for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
+            Marker marker = entry.getKey();
+            IElement elementValue = entry.getValue();
+            if (elementValue.getId() == null){
+                marker.remove();
+            }
+        }
+
+        if(currentElement != null && currentElement.getId() != null && currentElement.getId().equals(element.getId()))
+        {
+            mListener.handleCancelSelection();
+        }
     }
 
     private boolean hasElementSelected(){
@@ -275,7 +304,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
                     .title(element.getName())
-                    .draggable(element.getId() != null)
+                    .draggable(isDraggable(element))
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setLabel(element.getName())
@@ -289,6 +318,26 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
         elementsToSync.add(element);
         return null;
+    }
+
+    private boolean isDraggable(Element element)
+    {
+        boolean result = true;
+
+        switch (element.getType())
+        {
+            case POINT_OF_INTEREST:
+                //disable contextual drawer for external SIG
+                if(((PointOfInterest)element).isExternal())
+                {
+                    result = false;
+                }
+                break;
+        }
+
+        result = result && (element.getId() != null) && !this.isCodis;
+
+        return result;
     }
 
     private void updateMarker(Marker marker, Element element){
@@ -313,6 +362,20 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void updateElements(Collection<Element> elements){
         for(Element element : elements){
+            switch (ElementType.getElementType(element.getForm())){
+                case MEAN:
+                    if (((IMean) element).getStates().get(MeanState.RELEASED) != null){
+                        continue;
+                    }
+                    break;
+                case AIRMEAN:
+                    if (((IDrone) element).getStates().get(MeanState.RELEASED) != null) {
+                        continue;
+                    }
+                    break;
+                default:
+                    break;
+            }
             if(element.getLocation().getGeopoint() != null) {
                 updateElement(element);
             }

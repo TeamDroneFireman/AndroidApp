@@ -165,7 +165,7 @@ public class PictoFactory {
         //canvas.drawColor(this.color);
         canvas.drawText(this.label, x, y, paint);
         return bitmap;
-/*
+        /*
         View view = getView();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();

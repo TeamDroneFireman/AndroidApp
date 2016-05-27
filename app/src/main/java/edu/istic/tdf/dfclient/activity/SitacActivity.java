@@ -1,9 +1,12 @@
 package edu.istic.tdf.dfclient.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observer;
@@ -26,6 +30,7 @@ import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
+import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
@@ -82,10 +87,43 @@ public class SitacActivity extends BaseActivity implements
     @Inject InterventionMeanDao interventionMeanDao;
     @Inject PointOfInterestDao pointOfInterestDao;
 
+    private boolean isCodis;
+
     private ArrayList<Observer> observers = new ArrayList<>();
 
     @Override
+    public void onBackPressed() {
+        if(!sitacFragment.equals(currentFragment))
+        {
+            if(this.isCodis)
+            {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                .commit();
+                switchTo(sitacFragment);
+            }
+            else
+            {
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .commit();
+                switchTo(sitacFragment);
+            }
+        }
+        else
+        {
+            this.overridePendingTransition(R.anim.shake, R.anim.shake);
+            Bundle intentBundle = new Bundle();
+            final Intent intent = new Intent(this, MainMenuActivity.class);
+            ActivityCompat.startActivity(this, intent, intentBundle);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.isCodis = ((TdfApplication)this.getApplication()).loadCredentials().isCodisUser();
 
         //intervention = createInterventionBouton();
         super.onCreate(savedInstanceState);
@@ -120,6 +158,12 @@ public class SitacActivity extends BaseActivity implements
                 .commit();
 
         hideContextualDrawer();
+
+        if(this.isCodis)
+        {
+            hideToolBar();
+        }
+
         List<IElement> elements = new ArrayList<>();
 /*
         IElement interventionMean = new InterventionMean();
@@ -159,17 +203,20 @@ public class SitacActivity extends BaseActivity implements
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
-        switch (element.getType())
+        if(!this.isCodis)
         {
-            case POINT_OF_INTEREST:
-                //disable contextual drawer for external SIG
-                if(!((PointOfInterest)element).isExternal())
-                {
+            switch (element.getType())
+            {
+                case POINT_OF_INTEREST:
+                    //disable contextual drawer for external SIG
+                    if(!((PointOfInterest)element).isExternal())
+                    {
+                        showContextualDrawer();
+                    }
+                    break;
+                default:
                     showContextualDrawer();
-                }
-                break;
-            default:
-                showContextualDrawer();
+            }
         }
     }
 
@@ -254,11 +301,25 @@ public class SitacActivity extends BaseActivity implements
         contextualDrawer.animate().translationX(0);
 
     }
+
     private void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
                 .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
+    }
+
+    private void hideToolBar(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(toolbarFragment)
+                .commit();
+    }
+
+    public void showToolBar()
+    {
+        getSupportFragmentManager().beginTransaction()
+                .show(toolbarFragment)
+                .commit();
     }
 
     @Override
@@ -278,20 +339,31 @@ public class SitacActivity extends BaseActivity implements
                 getSupportFragmentManager().beginTransaction()
                         .hide(toolbarFragment)
                         .hide(contextualDrawerFragment)
-                        .hide(sitacFragment)
+                        .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                         .commit();
-                /*intent = new Intent(this, MeansTableActivity.class);
-                this.startActivity(intent);*/
+
                 switchTo(meansTableFragment);
                 break;
 
             case R.id.switch_to_sitac:
-                getSupportFragmentManager().beginTransaction()
-                        .show(toolbarFragment)
-                        .show(contextualDrawerFragment)
-                        .show(sitacFragment)
-                        .commit();
-                switchTo(sitacFragment);
+                if(this.isCodis)
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(toolbarFragment)
+                            .hide(contextualDrawerFragment)
+                            .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
+                            .commit();
+                    switchTo(sitacFragment);
+                }
+                else
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .show(toolbarFragment)
+                            .hide(contextualDrawerFragment)
+                            .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
+                            .commit();
+                    switchTo(sitacFragment);
+                }
                 break;
 
             case R.id.logout_button:
@@ -315,8 +387,6 @@ public class SitacActivity extends BaseActivity implements
 
     void switchTo (Fragment fragment)
     {
-        if (fragment.isVisible())
-            return;
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out);
 
@@ -391,8 +461,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadMean(meanId);
-                        hideContextualDrawer();
+                        dataLoader.loadMean(meanId, false);
                     }
                 });
             }
@@ -431,8 +500,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadDrone(droneId);
-                        hideContextualDrawer();
+                        dataLoader.loadDrone(droneId, false);
                     }
                 });
             }
@@ -471,8 +539,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dataLoader.loadPointOfInterest(pointOfInterestId);
-                        hideContextualDrawer();
+                        dataLoader.loadPointOfInterest(pointOfInterestId, false);
                     }
                 });
             }
@@ -504,8 +571,123 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public void cancelUpdate() {
-        hideContextualDrawer();
         sitacFragment.cancelSelection();
+    }
+
+    @Override
+    public void deleteElement(final Element element){
+        new AlertDialog.Builder(this)
+                .setTitle("Supprimer")
+                .setMessage("Attention !\nCette action va libérer l'élément actuel et celui ci ne sera plus disponible.\nVoulez-vous continuer ?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteIfMean(element);
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
+    }
+
+    private void deleteIfMean(final Element element){
+        if (element.isMeanFromMeanTable()) {
+            ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
+            IDao dao = this.dataLoader.getDaoOfElement(element);
+            dao.persist(element, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    deleteFromUI(element);
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    SitacActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } else {
+            if (element.getType() == ElementType.POINT_OF_INTEREST && ((PointOfInterest) element).isExternal()) {
+                SitacActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                IDao dao = this.dataLoader.getDaoOfElement(element);
+                dao.delete(element, new IDaoWriteReturnHandler() {
+                    @Override
+                    public void onSuccess(Object r) {
+                        deleteFromUI(element);
+                    }
+
+                    @Override
+                    public void onRepositoryFailure(Throwable e) {
+                        SitacActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onRestFailure(Throwable e) {
+                        SitacActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    private void deleteFromUI(final Element element){
+        SitacActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sitacFragment.cancelSelection();
+                hideContextualDrawer();
+                sitacFragment.removeElement(element);
+                Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addElement(Element element){
+        switch (element.getType()) {
+            case MEAN:
+                this.dataLoader.getInterventionMeans().add((InterventionMean)element);
+                break;
+            case POINT_OF_INTEREST:
+                this.dataLoader.getPointOfInterests().add((PointOfInterest)element);
+                break;
+            case MEAN_OTHER:
+                // TODO: 29/04/16
+                break;
+            case WATERPOINT:
+                // TODO: 29/04/16
+                break;
+            case AIRMEAN:
+                this.dataLoader.getDrones().add((Drone)element);
+                break;
+        }
     }
 
     @Override
@@ -645,7 +827,8 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             SitacActivity.this.intervention = r;
-                            sitacFragment.setLocation(r.getLocation().getGeopoint());
+                            if (sitacFragment.isLocationEmpty())
+                                sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }
                     });
 
@@ -710,7 +893,8 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void loadDrone(String droneId) {
+        private void loadDrone(String droneId, final boolean loadAfterPush)
+        {
             SitacActivity.this.droneDao.find(droneId, new IDaoSelectReturnHandler<Drone>() {
                 @Override
                 public void onRepositoryResult(Drone r) {
@@ -748,11 +932,21 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            sitacFragment.cancelSelection();
+                            if(loadAfterPush)
+                            {
+                                //We keep the selection if modification come from an other tablet
+                                Element currentElement = contextualDrawerFragment.tryGetElement();
+                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
+                            }
+                            else
+                            {
+                                sitacFragment.cancelSelection();
+                            }
                         }
                     });
                 }
@@ -812,7 +1006,8 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void loadMean(String meanId) {
+        private void loadMean(String meanId, final boolean loadAfterPush)
+        {
             SitacActivity.this.interventionMeanDao.find(meanId, new IDaoSelectReturnHandler<InterventionMean>() {
                 @Override
                 public void onRepositoryResult(InterventionMean r) {
@@ -850,11 +1045,21 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            sitacFragment.cancelSelection();
+                            if(loadAfterPush)
+                            {
+                                //We keep the selection if modification come from an other tablet
+                                Element currentElement = contextualDrawerFragment.tryGetElement();
+                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
+                            }
+                            else
+                            {
+                                sitacFragment.cancelSelection();
+                            }
                         }
                     });
                 }
@@ -913,7 +1118,7 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void loadPointOfInterest(String pointOfInterestId) {
+        private void loadPointOfInterest(String pointOfInterestId, final boolean loadAfterPush) {
             SitacActivity.this.pointOfInterestDao.find(pointOfInterestId, new IDaoSelectReturnHandler<PointOfInterest>() {
                 @Override
                 public void onRepositoryResult(PointOfInterest r) {
@@ -951,10 +1156,20 @@ public class SitacActivity extends BaseActivity implements
                     elementsUpdate.add(r);
                     updateElementsInUi(elementsUpdate);
 
+                    final Element element = r;
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            sitacFragment.cancelSelection();
+                            if(loadAfterPush)
+                            {
+                                //We keep the selection if modification come from an other tablet
+                                Element currentElement = contextualDrawerFragment.tryGetElement();
+                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
+                            }
+                            else
+                            {
+                                sitacFragment.cancelSelection();
+                            }
                         }
                     });
                 }
@@ -995,7 +1210,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.sitacFragment.removeElements(elements);
 
                     // Update Means table
-                    SitacActivity.this.meansTableFragment.removeElements(elements);
+                    SitacActivity.this.meansTableFragment.removeElementFromUi(elements);
                 }
             });
         }
