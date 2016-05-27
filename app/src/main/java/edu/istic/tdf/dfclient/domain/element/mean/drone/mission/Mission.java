@@ -19,6 +19,15 @@ public class Mission {
         this.pathPoints = pathPoints;
     }
 
+    @Override
+    public String toString() {
+        return "Mission{" +
+                "pathPoints=" + pathPoints +
+                '}';
+    }
+
     public Mission() {
     }
+
+
 }

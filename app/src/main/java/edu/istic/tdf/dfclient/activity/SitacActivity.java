@@ -8,7 +8,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +39,7 @@ import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
@@ -360,6 +364,17 @@ public class SitacActivity extends BaseActivity implements
                 this.updateDrone((Drone)element);
                 break;
         }
+    }
+
+    @Override
+    public Mission getCurrentMission() {
+        Mission mission = new Mission();
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        for (LatLng latLng : sitacFragment.getCurrentDronePath()){
+            geoPoints.add(new GeoPoint(latLng.latitude, latLng.longitude, 10));
+        }
+        mission.setPathPoints(geoPoints);
+        return mission;
     }
 
     @Override

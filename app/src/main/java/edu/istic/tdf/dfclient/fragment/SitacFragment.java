@@ -31,6 +31,7 @@ import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
@@ -207,6 +208,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         this.isDronePathMode = isDronePathMode;
     }
 
+    public ArrayList<LatLng> getCurrentDronePath(){
+        return this.currentPath;
+    }
+
     public interface OnFragmentInteractionListener {
 
         Tool getSelectedTool();
@@ -247,6 +252,22 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
         if(element.getForm() == null){
             element.setForm(PictoFactory.ElementForm.MEAN);
+        }
+
+        if(element.getForm() == PictoFactory.ElementForm.AIRMEAN || element.getForm() == PictoFactory.ElementForm.AIRMEAN_PLANNED){
+
+            ArrayList<LatLng> pathPoints = new ArrayList<>();
+            if(((Drone)element).getMission() != null){
+
+            for(GeoPoint geoPoint : ((Drone)element).getMission().getPathPoints()){
+                pathPoints.add(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()));
+            }
+
+            PolylineOptions rectOptions = new PolylineOptions().addAll(pathPoints);
+
+            Polyline dronePolyline = googleMap.addPolyline(rectOptions);
+            }
+
         }
 
         if(googleMap != null) {
