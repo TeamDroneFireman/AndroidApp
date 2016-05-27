@@ -72,7 +72,13 @@
         <activity android:name=".activity.MainMenuActivity"
             android:screenOrientation="landscape"/>
         <activity android:name=".activity.SitacActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:parentActivityName=".activity.MainMenuActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainMenuActivity" />
+        </activity>
         <activity android:name=".activity.MeansTableActivity"
             android:screenOrientation="landscape"></activity>
         <activity android:name=".activity.DronesMapActivity"

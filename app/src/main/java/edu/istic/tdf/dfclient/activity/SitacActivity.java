@@ -1,11 +1,11 @@
 package edu.istic.tdf.dfclient.activity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -114,10 +114,9 @@ public class SitacActivity extends BaseActivity implements
         else
         {
             this.overridePendingTransition(R.anim.shake, R.anim.shake);
-            Bundle intentBundle = new Bundle();
-            final Intent intent = new Intent(this, MainMenuActivity.class);
-            setResult(Activity.RESULT_OK, intent);
-            finish();
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            NavUtils.navigateUpTo(this, upIntent);
         }
     }
 
