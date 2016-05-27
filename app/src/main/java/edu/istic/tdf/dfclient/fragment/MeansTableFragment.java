@@ -224,13 +224,13 @@ public class MeansTableFragment extends Fragment {
     private void addDeleteButton(final LinearLayout relativeLayout, final IMean element, Date released, Date valided) {
         if(!isCodis&& released==null && valided!=null) {
             Button deleteButton = new Button(relativeLayout.getContext());
-            deleteButton.setText("Supprimer");
+            deleteButton.setText(R.string.supprimer_button_mean_table);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new AlertDialog.Builder(relativeLayout.getContext())
-                            .setTitle("Supprimer")
-                            .setMessage("Attention !\n Êtes vous sûr de vouloir supprimer cet élément?")
+                            .setTitle(R.string.supprimer_button_mean_table)
+                            .setMessage(R.string.popup_supprimer_button_mean_table)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
