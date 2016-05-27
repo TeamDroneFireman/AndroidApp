@@ -253,7 +253,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 marker.remove();
             }
         }
-        mListener.handleCancelSelection();
+        if (mListener != null)
+            mListener.handleCancelSelection();
     }
 
     public void cancelSelectionAfterPushIfRequire(Element element, Element currentElement){
