@@ -828,14 +828,18 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            // Set intervention
                             SitacActivity.this.intervention = r;
+
+                            // Subscribe to intervention
+                            DataLoader.this.subscribeToIntervention();
+
+                            // Center map view on location
                             if (sitacFragment.isLocationEmpty())
                                 sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }
                     });
 
-                    // Subscribe to intervention
-                    DataLoader.this.subscribeToIntervention();
 
                     // TODO : What to do when it is loaded ?
                 }

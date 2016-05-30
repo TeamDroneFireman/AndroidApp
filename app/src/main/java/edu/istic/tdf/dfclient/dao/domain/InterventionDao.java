@@ -27,6 +27,6 @@ public class InterventionDao extends Dao<Intervention, InterventionRepository, I
      * @param registrationId The registration id to subscribe
      */
     public void subscribe(Intervention intervention, String registrationId){
-        //this.restClient.subscribe(registrationId, intervention);
+        this.restClient.subscribe(registrationId, intervention);
     }
 }
