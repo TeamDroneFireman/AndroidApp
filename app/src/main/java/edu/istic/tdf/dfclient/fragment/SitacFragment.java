@@ -192,6 +192,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
                 element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
+                element.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                 mListener.handleUpdatedElement(element);
             }
         });
