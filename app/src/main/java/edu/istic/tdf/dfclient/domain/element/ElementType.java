@@ -8,6 +8,8 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 public enum ElementType {
 
     MEAN,
+    MEAN_GROUP,
+    MEAN_COLUMN,
     MEAN_OTHER,
     POINT_OF_INTEREST,
     WATERPOINT,
@@ -19,9 +21,15 @@ public enum ElementType {
 
             case MEAN:
             case MEAN_PLANNED:
-            case MEAN_GROUP:
-            case MEAN_COLUMN:
                 return ElementType.MEAN;
+
+            case MEAN_GROUP_PLANNED:
+            case MEAN_GROUP:
+                return ElementType.MEAN_GROUP;
+
+            case MEAN_COLUMN:
+            case MEAN_COLUMN_PLANNED:
+                return ElementType.MEAN_COLUMN;
 
             case MEAN_OTHER:
             case MEAN_OTHER_PLANNED:

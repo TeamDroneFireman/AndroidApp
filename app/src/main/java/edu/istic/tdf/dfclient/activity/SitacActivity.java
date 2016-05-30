@@ -262,6 +262,22 @@ public class SitacActivity extends BaseActivity implements
                     element.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                     break;
 
+                case MEAN_GROUP:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    ((IMean) element).setAction("Action par défaut");
+                    element.setForm(PictoFactory.ElementForm.MEAN_GROUP_PLANNED);
+                    break;
+
+                case MEAN_COLUMN:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    ((IMean) element).setAction("Action par défaut");
+                    element.setForm(PictoFactory.ElementForm.MEAN_COLUMN_PLANNED);
+                    break;
+
                 case MEAN_OTHER:
                 case POINT_OF_INTEREST:
                     element = new PointOfInterest();

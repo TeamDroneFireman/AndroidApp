@@ -47,7 +47,9 @@ public class PictoFactory {
         MEAN("Véhicule", R.drawable.mean),
         MEAN_PLANNED("Véhicule prévu", R.drawable.mean_planned),
         MEAN_GROUP("Groupe de véhicules", R.drawable.mean_group),
+        MEAN_GROUP_PLANNED("Groupe de véhicules prévu", R.drawable.mean_group_planned),
         MEAN_COLUMN("Colonne", R.drawable.mean_column),
+        MEAN_COLUMN_PLANNED("Colonne prévue", R.drawable.mean_column_planned),
 
         // Mean other
         MEAN_OTHER("Moyen d'intervention", R.drawable.mean_other),
@@ -192,7 +194,7 @@ public class PictoFactory {
         rect.set(0, 0, bitmap.getWidth(), bitmap.getHeight() + 500);*/
 
         Canvas canvas = new Canvas(bitmap);
-        paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextAlign(Paint.Align.CENTER);
 
         // Color of icon + text
         if(isExternal){
@@ -203,7 +205,7 @@ public class PictoFactory {
             paint.setColor(this.role.getColor());
         }
 
-        canvas.drawText(this.label, 0, (bitmap.getHeight()/2) - (bounds.height()/2), paint);
+        canvas.drawText(this.label, 0, bounds.height() + bitmap.getScaledHeight(canvas)/2, paint);
 
         return bitmap;
     }
