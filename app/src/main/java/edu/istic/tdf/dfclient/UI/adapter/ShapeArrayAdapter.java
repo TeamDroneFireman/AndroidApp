@@ -68,7 +68,7 @@ public class ShapeArrayAdapter extends ArrayAdapter<PictoFactory.ElementForm> {
         //show data
         holder.textViewTitle.setText(shape.toString());
 
-        holder.imageViewIcon.setImageBitmap(PictoFactory.createPicto(getContext()).setForm(shape).toBitmap());
+        holder.imageViewIcon.setImageBitmap(PictoFactory.createPicto(getContext()).setLabel("").setForm(shape).toBitmap());
         holder.imageViewIcon.setColorFilter(Color.WHITE);
 
         return row;

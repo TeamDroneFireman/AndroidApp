@@ -68,7 +68,7 @@ public class RoleArrayAdapter extends ArrayAdapter<Role> {
         //show data
         holder.textViewTitle.setText(role.getTitle());
 
-        holder.imageViewIcon.setImageBitmap(PictoFactory.createPicto(getContext()).setForm(PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE).toBitmap());
+        holder.imageViewIcon.setImageBitmap(PictoFactory.createPicto(getContext()).setLabel("").setForm(PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE).toBitmap());
         holder.imageViewIcon.setColorFilter(role.getColor());
 
         return row;
