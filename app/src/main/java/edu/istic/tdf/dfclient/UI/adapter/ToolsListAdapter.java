@@ -202,7 +202,13 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     }
 
     public void cancelSelection() {
+        if(currentView != null)
+        {
+            currentView.setBackgroundColor(context.getResources().getColor(R.color.darkGrey));
+        }
 
+        currentView = null;
+        currentTool = null;
     }
 
     public interface OnToolsListAdapterInteractionListener {
