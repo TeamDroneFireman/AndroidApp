@@ -16,7 +16,7 @@ public class TdfHttpClient {
 
     private final static String SCHEME = "http";
     //private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
-    private final static String HOST = "devprojetm2gla.istic.univ-rennes1.fr";
+    private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
 
     public static final String HTTP_ACCEPT = "application/json";
     public static final String HTTP_CONTENT_TYPE = "application/json; charset=utf-8";
