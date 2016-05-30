@@ -158,31 +158,11 @@ public class SitacActivity extends BaseActivity implements
 
         hideContextualDrawer();
 
-        if(this.isCodis)
-        {
-            hideToolBar();
-        }
-
-        List<IElement> elements = new ArrayList<>();
-/*
-        IElement interventionMean = new InterventionMean();
-        interventionMean.setName("CC3");
-        interventionMean.setLocation(new Location("", new GeoPoint(48.1152739, -1.6381364, 12.0)));
-*/
-        IElement drone = new Drone();
-        drone.setName("Drone1");
-        drone.setLocation(new Location("", new GeoPoint(49.1152739, -1.6381364, 12.0)));
-        drone.setForm(PictoFactory.ElementForm.AIRMEAN);
-
-        //elements.add(interventionMean);
-        elements.add(drone);
-//        sitacFragment.updateElements(elements);
-
         currentFragment = sitacFragment;
 
         // Load data
         String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        dataLoader = new DataLoader(interventionId);
         dataLoader.loadData();
 
         this.registerPushHandlers();
@@ -193,6 +173,11 @@ public class SitacActivity extends BaseActivity implements
         this.sitacFragment.cancelSelection();
         this.selectedTool = tool;
         hideContextualDrawer();
+    }
+
+    @Override
+    public boolean isInterventionArchived() {
+        return this.intervention.isArchived();
     }
 
     @Override
@@ -209,7 +194,7 @@ public class SitacActivity extends BaseActivity implements
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
-        if(!this.isCodis)
+        if(!this.isCodis && !intervention.isArchived())
         {
             switch (element.getType())
             {
@@ -788,11 +773,17 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestResult(final Intervention r) {
+                    if(SitacActivity.this.isCodis || r.isArchived())
+                    {
+                        hideToolBar();
+                    }
 
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             SitacActivity.this.intervention = r;
+                            meansTableFragment.initComponentForAddNewAskedMean();
+
                             if (sitacFragment.isLocationEmpty())
                                 sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }

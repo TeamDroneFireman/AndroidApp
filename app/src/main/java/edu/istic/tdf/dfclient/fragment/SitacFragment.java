@@ -321,6 +321,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
+        /**
+         *
+         * @return true iff the current intervention is archived
+         */
+        boolean isInterventionArchived();
+
         Tool getSelectedTool();
         Element tryGetSelectedElement();
 
@@ -395,9 +401,19 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
+    /**
+     *
+     * @param element
+     * @return true iff the current element is not an external Point of Interest
+     * AND if the current user is not the CODIS
+     * AND if the current intervention is not archived
+     */
     private boolean isDraggable(Element element)
     {
-        boolean result = true;
+        if(this.isCodis || element.getId() == null || mListener.isInterventionArchived())
+        {
+            return false;
+        }
 
         switch (element.getType())
         {
@@ -405,14 +421,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 //disable contextual drawer for external SIG
                 if(((PointOfInterest)element).isExternal())
                 {
-                    result = false;
+                    return false;
                 }
                 break;
         }
 
-        result = result && (element.getId() != null) && !this.isCodis;
-
-        return result;
+        return true;
     }
 
     private void updateMarker(Marker marker, Element element){
