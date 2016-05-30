@@ -1,13 +1,20 @@
 package edu.istic.tdf.dfclient.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -59,7 +66,29 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // TODO: 30/05/16 what happen when click on an image
+                ImageView imageView = new ImageView(getContext());
+                Picasso.with(getContext()).load(imgid.get(position)).into(imageView);
+
+                //create a dialog in order to show in full screnn the image
+                AlertDialog.Builder imgDialog = new AlertDialog.Builder(
+                        getActivity());
+
+                Dialog dialog = imgDialog.create();
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                dialog.show();
+                dialog.getWindow().setAttributes(lp);
+
+                dialog.show();
+
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                LinearLayout layout = (LinearLayout)layoutInflater.inflate(R.layout.img_full_screen_popup, null);
+
+                ((ImageView)layout.findViewById(R.id.imgFullScrenn)).setImageDrawable(imageView.getDrawable());
+                dialog.setContentView(layout);
             }
         });
 
@@ -85,6 +114,9 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
         mListener = null;
     }
 
+    /**
+     * methode that will fill the listview
+     */
     public void updateList()
     {
         itemname.add("Safari");
