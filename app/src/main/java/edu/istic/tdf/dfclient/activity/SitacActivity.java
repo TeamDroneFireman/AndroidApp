@@ -781,7 +781,13 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            // Set intervention
                             SitacActivity.this.intervention = r;
+
+                            // Subscribe to intervention
+                            DataLoader.this.subscribeToIntervention();
+
+                            // Center map view on location
                             meansTableFragment.initComponentForAddNewAskedMean();
 
                             if (sitacFragment.isLocationEmpty())
@@ -789,8 +795,6 @@ public class SitacActivity extends BaseActivity implements
                         }
                     });
 
-                    // Subscribe to intervention
-                    DataLoader.this.subscribeToIntervention();
 
                     // TODO : What to do when it is loaded ?
                 }
