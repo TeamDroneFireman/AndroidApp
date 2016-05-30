@@ -40,6 +40,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
         this.toolsGroups= toolsGroups;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
+
     }
 
     @Override
@@ -163,7 +164,7 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
                     PictoFactory.createPicto(context)
                             .setLabel("")
                             .setRole(children.getRole())
-                            .setDrawable(children.getForm().getDrawable())
+                            .setForm(children.getForm())
                             .toBitmap()
             );
         }

@@ -3,16 +3,12 @@ package edu.istic.tdf.dfclient.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,12 +19,9 @@ import java.util.Observer;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
-import edu.istic.tdf.dfclient.UI.Mean;
 import edu.istic.tdf.dfclient.UI.adapter.RoleArrayAdapter;
 import edu.istic.tdf.dfclient.UI.adapter.ShapeArrayAdapter;
-import edu.istic.tdf.dfclient.UI.adapter.StateArrayAdapter;
 import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
@@ -195,7 +188,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             case MEAN:
                 if(((IMean) element).getState().equals(MeanState.ASKED)){
                     forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_PLANNED};
+                            PictoFactory.ElementForm.MEAN_PLANNED,
+                            PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
+                            PictoFactory.ElementForm.MEAN_COLUMN_PLANNED};
                 }else{
                     forms = new PictoFactory.ElementForm[]{
                             PictoFactory.ElementForm.MEAN,
