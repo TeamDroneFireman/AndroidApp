@@ -220,6 +220,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             default:
 
                     forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN_OTHER,
                             PictoFactory.ElementForm.SOURCE,
                             PictoFactory.ElementForm.TARGET,
                             PictoFactory.ElementForm.WATERPOINT,
