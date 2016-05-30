@@ -3,15 +3,14 @@ package edu.istic.tdf.dfclient.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -115,9 +114,9 @@ public class SitacActivity extends BaseActivity implements
         else
         {
             this.overridePendingTransition(R.anim.shake, R.anim.shake);
-            Bundle intentBundle = new Bundle();
-            final Intent intent = new Intent(this, MainMenuActivity.class);
-            ActivityCompat.startActivity(this, intent, intentBundle);
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            NavUtils.navigateUpTo(this, upIntent);
         }
     }
 
@@ -159,31 +158,11 @@ public class SitacActivity extends BaseActivity implements
 
         hideContextualDrawer();
 
-        if(this.isCodis)
-        {
-            hideToolBar();
-        }
-
-        List<IElement> elements = new ArrayList<>();
-/*
-        IElement interventionMean = new InterventionMean();
-        interventionMean.setName("CC3");
-        interventionMean.setLocation(new Location("", new GeoPoint(48.1152739, -1.6381364, 12.0)));
-*/
-        IElement drone = new Drone();
-        drone.setName("Drone1");
-        drone.setLocation(new Location("", new GeoPoint(49.1152739, -1.6381364, 12.0)));
-        drone.setForm(PictoFactory.ElementForm.AIRMEAN);
-
-        //elements.add(interventionMean);
-        elements.add(drone);
-//        sitacFragment.updateElements(elements);
-
         currentFragment = sitacFragment;
 
         // Load data
         String interventionId = (String) getIntent().getExtras().get("interventionId");
-        dataLoader = new DataLoader(interventionId); //"5720c3b8358423010064ca33"); // TODO : Set the real intervention id
+        dataLoader = new DataLoader(interventionId);
         dataLoader.loadData();
 
         this.registerPushHandlers();
@@ -197,15 +176,25 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
+    public boolean isInterventionArchived() {
+        return this.intervention.isArchived();
+    }
+
+    @Override
     public Tool getSelectedTool() {
         return selectedTool;
+    }
+
+    @Override
+    public Element tryGetSelectedElement() {
+        return toolbarFragment.tryGetElementFromTool(selectedTool);
     }
 
     @Override
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
         contextualDrawerFragment.setSelectedElement(element);
-        if(!this.isCodis)
+        if(!this.isCodis && !intervention.isArchived())
         {
             switch (element.getType())
             {
@@ -229,7 +218,6 @@ public class SitacActivity extends BaseActivity implements
         if(element != null)
         {
             //It's an element that as been asked but never put on the map
-            element.setLocation(new Location(null, new GeoPoint(latitude, longitude, 0)));
             updateElement(element);
         }
         else {
@@ -672,26 +660,6 @@ public class SitacActivity extends BaseActivity implements
         });
     }
 
-    private void addElement(Element element){
-        switch (element.getType()) {
-            case MEAN:
-                this.dataLoader.getInterventionMeans().add((InterventionMean)element);
-                break;
-            case POINT_OF_INTEREST:
-                this.dataLoader.getPointOfInterests().add((PointOfInterest)element);
-                break;
-            case MEAN_OTHER:
-                // TODO: 29/04/16
-                break;
-            case WATERPOINT:
-                // TODO: 29/04/16
-                break;
-            case AIRMEAN:
-                this.dataLoader.getDrones().add((Drone)element);
-                break;
-        }
-    }
-
     @Override
     public void handleValidation(Element element) {
         updateElement(element);
@@ -746,24 +714,12 @@ public class SitacActivity extends BaseActivity implements
             return drones;
         }
 
-        public void setDrones(Collection<Drone> drones) {
-            this.drones = drones;
-        }
-
         public Collection<InterventionMean> getInterventionMeans() {
             return interventionMeans;
         }
 
-        public void setInterventionMeans(Collection<InterventionMean> interventionMeans) {
-            this.interventionMeans = interventionMeans;
-        }
-
         public Collection<PointOfInterest> getPointOfInterests() {
             return pointOfInterests;
-        }
-
-        public void setPointOfInterests(Collection<PointOfInterest> pointOfInterests) {
-            this.pointOfInterests = pointOfInterests;
         }
 
         // collection to save previous load datas
@@ -801,13 +757,6 @@ public class SitacActivity extends BaseActivity implements
             return dao;
         }
 
-        public void persistElement(Element element, IDaoWriteReturnHandler handler) {
-            Dao dao = getDaoOfElement(element);
-            if(dao != null){
-                dao.persist(element, handler);
-            }
-        }
-
         private void subscribeToIntervention() {
             TdfApplication tdfApplication = (TdfApplication) SitacActivity.this.getApplication();
             String pushRegistrationId = tdfApplication.getPushRegistrationId();
@@ -824,6 +773,10 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestResult(final Intervention r) {
+                    if(SitacActivity.this.isCodis || r.isArchived())
+                    {
+                        hideToolBar();
+                    }
 
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -835,6 +788,8 @@ public class SitacActivity extends BaseActivity implements
                             DataLoader.this.subscribeToIntervention();
 
                             // Center map view on location
+                            meansTableFragment.initComponentForAddNewAskedMean();
+
                             if (sitacFragment.isLocationEmpty())
                                 sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }

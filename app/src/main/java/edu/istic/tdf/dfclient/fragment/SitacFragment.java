@@ -32,15 +32,24 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
+
+    //minimal distance between 2 marker
+    private Double minimalDistance = 0.00003;
+    //Last valid lat
+    private Double lastValidLat;
+    //Last valid lng
+    private Double lastValidLng;
+    //Last valid lat
+    private Marker currentDraggedMarker;
 
     private OnFragmentInteractionListener mListener;
     private GoogleMap googleMap;
@@ -95,6 +104,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private void initMap(){
         googleMap.getUiSettings().setTiltGesturesEnabled(false);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -110,10 +120,24 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     currentPolyline = googleMap.addPolyline(rectOptions);
 
                 }else if (hasElementSelected()) {
-                    Element element = createElementFromLatLng(latLng);
-                    Marker marker = addMarker(element);
-                    if (marker != null) {
-                        addMarker(element).showInfoWindow();
+                    Element element = mListener.tryGetSelectedElement();
+                    if (element != null)
+                    {
+                        GeoPoint geoPoint = new GeoPoint();
+                        geoPoint.setLatitude(latLng.latitude);
+                        geoPoint.setLongitude(latLng.longitude);
+                        element.getLocation().setGeopoint(geoPoint);
+                        Tool tool = mListener.getSelectedTool();
+                        mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
+                    }
+                    else
+                    {
+                        element = createElementFromLatLng(latLng);
+
+                        Marker marker = addMarker(element);
+                        if (marker != null) {
+                            addMarker(element).showInfoWindow();
+                        }
                     }
                 } else {
                     cancelSelection();
@@ -136,21 +160,37 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
-
+                //initialize the current position to the initial marker position
+                lastValidLat = marker.getPosition().latitude;
+                lastValidLng = marker.getPosition().longitude;
             }
 
             @Override
             public void onMarkerDrag(Marker marker) {
+                currentDraggedMarker = marker;
+                //compute in a thread the last valid position
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        computeLastValidPosition(currentDraggedMarker);
+                    }
+                });
+
                 Element element = markersList.get(marker);
 
                 element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
                 element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
-
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
+                LatLng latLng = new LatLng(lastValidLat, lastValidLng);
+                marker.setPosition(latLng);
+
                 Element element = markersList.get(marker);
+
+                element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
+                element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
                 mListener.handleUpdatedElement(element);
             }
@@ -179,6 +219,43 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
     }
 
+    /**
+     *
+     * @param currentMarker
+     * @return an array that contain a valid lat and a valid lng
+     */
+    private void computeLastValidPosition(Marker currentMarker)
+    {
+        Double newLat = currentMarker.getPosition().latitude;
+        Double newLng = currentMarker.getPosition().longitude;
+
+        Double currentLat;
+        Double currentLng;
+        Double diffLat;
+        Double diffLng;
+
+        Double distanceToTheCurrentMarker;
+        boolean isPositionValid = true;
+
+        for (Marker marker : markersList.keySet()) {
+            if (!marker.getId().equals(currentMarker.getId()))
+            {
+                currentLat = marker.getPosition().latitude;
+                currentLng = marker.getPosition().longitude;
+                diffLat = newLat - currentLat;
+                diffLng = newLng - currentLng;
+                distanceToTheCurrentMarker = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLng, 2));
+                isPositionValid = isPositionValid && (distanceToTheCurrentMarker > this.minimalDistance);
+            }
+        }
+
+        if(isPositionValid)
+        {
+            this.lastValidLat = newLat;
+            this.lastValidLng = newLng;
+        }
+    }
+
     public void cancelSelection(){
         if(currentPolyline != null){
             currentPolyline.remove();
@@ -190,7 +267,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 marker.remove();
             }
         }
-        mListener.handleCancelSelection();
+        if (mListener != null)
+            mListener.handleCancelSelection();
     }
 
     public void cancelSelectionAfterPushIfRequire(Element element, Element currentElement){
@@ -243,7 +321,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
+        /**
+         *
+         * @return true iff the current intervention is archived
+         */
+        boolean isInterventionArchived();
+
         Tool getSelectedTool();
+        Element tryGetSelectedElement();
 
         void setSelectedElement(Element element);
         Element handleElementAdded(Tool tool, Double latitude, Double longitude);
@@ -288,13 +373,13 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             ArrayList<LatLng> pathPoints = new ArrayList<>();
             if(((Drone)element).getMission() != null){
 
-            for(GeoPoint geoPoint : ((Drone)element).getMission().getPathPoints()){
-                pathPoints.add(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()));
-            }
+                for(GeoPoint geoPoint : ((Drone)element).getMission().getPathPoints()){
+                    pathPoints.add(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()));
+                }
 
-            PolylineOptions rectOptions = new PolylineOptions().addAll(pathPoints);
+                PolylineOptions rectOptions = new PolylineOptions().addAll(pathPoints);
 
-            Polyline dronePolyline = googleMap.addPolyline(rectOptions);
+                Polyline dronePolyline = googleMap.addPolyline(rectOptions);
             }
 
         }
@@ -306,11 +391,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     .title(element.getName())
                     .draggable(isDraggable(element))
                     .icon(BitmapDescriptorFactory.fromBitmap(
-                            PictoFactory.createPicto(getContext())
-                                    .setLabel(element.getName())
-                                    .setDrawable(element.getForm().getDrawable())
-                                    .setColor(element.getRole().getColor())
-                                    .toBitmap()
+                            PictoFactory.createPicto(getContext()).setElement(element).toBitmap()
                     )));
 
             markersList.put(marker, element);
@@ -320,9 +401,19 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
+    /**
+     *
+     * @param element
+     * @return true iff the current element is not an external Point of Interest
+     * AND if the current user is not the CODIS
+     * AND if the current intervention is not archived
+     */
     private boolean isDraggable(Element element)
     {
-        boolean result = true;
+        if(this.isCodis || element.getId() == null || mListener.isInterventionArchived())
+        {
+            return false;
+        }
 
         switch (element.getType())
         {
@@ -330,25 +421,26 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 //disable contextual drawer for external SIG
                 if(((PointOfInterest)element).isExternal())
                 {
-                    result = false;
+                    return false;
                 }
                 break;
         }
 
-        result = result && (element.getId() != null) && !this.isCodis;
-
-        return result;
+        return true;
     }
 
     private void updateMarker(Marker marker, Element element){
-
-        marker.setIcon(BitmapDescriptorFactory.fromBitmap(PictoFactory.createPicto(getContext()).setElement(element).toBitmap()));
-        marker.setPosition(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()));
-        marker.setTitle(element.getName());
-
         markersList.remove(marker);
-        markersList.put(marker, element);
 
+        marker = googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(element.getLocation().getGeopoint().getLatitude(), element.getLocation().getGeopoint().getLongitude()))
+                .title(element.getName())
+                .draggable(isDraggable(element))
+                .icon(BitmapDescriptorFactory.fromBitmap(
+                        PictoFactory.createPicto(getContext()).setElement(element).toBitmap()
+                )));
+
+        markersList.put(marker, element);
     }
 
     public void updateElement(Element element){

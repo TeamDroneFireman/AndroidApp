@@ -1,6 +1,5 @@
 package edu.istic.tdf.dfclient.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,7 +8,6 @@ import android.view.MenuItem;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 
 public class MeansTableActivity extends BaseActivity implements MeansTableFragment.OnFragmentInteractionListener {
@@ -54,5 +52,10 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
     @Override
     public void handleValidation(Element element) {
 
+    }
+
+    @Override
+    public boolean isInterventionArchived() {
+        return false;
     }
 }

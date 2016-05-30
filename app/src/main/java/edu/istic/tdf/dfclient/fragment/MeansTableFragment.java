@@ -2,6 +2,7 @@ package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -47,6 +48,8 @@ public class MeansTableFragment extends Fragment {
 
     private Spinner spinner;
 
+    private Button validation;
+
     private HashMap<String,IElement> elementsMean=new HashMap<>();
 
     private HashMap<String,TableRow> link=new HashMap<>();
@@ -79,11 +82,18 @@ public class MeansTableFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
 
-
         spinner=(Spinner)view.findViewById(R.id.spinner);
-        Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
+        validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
 
-        if(isCodis){
+        return view;
+    }
+
+    /**
+     * initialize the two components spinner and validation
+     */
+    public void initComponentForAddNewAskedMean()
+    {
+        if(mListener.isInterventionArchived() || isCodis){
             spinner.setVisibility(View.INVISIBLE);
             validation.setVisibility(View.INVISIBLE);
         }else{
@@ -120,8 +130,6 @@ public class MeansTableFragment extends Fragment {
                 }
             });
         }
-        
-        return view;
     }
 
     @Deprecated
@@ -197,9 +205,11 @@ public class MeansTableFragment extends Fragment {
         TextView name = new TextView(meanTab.getContext());
         name.setText(element.getName());
         name.setGravity(Gravity.CENTER_HORIZONTAL);
+        name.setTextSize(20);
+        name.setTypeface(null, Typeface.BOLD);
         tableRow.addView(name);
 
-        tableRow.setBackgroundColor(element.getRole().getColor());
+        tableRow.setBackgroundColor(element.getRole().getLightColor());
         HashMap<MeanState, Date> currentStates = element.getStates();
 
         Date d = currentStates.get(MeanState.ASKED);
@@ -219,15 +229,15 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addDeleteButton(final LinearLayout relativeLayout, final IMean element, Date released, Date valided) {
-        if(!isCodis&& released==null && valided!=null) {
+        if(!mListener.isInterventionArchived() && !isCodis&& released==null && valided!=null) {
             Button deleteButton = new Button(relativeLayout.getContext());
-            deleteButton.setText("Supprimer");
+            deleteButton.setText(R.string.supprimer_button_mean_table);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new AlertDialog.Builder(relativeLayout.getContext())
-                            .setTitle("Supprimer")
-                            .setMessage("Attention !\n Êtes vous sûr de vouloir supprimer cet élément?")
+                            .setTitle(R.string.supprimer_button_mean_table)
+                            .setMessage(R.string.popup_supprimer_button_mean_table)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -242,7 +252,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addCancelButton(LinearLayout relativeLayout, final IElement element, Date validated, Date released) {
-        if(!isCodis&&validated==null &&released==null){
+        if(!mListener.isInterventionArchived() && !isCodis&&validated==null &&released==null){
             Button cancelButton=new Button(relativeLayout.getContext());
             cancelButton.setText("Annuler");
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +269,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addValidationButtonForCodis(final LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
-        if(isCodis&& valided==null && released==null){
+        if(!mListener.isInterventionArchived() && isCodis && valided==null && released==null){
             Button validationButton=new Button(relativeLayout.getContext());
             validationButton.setText("Valider");
             validationButton.setOnClickListener(new View.OnClickListener() {
@@ -300,6 +310,7 @@ public class MeansTableFragment extends Fragment {
         TextView textView=new TextView(meanTab.getContext());
         if(d!=null) {
             textView.setText(d.toString());
+            textView.setTextSize(20);
         }else{
             textView.setText("");
         }
@@ -346,8 +357,13 @@ public class MeansTableFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
 
-        public void handleValidation(Element element);
+        void handleValidation(Element element);
 
+        /**
+         *
+         * @return true iff the current intervention is archived
+         */
+        boolean isInterventionArchived();
     }
 
     private void removeElement(Element element){

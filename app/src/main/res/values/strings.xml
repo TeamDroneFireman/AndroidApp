@@ -41,9 +41,16 @@
     <string name="intervention_detail_dateformat">yyyy-MM-dd\'-\'HH:mm:ss</string>
     <string name="intervention_welcome_pleaseselect">Sélectionnez une intervention</string>
     <string name="new_mean">nouveau moyen</string>
+
+    <string name="supprimer_button_mean_table">Libérer</string>
+    <string name="popup_supprimer_button_mean_table">"Attention !\n Êtes vous sûr de vouloir libérer cet élément?"</string>
+
     <!-- Activity titles -->
     <string name="activity_main_menu_title">Interventions</string>
     <string name="activity_sitac_title">SITAC</string>
 
+    <!-- Contextual Drawer -->
+    <string name="supprimer_button_for_mean">Libérer</string>
+    <string name="supprimer_button_for_defaut">Supprimer</string>
 
 </resources>

@@ -10,7 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="15dp">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            
+            
         <Spinner
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -31,6 +37,45 @@
             android:id="@+id/ElementLabelEdit"
             android:layout_gravity="center_horizontal|top" />
 
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="Le moyen est arrivé"
+            android:checked="false"
+            android:id="@+id/ArrivedState"/>
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:clickable="true"
+            android:text="Le moyen est engagé"
+            android:checked="false"
+            android:id="@+id/EngagedState"/>
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:clickable="true"
+            android:text="Le moyen est libéré"
+            android:checked="false"
+            android:id="@+id/ReleasedState"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:clickable="true"
+            android:text="Default state of TextView"
+            android:checked="false"
+            android:id="@+id/StateView"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,8 +100,9 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Supprimer"
+            android:text="@string/supprimer_button_for_defaut"
             android:id="@+id/ElementDeleteButton"
             android:layout_gravity="center_horizontal|bottom" />
+    </LinearLayout>
     </LinearLayout>
 </FrameLayout>

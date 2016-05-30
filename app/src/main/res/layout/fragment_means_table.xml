@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:foregroundGravity="center_horizontal"
                 android:id="@+id/scrollView3"
-                >
+                style="@style/Base.Theme.AppCompat">
 
 
                 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -50,7 +50,8 @@
                             android:id="@+id/textView5"
                             android:gravity="center_horizontal"
                             android:textStyle="bold"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="22dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -58,7 +59,8 @@
                             android:text="@string/column_1"
                             android:id="@+id/textView6"
                             android:gravity="center_horizontal"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textSize="22dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -66,7 +68,8 @@
                             android:text="@string/column_1bis"
                             android:id="@+id/textView4"
                             android:gravity="center_horizontal"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textSize="22dp" />
 
                         <TextView
                                 android:layout_width="wrap_content"
@@ -74,7 +77,8 @@
                                 android:text="@string/column_2"
                                 android:id="@+id/textView"
                                 android:gravity="center_horizontal"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textSize="22dp" />
 
                         <TextView
                                 android:layout_width="wrap_content"
@@ -82,7 +86,8 @@
                                 android:text="@string/column_3"
                                 android:id="@+id/textView2"
                                 android:gravity="center_horizontal"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textSize="22dp" />
 
                         <TextView
                                 android:layout_width="wrap_content"
@@ -90,7 +95,8 @@
                                 android:text="@string/column_4"
                                 android:id="@+id/textView3"
                                 android:gravity="center_horizontal"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textSize="22dp" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -121,7 +127,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_toRightOf="@+id/meanTableValidationbtn"
-            android:layout_toEndOf="@+id/meanTableValidationbtn" />
+            android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
 

@@ -6,8 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,7 +17,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
@@ -60,6 +57,13 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
      */
     @Inject
     InterventionWelcomeFragment interventionWelcomeFragment;
+
+    @Override
+    public void onBackPressed() {
+        this.overridePendingTransition(R.anim.shake, R.anim.shake);
+        final Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +126,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             intent.putExtra("interventionId",intervention.getId());
             this.startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // nothing to do
     }
 
     /**

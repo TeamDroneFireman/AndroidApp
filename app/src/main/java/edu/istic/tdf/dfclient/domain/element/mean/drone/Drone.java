@@ -27,7 +27,7 @@ public class Drone extends Element implements IDrone {
      * represent the current mission of the drone
      */
     private Mission mission;
-
+    private MeanState currentState;
     /**
      * represent the current action
      * But not use for the moment !
@@ -37,6 +37,7 @@ public class Drone extends Element implements IDrone {
     public Drone() {
         super();
         this.states = new HashMap<>();
+        this.currentState = MeanState.ASKED;
         this.states.put(MeanState.ASKED, new Date());
         this.states.put(MeanState.VALIDATED, null);
         this.states.put(MeanState.ARRIVED, null);
@@ -49,12 +50,13 @@ public class Drone extends Element implements IDrone {
 
     @Override
     public void setState(MeanState state) {
+        this.currentState = state;
         this.states.put(state, new Date());
     }
 
     @Override
     public MeanState getState() {
-        MeanState currentState;
+        /*MeanState currentState;
         if(this.states.get(MeanState.RELEASED) != null){
             currentState = MeanState.RELEASED;
         }else if (this.states.get(MeanState.ENGAGED) != null){
@@ -65,8 +67,12 @@ public class Drone extends Element implements IDrone {
             currentState = MeanState.VALIDATED;
         }else{
             currentState = MeanState.ASKED;
+        }*/
+        if(this.states.get(MeanState.RELEASED)!=null){
+            return MeanState.RELEASED;
         }
-        return currentState;
+
+        return this.currentState;
     }
 
     @Override
