@@ -216,6 +216,12 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
+
+        if(element.getType() == ElementType.AIRMEAN)
+        {
+            showGalleryDrawer();
+        }
+
         contextualDrawerFragment.setSelectedElement(element);
         if(!this.isCodis && !intervention.isArchived())
         {
@@ -320,6 +326,7 @@ public class SitacActivity extends BaseActivity implements
         this.selectedTool = null;
         this.toolbarFragment.cancelSelection();
         hideContextualDrawer();
+        hideGalleryDrawer();
     }
 
     private void showContextualDrawer(){

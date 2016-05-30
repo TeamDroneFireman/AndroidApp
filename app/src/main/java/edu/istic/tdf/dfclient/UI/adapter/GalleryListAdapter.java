@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import edu.istic.tdf.dfclient.R;
@@ -18,15 +20,23 @@ import edu.istic.tdf.dfclient.R;
 public class GalleryListAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
-    private final ArrayList<String> itemname;
-    private final ArrayList<Integer> imgid;
 
-    public GalleryListAdapter(Activity context, ArrayList<String> itemname, ArrayList<Integer> imgid) {
+    /**
+     * Texts with the images
+     */
+    private final ArrayList<String> itemname;
+
+    /**
+     * Images you should show
+     */
+    private final ArrayList<String> imgid;
+
+    public GalleryListAdapter(Activity context, ArrayList<String> itemname, ArrayList<String> imgid) {
         super(context, R.layout.list_view_gallery_row, itemname);
 
-        this.context=context;
-        this.itemname=itemname;
-        this.imgid=imgid;
+        this.context = context;
+        this.itemname = itemname;
+        this.imgid = imgid;
     }
 
     public View getView(int position,View view,ViewGroup parent) {
@@ -38,7 +48,8 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
 
         txtTitle.setText(itemname.get(position));
-        imageView.setImageResource(imgid.get(position));
+        Picasso.with(context).load(imgid.get(position)).into(imageView);
+
         extratxt.setText("Description "+ itemname.get(position));
         return rowView;
     };

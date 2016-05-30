@@ -26,7 +26,7 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
     private GalleryListAdapter galleryListAdapter;
 
     private ArrayList<String> itemname = new ArrayList<>();
-    private ArrayList<Integer> imgid = new ArrayList<>();
+    private ArrayList<String> imgid = new ArrayList<>();
 
     @Bind(R.id.list_view_gallery)
     ListView listViewGallery;
@@ -91,11 +91,12 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
         itemname.add("Camera");
         itemname.add("Global");
         itemname.add("FireFox");
-        
-        imgid.add(R.drawable.action_zone1);
-        imgid.add(R.drawable.airmean_planned);
-        imgid.add(R.drawable.common_google_signin_btn_icon_dark);
-        imgid.add(R.drawable.common_google_signin_btn_icon_dark_focused);
+
+        String urlimg = "http://webplantmedia.com/starter-themes/wordpresscanvas-structure1/wp-content/uploads/2014/04/16-9-dummy-image6.jpg";
+        imgid.add(urlimg);
+        imgid.add(urlimg);
+        imgid.add(urlimg);
+        imgid.add(urlimg);
         // TODO: 30/05/16
 
         galleryListAdapter.notifyDataSetChanged();

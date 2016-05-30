@@ -23,9 +23,9 @@
     </FrameLayout>
 
     <FrameLayout android:id="@+id/gallery_drawer_container"
-        android:layout_width="400dp"
+        android:layout_width="215dp"
         android:layout_height="match_parent"
-        android:layout_gravity="top|right">
+        android:layout_gravity="top|left">
     </FrameLayout>
 
 </FrameLayout>
