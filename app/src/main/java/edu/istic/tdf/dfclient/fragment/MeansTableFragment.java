@@ -48,6 +48,8 @@ public class MeansTableFragment extends Fragment {
 
     private Spinner spinner;
 
+    private Button validation;
+
     private HashMap<String,IElement> elementsMean=new HashMap<>();
 
     private HashMap<String,TableRow> link=new HashMap<>();
@@ -80,11 +82,18 @@ public class MeansTableFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_means_table, container, false);
         meanTab=(TableLayout)view.findViewById(R.id.meanTab);
 
-
         spinner=(Spinner)view.findViewById(R.id.spinner);
-        Button validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
+        validation=(Button)view.findViewById(R.id.meanTableValidationbtn);
 
-        if(isCodis){
+        return view;
+    }
+
+    /**
+     * initialize the two components spinner and validation
+     */
+    public void initComponentForAddNewAskedMean()
+    {
+        if(mListener.isInterventionArchived() || isCodis){
             spinner.setVisibility(View.INVISIBLE);
             validation.setVisibility(View.INVISIBLE);
         }else{
@@ -121,8 +130,6 @@ public class MeansTableFragment extends Fragment {
                 }
             });
         }
-        
-        return view;
     }
 
     @Deprecated
@@ -222,7 +229,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addDeleteButton(final LinearLayout relativeLayout, final IMean element, Date released, Date valided) {
-        if(!isCodis&& released==null && valided!=null) {
+        if(!mListener.isInterventionArchived() && !isCodis&& released==null && valided!=null) {
             Button deleteButton = new Button(relativeLayout.getContext());
             deleteButton.setText(R.string.supprimer_button_mean_table);
             deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -245,7 +252,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addCancelButton(LinearLayout relativeLayout, final IElement element, Date validated, Date released) {
-        if(!isCodis&&validated==null &&released==null){
+        if(!mListener.isInterventionArchived() && !isCodis&&validated==null &&released==null){
             Button cancelButton=new Button(relativeLayout.getContext());
             cancelButton.setText("Annuler");
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -262,7 +269,7 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addValidationButtonForCodis(final LinearLayout relativeLayout, final IElement element, Date valided, Date released) {
-        if(isCodis&& valided==null && released==null){
+        if(!mListener.isInterventionArchived() && isCodis && valided==null && released==null){
             Button validationButton=new Button(relativeLayout.getContext());
             validationButton.setText("Valider");
             validationButton.setOnClickListener(new View.OnClickListener() {
@@ -350,8 +357,13 @@ public class MeansTableFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
 
-        public void handleValidation(Element element);
+        void handleValidation(Element element);
 
+        /**
+         *
+         * @return true iff the current intervention is archived
+         */
+        boolean isInterventionArchived();
     }
 
     private void removeElement(Element element){

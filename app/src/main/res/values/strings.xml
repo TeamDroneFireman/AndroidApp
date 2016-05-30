@@ -32,7 +32,7 @@
     <!-- Mean Table-->
     <string name="mean_id">nom</string>
     <string name="column_1">demandé à</string>
-    <string name="column_1bis">partis à</string>
+    <string name="column_1bis">parti à</string>
     <string name="column_2">arrivé à</string>
     <string name="column_3">engagé à</string>
     <string name="column_4">liberé à</string>

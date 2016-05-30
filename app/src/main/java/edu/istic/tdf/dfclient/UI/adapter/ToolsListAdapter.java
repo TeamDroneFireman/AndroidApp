@@ -25,6 +25,16 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private OnToolsListAdapterInteractionListener listener;
 
+    /**
+     * The current view, usefull for color
+     */
+    private View currentView;
+
+    /**
+     * The current tool, usefull for repaint when scrolling the expandable list view
+     */
+    private Tool currentTool;
+
     public ToolsListAdapter(Context context, SparseArray<ToolsGroup> toolsGroups, OnToolsListAdapterInteractionListener listener) {
         this.context = context;
         this.toolsGroups= toolsGroups;
@@ -125,10 +135,23 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, final ViewGroup parent) {
-
         final Tool children = (Tool) getChild(groupPosition, childPosition);
 
         convertView = inflater.inflate(R.layout.fragment_toolbar_item, null);
+
+        //Set the color if this is the current selected tool
+        //Require because scroll of the expandable list view repaint all element with default color
+        if(children.equals(currentTool))
+        {
+            //it is the current selected list view, set to the selected view color
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            currentView = convertView;
+        }
+        else
+        {
+            //it is not the current selected tool, set to the default color
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.darkGrey));
+        }
 
         ImageView icon = (ImageView) convertView.findViewById(R.id.imageView);
 
@@ -143,22 +166,27 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
                             .setDrawable(children.getForm().getDrawable())
                             .toBitmap()
             );
-            //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
-            //icon.setImageDrawable(PictoFactory.createPicto(context).setDrawable(children.getForm().getDrawable()).toDrawable());
-            //icon.setColorFilter(children.getRole().getColor());
-
         }
         else {
             icon.setImageBitmap(PictoFactory.createPicto(context).setElement(element).toBitmap());
-            //icon.setImageDrawable(PictoFactory.createPicto(context).setElement(element).toDrawable());
             icon.setColorFilter(element.getRole().getColor());
-
         }
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.handleSelectedTools(children);
+
+                //Set the color of the previous selected view
+                if(currentView != null)
+                {
+                    currentView.setBackgroundColor(context.getResources().getColor(R.color.darkGrey));
+                }
+
+                //Set the color of the new selected view
+                view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+                currentView = view;
+                currentTool = children;
             }
         };
 

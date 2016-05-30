@@ -1,14 +1,11 @@
 package edu.istic.tdf.dfclient.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,7 +17,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
@@ -128,7 +124,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             // Detail fragment
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
-            this.startActivityForResult(intent, 1);
+            this.startActivity(intent);
         }
     }
 
