@@ -28,7 +28,7 @@ public class InterventionRestClient extends RestClient<Intervention> implements 
     /**
      * The Push subscription endpoint URL
      */
-    private final static String SUBSCRIPTION_URL = "/register";
+    private final static String SUBSCRIPTION_URL = "register/";
 
     /**
      * A GSON Serializer
