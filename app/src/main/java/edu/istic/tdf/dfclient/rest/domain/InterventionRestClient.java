@@ -28,7 +28,7 @@ public class InterventionRestClient extends RestClient<Intervention> implements 
     /**
      * The Push subscription endpoint URL
      */
-    private final static String SUBSCRIPTION_URL = "TODO"; // TODO : Set sub url
+    private final static String SUBSCRIPTION_URL = "register/";
 
     /**
      * A GSON Serializer
@@ -38,7 +38,7 @@ public class InterventionRestClient extends RestClient<Intervention> implements 
     public InterventionRestClient(TdfHttpClient httpClient, Gson gson) {
         super(Intervention.class, httpClient);
         this.gson = gson;
-        httpClient.setConf(new TdfHttpClientConf(RestEndpoints.Intervention)); // Hack because no load balancer
+        httpClient.setConf(new TdfHttpClientConf(RestEndpoints.Intervention));
     }
 
     /**
@@ -51,7 +51,6 @@ public class InterventionRestClient extends RestClient<Intervention> implements 
         data.setRegistrationId(registrationId);
         data.setInterventionId(intervention.getId());
 
-        // TODO : Register here
         this.httpClient.post(SUBSCRIPTION_URL, gson.toJson(data), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

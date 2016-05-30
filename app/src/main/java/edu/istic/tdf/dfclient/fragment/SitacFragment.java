@@ -120,10 +120,24 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     currentPolyline = googleMap.addPolyline(rectOptions);
 
                 }else if (hasElementSelected()) {
-                    Element element = createElementFromLatLng(latLng);
-                    Marker marker = addMarker(element);
-                    if (marker != null) {
-                        addMarker(element).showInfoWindow();
+                    Element element = mListener.tryGetSelectedElement();
+                    if (element != null)
+                    {
+                        GeoPoint geoPoint = new GeoPoint();
+                        geoPoint.setLatitude(latLng.latitude);
+                        geoPoint.setLongitude(latLng.longitude);
+                        element.getLocation().setGeopoint(geoPoint);
+                        Tool tool = mListener.getSelectedTool();
+                        mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
+                    }
+                    else
+                    {
+                        element = createElementFromLatLng(latLng);
+
+                        Marker marker = addMarker(element);
+                        if (marker != null) {
+                            addMarker(element).showInfoWindow();
+                        }
                     }
                 } else {
                     cancelSelection();
@@ -307,7 +321,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public interface OnFragmentInteractionListener {
 
+        /**
+         *
+         * @return true iff the current intervention is archived
+         */
+        boolean isInterventionArchived();
+
         Tool getSelectedTool();
+        Element tryGetSelectedElement();
 
         void setSelectedElement(Element element);
         Element handleElementAdded(Tool tool, Double latitude, Double longitude);
@@ -380,9 +401,19 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
+    /**
+     *
+     * @param element
+     * @return true iff the current element is not an external Point of Interest
+     * AND if the current user is not the CODIS
+     * AND if the current intervention is not archived
+     */
     private boolean isDraggable(Element element)
     {
-        boolean result = true;
+        if(this.isCodis || element.getId() == null || mListener.isInterventionArchived())
+        {
+            return false;
+        }
 
         switch (element.getType())
         {
@@ -390,14 +421,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 //disable contextual drawer for external SIG
                 if(((PointOfInterest)element).isExternal())
                 {
-                    result = false;
+                    return false;
                 }
                 break;
         }
 
-        result = result && (element.getId() != null) && !this.isCodis;
-
-        return result;
+        return true;
     }
 
     private void updateMarker(Marker marker, Element element){
