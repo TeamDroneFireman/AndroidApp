@@ -188,7 +188,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             case MEAN:
                 if(((IMean) element).getState().equals(MeanState.ASKED)){
                     forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_PLANNED};
+                            PictoFactory.ElementForm.MEAN_PLANNED,
+                            PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
+                            PictoFactory.ElementForm.MEAN_COLUMN_PLANNED};
                 }else{
                     forms = new PictoFactory.ElementForm[]{
                             PictoFactory.ElementForm.MEAN,
