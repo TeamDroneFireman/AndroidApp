@@ -194,7 +194,6 @@ public class PictoFactory {
         rect.set(0, 0, bitmap.getWidth(), bitmap.getHeight() + 500);*/
 
         Canvas canvas = new Canvas(bitmap);
-        //paint.setTextAlign(Paint.Align.CENTER);
 
         // Color of icon + text
         if(isExternal){
@@ -205,7 +204,19 @@ public class PictoFactory {
             paint.setColor(this.role.getColor());
         }
 
-        canvas.drawText(this.label, 0, bounds.height() + bitmap.getScaledHeight(canvas)/2, paint);
+       // paint.setTextAlign(Paint.Align.CENTER);
+        if(this.form == ElementForm.AIRMEAN
+                || this.form == ElementForm.AIRMEAN_PLANNED
+                || this.form == ElementForm.SOURCE
+                || this.form == ElementForm.TARGET
+                || this.form == ElementForm.WATERPOINT
+                || this.form == ElementForm.WATERPOINT_SUPPLY
+                || this.form == ElementForm.WATERPOINT_SUSTAINABLE){
+            paint.setColor(this.role.getDarkColor());
+            canvas.drawText(this.label, 4, bounds.height()/2 + bitmap.getScaledHeight(canvas)/2, paint);
+        } else {
+            canvas.drawText(this.label, 4, bounds.height()/2 + bitmap.getScaledHeight(canvas)/2, paint);
+        }
 
         return bitmap;
     }
@@ -214,8 +225,8 @@ public class PictoFactory {
 
         int textSize = 100;
         paint.setTextSize(textSize);
-        if(paint.measureText(this.label) > bitmap.getWidth()){
-            while(paint.measureText(this.label) > bitmap.getWidth()){
+        if(paint.measureText(this.label) > (bitmap.getWidth() - 8)){
+            while(paint.measureText(this.label) > (bitmap.getWidth() - 8)){
                 textSize--;
                 paint.setTextSize(textSize);
             }
@@ -233,9 +244,11 @@ public class PictoFactory {
         BitmapFactory.decodeResource(resources, this.form.getDrawable(), options);
         options.inSampleSize = calculateInSampleSize(options, this.size, this.size);
         options.inJustDecodeBounds = false;
+
         Bitmap bitmap = BitmapFactory.decodeResource(resources, this.form.getDrawable(), options);
 
         android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+
         if(bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
         }
