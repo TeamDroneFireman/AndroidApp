@@ -32,7 +32,6 @@ import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
@@ -109,23 +108,25 @@ public class MeansTableFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Element element;
-                    if(spinner.getSelectedItem().toString().equals("DRONE")){
-                        Drone mean = new Drone();
+                    IMean mean;
+                    if(spinner.getSelectedItem().toString().equals("DRONE"))
+                    {
+                        mean = new Drone();
                         mean.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
-                        element = mean;
-
-                    }else{
-                        InterventionMean mean = new InterventionMean();
+                    }
+                    else
+                    {
+                        mean = new InterventionMean();
                         mean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                         mean.setAction("Action par défaut");
-                        element = mean;
                     }
 
+                    element = (Element)mean;
                     element.setName(spinner.getSelectedItem().toString());
                     ((IMean)element).setState(MeanState.ASKED);
                     element.setLocation(new Location());
-                    element.setRole(Role.DEFAULT);
                     element.setForm(element.getForm());
+                    element.setRoleFromMeanType(spinner.getSelectedItem().toString());
                     mListener.handleValidation(element);
                 }
             });
