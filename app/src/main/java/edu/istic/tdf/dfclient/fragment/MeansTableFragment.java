@@ -18,12 +18,14 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
@@ -308,14 +310,18 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addMeanState(TableRow tableRow,Date d){
-
         TextView textView=new TextView(meanTab.getContext());
-        if(d!=null) {
-            textView.setText(d.toString());
+        if(d!=null)
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE);
+            textView.setText(sdf.format(d));
             textView.setTextSize(20);
-        }else{
+        }
+        else
+        {
             textView.setText("");
         }
+
         textView.setGravity(Gravity.CENTER_HORIZONTAL);
         tableRow.addView(textView);
     }
@@ -369,10 +375,10 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void removeElement(Element element){
-         if (element.isMeanFromMeanTable()) {
-             ((IMean) element).setState(MeanState.RELEASED);
-             mListener.handleValidation(element);
-         }
+        if (element.isMeanFromMeanTable()) {
+            ((IMean) element).setState(MeanState.RELEASED);
+            mListener.handleValidation(element);
+        }
     }
 
     public void removeElementFromUi(Collection<Element> element){
