@@ -53,33 +53,10 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
         TextView txtTitle = (TextView) rowView.findViewById(R.id.item);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
-
         txtTitle.setText(drones.get(position));
-
-        // TODO: 31/05/16 header 
-        /*Picasso.Builder picab = new Picasso.Builder(context);
-
-        picab.downloader(new OkHttpDownloader(context) {
-            @Override
-            protected HttpURLConnection openConnection(Uri uri) throws IOException {
-                HttpURLConnection connection =
-            }
-
-        });
-
-        picab.downloader(new OkHttpDownloader(context) {
-            @Override
-            protected HttpURLConnection openConnection(Uri uri) throws IOException {
-                HttpURLConnection connection = super.openConnection(uri);
-                connection.setRequestProperty(Constant.HEADER_X_API_KEY, mSharedPreferences.getString(SharedPreferenceKeys.JSESSIONID, ""));
-                return connection;
-            }
-        });
-
-        Picasso pica = picab.build();*/
-
+        String url = TdfHttpClient.SCHEME + "://" + TdfHttpClient.HOST + ":12353" + imgUrl.get(position);
         Picasso.with(context)
-                .load(TdfHttpClient.HOST+ imgUrl.get(position))
+                .load(url)
                 .noPlaceholder()
                 .into(imageView);
 
