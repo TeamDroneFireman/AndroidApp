@@ -50,7 +50,9 @@ public class InterventionMean extends Element implements IInterventionMean {
     @Override
     public void setState(MeanState state) {
         this.currentState = state;
-        this.states.put(state, new Date());
+        if(this.states.get(state)==null){
+            this.states.put(state, new Date());
+        }
     }
 
     @Override
