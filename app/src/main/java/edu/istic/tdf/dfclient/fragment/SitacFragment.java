@@ -364,7 +364,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         // Remove paths if already present
         removePathsForDrone(element);
 
-        if(((Drone)element).hasMission()) {
+        if(((Drone)element).hasMission() && (((Drone)element).getMission().getPathPoints().size() > 0)) {
 
             // Mission points
             ArrayList<LatLng> missionPathPoints = MapUtils.geoPointListToLatLngList(((Drone) element).getMission().getPathPoints());
