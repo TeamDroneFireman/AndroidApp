@@ -150,48 +150,11 @@ public class PictoFactory {
         // Icon
         Bitmap bitmap = getOptimizedBitmap();
 
+        // Text
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fitTextToBitmap(paint, bitmap);
-
         Rect bounds = new Rect();
         paint.getTextBounds(this.label, 0, this.label.length(), bounds);
-
-        // Text
-        /*
-
-        Rect bounds = new Rect();
-        paint.getTextBounds(this.label, 0, this.label.length(), bounds);
-
-        int x = (bitmap.getWidth()) / 2;
-        int y = (bitmap.getHeight()) / 2;
-
-        switch (this.form){
-            case MEAN:
-            case MEAN_PLANNED:
-            case MEAN_GROUP:
-            case MEAN_COLUMN:
-            case MEAN_OTHER:
-            case MEAN_OTHER_PLANNED:
-                y -= 10;
-                break;
-            case WATERPOINT:
-            case WATERPOINT_SUPPLY:
-            case WATERPOINT_SUSTAINABLE:
-                y += 10;
-                break;
-            case AIRMEAN:
-                break;
-            case AIRMEAN_PLANNED:
-                break;
-            case SOURCE:
-                break;
-            case TARGET:
-                break;
-        }
-
-
-        Rect rect = new Rect();
-        rect.set(0, 0, bitmap.getWidth(), bitmap.getHeight() + 500);*/
 
         Canvas canvas = new Canvas(bitmap);
 
@@ -204,7 +167,6 @@ public class PictoFactory {
             paint.setColor(this.role.getColor());
         }
 
-       // paint.setTextAlign(Paint.Align.CENTER);
         if(this.form == ElementForm.AIRMEAN
                 || this.form == ElementForm.AIRMEAN_PLANNED
                 || this.form == ElementForm.SOURCE
@@ -223,7 +185,7 @@ public class PictoFactory {
 
     private void fitTextToBitmap(Paint paint, Bitmap bitmap) {
 
-        int textSize = 100;
+        int textSize = 40;
         paint.setTextSize(textSize);
         if(paint.measureText(this.label) > (bitmap.getWidth() - 8)){
             while(paint.measureText(this.label) > (bitmap.getWidth() - 8)){
