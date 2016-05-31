@@ -372,7 +372,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             if(((Drone)element).getMission().getPathMode() == Mission.PathMode.ZONE){
 
                 PolygonOptions polygonOptions = new PolygonOptions().addAll(missionPathPoints).strokeColor(Role.PEOPLE.getColor()).fillColor(0x5564DD17);
-                Polygon polygon = googleMap.addPolygon(polygonOptions);
                 missionZonesList.put(element.getId(), googleMap.addPolygon(polygonOptions));
 
             } else {
@@ -389,23 +388,27 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 );
 
                 // Check on which mission segment is the nearest point
-                LatLng lastPoint = missionPathPoints.get(0);
-                int closestMissionPointIndex = 0;
+                if(missionPathPoints.size() > 0){
 
-                for (LatLng currentPoint : missionPathPoints) {
+                    LatLng lastPoint = missionPathPoints.get(0);
+                    int closestMissionPointIndex = 0;
 
-                    if (MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)) {
-                        closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
+                    for (LatLng currentPoint : missionPathPoints) {
+
+                        if (MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)) {
+                            closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
+                        }
+
+                        lastPoint = currentPoint;
                     }
 
-                    lastPoint = currentPoint;
+                    dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
+                    dronePathPoints.add(nearestPointOnMission);
+
+                    PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor());
+                    dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
+
                 }
-
-                dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
-                dronePathPoints.add(nearestPointOnMission);
-
-                PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor());
-                dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
             }
 
         }

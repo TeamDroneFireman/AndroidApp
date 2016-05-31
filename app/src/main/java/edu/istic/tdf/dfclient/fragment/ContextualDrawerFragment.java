@@ -56,6 +56,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.DroneCreatePathButton)
     Button droneCreatePathButton;
 
+    @Bind(R.id.DroneStartMission)
+    Button droneStartMission;
+
     @Bind(R.id.DronePathModeSpinner)
     Spinner dronePathModeSpinner;
 
@@ -127,6 +130,15 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 mListener.deleteElement(element);
+            }
+        });
+
+        droneStartMission.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(((Drone)element).hasMission()){
+                    mListener.startMission((Drone)element);
+                }
             }
         });
 
@@ -412,6 +424,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         void setCreateDronePathMode(boolean isDronePathMode);
         void cancelUpdate();
         void deleteElement(Element element);
+        void startMission(Drone drone);
     }
 
     /**
