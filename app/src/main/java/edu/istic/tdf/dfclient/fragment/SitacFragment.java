@@ -471,24 +471,22 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private Marker getImageDroneMarker(ImageDrone imageDrone){
-        if(markersListImageDrone.containsValue(imageDrone)){
-            for (Map.Entry<Marker, Collection<ImageDrone>> entry : markersListImageDrone.entrySet()) {
-                Marker marker = entry.getKey();
-                Collection<ImageDrone> imageDroneValues = entry.getValue();
+        for (Map.Entry<Marker, Collection<ImageDrone>> entry : markersListImageDrone.entrySet()) {
+            Marker marker = entry.getKey();
+            Collection<ImageDrone> imageDroneValues = entry.getValue();
 
-                Iterator<ImageDrone> iterator = imageDroneValues.iterator();
-                ImageDrone img;
-                while(iterator.hasNext())
+            Iterator<ImageDrone> iterator = imageDroneValues.iterator();
+            ImageDrone img;
+            while(iterator.hasNext())
+            {
+                img = iterator.next();
+
+                if (img.getGeoPoint() != null &&
+                        img.getGeoPoint().getAltitude() == imageDrone.getGeoPoint().getAltitude() &&
+                        img.getGeoPoint().getLatitude() == imageDrone.getGeoPoint().getLatitude() &&
+                        img.getGeoPoint().getLongitude() == imageDrone.getGeoPoint().getLongitude())
                 {
-                    img = iterator.next();
-
-                    if(img.equals(imageDrone)){
-                        return marker;
-                    }
-                    else if (img.getId() != null && img.getId() == imageDrone.getId())
-                    {
-                        return marker;
-                    }
+                    return marker;
                 }
             }
         }
@@ -620,19 +618,20 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private void updateImageDroneMarker(Marker marker, ImageDrone imageDrone){
         Collection<ImageDrone> imageDrones =  markersListImageDrone.get(marker);
         Collection<ImageDrone> newImageDrones = new ArrayList<>();
-
         for (ImageDrone img:imageDrones)
         {
-            if(img.getId() == imageDrone.getId())
-            {
-                newImageDrones.add(imageDrone);
-            }
-            else
+            if(img.getId() != imageDrone.getId())
             {
                 newImageDrones.add(img);
             }
         }
 
+        newImageDrones.add(imageDrone);
+        marker.remove();
+        markersListImageDrone.remove(marker);
+        marker = googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(imageDrone.getGeoPoint().getLatitude(), imageDrone.getGeoPoint().getLongitude()))
+                .draggable(false));
         markersListImageDrone.put(marker, newImageDrones);
     }
 

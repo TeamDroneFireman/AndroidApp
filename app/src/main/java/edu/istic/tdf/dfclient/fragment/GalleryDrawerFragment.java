@@ -16,8 +16,10 @@ import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -34,8 +36,9 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
 
     private GalleryListAdapter galleryListAdapter;
 
-    private ArrayList<String> itemname = new ArrayList<>();
-    private ArrayList<String> imgid = new ArrayList<>();
+    private ArrayList<String> drones = new ArrayList<>();
+    private ArrayList<String> dates = new ArrayList<>();
+    private ArrayList<String> imgUrl = new ArrayList<>();
 
     @Bind(R.id.list_view_gallery)
     ListView listViewGallery;
@@ -60,7 +63,7 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
         view = inflater.inflate(R.layout.fragment_gallery_drawer, container, false);
         ButterKnife.bind(this, view);
 
-        galleryListAdapter = new GalleryListAdapter(this.getActivity(), itemname, imgid);
+        galleryListAdapter = new GalleryListAdapter(this.getActivity(), drones, imgUrl, dates);
 
         listViewGallery.setAdapter(galleryListAdapter);
 
@@ -69,7 +72,7 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 ImageView imageView = new ImageView(getContext());
-                Picasso.with(getContext()).load(imgid.get(position)).into(imageView);
+                Picasso.with(getContext()).load(imgUrl.get(position)).into(imageView);
 
                 //create a dialog in order to show in full screnn the image
                 AlertDialog.Builder imgDialog = new AlertDialog.Builder(
@@ -87,9 +90,9 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
                 dialog.show();
 
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                LinearLayout layout = (LinearLayout)layoutInflater.inflate(R.layout.img_full_screen_popup, null);
+                LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.img_full_screen_popup, null);
 
-                ((ImageView)layout.findViewById(R.id.imgFullScrenn)).setImageDrawable(imageView.getDrawable());
+                ((ImageView) layout.findViewById(R.id.imgFullScrenn)).setImageDrawable(imageView.getDrawable());
                 dialog.setContentView(layout);
             }
         });
@@ -120,17 +123,16 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
      */
     public void updateList(Collection<ImageDrone> imageDrones)
     {
-        itemname.add("Safari");
-        itemname.add("Camera");
-        itemname.add("Global");
-        itemname.add("FireFox");
+        drones.clear();
+        imgUrl.clear();
+        dates.clear();
 
-        String urlimg = "http://webplantmedia.com/starter-themes/wordpresscanvas-structure1/wp-content/uploads/2014/04/16-9-dummy-image6.jpg";
-        imgid.add(urlimg);
-        imgid.add(urlimg);
-        imgid.add(urlimg);
-        imgid.add(urlimg);
-        // TODO: 30/05/16
+        for (ImageDrone imageDrone : imageDrones) {
+            drones.add(imageDrone.getDrone());
+            imgUrl.add(imageDrone.getLink());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE);
+            dates.add(sdf.format(imageDrone.getTakenAt()));
+        }
 
         galleryListAdapter.notifyDataSetChanged();
     }

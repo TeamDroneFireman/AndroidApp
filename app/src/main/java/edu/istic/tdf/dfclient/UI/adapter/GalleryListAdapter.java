@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.http.TdfHttpClient;
 
 /**
  * Created by btessiau on 30/05/16.
@@ -24,33 +25,65 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
     /**
      * Texts with the images
      */
-    private final ArrayList<String> itemname;
+    private final ArrayList<String> drones;
 
     /**
-     * Images you should show
+     * Images url you should show
      */
-    private final ArrayList<String> imgid;
+    private final ArrayList<String> imgUrl;
 
-    public GalleryListAdapter(Activity context, ArrayList<String> itemname, ArrayList<String> imgid) {
-        super(context, R.layout.list_view_gallery_row, itemname);
+    /**
+     * Date of the picture
+     */
+    private final ArrayList<String> dates;
+
+    public GalleryListAdapter(Activity context, ArrayList<String> drones, ArrayList<String> imgUrl, ArrayList<String> dates) {
+        super(context, R.layout.list_view_gallery_row, drones);
 
         this.context = context;
-        this.itemname = itemname;
-        this.imgid = imgid;
+        this.drones = drones;
+        this.imgUrl = imgUrl;
+        this.dates = dates;
     }
 
     public View getView(int position,View view,ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.list_view_gallery_row, null,true);
+        View rowView=inflater.inflate(R.layout.list_view_gallery_row, null, true);
 
         TextView txtTitle = (TextView) rowView.findViewById(R.id.item);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
 
-        txtTitle.setText(itemname.get(position));
-        Picasso.with(context).load(imgid.get(position)).into(imageView);
+        txtTitle.setText(drones.get(position));
 
-        extratxt.setText("Description "+ itemname.get(position));
+        // TODO: 31/05/16 header 
+        /*Picasso.Builder picab = new Picasso.Builder(context);
+
+        picab.downloader(new OkHttpDownloader(context) {
+            @Override
+            protected HttpURLConnection openConnection(Uri uri) throws IOException {
+                HttpURLConnection connection =
+            }
+
+        });
+
+        picab.downloader(new OkHttpDownloader(context) {
+            @Override
+            protected HttpURLConnection openConnection(Uri uri) throws IOException {
+                HttpURLConnection connection = super.openConnection(uri);
+                connection.setRequestProperty(Constant.HEADER_X_API_KEY, mSharedPreferences.getString(SharedPreferenceKeys.JSESSIONID, ""));
+                return connection;
+            }
+        });
+
+        Picasso pica = picab.build();*/
+
+        Picasso.with(context)
+                .load(TdfHttpClient.HOST+ imgUrl.get(position))
+                .noPlaceholder()
+                .into(imageView);
+
+        extratxt.setText(dates.get(position));
         return rowView;
     };
 }
