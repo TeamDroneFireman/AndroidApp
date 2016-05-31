@@ -110,25 +110,21 @@ public class MeansTableFragment extends Fragment {
                 public void onClick(View v) {
                     Element element;
                     if(spinner.getSelectedItem().toString().equals("DRONE")){
-                        Drone mean=new Drone();
-                        mean.setState(MeanState.ASKED);
-                        mean.setLocation(new Location());
+                        Drone mean = new Drone();
                         mean.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
-                        mean.setRole(Role.DEFAULT);
-                        element=mean;
+                        element = mean;
 
                     }else{
-                        InterventionMean mean=new InterventionMean();
-                        mean.setState(MeanState.ASKED);
-                        mean.setName(spinner.getSelectedItem().toString());
-                        mean.setLocation(new Location());
+                        InterventionMean mean = new InterventionMean();
                         mean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
-                        mean.setRole(Role.DEFAULT);
-                        // TODO: 25/05/16  action bouchon
                         mean.setAction("Action par défaut");
-                        //TODO mettre les couleurs plus spécifiquement
-                        element=mean;
+                        element = mean;
                     }
+
+                    element.setName(spinner.getSelectedItem().toString());
+                    ((IMean)element).setState(MeanState.ASKED);
+                    element.setLocation(new Location());
+                    element.setRole(Role.DEFAULT);
                     element.setForm(element.getForm());
                     mListener.handleValidation(element);
                 }
