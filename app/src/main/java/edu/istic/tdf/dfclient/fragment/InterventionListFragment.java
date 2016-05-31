@@ -1,6 +1,7 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,24 +15,39 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.adapter.InterventionListAdapter;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
+import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.Element;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
+import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import su.levenetc.android.badgeview.BadgeView;
+
 
 public class InterventionListFragment extends Fragment {
+
 
     // UI
     @Bind(R.id.interventionCreationButton) Button interventionCreationBt;
@@ -48,12 +64,23 @@ public class InterventionListFragment extends Fragment {
     private OnFragmentInteractionListener fragmentInteractionListener;
 
     private boolean isCodis;
+    private DroneDao droneDao;
+    private InterventionMeanDao interventionMeanDao;
 
 
-    public static InterventionListFragment newInstance(InterventionDao interventionDao) {
+    /**
+     * List of mean to validate for CODIS
+     */
+    private HashMap<String,List<IMean>> askedMeansList =new HashMap<>();
+
+
+    public static InterventionListFragment newInstance(InterventionDao interventionDao,DroneDao droneD,InterventionMeanDao interventionMeanDao) {
         InterventionListFragment fragment = new InterventionListFragment();
         fragment.interventionDao = interventionDao;
+        fragment.droneDao=droneD;
+        fragment.interventionMeanDao=interventionMeanDao;
         return fragment;
+
     }
 
     @Override
@@ -73,11 +100,20 @@ public class InterventionListFragment extends Fragment {
         // Toggle creation button
         displayCreationBt();
 
-        //Data
-        interventionsAdapter = new InterventionListAdapter(getActivity(),
-                interventions);
+//Data
+        interventionsAdapter = new InterventionListAdapter(getActivity(),inflater,
+                interventions,isCodis);
 
         interventionsList.setAdapter(interventionsAdapter);
+
+        interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                view.setSelected(true);
+                selectItem(position);
+            }
+
+        });
 
         // Events
         interventionCreationBt.setOnClickListener(new View.OnClickListener() {
@@ -88,15 +124,6 @@ public class InterventionListFragment extends Fragment {
         });
 
         loadAndDisplayInterventions(null);
-
-        interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setSelected(true);
-                selectItem(position);
-            }
-
-        });
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -135,13 +162,15 @@ public class InterventionListFragment extends Fragment {
         fragmentInteractionListener = null;
     }
 
+
+
     public interface OnFragmentInteractionListener {
 
         // When button creation intervention clicked
         void handleInterventionCreation();
 
         // when an interventions is selected
-        void handleInterventionSelected(Intervention intervention);
+        void handleInterventionSelected(Intervention intervention, List<IMean> meanList);
     }
 
     private void displayCreationBt() {
@@ -152,8 +181,68 @@ public class InterventionListFragment extends Fragment {
         ((MainMenuActivity) InterventionListFragment.this.getActivity()).showProgress();
         interventions.clear();
         interventionArrayList.clear();
+        askedMeansList.clear();
 
-        interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
+        interventionDao.findAllWithAskedElement(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
+
+            @Override
+            public void onRepositoryResult(List<Intervention> r) {
+
+            }
+
+            @Override
+            public void onRestResult(List<Intervention> interventionList) {
+                Iterator<Intervention> interventionIterator = interventionList.iterator();
+                Intervention intervention;
+
+                while (interventionIterator.hasNext()) {
+                    intervention = interventionIterator.next();
+                    interventionArrayList.add(intervention);
+
+                    addMeanInHashMap(intervention,intervention.getDrones());
+                    addMeanInHashMap(intervention, intervention.getMeans());
+                }
+
+                sortInterventions();
+
+                interventionsAdapter.setHashMap(askedMeansList);
+                interventionsAdapter.setArrayList(interventionArrayList);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
+
+                        interventionsAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                // Run callback
+                if (onLoaded != null) {
+                    onLoaded.run();
+                }
+            }
+
+            @Override
+            public void onRepositoryFailure(Throwable e) {
+
+            }
+
+            @Override
+            public void onRestFailure(Throwable e) {
+                Log.e("TAG", "Rest error when loading interventions");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
+                        Toast.makeText(InterventionListFragment.this.getActivity(),
+                                "Network error when loading interventions", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        /*interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
             @Override
             public void onRepositoryResult(List<Intervention> interventionList) {
             }
@@ -165,6 +254,7 @@ public class InterventionListFragment extends Fragment {
                 while (interventionIterator.hasNext()) {
                     intervention = interventionIterator.next();
                     interventionArrayList.add(intervention);
+                    getMeans(intervention);
                 }
 
                 sortInterventions();
@@ -173,6 +263,7 @@ public class InterventionListFragment extends Fragment {
                     @Override
                     public void run() {
                         ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
+
                         interventionsAdapter.notifyDataSetChanged();
                     }
                 });
@@ -190,7 +281,7 @@ public class InterventionListFragment extends Fragment {
             @Override
             public void onRestFailure(Throwable e) {
                 // TODO : display toast error
-                Log.e("TAG","Rest error when loading interventions");
+                Log.e("TAG", "Rest error when loading interventions");
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -200,8 +291,96 @@ public class InterventionListFragment extends Fragment {
                     }
                 });
             }
-        });
+        });*/
+
+
     }
+
+    /*private void getMeans(final Intervention intervention) {
+
+
+        this.interventionMeanDao.findByIntervention(intervention.getId(), new DaoSelectionParameters(),
+                new IDaoSelectReturnHandler<List<InterventionMean>>() {
+                    @Override
+                    public void onRepositoryResult(List<InterventionMean> r) {
+                        // Nothing
+                    }
+
+                    @Override
+                    public void onRestResult(List<InterventionMean> r) {
+                        addMeanInHashMap(intervention, r);
+                        getDrones(intervention);
+                    }
+
+                    @Override
+                    public void onRepositoryFailure(Throwable e) {
+                        // Nothing
+                    }
+
+                    @Override
+                    public void onRestFailure(Throwable e) {
+                        //TODO
+                    }
+                });
+
+
+
+    }*/
+
+    private void addMeanInHashMap(Intervention intervention, Collection<? extends IMean> r) {
+        String idI=intervention.getId();
+        List<IMean> list=new ArrayList<>();
+        if(askedMeansList.containsKey(idI)){
+            list=askedMeansList.get(idI);
+        }
+        list.addAll(r);
+        askedMeansList.put(idI, list);
+    }
+
+    /*private void getDrones(final Intervention intervention) {
+
+        droneDao.findByIntervention(intervention.getId(), new DaoSelectionParameters(),
+                new IDaoSelectReturnHandler<List<Drone>>() {
+                    @Override
+                    public void onRepositoryResult(List<Drone> r) {
+                        // Nothing
+                    }
+
+                    @Override
+                    public void onRestResult(List<Drone> r) {
+                        // Cast to collection of elements
+                        addMeanInHashMap(intervention, r);
+
+                        interventionsAdapter.setHashMap(askedMeansList);
+                        interventionsAdapter.setArrayList(interventionArrayList);
+
+                        sortInterventions();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
+
+                                interventionsAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void onRepositoryFailure(Throwable e) {
+                        // Nothing
+                    }
+
+                    @Override
+                    public void onRestFailure(Throwable e) {
+                        //// TODO: 30/05/16
+                    }
+                });
+
+
+    }*/
 
     private void sortInterventions(){
         ArrayList<Intervention> interventionArrayListNotArchived = new ArrayList<>();
@@ -259,6 +438,8 @@ public class InterventionListFragment extends Fragment {
     }
 
     private void selectItem(int i){
-        fragmentInteractionListener.handleInterventionSelected(interventionArrayList.get(i));
+        Intervention intervention=interventionArrayList.get(i);
+        List<IMean> meanList=askedMeansList.get(intervention.getId());
+        fragmentInteractionListener.handleInterventionSelected(intervention,meanList);
     }
 }

@@ -79,4 +79,7 @@ dependencies {
 
     //Picasso for image loading
     compile 'com.squareup.picasso:picasso:2.5.2'
+    //badges
+    compile 'com.github.elevenetc:badgeview:v1.0.0'
+
 }

@@ -291,6 +291,7 @@ public class InterventionCreateFormFragment extends Fragment {
         meansAdapter.notifyDataSetChanged();
     }
 
+
     public interface OnFragmentInteractionListener {
         // Called iff the form is complete
         void onCreateIntervention();

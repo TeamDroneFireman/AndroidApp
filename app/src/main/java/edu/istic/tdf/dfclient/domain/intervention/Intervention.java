@@ -10,6 +10,8 @@ import java.util.Iterator;
 import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.Entity;
 import edu.istic.tdf.dfclient.domain.element.IElement;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.geo.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +35,16 @@ public class Intervention extends Entity implements IIntervention {
      * The corresponding sinister code
      */
     private String sinisterCode;
+
+    /**
+     *
+     */
+    private Collection<Drone> drones;
+
+    /**
+     *
+     */
+    private Collection<InterventionMean> means;
 
     /**
      * The collection of elements on the intervention
@@ -148,5 +160,23 @@ public class Intervention extends Entity implements IIntervention {
     @Override
     public void setSinisterCode(String sinisterCode) {
         this.sinisterCode = sinisterCode;
+    }
+
+    /**
+     * asked drones
+     * This methods is used for the validation table
+     * @return
+     */
+    public Collection<Drone> getDrones() {
+        return drones;
+    }
+
+    /**
+     * asked interventionMeans
+     * This methods is used for the validation table
+     * @return
+     */
+    public Collection<InterventionMean> getMeans() {
+        return means;
     }
 }

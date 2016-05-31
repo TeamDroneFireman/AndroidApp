@@ -76,6 +76,13 @@
             </LinearLayout>
         </ScrollView>
 
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/validation_table"
+            android:layout_below="@+id/scrollView2"
+            android:layout_above="@+id/interventionSelectionButton" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
