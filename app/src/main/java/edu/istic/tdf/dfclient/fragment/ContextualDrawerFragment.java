@@ -147,16 +147,21 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             public void onClick(View v) {
                 if (createDronePathMode) {
 
+                    droneStartMission.setVisibility(View.GONE);
+                    if(((Drone)element).hasMission()){
+                        droneStartMission.setVisibility(View.VISIBLE);
+                    }
                     dronePathModeSpinner.setVisibility(View.GONE);
                     droneCreatePathButton.setText("Créer chemin");
 
                     Mission currentMission = mListener.getCurrentMission();
 
-                    if(currentMission != null){
+                    if(!currentMission.getPathPoints().isEmpty()){
 
                         ArrayList<GeoPoint> pathPoints = mListener.getCurrentMission().getPathPoints();
                         Mission.PathMode pathMode = (Mission.PathMode) dronePathModeSpinner.getSelectedItem();
 
+                        // If cycle or simple we close the path
                         switch (pathMode){
                             case SIMPLE:
                             case CYCLE:
@@ -176,6 +181,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
                     mListener.setCreateDronePathMode(false);
                 } else {
+
+                    droneStartMission.setVisibility(View.GONE);
                     dronePathModeSpinner.setVisibility(View.VISIBLE);
                     droneCreatePathButton.setText("Confirmer chemin");
                     mListener.setCreateDronePathMode(true);
@@ -227,7 +234,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         roleArrayAdapter.notifyDataSetChanged();
         PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
         final MeanState[] states = MeanState.values();
+
         droneCreatePathButton.setVisibility(View.GONE);
+        droneStartMission.setVisibility(View.GONE);
         dronePathModeSpinner.setVisibility(View.GONE);
 
         MeanState meanState;
@@ -249,6 +258,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 }
                  break;
             case AIRMEAN:
+                if(((Drone)element).hasMission() && !((Drone)element).getMission().getPathPoints().isEmpty()){
+                    droneStartMission.setVisibility(View.VISIBLE);
+                }
                 meanState = ((IMean) element).getState();
                 droneCreatePathButton.setVisibility(View.VISIBLE);
                 if(meanState.equals(MeanState.ENGAGED)){
