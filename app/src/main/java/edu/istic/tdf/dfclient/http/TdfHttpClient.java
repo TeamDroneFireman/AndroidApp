@@ -16,7 +16,7 @@ public class TdfHttpClient {
 
     private final static String SCHEME = "http";
     //private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
-    private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
+    private final static String HOST = "devprojetm2gla.istic.univ-rennes1.fr";
 
     public static final String HTTP_ACCEPT = "application/json";
     public static final String HTTP_CONTENT_TYPE = "application/json; charset=utf-8";
@@ -155,9 +155,13 @@ public class TdfHttpClient {
             case User:
                 host = "user";
                 break;
+            case ImageDrone:
+                host = "image";
+                break;
             default:
                 return "";
         }
+
         return host + ".docker.localhost";
     }
 
@@ -178,6 +182,9 @@ public class TdfHttpClient {
                 break;
             case Sinister:
                 path = "sinisters";
+                break;
+            case ImageDrone:
+                path = "images";
                 break;
             default:
                 return "";

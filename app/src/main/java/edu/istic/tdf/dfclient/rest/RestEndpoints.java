@@ -10,5 +10,6 @@ public enum RestEndpoints {
     Drone,
     Sig,
     Mean,
-    Sinister
+    Sinister,
+    ImageDrone
 }

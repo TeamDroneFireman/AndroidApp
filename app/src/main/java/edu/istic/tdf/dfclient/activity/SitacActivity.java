@@ -30,12 +30,14 @@ import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
+import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -89,6 +91,7 @@ public class SitacActivity extends BaseActivity implements
     @Inject DroneDao droneDao;
     @Inject InterventionMeanDao interventionMeanDao;
     @Inject PointOfInterestDao pointOfInterestDao;
+    @Inject ImageDroneDao imageDroneDao;
 
     /**
      * true if and only if the current user is the CODIS
@@ -769,10 +772,13 @@ public class SitacActivity extends BaseActivity implements
             return pointOfInterests;
         }
 
+        public Collection<ImageDrone> getImageDrones() { return imageDrones; }
+
         // collection to save previous load datas
         private Collection<Drone> drones = new ArrayList<>();
         private Collection<InterventionMean> interventionMeans = new ArrayList<>();
         private Collection<PointOfInterest> pointOfInterests = new ArrayList<>();
+        private Collection<ImageDrone> imageDrones = new ArrayList<>();
 
         public DataLoader(String interventionId) {
             this.interventionId = interventionId;
@@ -783,6 +789,9 @@ public class SitacActivity extends BaseActivity implements
             this.loadDrones();
             this.loadMeans();
             this.loadPointsOfInterest();
+
+            //load images taken by drones
+            this.loadImageDrones();
         }
 
         public Dao getDaoOfElement(IElement element) {
@@ -820,8 +829,7 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestResult(final Intervention r) {
-                    if(SitacActivity.this.isCodis || r.isArchived())
-                    {
+                    if (SitacActivity.this.isCodis || r.isArchived()) {
                         hideToolBar();
                     }
 
@@ -942,14 +950,11 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            if(loadAfterPush)
-                            {
+                            if (loadAfterPush) {
                                 //We keep the selection if modification come from an other tablet
                                 Element currentElement = contextualDrawerFragment.tryGetElement();
                                 sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            }
-                            else
-                            {
+                            } else {
                                 sitacFragment.cancelSelection();
                             }
                         }
@@ -1055,14 +1060,11 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            if(loadAfterPush)
-                            {
+                            if (loadAfterPush) {
                                 //We keep the selection if modification come from an other tablet
                                 Element currentElement = contextualDrawerFragment.tryGetElement();
                                 sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            }
-                            else
-                            {
+                            } else {
                                 sitacFragment.cancelSelection();
                             }
                         }
@@ -1165,14 +1167,11 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(loadAfterPush)
-                            {
+                            if (loadAfterPush) {
                                 //We keep the selection if modification come from an other tablet
                                 Element currentElement = contextualDrawerFragment.tryGetElement();
                                 sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            }
-                            else
-                            {
+                            } else {
                                 sitacFragment.cancelSelection();
                             }
                         }
@@ -1187,6 +1186,131 @@ public class SitacActivity extends BaseActivity implements
                 @Override
                 public void onRestFailure(Throwable e) {
                     SitacActivity.this.displayNetworkError();
+                }
+            });
+        }
+
+        /**
+         * Load all images of the intervention
+         */
+        private void loadImageDrones()
+        {
+            SitacActivity.this.imageDroneDao.findByIntervention(interventionId,
+                    new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<ImageDrone>>() {
+                        @Override
+                        public void onRepositoryResult(List<ImageDrone> r) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestResult(List<ImageDrone> r) {
+                            // Cast to collection of elements
+                            Collection<ImageDrone> colR = new ArrayList<>();
+                            colR.addAll(r);
+
+                            Collection<ImageDrone> colRRemove = new ArrayList<>();
+                            colRRemove.addAll(imageDrones);
+
+                            imageDrones = r;
+
+                            removeImagesDrone(colRRemove);
+                            updateImagesDrone(colR);
+                        }
+
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+
+                        }
+                    });
+        }
+
+        /**
+         * Load an image of the intervention
+         * @param pointOfInterestId
+         * @param loadAfterPush
+         */
+        private void loadImageDrone(String pointOfInterestId, final boolean loadAfterPush)
+        {
+            SitacActivity.this.imageDroneDao.find(interventionId, new IDaoSelectReturnHandler<ImageDrone>() {
+                        @Override
+                        public void onRepositoryResult(ImageDrone r) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestResult(ImageDrone r) {
+                            ImageDrone imgToRemove = null;
+
+                            //Collection usefull for remove in the loop
+                            Collection<ImageDrone> imageDronesCopy = new ArrayList<>();
+                            imageDronesCopy.addAll(imageDrones);
+
+                            Iterator<ImageDrone> it = imageDrones.iterator();
+                            ImageDrone imageDrone;
+                            while (it.hasNext()) {
+                                imageDrone = it.next();
+                                if (r.getId().equals(imageDrone.getId())) {
+                                    imgToRemove = imageDrone;
+                                    imageDronesCopy.remove(imageDrone);
+                                }
+                            }
+
+                            imageDrones = imageDronesCopy;
+                            imageDrones.add(r);
+
+                            if (imgToRemove != null) {
+                                Collection<ImageDrone> imgsRemove = new ArrayList<>();
+                                imgsRemove.add(imgToRemove);
+                                removeImagesDrone(imgsRemove);
+                            }
+
+                            Collection<ImageDrone> imgsUpdate = new ArrayList<>();
+                            imgsUpdate.add(r);
+                            updateImagesDrone(imgsUpdate);
+                        }
+
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+
+                        }
+                    });
+        }
+
+        /**
+         * Update the sitacfragment
+         * @param imageDrones
+         */
+        public void updateImagesDrone(final Collection<ImageDrone> imageDrones)
+        {
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO: 31/05/16 mettre à jour les images sur la carte
+                }
+            });
+        }
+
+
+        /**
+         * Update the sitacfragment
+         * @param imageDrones
+         */
+        public void removeImagesDrone(final Collection<ImageDrone> imageDrones)
+        {
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO: 31/05/16 mettre à jour les images sur la carte
                 }
             });
         }
