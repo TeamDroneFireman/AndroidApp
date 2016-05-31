@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -58,6 +60,9 @@ import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.push.IPushCommand;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -657,6 +662,11 @@ public class SitacActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public void startMission(Drone drone) {
+        this.dataLoader.startMission(drone);
+    }
+
     private void deleteIfMean(final Element element){
         if (element.isMeanFromMeanTable()) {
             ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
@@ -726,6 +736,7 @@ public class SitacActivity extends BaseActivity implements
             }
         }
     }
+
 
     private void deleteFromUI(final Element element){
         SitacActivity.this.runOnUiThread(new Runnable() {
@@ -934,6 +945,24 @@ public class SitacActivity extends BaseActivity implements
                         }
                     });
         }
+
+        private void startMission(final Drone drone){
+
+            SitacActivity.this.droneDao.startMission(drone, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("DRONE MISSION :", "ERROR WHEN STARTING MISSION FOR DRONE[" + drone.getId() + "]");
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.i("DRONE MISSION : ", "MISSION STARTED FOR DRONE [" + drone.getId() + "]");
+
+                }
+            });
+
+        }
+
 
         private void loadDrone(String droneId, final boolean loadAfterPush)
         {

@@ -26,11 +26,11 @@ public class Mission {
         }
     }
 
-    private ArrayList<GeoPoint> pathPoints = new ArrayList<>();
+    private ArrayList<GeoPoint> geoPoints = new ArrayList<>();
     private PathMode pathMode = PathMode.SIMPLE;
 
     public ArrayList<GeoPoint> getPathPoints() {
-        return pathPoints;
+        return geoPoints;
     }
 
     public Mission.PathMode getPathMode(){
@@ -42,13 +42,13 @@ public class Mission {
     }
 
     public void setPathPoints(ArrayList<GeoPoint> pathPoints) {
-        this.pathPoints = pathPoints;
+        this.geoPoints = pathPoints;
     }
 
     @Override
     public String toString() {
         return "Mission{" +
-                "pathPoints=" + pathPoints +
+                "pathPoints=" + geoPoints +
                 '}';
     }
 
@@ -56,11 +56,11 @@ public class Mission {
     }
 
     public Mission(ArrayList<GeoPoint> pathPoints){
-        this.pathPoints = pathPoints;
+        this.geoPoints = pathPoints;
     }
 
     public Mission(ArrayList<GeoPoint> pathPoints, PathMode pathMode){
-        this.pathPoints = pathPoints;
+        this.geoPoints = pathPoints;
         this.pathMode = pathMode;
     }
 
