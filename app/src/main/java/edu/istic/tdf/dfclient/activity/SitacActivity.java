@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
@@ -39,7 +40,6 @@ import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
-import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -52,6 +52,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionM
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.domain.geo.Location;
+import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
@@ -117,6 +118,10 @@ public class SitacActivity extends BaseActivity implements
 
         // Inject dagger dependencies
         getApplicationComponent().inject(this);
+
+        //remove back button from action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         // Activity title
         setTitle(getString(R.string.activity_sitac_title));
@@ -368,7 +373,7 @@ public class SitacActivity extends BaseActivity implements
 
     }
 
-    private void showGalleryDrawer(){
+    private void showGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .show(galleryDrawerFragment)
                 .commit();
@@ -381,7 +386,7 @@ public class SitacActivity extends BaseActivity implements
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
-    private void hideGalleryDrawer(){
+    private void hideGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .hide(galleryDrawerFragment)
                 .commit();
@@ -393,7 +398,7 @@ public class SitacActivity extends BaseActivity implements
                 .commit();
     }
 
-    private void showToolBar(){
+    private void showToolBar() {
         getSupportFragmentManager().beginTransaction()
                 .show(toolbarFragment)
                 .commit();
@@ -946,7 +951,7 @@ public class SitacActivity extends BaseActivity implements
                     });
         }
 
-        private void startMission(final Drone drone){
+        private void startMission(final Drone drone) {
 
             SitacActivity.this.droneDao.startMission(drone, new Callback() {
                 @Override
@@ -1295,53 +1300,53 @@ public class SitacActivity extends BaseActivity implements
         private void loadImageDrone(String pointOfInterestId, final boolean loadAfterPush)
         {
             SitacActivity.this.imageDroneDao.find(interventionId, new IDaoSelectReturnHandler<ImageDrone>() {
-                        @Override
-                        public void onRepositoryResult(ImageDrone r) {
-                            // Nothing
+                @Override
+                public void onRepositoryResult(ImageDrone r) {
+                    // Nothing
+                }
+
+                @Override
+                public void onRestResult(ImageDrone r) {
+                    ImageDrone imgToRemove = null;
+
+                    //Collection usefull for remove in the loop
+                    Collection<ImageDrone> imageDronesCopy = new ArrayList<>();
+                    imageDronesCopy.addAll(imageDrones);
+
+                    Iterator<ImageDrone> it = imageDrones.iterator();
+                    ImageDrone imageDrone;
+                    while (it.hasNext()) {
+                        imageDrone = it.next();
+                        if (r.getId().equals(imageDrone.getId())) {
+                            imgToRemove = imageDrone;
+                            imageDronesCopy.remove(imageDrone);
                         }
+                    }
 
-                        @Override
-                        public void onRestResult(ImageDrone r) {
-                            ImageDrone imgToRemove = null;
+                    imageDrones = imageDronesCopy;
+                    imageDrones.add(r);
 
-                            //Collection usefull for remove in the loop
-                            Collection<ImageDrone> imageDronesCopy = new ArrayList<>();
-                            imageDronesCopy.addAll(imageDrones);
+                    if (imgToRemove != null) {
+                        Collection<ImageDrone> imgsRemove = new ArrayList<>();
+                        imgsRemove.add(imgToRemove);
+                        removeImagesDrone(imgsRemove);
+                    }
 
-                            Iterator<ImageDrone> it = imageDrones.iterator();
-                            ImageDrone imageDrone;
-                            while (it.hasNext()) {
-                                imageDrone = it.next();
-                                if (r.getId().equals(imageDrone.getId())) {
-                                    imgToRemove = imageDrone;
-                                    imageDronesCopy.remove(imageDrone);
-                                }
-                            }
+                    Collection<ImageDrone> imgsUpdate = new ArrayList<>();
+                    imgsUpdate.add(r);
+                    updateImagesDrone(imgsUpdate);
+                }
 
-                            imageDrones = imageDronesCopy;
-                            imageDrones.add(r);
+                @Override
+                public void onRepositoryFailure(Throwable e) {
 
-                            if (imgToRemove != null) {
-                                Collection<ImageDrone> imgsRemove = new ArrayList<>();
-                                imgsRemove.add(imgToRemove);
-                                removeImagesDrone(imgsRemove);
-                            }
+                }
 
-                            Collection<ImageDrone> imgsUpdate = new ArrayList<>();
-                            imgsUpdate.add(r);
-                            updateImagesDrone(imgsUpdate);
-                        }
+                @Override
+                public void onRestFailure(Throwable e) {
 
-                        @Override
-                        public void onRepositoryFailure(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onRestFailure(Throwable e) {
-
-                        }
-                    });
+                }
+            });
         }
 
         /**
