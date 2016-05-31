@@ -177,6 +177,10 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     public void setSelectedElement(final Element element) {
         this.element = element;
         ElementLabelEdit.setText(element.getName());
+
+        //If it is a mean, can't change the name
+        ElementLabelEdit.setEnabled(!element.isMeanFromMeanTable());
+
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
         roleArrayAdapter.notifyDataSetChanged();
 
