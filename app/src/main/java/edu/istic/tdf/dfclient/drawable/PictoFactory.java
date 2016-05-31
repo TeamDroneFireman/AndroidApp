@@ -278,4 +278,54 @@ public class PictoFactory {
 
         return inSampleSize;
     }
+
+    public static ElementForm getFormPlanned(ElementForm elementForm){
+        switch (elementForm){
+            case MEAN:
+            case MEAN_PLANNED:
+                return ElementForm.MEAN_PLANNED;
+            case MEAN_GROUP:
+            case MEAN_GROUP_PLANNED:
+                return ElementForm.MEAN_GROUP_PLANNED;
+            case MEAN_COLUMN:
+            case MEAN_COLUMN_PLANNED:
+                return ElementForm.MEAN_COLUMN_PLANNED;
+            // Mean other
+            case MEAN_OTHER:
+            case MEAN_OTHER_PLANNED:
+                return ElementForm.MEAN_OTHER_PLANNED;
+            // Airmean
+            case AIRMEAN:
+            case AIRMEAN_PLANNED:
+                return ElementForm.AIRMEAN_PLANNED;
+            default:
+                return elementForm;
+        }
+    }
+
+    public static ElementForm getFormNotPlanned(ElementForm elementForm){
+        switch (elementForm){
+            case MEAN:
+            case MEAN_PLANNED:
+                return ElementForm.MEAN_PLANNED;
+            case MEAN_GROUP:
+            case MEAN_GROUP_PLANNED:
+                return ElementForm.MEAN_GROUP_PLANNED;
+            case MEAN_COLUMN:
+            case MEAN_COLUMN_PLANNED:
+                return ElementForm.MEAN_COLUMN_PLANNED;
+            // Mean other
+            case MEAN_OTHER:
+            case MEAN_OTHER_PLANNED:
+                return ElementForm.MEAN_OTHER_PLANNED;
+            // Airmean
+            case AIRMEAN:
+            case AIRMEAN_PLANNED:
+                return ElementForm.AIRMEAN_PLANNED;
+            default:
+                return elementForm;
+        }
+    }
+
+
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -68,8 +69,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     CheckBox arrivedStateCheckBox;
     @Bind(R.id.EngagedState)
     CheckBox engagedStateCheckBox;
-    @Bind(R.id.ReleasedState)
-    CheckBox releasedStateCheckBox;
+    @Bind(R.id.InTransitState)
+    CheckBox inTransit;
     @Bind(R.id.StateView)
     TextView stateTextView;
 
@@ -108,13 +109,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 element.setName(ElementLabelEdit.getText().toString());
                 element.setRole((Role) roleSpinner.getSelectedItem());
                 element.setForm((PictoFactory.ElementForm) formSpinner.getSelectedItem());
-                if (releasedStateCheckBox.isChecked()) {
-                    ((IMean) element).setState(MeanState.RELEASED);
-                } else if (engagedStateCheckBox.isChecked()) {
-                    ((IMean) element).setState(MeanState.ENGAGED);
-                } else if (arrivedStateCheckBox.isChecked()) {
-                    ((IMean) element).setState(MeanState.ARRIVED);
-                }
+
                 mListener.updateElement(element);
             }
         });
@@ -206,7 +201,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     }
 
     /**
-     * Set the element which can be modify by the drawer
+     * Set the element which can be modified by the drawer
      * @param element
      */
     public void setSelectedElement(final Element element) {
@@ -218,49 +213,53 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
         roleArrayAdapter.notifyDataSetChanged();
-
         PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
         final MeanState[] states = MeanState.values();
         droneCreatePathButton.setVisibility(View.GONE);
         dronePathModeSpinner.setVisibility(View.GONE);
 
+        MeanState meanState;
         switch (element.getType()){
             case MEAN:
-                if(((IMean) element).getState().equals(MeanState.ASKED)){
+                meanState = ((IMean) element).getState();
+                if(meanState.equals(MeanState.ENGAGED)){
                     forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_PLANNED,
-                            PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
-                            PictoFactory.ElementForm.MEAN_COLUMN_PLANNED};
+                                PictoFactory.ElementForm.MEAN,
+                                PictoFactory.ElementForm.MEAN_GROUP,
+                                PictoFactory.ElementForm.MEAN_COLUMN
+                            };
                 }else{
                     forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN,
-                            PictoFactory.ElementForm.MEAN_GROUP,
-                            PictoFactory.ElementForm.MEAN_COLUMN };
+                                PictoFactory.ElementForm.MEAN_PLANNED,
+                                PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
+                                PictoFactory.ElementForm.MEAN_COLUMN_PLANNED
+                             };
                 }
                  break;
             case AIRMEAN:
+                meanState = ((IMean) element).getState();
                 droneCreatePathButton.setVisibility(View.VISIBLE);
-                if(((IMean) element).getState().equals(MeanState.ASKED)){
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.AIRMEAN_PLANNED};
-                }else{
+                if(meanState.equals(MeanState.ENGAGED)){
                     forms = new PictoFactory.ElementForm[]{
                             PictoFactory.ElementForm.AIRMEAN};
+                }else{
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.AIRMEAN_PLANNED};
                 }
                 break;
             case MEAN_OTHER:
-                if(((IMean) element).getState().equals(MeanState.ASKED)){
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_OTHER_PLANNED};
-                }else{
+                meanState = ((IMean) element).getState();
+                if(meanState.equals(MeanState.ENGAGED)){
                     forms = new PictoFactory.ElementForm[]{
                             PictoFactory.ElementForm.MEAN_OTHER};
+                }else{
+                    forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN_OTHER_PLANNED};
                 }
                 break;
-            default:
 
+            default:
                     forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_OTHER,
                             PictoFactory.ElementForm.SOURCE,
                             PictoFactory.ElementForm.TARGET,
                             PictoFactory.ElementForm.WATERPOINT,
@@ -269,7 +268,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
 
         }
-
         shapeArrayAdapter = new ShapeArrayAdapter(getContext(), forms);
         dronePathModeSpinner.setAdapter(new ArrayAdapter<Mission.PathMode>(getContext(), android.R.layout.simple_spinner_item, Mission.PathMode.values()));
 
@@ -277,7 +275,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
         shapeArrayAdapter.notifyDataSetChanged();
         initializeStateSelection();
-        
         //if element has an id we can suppress it
         if(element.getId() != null)
         {
@@ -298,71 +295,111 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         }
         else
         {
-            elementDeleteButton.setVisibility(View.INVISIBLE);
+            elementDeleteButton.setVisibility(View.GONE);
             elementDeleteButton.setEnabled(false);
         }
     }
 
 
+    /**
+     *  Method to help initializeStateSelection below
+      */
+    private void setCheckBoxProperties(CheckBox button, boolean enable, boolean checked){
+        button.setChecked(checked);
+        button.setEnabled(enable);
+        if(enable){
+            button.setVisibility(View.VISIBLE);
+        }else{
+            button.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Method to update the state with the checkbox and the actual states
+     */
+    private void updateState(){
+        MeanState meanState = ((IMean) element).getState();
+        if( meanState.equals(MeanState.ARRIVED)||
+                meanState.equals(MeanState.ENGAGED)||
+                meanState.equals(MeanState.VALIDATED)||
+                meanState.equals(MeanState.INTRANSIT)){
+            if (inTransit.isChecked()) {
+                ((IMean) element).setState(MeanState.INTRANSIT);
+            }else if (engagedStateCheckBox.isChecked()) {
+                ((IMean) element).setState(MeanState.ENGAGED);
+            }else{
+                ((IMean) element).setState(MeanState.ARRIVED);
+            }
+        }
+    }
     private void initializeStateSelection() {
+        inTransit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateState();
+                setSelectedElement(element);
+            }
+        });
+        engagedStateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateState();
+                setSelectedElement(element);
+            }
+        });
+        arrivedStateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateState();
+                setSelectedElement(element);
+            }
+        });
         switch(element.getType()){
             case MEAN_OTHER:
             case MEAN:
             case AIRMEAN:
                 MeanState m = ((IMean) element).getState();
                 stateTextView.setText(m.getMeanAsReadableText());
-                arrivedStateCheckBox.setChecked(false);
-                arrivedStateCheckBox.setEnabled(false);
-                releasedStateCheckBox.setChecked(false);
-                releasedStateCheckBox.setEnabled(false);
-                engagedStateCheckBox.setChecked(false);
-                engagedStateCheckBox.setEnabled(false);
                 switch (m){
                     case ASKED:
-                        arrivedStateCheckBox.setChecked(false);
-                        arrivedStateCheckBox.setEnabled(false);
-                        engagedStateCheckBox.setChecked(false);
-                        engagedStateCheckBox.setEnabled(false);
-                        releasedStateCheckBox.setChecked(false);
-                        releasedStateCheckBox.setEnabled(false);
+                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
+                        setCheckBoxProperties(engagedStateCheckBox, false, false);
+                        setCheckBoxProperties(inTransit, false, false);
                         break;
                     case VALIDATED:
-                        arrivedStateCheckBox.setChecked(false);
-                        arrivedStateCheckBox.setEnabled(true);
-                        engagedStateCheckBox.setChecked(false);
-                        engagedStateCheckBox.setEnabled(true);
-                        releasedStateCheckBox.setChecked(false);
-                        releasedStateCheckBox.setEnabled(true);
+                        setCheckBoxProperties(arrivedStateCheckBox, true, false);
+                        setCheckBoxProperties(engagedStateCheckBox, true, false);
+                        setCheckBoxProperties(inTransit, true, false);
                         break;
                     case ARRIVED:
-                        arrivedStateCheckBox.setChecked(true);
-                        arrivedStateCheckBox.setEnabled(false);
-                        engagedStateCheckBox.setChecked(false);
-                        engagedStateCheckBox.setEnabled(true);
-                        releasedStateCheckBox.setChecked(false);
-                        releasedStateCheckBox.setEnabled(true);
+                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
+                        setCheckBoxProperties(engagedStateCheckBox, true, false);
+                        setCheckBoxProperties(inTransit, true, false);
                         break;
                     case ENGAGED:
-                        arrivedStateCheckBox.setChecked(true);
-                        arrivedStateCheckBox.setEnabled(false);
-                        engagedStateCheckBox.setChecked(true);
-                        engagedStateCheckBox.setEnabled(true);
-                        releasedStateCheckBox.setChecked(false);
-                        releasedStateCheckBox.setEnabled(true);
+                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
+                        setCheckBoxProperties(engagedStateCheckBox, true, true);
+                        setCheckBoxProperties(inTransit, true, false);
+                        break;
+                    case INTRANSIT:
+                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
+                        setCheckBoxProperties(engagedStateCheckBox, true, true);
+                        setCheckBoxProperties(inTransit, true, true);
                         break;
                     case RELEASED:
-                        arrivedStateCheckBox.setChecked(true);
-                        arrivedStateCheckBox.setEnabled(false);
-                        engagedStateCheckBox.setChecked(true);
-                        engagedStateCheckBox.setEnabled(false);
-                        releasedStateCheckBox.setChecked(true);
-                        releasedStateCheckBox.setEnabled(false);
+                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
+                        setCheckBoxProperties(engagedStateCheckBox, false, false);
+                        setCheckBoxProperties(inTransit, false, false);
                         break;
                 }
                 break;
             case POINT_OF_INTEREST:
             case WATERPOINT:
-
+            default:
+                stateTextView.setVisibility(View.GONE);
+                arrivedStateCheckBox.setVisibility(View.GONE);
+                engagedStateCheckBox.setVisibility(View.GONE);
+                inTransit.setVisibility(View.GONE);
                 break;
         }
 

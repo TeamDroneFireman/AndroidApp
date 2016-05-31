@@ -9,6 +9,7 @@ public enum MeanState {
     VALIDATED,
     ARRIVED,
     ENGAGED,
+    INTRANSIT,
     RELEASED;
 
 
@@ -18,6 +19,7 @@ public enum MeanState {
             case VALIDATED: return ARRIVED;
             case ARRIVED:return ENGAGED;
             case ENGAGED:return RELEASED;
+            case INTRANSIT:return INTRANSIT;
             default:return ASKED;
         }
     }
@@ -29,6 +31,7 @@ public enum MeanState {
             case ARRIVED:return VALIDATED;
             case ENGAGED:return ARRIVED;
             case RELEASED:return ENGAGED;
+            case INTRANSIT:return INTRANSIT;
             default:return ASKED;
         }
     }
@@ -39,6 +42,7 @@ public enum MeanState {
             case VALIDATED: return "Valider le moyen";
             case ARRIVED:return "Le moyen est arrivé";
             case ENGAGED:return "Le moyen est engagé";
+            case INTRANSIT:return "Le moyen est en transit";
             case RELEASED:return "Libérer le moyen";
             default:return "Etat par défaut";
         }
@@ -50,6 +54,7 @@ public enum MeanState {
             case VALIDATED: return "Moyen validé";
             case ARRIVED:return "Moyen arrivé";
             case ENGAGED:return "Moyen engagé";
+            case INTRANSIT:return "Moyen en transit";
             case RELEASED:return "Moyen libéré";
             default:return "Etat par défaut";
         }
