@@ -1,7 +1,11 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +43,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
+import edu.istic.tdf.dfclient.util.MapUtils;
 
 public class SitacFragment extends SupportMapFragment implements OnMapReadyCallback, Observer {
 
@@ -63,6 +68,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private HashMap<Marker, Element> markersList = new HashMap<>();
 
     // Gestion des chemins de drone
+    // List d'association id drone <--> polyline
+    private HashMap<String, Polyline> dronePathsList = new HashMap<>();
+    private HashMap<String, Polyline> missionPathsList = new HashMap<>();
+
     private boolean isDronePathMode;
     private ArrayList<LatLng> currentPath;
     private Polyline currentPolyline;
@@ -116,6 +125,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     if(currentPolyline != null){
                         currentPolyline.remove();
                     }
+                    rectOptions.color(Role.WHITE.getColor());
 
                     currentPolyline = googleMap.addPolyline(rectOptions);
 
@@ -192,7 +202,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 element.getLocation().getGeopoint().setLatitude(marker.getPosition().latitude);
                 element.getLocation().getGeopoint().setLongitude(marker.getPosition().longitude);
 
-                switch(element.getForm()){
+                switch (element.getForm()) {
                     case MEAN:
                         element.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
                         break;
@@ -276,6 +286,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     public void cancelSelection(){
+        isDronePathMode = false;
         if(currentPolyline != null){
             currentPolyline.remove();
         }
@@ -334,6 +345,65 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         this.isDronePathMode = isDronePathMode;
     }
 
+    /**
+     *
+     * Draw a polyline on map and store it in the dronePathsList hashmap with the element id as key
+     *
+     * @param element
+     */
+    private void drawDronePath(Element element){
+
+        // Remove paths if already present
+        removePathsForDrone(element);
+
+        if(((Drone)element).hasMission()) {
+
+            // Mission points
+            ArrayList<LatLng> missionPathPoints = MapUtils.geoPointListToLatLngList(((Drone) element).getMission().getPathPoints());
+            PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(Color.LTGRAY);
+            missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
+
+            // Drone progress points
+            ArrayList<LatLng> dronePathPoints = new ArrayList<>();
+
+            LatLng nearestPointOnMission = MapUtils.findNearestPoint(
+                    MapUtils.geoPointToLatLng(element.getLocation().getGeopoint()),
+                    missionPathPoints
+            );
+
+            // Check on which mission segment is the nearest point
+            LatLng lastPoint = missionPathPoints.get(0);
+            int closestMissionPointIndex = 0;
+
+            for(LatLng currentPoint : missionPathPoints){
+
+                if(MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)){
+                    closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
+                }
+
+                lastPoint = currentPoint;
+            }
+
+            dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
+            dronePathPoints.add(nearestPointOnMission);
+
+            PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor());
+            dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
+
+        }
+
+    }
+
+    private void removePathsForDrone(Element element) {
+
+        if(dronePathsList.get(element.getId()) != null){
+            dronePathsList.get(element.getId()).remove();
+        }
+        if(missionPathsList.get(element.getId()) != null){
+            missionPathsList.get(element.getId()).remove();
+        }
+    }
+
     public ArrayList<LatLng> getCurrentDronePath(){
         return this.currentPath;
     }
@@ -388,19 +458,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
 
         if(element.getForm() == PictoFactory.ElementForm.AIRMEAN || element.getForm() == PictoFactory.ElementForm.AIRMEAN_PLANNED){
-
-            ArrayList<LatLng> pathPoints = new ArrayList<>();
-            if(((Drone)element).getMission() != null){
-
-                for(GeoPoint geoPoint : ((Drone)element).getMission().getPathPoints()){
-                    pathPoints.add(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()));
-                }
-
-                PolylineOptions rectOptions = new PolylineOptions().addAll(pathPoints);
-
-                Polyline dronePolyline = googleMap.addPolyline(rectOptions);
-            }
-
+            drawDronePath(element);
         }
 
         if(googleMap != null) {
@@ -459,6 +517,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                         PictoFactory.createPicto(getContext()).setElement(element).toBitmap()
                 )));
 
+        if(element.getForm() == PictoFactory.ElementForm.AIRMEAN || element.getForm() == PictoFactory.ElementForm.AIRMEAN_PLANNED){
+            drawDronePath(element);
+        }
+
         markersList.put(marker, element);
     }
 
@@ -506,5 +568,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             removeElement(element);
         }
     }
+
 
 }

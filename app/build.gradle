@@ -70,8 +70,9 @@ dependencies {
     compile 'eu.inloop:easygcm:1.6.2@aar'
 
     // UI ----------------------------------
-    // GoogleMaps API
+    // GoogleMaps API + google maps utils
     compile 'com.google.android.gms:play-services-maps:8.3.0'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
 
     // Proccess button
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'

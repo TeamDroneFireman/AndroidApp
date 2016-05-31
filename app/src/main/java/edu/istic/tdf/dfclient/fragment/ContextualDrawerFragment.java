@@ -132,10 +132,11 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 if (createDronePathMode) {
+                    droneCreatePathButton.setText("Créer chemin");
                     ((Drone) element).setMission(mListener.getCurrentMission());
-                    mListener.getCurrentMission();
                     mListener.setCreateDronePathMode(false);
                 } else {
+                    droneCreatePathButton.setText("Fermer chemin");
                     mListener.setCreateDronePathMode(true);
                 }
                 createDronePathMode = !createDronePathMode;
