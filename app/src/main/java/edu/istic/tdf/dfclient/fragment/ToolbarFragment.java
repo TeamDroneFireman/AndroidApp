@@ -123,13 +123,13 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         group = new ToolsGroup("Demandés");
         groups.append(1, group);
 
-        group = new ToolsGroup("Validés");
+        group = new ToolsGroup("Va");
         groups.append(2, group);
 
-        group = new ToolsGroup("Arrivés");
+        group = new ToolsGroup("Inactifs");
         groups.append(3, group);
 
-        group = new ToolsGroup("Engagés");
+        group = new ToolsGroup("Actifs");
         groups.append(4, group);
 
     }
