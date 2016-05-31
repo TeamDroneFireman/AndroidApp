@@ -29,5 +29,9 @@ public class Mission {
     public Mission() {
     }
 
+    public Mission(ArrayList<GeoPoint> pathPoints){
+        this.pathPoints = pathPoints;
+    }
+
 
 }

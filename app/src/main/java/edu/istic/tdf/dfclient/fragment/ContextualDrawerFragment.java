@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
@@ -27,6 +28,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class ContextualDrawerFragment extends Fragment implements Observer {
@@ -133,7 +135,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             public void onClick(View v) {
                 if (createDronePathMode) {
                     droneCreatePathButton.setText("Créer chemin");
-                    ((Drone) element).setMission(mListener.getCurrentMission());
+                    ArrayList<GeoPoint> pathPoints = mListener.getCurrentMission().getPathPoints();
+                    pathPoints.add(pathPoints.get(0));
+                    ((Drone) element).setMission(new Mission(pathPoints));
                     mListener.setCreateDronePathMode(false);
                 } else {
                     droneCreatePathButton.setText("Fermer chemin");
