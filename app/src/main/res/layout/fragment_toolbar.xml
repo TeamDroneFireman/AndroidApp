@@ -5,10 +5,11 @@
     tools:context="edu.istic.tdf.dfclient.fragment.ToolbarFragment"
     android:background="#424242">
 
-        <ExpandableListView
-            android:id="@+id/toolbar_listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </ExpandableListView>
+    <ExpandableListView
+        android:id="@+id/toolbar_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:groupIndicator="@null">
+    </ExpandableListView>
 
 </FrameLayout>
