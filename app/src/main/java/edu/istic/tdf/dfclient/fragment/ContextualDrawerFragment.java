@@ -258,7 +258,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 }
                  break;
             case AIRMEAN:
-                if(!((Drone)element).getMission().getPathPoints().isEmpty()){
+                if(((Drone)element).hasMission() && !((Drone)element).getMission().getPathPoints().isEmpty()){
                     droneStartMission.setVisibility(View.VISIBLE);
                 }
                 meanState = ((IMean) element).getState();

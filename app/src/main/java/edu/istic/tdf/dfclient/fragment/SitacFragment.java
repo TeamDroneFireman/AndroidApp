@@ -131,6 +131,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     if(currentPolyline != null){
                         currentPolyline.remove();
                     }
+
                     rectOptions.color(Role.WHITE.getColor());
 
                     currentPolyline = googleMap.addPolyline(rectOptions);
