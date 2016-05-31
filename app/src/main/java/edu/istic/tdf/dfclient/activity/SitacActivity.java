@@ -211,6 +211,16 @@ public class SitacActivity extends BaseActivity implements
     }
 
     @Override
+    public void handleImageDronesSelected(Collection<ImageDrone> imageDrones) {
+        if(imageDrones != null)
+        {
+            this.galleryDrawerFragment.updateList(imageDrones);
+        };
+
+        showGalleryDrawer();
+    }
+
+    @Override
     public Tool getSelectedTool() {
         return selectedTool;
     }
@@ -332,6 +342,15 @@ public class SitacActivity extends BaseActivity implements
     public void handleCancelSelection() {
         this.selectedTool = null;
         this.toolbarFragment.cancelSelection();
+        if(isCodis || isInterventionArchived())
+        {
+            hideToolBar();
+        }
+        else
+        {
+            showToolBar();
+        }
+
         hideContextualDrawer();
         hideGalleryDrawer();
     }
@@ -366,6 +385,12 @@ public class SitacActivity extends BaseActivity implements
     private void hideToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .hide(toolbarFragment)
+                .commit();
+    }
+
+    private void showToolBar(){
+        getSupportFragmentManager().beginTransaction()
+                .show(toolbarFragment)
                 .commit();
     }
 
@@ -1299,7 +1324,8 @@ public class SitacActivity extends BaseActivity implements
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO: 31/05/16 mettre à jour les images sur la carte
+                    // Update Map
+                    SitacActivity.this.sitacFragment.updateImageDrones(imageDrones);
                 }
             });
         }
@@ -1314,7 +1340,8 @@ public class SitacActivity extends BaseActivity implements
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO: 31/05/16 mettre à jour les images sur la carte
+                    // Update Map
+                    SitacActivity.this.sitacFragment.removeImageDrones(imageDrones);
                 }
             });
         }

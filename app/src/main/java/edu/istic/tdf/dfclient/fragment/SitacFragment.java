@@ -1,11 +1,7 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +22,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -45,6 +42,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
+import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.util.MapUtils;
 
@@ -66,9 +64,13 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private Double longitude = 0.0;
 
     private List<Element> elementsToSync = new ArrayList<>();
+    private List<ImageDrone> imageDronesToSync = new ArrayList<>();
 
     // Liste d'association marker <--> element
     private HashMap<Marker, Element> markersList = new HashMap<>();
+
+    // Liste d'association marker <--> element
+    private HashMap<Marker, Collection<ImageDrone>> markersListImageDrone = new HashMap<>();
 
     // Gestion des chemins de drone
     // List d'association id drone <--> polyline
@@ -163,9 +165,15 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(!isDronePathMode){
+
+                if(isImageDroneMarker(marker))
+                {
+                    mListener.handleImageDronesSelected(markersListImageDrone.get(marker));
+                }
+                else if(!isDronePathMode){
                     mListener.setSelectedElement(markersList.get(marker));
                 }
+
                 return false;
             }
 
@@ -431,6 +439,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
          */
         boolean isInterventionArchived();
 
+        /**
+         * handle the selection of a marker of type image drone
+         * @param imageDrones
+         */
+        void handleImageDronesSelected(Collection<ImageDrone> imageDrones);
+
         Tool getSelectedTool();
         Element tryGetSelectedElement();
 
@@ -456,10 +470,42 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return null;
     }
 
+    private Marker getImageDroneMarker(ImageDrone imageDrone){
+        if(markersListImageDrone.containsValue(imageDrone)){
+            for (Map.Entry<Marker, Collection<ImageDrone>> entry : markersListImageDrone.entrySet()) {
+                Marker marker = entry.getKey();
+                Collection<ImageDrone> imageDroneValues = entry.getValue();
+
+                Iterator<ImageDrone> iterator = imageDroneValues.iterator();
+                ImageDrone img;
+                while(iterator.hasNext())
+                {
+                    img = iterator.next();
+
+                    if(img.equals(imageDrone)){
+                        return marker;
+                    }
+                    else if (img.getId() != null && img.getId() == imageDrone.getId())
+                    {
+                        return marker;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     private void syncMarker(){
         for (Element element : elementsToSync){
             updateElement(element);
         }
+
+        for (ImageDrone imageDrone : imageDronesToSync){
+            updateImageDrone(imageDrone);
+        }
+
+        imageDronesToSync.clear();
         elementsToSync.clear();
     }
 
@@ -489,7 +535,29 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             markersList.put(marker, element);
             return marker;
         }
+
         elementsToSync.add(element);
+        return null;
+    }
+
+    /**
+     * add a marker that represent a ImageDrone
+     * @param imageDrone
+     * @return
+     */
+    private Marker addMarker(ImageDrone imageDrone){
+        if(googleMap != null) {
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(imageDrone.getGeoPoint().getLatitude(), imageDrone.getGeoPoint().getLongitude()))
+                    .draggable(false));
+
+            Collection<ImageDrone> imageDrones = new ArrayList<>();
+            imageDrones.add(imageDrone);
+            markersListImageDrone.put(marker, imageDrones);
+            return marker;
+        }
+
+        imageDronesToSync.add(imageDrone);
         return null;
     }
 
@@ -521,6 +589,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         return true;
     }
 
+    private boolean isImageDroneMarker(Marker marker)
+    {
+        return markersListImageDrone.containsKey(marker);
+    }
+
     private void updateMarker(Marker marker, Element element){
         markersList.remove(marker);
 
@@ -537,6 +610,30 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
 
         markersList.put(marker, element);
+    }
+
+    /**
+     * Update the marker if require
+     * @param marker
+     * @param imageDrone
+     */
+    private void updateImageDroneMarker(Marker marker, ImageDrone imageDrone){
+        Collection<ImageDrone> imageDrones =  markersListImageDrone.get(marker);
+        Collection<ImageDrone> newImageDrones = new ArrayList<>();
+
+        for (ImageDrone img:imageDrones)
+        {
+            if(img.getId() == imageDrone.getId())
+            {
+                newImageDrones.add(imageDrone);
+            }
+            else
+            {
+                newImageDrones.add(img);
+            }
+        }
+
+        markersListImageDrone.put(marker, newImageDrones);
     }
 
     public void updateElement(Element element){
@@ -584,4 +681,49 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
     }
 
+    public void updateImageDrones(Collection<ImageDrone> imageDrones)
+    {
+        for (ImageDrone imageDrone : imageDrones) {
+            updateImageDrone(imageDrone);
+        }
+    }
+
+    private void updateImageDrone(ImageDrone imageDrone)
+    {
+        Marker marker = getImageDroneMarker(imageDrone);
+        if(marker == null){
+            addMarker(imageDrone);
+        } else {
+            updateImageDroneMarker(marker, imageDrone);
+        }
+    }
+
+    public void removeImageDrones(Collection<ImageDrone> imageDrones)
+    {
+        for (ImageDrone imageDrone : imageDrones) {
+            removeImageDrone(imageDrone);
+        }
+    }
+
+    private void removeImageDrone(ImageDrone imageDrone)
+    {
+        Marker marker = getImageDroneMarker(imageDrone);
+        if(marker != null){
+            Collection<ImageDrone> imageDrones = markersListImageDrone.get(marker);
+
+            for (ImageDrone img:imageDrones)
+            {
+                if(img.getId() == imageDrone.getId())
+                {
+                    imageDrones.remove(img);
+                }
+            }
+
+            if(imageDrones.size() == 0)
+            {
+                marker.remove();
+                markersListImageDrone.remove(marker);
+            }
+        }
+    }
 }
