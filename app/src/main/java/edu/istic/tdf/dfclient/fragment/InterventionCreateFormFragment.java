@@ -240,6 +240,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
             @Override
             public void onRepositoryResult(List<Sinister> r) {
+                ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
             }
 
             @Override
@@ -258,9 +259,10 @@ public class InterventionCreateFormFragment extends Fragment {
                     public void run() {
                         meansAdapter.notifyDataSetChanged();
                         sinistersAdapter.notifyDataSetChanged();
-                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+
                     }
                 });
+                ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
             }
 
             @Override
