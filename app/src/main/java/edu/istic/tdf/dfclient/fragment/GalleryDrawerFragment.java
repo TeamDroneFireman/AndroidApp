@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.adapter.GalleryListAdapter;
 import edu.istic.tdf.dfclient.domain.image.ImageDrone;
+import edu.istic.tdf.dfclient.http.TdfHttpClient;
 
 public class GalleryDrawerFragment extends Fragment implements Observer {
     private OnFragmentInteractionListener mListener;
@@ -72,7 +73,12 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 ImageView imageView = new ImageView(getContext());
-                Picasso.with(getContext()).load(imgUrl.get(position)).into(imageView);
+
+                String url = TdfHttpClient.SCHEME + "://" + TdfHttpClient.HOST + ":12353" + imgUrl.get(position);
+                Picasso.with(getContext())
+                        .load(url)
+                        .noPlaceholder()
+                        .into(imageView);
 
                 //create a dialog in order to show in full screnn the image
                 AlertDialog.Builder imgDialog = new AlertDialog.Builder(

@@ -14,8 +14,8 @@ import okhttp3.RequestBody;
 
 public class TdfHttpClient {
 
-    private final static String SCHEME = "http";
-    //private final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
+    public final static String SCHEME = "http";
+    //public final static String HOST = "projetm2gla.istic.univ-rennes1.fr";
     public final static String HOST = "devprojetm2gla.istic.univ-rennes1.fr";
 
     public static final String HTTP_ACCEPT = "application/json";
