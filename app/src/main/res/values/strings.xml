@@ -52,5 +52,7 @@
     <!-- Contextual Drawer -->
     <string name="supprimer_button_for_mean">Libérer</string>
     <string name="supprimer_button_for_defaut">Supprimer</string>
+    <string name="refused_button">Refuser</string>
+    <string name="validation_button">Valider</string>
 
 </resources>

@@ -79,4 +79,17 @@ dependencies {
 
     //Picasso for image loading
     compile 'com.squareup.picasso:picasso:2.5.2'
+    //badges
+    compile 'com.github.elevenetc:badgeview:v1.0.0'
+
+}
+
+
+android.applicationVariants.all { variant ->
+    task("generate${variant.name.capitalize()}JavaDoc", type: Javadoc) {
+        description "Generates Javadoc for $variant.name."
+        source = variant.javaCompile.source
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+    }
 }

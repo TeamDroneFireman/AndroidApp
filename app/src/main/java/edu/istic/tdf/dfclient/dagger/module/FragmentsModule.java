@@ -21,14 +21,15 @@ import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 @Module
 public class FragmentsModule {
 
+
     @Provides
     LoginFragment provideLoginFragment(LoginRestService loginRestService) {
         return LoginFragment.newInstance(loginRestService);
     }
 
     @Provides
-    InterventionListFragment provideInterventionListFragment(InterventionDao interventionDao) {
-        return InterventionListFragment.newInstance(interventionDao);
+    InterventionListFragment provideInterventionListFragment(InterventionDao interventionDao,DroneDao droneDao,InterventionMeanDao interventionMeanDao) {
+        return InterventionListFragment.newInstance(interventionDao,droneDao,interventionMeanDao);
     }
 
     @Provides

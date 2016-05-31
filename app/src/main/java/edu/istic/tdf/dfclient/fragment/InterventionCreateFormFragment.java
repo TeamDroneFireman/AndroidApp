@@ -240,6 +240,12 @@ public class InterventionCreateFormFragment extends Fragment {
 
             @Override
             public void onRepositoryResult(List<Sinister> r) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                    }
+                });
             }
 
             @Override
@@ -267,12 +273,24 @@ public class InterventionCreateFormFragment extends Fragment {
             public void onRepositoryFailure(Throwable e) {
                 Log.e("Load Sinisters", "couldn't load sinister properties");
                 Log.e("Load Sinisters", e.getMessage());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                    }
+                });
             }
 
             @Override
             public void onRestFailure(Throwable e) {
                 Log.e("Load Sinisters", "couldn't load sinister properties");
                 Log.e("Load Sinisters", e.getMessage());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainMenuActivity) InterventionCreateFormFragment.this.getActivity()).hideProgress();
+                    }
+                });
             }
         });
 
@@ -290,6 +308,7 @@ public class InterventionCreateFormFragment extends Fragment {
         }
         meansAdapter.notifyDataSetChanged();
     }
+
 
     public interface OnFragmentInteractionListener {
         // Called iff the form is complete
