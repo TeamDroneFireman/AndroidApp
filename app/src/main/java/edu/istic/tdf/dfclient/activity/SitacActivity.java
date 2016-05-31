@@ -30,12 +30,14 @@ import edu.istic.tdf.dfclient.UI.Tool;
 import edu.istic.tdf.dfclient.dao.Dao;
 import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
+import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
@@ -51,6 +53,7 @@ import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 import edu.istic.tdf.dfclient.fragment.ContextualDrawerFragment;
+import edu.istic.tdf.dfclient.fragment.GalleryDrawerFragment;
 import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
@@ -60,17 +63,21 @@ public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
         ContextualDrawerFragment.OnFragmentInteractionListener,
         ToolbarFragment.OnFragmentInteractionListener,
-        MeansTableFragment.OnFragmentInteractionListener{
+        MeansTableFragment.OnFragmentInteractionListener,
+        GalleryDrawerFragment.OnFragmentInteractionListener {
 
     // UI
     private Tool selectedTool;
     private View contextualDrawer;
+    private View galleryDrawer;
     private View sitacContainer;
 
     private SitacFragment sitacFragment;
     private ToolbarFragment toolbarFragment;
     private ContextualDrawerFragment contextualDrawerFragment;
     private MeansTableFragment meansTableFragment;
+    private GalleryDrawerFragment galleryDrawerFragment;
+
     private android.support.v4.app.Fragment currentFragment;
 
     // Data
@@ -78,47 +85,22 @@ public class SitacActivity extends BaseActivity implements
 
     private Intervention intervention;
 
-    private Element selectedElement;
+    private boolean interventionIsArchived;
 
+    private Element selectedElement;
 
     @Inject InterventionDao interventionDao;
     @Inject DroneDao droneDao;
     @Inject InterventionMeanDao interventionMeanDao;
     @Inject PointOfInterestDao pointOfInterestDao;
+    @Inject ImageDroneDao imageDroneDao;
 
+    /**
+     * true if and only if the current user is the CODIS
+     */
     private boolean isCodis;
 
     private ArrayList<Observer> observers = new ArrayList<>();
-
-    @Override
-    public void onBackPressed() {
-        if(!sitacFragment.equals(currentFragment))
-        {
-            if(this.isCodis)
-            {
-                getSupportFragmentManager().beginTransaction()
-                        .hide(toolbarFragment)
-                        .hide(contextualDrawerFragment)
-                .commit();
-                switchTo(sitacFragment);
-            }
-            else
-            {
-                getSupportFragmentManager().beginTransaction()
-                        .show(toolbarFragment)
-                        .hide(contextualDrawerFragment)
-                        .commit();
-                switchTo(sitacFragment);
-            }
-        }
-        else
-        {
-            this.overridePendingTransition(R.anim.shake, R.anim.shake);
-            Intent upIntent = NavUtils.getParentActivityIntent(this);
-            upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            NavUtils.navigateUpTo(this, upIntent);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,36 +118,84 @@ public class SitacActivity extends BaseActivity implements
 
         contextualDrawer = findViewById(R.id.contextual_drawer_container);
         sitacContainer = findViewById(R.id.sitac_container);
+        galleryDrawer = findViewById(R.id.gallery_drawer_container);
 
         sitacFragment = SitacFragment.newInstance();
         toolbarFragment = ToolbarFragment.newInstance();
         contextualDrawerFragment = ContextualDrawerFragment.newInstance();
         meansTableFragment=(MeansTableFragment.newInstance());
+        galleryDrawerFragment = GalleryDrawerFragment.newInstance();
 
         observers.add(sitacFragment);
         observers.add(toolbarFragment);
         observers.add(contextualDrawerFragment);
+        observers.add(galleryDrawerFragment);
 
-        getSupportFragmentManager().beginTransaction()
+        //Initialize fragment in a transaction
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
                 .add(R.id.sitac_container, meansTableFragment, meansTableFragment.getTag())
                 .hide(meansTableFragment)
                 .add(R.id.sitac_container, sitacFragment, sitacFragment.getTag())
                 .show(sitacFragment)
-                .add(R.id.toolbar_container, toolbarFragment)
-                .add(R.id.contextual_drawer_container, contextualDrawerFragment)
-                .hide(contextualDrawerFragment)
-                .commit();
+                .add(R.id.toolbar_container, toolbarFragment);
 
-        hideContextualDrawer();
+        if(this.isCodis) {
+            fragmentTransaction.hide(toolbarFragment);
+        }
+        else
+        {
+            fragmentTransaction.show(toolbarFragment);
+        }
+
+        fragmentTransaction.add(R.id.contextual_drawer_container, contextualDrawerFragment)
+                .hide(contextualDrawerFragment)
+                .add(R.id.gallery_drawer_container, galleryDrawerFragment)
+                .hide(galleryDrawerFragment);
+
+        fragmentTransaction.commit();
 
         currentFragment = sitacFragment;
 
         // Load data
         String interventionId = (String) getIntent().getExtras().get("interventionId");
+        interventionIsArchived = (boolean) getIntent().getExtras().get("interventionIsArchived");
+
         dataLoader = new DataLoader(interventionId);
         dataLoader.loadData();
 
         this.registerPushHandlers();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!sitacFragment.equals(currentFragment))
+        {
+            if(this.isCodis || this.isInterventionArchived())
+            {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .hide(galleryDrawerFragment)
+                        .commit();
+                switchTo(sitacFragment);
+            }
+            else
+            {
+                getSupportFragmentManager().beginTransaction()
+                        .show(toolbarFragment)
+                        .hide(contextualDrawerFragment)
+                        .hide(galleryDrawerFragment)
+                        .commit();
+                switchTo(sitacFragment);
+            }
+        }
+        else
+        {
+            this.overridePendingTransition(R.anim.shake, R.anim.shake);
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            NavUtils.navigateUpTo(this, upIntent);
+        }
     }
 
     @Override
@@ -177,7 +207,17 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public boolean isInterventionArchived() {
-        return this.intervention.isArchived();
+        return this.interventionIsArchived;
+    }
+
+    @Override
+    public void handleImageDronesSelected(Collection<ImageDrone> imageDrones) {
+        if(imageDrones != null)
+        {
+            this.galleryDrawerFragment.updateList(imageDrones);
+        };
+
+        showGalleryDrawer();
     }
 
     @Override
@@ -193,6 +233,12 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
+
+        if(element.getType() == ElementType.AIRMEAN)
+        {
+            showGalleryDrawer();
+        }
+
         contextualDrawerFragment.setSelectedElement(element);
         if(!this.isCodis && !intervention.isArchived())
         {
@@ -235,9 +281,24 @@ public class SitacActivity extends BaseActivity implements
                     element = new InterventionMean();
                     element.setName("Moyen SP");
                     ((IMean) element).setState(MeanState.ASKED);
-                    // TODO: 23/05/16 action bouchon
                     ((IMean) element).setAction("Action par défaut");
                     element.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                    break;
+
+                case MEAN_GROUP:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    ((IMean) element).setAction("Action par défaut");
+                    element.setForm(PictoFactory.ElementForm.MEAN_GROUP_PLANNED);
+                    break;
+
+                case MEAN_COLUMN:
+                    element = new InterventionMean();
+                    element.setName("Moyen SP");
+                    ((IMean) element).setState(MeanState.ASKED);
+                    ((IMean) element).setAction("Action par défaut");
+                    element.setForm(PictoFactory.ElementForm.MEAN_COLUMN_PLANNED);
                     break;
 
                 case MEAN_OTHER:
@@ -281,7 +342,17 @@ public class SitacActivity extends BaseActivity implements
     public void handleCancelSelection() {
         this.selectedTool = null;
         this.toolbarFragment.cancelSelection();
+        if(isCodis || isInterventionArchived())
+        {
+            hideToolBar();
+        }
+        else
+        {
+            showToolBar();
+        }
+
         hideContextualDrawer();
+        hideGalleryDrawer();
     }
 
     private void showContextualDrawer(){
@@ -292,11 +363,23 @@ public class SitacActivity extends BaseActivity implements
 
     }
 
+    private void showGalleryDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .show(galleryDrawerFragment)
+                .commit();
+    }
+
     private void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
                 .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
+    }
+
+    private void hideGalleryDrawer(){
+        getSupportFragmentManager().beginTransaction()
+                .hide(galleryDrawerFragment)
+                .commit();
     }
 
     private void hideToolBar(){
@@ -305,8 +388,7 @@ public class SitacActivity extends BaseActivity implements
                 .commit();
     }
 
-    public void showToolBar()
-    {
+    private void showToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .show(toolbarFragment)
                 .commit();
@@ -329,6 +411,7 @@ public class SitacActivity extends BaseActivity implements
                 getSupportFragmentManager().beginTransaction()
                         .hide(toolbarFragment)
                         .hide(contextualDrawerFragment)
+                        .hide(galleryDrawerFragment)
                         .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                         .commit();
 
@@ -336,11 +419,12 @@ public class SitacActivity extends BaseActivity implements
                 break;
 
             case R.id.switch_to_sitac:
-                if(this.isCodis)
+                if(this.isCodis || isInterventionArchived())
                 {
                     getSupportFragmentManager().beginTransaction()
                             .hide(toolbarFragment)
                             .hide(contextualDrawerFragment)
+                            .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                             .commit();
                     switchTo(sitacFragment);
@@ -350,6 +434,7 @@ public class SitacActivity extends BaseActivity implements
                     getSupportFragmentManager().beginTransaction()
                             .show(toolbarFragment)
                             .hide(contextualDrawerFragment)
+                            .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
                             .commit();
                     switchTo(sitacFragment);
@@ -367,12 +452,6 @@ public class SitacActivity extends BaseActivity implements
         }
 
         return true;
-    }
-
-    private void notifyObservers(){
-        for(Observer observer : observers){
-            observer.notify();
-        }
     }
 
     void switchTo (Fragment fragment)
@@ -722,10 +801,13 @@ public class SitacActivity extends BaseActivity implements
             return pointOfInterests;
         }
 
+        public Collection<ImageDrone> getImageDrones() { return imageDrones; }
+
         // collection to save previous load datas
         private Collection<Drone> drones = new ArrayList<>();
         private Collection<InterventionMean> interventionMeans = new ArrayList<>();
         private Collection<PointOfInterest> pointOfInterests = new ArrayList<>();
+        private Collection<ImageDrone> imageDrones = new ArrayList<>();
 
         public DataLoader(String interventionId) {
             this.interventionId = interventionId;
@@ -736,6 +818,9 @@ public class SitacActivity extends BaseActivity implements
             this.loadDrones();
             this.loadMeans();
             this.loadPointsOfInterest();
+
+            //load images taken by drones
+            this.loadImageDrones();
         }
 
         public Dao getDaoOfElement(IElement element) {
@@ -773,8 +858,7 @@ public class SitacActivity extends BaseActivity implements
 
                 @Override
                 public void onRestResult(final Intervention r) {
-                    if(SitacActivity.this.isCodis || r.isArchived())
-                    {
+                    if (SitacActivity.this.isCodis || r.isArchived()) {
                         hideToolBar();
                     }
 
@@ -794,9 +878,6 @@ public class SitacActivity extends BaseActivity implements
                                 sitacFragment.setLocation(r.getLocation().getGeopoint());
                         }
                     });
-
-
-                    // TODO : What to do when it is loaded ?
                 }
 
                 @Override
@@ -898,14 +979,11 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            if(loadAfterPush)
-                            {
+                            if (loadAfterPush) {
                                 //We keep the selection if modification come from an other tablet
                                 Element currentElement = contextualDrawerFragment.tryGetElement();
                                 sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            }
-                            else
-                            {
+                            } else {
                                 sitacFragment.cancelSelection();
                             }
                         }
@@ -1011,14 +1089,11 @@ public class SitacActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            if(loadAfterPush)
-                            {
+                            if (loadAfterPush) {
                                 //We keep the selection if modification come from an other tablet
                                 Element currentElement = contextualDrawerFragment.tryGetElement();
                                 sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            }
-                            else
-                            {
+                            } else {
                                 sitacFragment.cancelSelection();
                             }
                         }
@@ -1121,14 +1196,11 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(loadAfterPush)
-                            {
+                            if (loadAfterPush) {
                                 //We keep the selection if modification come from an other tablet
                                 Element currentElement = contextualDrawerFragment.tryGetElement();
                                 sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            }
-                            else
-                            {
+                            } else {
                                 sitacFragment.cancelSelection();
                             }
                         }
@@ -1147,8 +1219,134 @@ public class SitacActivity extends BaseActivity implements
             });
         }
 
-        public void updateElementsInUi(final Collection<Element> elements) {
+        /**
+         * Load all images of the intervention
+         */
+        private void loadImageDrones()
+        {
+            SitacActivity.this.imageDroneDao.findByIntervention(interventionId,
+                    new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<ImageDrone>>() {
+                        @Override
+                        public void onRepositoryResult(List<ImageDrone> r) {
+                            // Nothing
+                        }
 
+                        @Override
+                        public void onRestResult(List<ImageDrone> r) {
+                            // Cast to collection of elements
+                            Collection<ImageDrone> colR = new ArrayList<>();
+                            colR.addAll(r);
+
+                            Collection<ImageDrone> colRRemove = new ArrayList<>();
+                            colRRemove.addAll(imageDrones);
+
+                            imageDrones = r;
+
+                            removeImagesDrone(colRRemove);
+                            updateImagesDrone(colR);
+                        }
+
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+
+                        }
+                    });
+        }
+
+        /**
+         * Load an image of the intervention
+         * @param pointOfInterestId
+         * @param loadAfterPush
+         */
+        private void loadImageDrone(String pointOfInterestId, final boolean loadAfterPush)
+        {
+            SitacActivity.this.imageDroneDao.find(interventionId, new IDaoSelectReturnHandler<ImageDrone>() {
+                        @Override
+                        public void onRepositoryResult(ImageDrone r) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void onRestResult(ImageDrone r) {
+                            ImageDrone imgToRemove = null;
+
+                            //Collection usefull for remove in the loop
+                            Collection<ImageDrone> imageDronesCopy = new ArrayList<>();
+                            imageDronesCopy.addAll(imageDrones);
+
+                            Iterator<ImageDrone> it = imageDrones.iterator();
+                            ImageDrone imageDrone;
+                            while (it.hasNext()) {
+                                imageDrone = it.next();
+                                if (r.getId().equals(imageDrone.getId())) {
+                                    imgToRemove = imageDrone;
+                                    imageDronesCopy.remove(imageDrone);
+                                }
+                            }
+
+                            imageDrones = imageDronesCopy;
+                            imageDrones.add(r);
+
+                            if (imgToRemove != null) {
+                                Collection<ImageDrone> imgsRemove = new ArrayList<>();
+                                imgsRemove.add(imgToRemove);
+                                removeImagesDrone(imgsRemove);
+                            }
+
+                            Collection<ImageDrone> imgsUpdate = new ArrayList<>();
+                            imgsUpdate.add(r);
+                            updateImagesDrone(imgsUpdate);
+                        }
+
+                        @Override
+                        public void onRepositoryFailure(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onRestFailure(Throwable e) {
+
+                        }
+                    });
+        }
+
+        /**
+         * Update the sitacfragment
+         * @param imageDrones
+         */
+        public void updateImagesDrone(final Collection<ImageDrone> imageDrones)
+        {
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update Map
+                    SitacActivity.this.sitacFragment.updateImageDrones(imageDrones);
+                }
+            });
+        }
+
+
+        /**
+         * Update the sitacfragment
+         * @param imageDrones
+         */
+        public void removeImagesDrone(final Collection<ImageDrone> imageDrones)
+        {
+            SitacActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update Map
+                    SitacActivity.this.sitacFragment.removeImageDrones(imageDrones);
+                }
+            });
+        }
+
+        public void updateElementsInUi(final Collection<Element> elements) {
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1159,11 +1357,9 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.meansTableFragment.updateElements(elements);
                 }
             });
-
         }
 
         public void removeElementsInUi(final Collection<Element> elements) {
-
             SitacActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

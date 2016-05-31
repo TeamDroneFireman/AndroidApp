@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
@@ -45,5 +46,10 @@ public class DaoModule {
     @Provides
     SinisterDao provideSinisterDao(TdfHttpClient httpClient) {
         return new SinisterDao(httpClient);
+    }
+
+    @Provides
+    ImageDroneDao provideImageDroneDao(TdfHttpClient httpClient) {
+        return new ImageDroneDao(httpClient);
     }
 }

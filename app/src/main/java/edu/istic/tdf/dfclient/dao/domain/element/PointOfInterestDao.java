@@ -6,8 +6,9 @@ import edu.istic.tdf.dfclient.http.TdfHttpClient;
 import edu.istic.tdf.dfclient.repository.domain.element.PointOfInterestRepository;
 import edu.istic.tdf.dfclient.rest.domain.element.PointOfInterestRestClient;
 
+
 /**
- * The DAO for Points Of Interest
+ * The DAO for images drones
  *
  * {@inheritDoc}
  */

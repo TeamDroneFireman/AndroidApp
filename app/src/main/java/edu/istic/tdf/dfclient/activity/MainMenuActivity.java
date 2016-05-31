@@ -15,9 +15,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import edu.istic.tdf.dfclient.R;
+import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
+import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.domain.element.ElementType;
+import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
+import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 import edu.istic.tdf.dfclient.fragment.InterventionCreateFormFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
@@ -32,7 +41,14 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     // UI
     SupportMapFragment mapFragment; // Map
-    Marker mapMarker; // Map marker
+    Marker mapMarker; // Map markerD
+
+    @Inject
+    DroneDao droneDao;
+
+    @Inject
+    InterventionMeanDao interventionMeanDao;
+
 
     /**
      * The right bottom fragment (intervention details)
@@ -70,6 +86,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+
         setTitle(getString(R.string.activity_main_menu_title));
 
         progressOverlay = findViewById(R.id.progress_overlay);
@@ -82,15 +99,20 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 .replace(R.id.list_container, interventionListFragment)
                 .commit();
 
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
                 .commit();
+
+
         // Map
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.intervention_detail_map);
         mapFragment.getMapAsync(this);
 
         displayWelcome();
+
+
     }
 
     @Override
@@ -124,6 +146,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             // Detail fragment
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
+            intent.putExtra("interventionIsArchived",intervention.isArchived());
             this.startActivity(intent);
         }
     }
@@ -142,6 +165,46 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
+    public void handleValidation(IMean mean) {
+        if(mean.getType().equals(ElementType.AIRMEAN)){
+            droneDao.persist((Drone) mean, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+
+                }
+            });
+        }else if(mean.getType().equals(ElementType.MEAN)){
+            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+
+                }
+            });
+        }
+
+    }
+
+    @Override
     public void handleInterventionCreation() {
         hideMap();
         getSupportFragmentManager().beginTransaction()
@@ -150,7 +213,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
-    public void handleInterventionSelected(Intervention intervention) {
+    public void handleInterventionSelected(Intervention intervention, List<IMean> meanList) {
         // Display detail in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
@@ -158,6 +221,9 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
         // Load intervention in fragment and display it
         interventionDetailFragment.setIntervention(intervention);
+        interventionDetailFragment.setMeanList(meanList);
+        //TODO passer les informations chargé pas le liste??
+        //
         interventionDetailFragment.displayIntervention();
 
         // Map

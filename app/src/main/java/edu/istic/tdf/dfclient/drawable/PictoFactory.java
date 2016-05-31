@@ -9,10 +9,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.DrawFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
@@ -45,7 +47,9 @@ public class PictoFactory {
         MEAN("Véhicule", R.drawable.mean),
         MEAN_PLANNED("Véhicule prévu", R.drawable.mean_planned),
         MEAN_GROUP("Groupe de véhicules", R.drawable.mean_group),
+        MEAN_GROUP_PLANNED("Groupe de véhicules prévu", R.drawable.mean_group_planned),
         MEAN_COLUMN("Colonne", R.drawable.mean_column),
+        MEAN_COLUMN_PLANNED("Colonne prévue", R.drawable.mean_column_planned),
 
         // Mean other
         MEAN_OTHER("Moyen d'intervention", R.drawable.mean_other),
@@ -93,7 +97,7 @@ public class PictoFactory {
      * Picto attributes
      */
     private Role role = Role.DEFAULT;
-    private int drawable = ElementForm.MEAN.getDrawable();
+    private ElementForm form = ElementForm.MEAN;
     private int size = 64;
     private String label = "Test";
     private DomainType domainType = DomainType.INTERVENTIONMEAN;
@@ -111,7 +115,7 @@ public class PictoFactory {
     }
 
     public PictoFactory setElement(IElement element){
-        this.setDrawable(element.getForm().getDrawable());
+        this.setForm(element.getForm());
         // Check if SIG or not
         if(element.getType() == ElementType.POINT_OF_INTEREST){
             this.isExternal = ((PointOfInterest)element).isExternal();
@@ -131,8 +135,8 @@ public class PictoFactory {
         return this;
     }
 
-    public PictoFactory setDrawable(int drawable){
-        this.drawable = drawable;
+    public PictoFactory setForm(ElementForm form){
+        this.form = form;
         return this;
     }
 
@@ -141,35 +145,20 @@ public class PictoFactory {
         return this;
     }
 
-    public Drawable toDrawable(){
-        Drawable drawable = ContextCompat.getDrawable(context, this.drawable);
-        drawable.setColorFilter(this.role.getColor(), PorterDuff.Mode.DST_ATOP);
-        drawable.setBounds(0, 0, size, size);
-        return drawable;
-    }
-
     public Bitmap toBitmap(){
 
+        // Icon
         Bitmap bitmap = getOptimizedBitmap();
+
+        // Text
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        fitTextToBitmap(paint, bitmap);
+        Rect bounds = new Rect();
+        paint.getTextBounds(this.label, 0, this.label.length(), bounds);
 
         Canvas canvas = new Canvas(bitmap);
 
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int textSize = 30;
-        paint.setTextSize((int) (textSize));
-        if(paint.measureText(this.label) > bitmap.getWidth()){
-            while(paint.measureText(this.label) > bitmap.getWidth()){
-                textSize--;
-                paint.setTextSize((int) (textSize));
-            }
-        }
-        Rect bounds = new Rect();
-        paint.getTextBounds(this.label, 0, this.label.length(), bounds);
-        int x = (bitmap.getWidth()) / 2;
-        int y = (bitmap.getHeight()) / 2;
-
-        paint.setTextAlign(Paint.Align.CENTER);
-
+        // Color of icon + text
         if(isExternal){
             canvas.drawColor(this.role.getDarkColor(), PorterDuff.Mode.SRC_IN);
             paint.setColor(this.role.getDarkColor());
@@ -178,53 +167,32 @@ public class PictoFactory {
             paint.setColor(this.role.getColor());
         }
 
-       // paint.setColorFilter(new PorterDuffColorFilter(this.color, PorterDuff.Mode.DST_ATOP));
-        //canvas.drawColor(this.color);
-        canvas.drawText(this.label, x, y, paint);
-        return bitmap;
-        /*
-        View view = getView();
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        view.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
-
-        ImageView imageView = (ImageView) view.findViewById(R.id.icon_image_view);
-        imageView.setImageResource(this.drawable);
-        imageView.setColorFilter(this.color);
-
-       // AutoScaleTextView textView = (AutoScaleTextView) view.findViewById(R.id.icon_text);
-        //textView.setText(this.label);
-        //textView.setTextColor(this.color);
-
-        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
-        view.buildDrawingCache();
-
-        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap);
-
-        // new antialised Paint
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        // text color - #3D3D3D
-        paint.setColor(this.color);
-
-        // text shadow
-        paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
-        paint.setTextAlign(Paint.Align.CENTER);
-        int x = (bitmap.getWidth())/2;
-        int y = (bitmap.getHeight())/2;
-
-        if(this.drawable == ElementForm.AIRMEAN_PLANNED.getDrawable()){
-            y += 50;
+        if(this.form == ElementForm.AIRMEAN
+                || this.form == ElementForm.AIRMEAN_PLANNED
+                || this.form == ElementForm.SOURCE
+                || this.form == ElementForm.TARGET
+                || this.form == ElementForm.WATERPOINT
+                || this.form == ElementForm.WATERPOINT_SUPPLY
+                || this.form == ElementForm.WATERPOINT_SUSTAINABLE){
+            paint.setColor(this.role.getDarkColor());
+            canvas.drawText(this.label, 4, bounds.height()/2 + bitmap.getScaledHeight(canvas)/2, paint);
+        } else {
+            canvas.drawText(this.label, 4, bounds.height()/2 + bitmap.getScaledHeight(canvas)/2, paint);
         }
 
-        canvas.drawText(label, x, y, paint);
-        view.draw(canvas);
-
         return bitmap;
-        */
+    }
+
+    private void fitTextToBitmap(Paint paint, Bitmap bitmap) {
+
+        int textSize = 40;
+        paint.setTextSize(textSize);
+        if(paint.measureText(this.label) > (bitmap.getWidth() - 8)){
+            while(paint.measureText(this.label) > (bitmap.getWidth() - 8)){
+                textSize--;
+                paint.setTextSize(textSize);
+            }
+        }
 
     }
 
@@ -235,25 +203,19 @@ public class PictoFactory {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
 
-        BitmapFactory.decodeResource(resources, this.drawable, options);
+        BitmapFactory.decodeResource(resources, this.form.getDrawable(), options);
         options.inSampleSize = calculateInSampleSize(options, this.size, this.size);
         options.inJustDecodeBounds = false;
-        Bitmap bitmap = BitmapFactory.decodeResource(resources, this.drawable, options);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(resources, this.form.getDrawable(), options);
 
         android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+
         if(bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
         }
 
        return bitmap.copy(bitmapConfig, true);
-    }
-
-    /**
-     *
-     * @return
-     */
-    private View getView(){
-        return  ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.icon_layout, null);
     }
 
     private int calculateInSampleSize(
@@ -278,4 +240,54 @@ public class PictoFactory {
 
         return inSampleSize;
     }
+
+    public static ElementForm getFormPlanned(ElementForm elementForm){
+        switch (elementForm){
+            case MEAN:
+            case MEAN_PLANNED:
+                return ElementForm.MEAN_PLANNED;
+            case MEAN_GROUP:
+            case MEAN_GROUP_PLANNED:
+                return ElementForm.MEAN_GROUP_PLANNED;
+            case MEAN_COLUMN:
+            case MEAN_COLUMN_PLANNED:
+                return ElementForm.MEAN_COLUMN_PLANNED;
+            // Mean other
+            case MEAN_OTHER:
+            case MEAN_OTHER_PLANNED:
+                return ElementForm.MEAN_OTHER_PLANNED;
+            // Airmean
+            case AIRMEAN:
+            case AIRMEAN_PLANNED:
+                return ElementForm.AIRMEAN_PLANNED;
+            default:
+                return elementForm;
+        }
+    }
+
+    public static ElementForm getFormNotPlanned(ElementForm elementForm){
+        switch (elementForm){
+            case MEAN:
+            case MEAN_PLANNED:
+                return ElementForm.MEAN_PLANNED;
+            case MEAN_GROUP:
+            case MEAN_GROUP_PLANNED:
+                return ElementForm.MEAN_GROUP_PLANNED;
+            case MEAN_COLUMN:
+            case MEAN_COLUMN_PLANNED:
+                return ElementForm.MEAN_COLUMN_PLANNED;
+            // Mean other
+            case MEAN_OTHER:
+            case MEAN_OTHER_PLANNED:
+                return ElementForm.MEAN_OTHER_PLANNED;
+            // Airmean
+            case AIRMEAN:
+            case AIRMEAN_PLANNED:
+                return ElementForm.AIRMEAN_PLANNED;
+            default:
+                return elementForm;
+        }
+    }
+
+
 }

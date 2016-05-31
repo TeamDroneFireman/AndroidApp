@@ -9,7 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,6 +29,7 @@ import edu.istic.tdf.dfclient.UI.adapter.ToolsListAdapter;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
+import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -118,7 +123,7 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         group = new ToolsGroup("Demandés");
         groups.append(1, group);
 
-        group = new ToolsGroup("En transit");
+        group = new ToolsGroup("Va");
         groups.append(2, group);
 
         group = new ToolsGroup("Inactifs");
@@ -141,6 +146,11 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         void handleSelectedToolUtils(Tool tool);
     }
 
+    /**
+     * Dispatch all interventionmeans and drones into the 4 map, then call refresh()
+     * @param interventionMeans
+     * @param drones
+     */
     public void dispatchMeanByState(Collection<InterventionMean> interventionMeans, Collection<Drone> drones)
     {
         this.mapGroupAsked.clear();
@@ -203,6 +213,9 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         refreshGroups();
     }
 
+    /**
+     * refresh the listview with the 4 map content
+     */
     private void refreshGroups(){
         ToolsGroup groupAsked;
         ToolsGroup groupInTransit;
@@ -211,9 +224,16 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groupAsked = new ToolsGroup("Demandés");
         Iterator<Tool> itAsked = this.mapGroupAsked.keySet().iterator();
+        ArrayList<Tool> groupAskedArrayList = new ArrayList<>();
         while(itAsked.hasNext())
         {
-            groupAsked.addTool(itAsked.next());
+            groupAskedArrayList.add(itAsked.next());
+        }
+
+        this.sortToolsByMeanAskedDate(groupAskedArrayList);
+
+        for (Tool tool: groupAskedArrayList) {
+            groupAsked.addTool(tool);
         }
 
         groups.remove(1);
@@ -221,9 +241,16 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groupInTransit = new ToolsGroup("En transit");
         Iterator<Tool> itInTransit = this.mapGroupInTransit.keySet().iterator();
+        ArrayList<Tool> groupInTransitArrayList = new ArrayList<>();
         while(itInTransit.hasNext())
         {
-            groupInTransit.addTool(itInTransit.next());
+            groupInTransitArrayList.add(itInTransit.next());
+        }
+
+        this.sortToolsByMeanAskedDate(groupInTransitArrayList);
+
+        for (Tool tool: groupInTransitArrayList ) {
+            groupInTransit.addTool(tool);
         }
 
         groups.remove(2);
@@ -231,9 +258,16 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groupInactif = new ToolsGroup("Inactifs");
         Iterator<Tool> itInactif = this.mapGroupInactif.keySet().iterator();
+        ArrayList<Tool> groupInactifArrayList = new ArrayList<>();
         while(itInactif.hasNext())
         {
-            groupInactif.addTool(itInactif.next());
+            groupInactifArrayList.add(itInTransit.next());
+        }
+
+        this.sortToolsByMeanAskedDate(groupInactifArrayList);
+
+        for (Tool tool: groupInactifArrayList ) {
+            groupInactif.addTool(tool);
         }
 
         groups.remove(3);
@@ -241,9 +275,16 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groupActif = new ToolsGroup("Actifs");
         Iterator<Tool> itActif = this.mapGroupActif.keySet().iterator();
+        ArrayList<Tool> groupActifArrayList = new ArrayList<>();
         while(itActif.hasNext())
         {
-            groupActif.addTool(itActif.next());
+            groupActifArrayList.add(itInTransit.next());
+        }
+
+        this.sortToolsByMeanAskedDate(groupActifArrayList);
+
+        for (Tool tool: groupActifArrayList ) {
+            groupActif.addTool(tool);
         }
 
         groups.remove(4);
@@ -253,6 +294,38 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         {
             toolsListAdapter.notifyDataSetChanged();
         }
+    }
+
+    /**
+     * sort tools using the asked date
+     * @param tools
+     */
+    private void sortToolsByMeanAskedDate(ArrayList<Tool> tools){
+        Comparator<Tool> toolComparator = new Comparator<Tool>() {
+            @Override
+            public int compare(Tool lhs, Tool rhs) {
+                //compare date
+                Element e1 = tryGetElementFromTool(lhs);
+                Element e2 = tryGetElementFromTool(rhs);
+
+                if(e1 == null)
+                {
+                    return 1;
+                }
+
+                if(e2 == null)
+                {
+                    return -1;
+                }
+
+                Date date1 = ((IMean)e1).getStates().get(MeanState.ASKED);
+                Date date2 = ((IMean)e2).getStates().get(MeanState.ASKED);
+
+                return date2.compareTo(date1);
+            }
+        };
+
+        Collections.sort(tools, toolComparator);
     }
 
     /**

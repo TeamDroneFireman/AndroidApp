@@ -155,9 +155,13 @@ public class TdfHttpClient {
             case User:
                 host = "user";
                 break;
+            case ImageDrone:
+                host = "image";
+                break;
             default:
                 return "";
         }
+
         return host + ".docker.localhost";
     }
 
@@ -178,6 +182,9 @@ public class TdfHttpClient {
                 break;
             case Sinister:
                 path = "sinisters";
+                break;
+            case ImageDrone:
+                path = "images";
                 break;
             default:
                 return "";
