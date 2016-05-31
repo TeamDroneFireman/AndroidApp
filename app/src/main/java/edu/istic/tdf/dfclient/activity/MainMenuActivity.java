@@ -124,6 +124,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             // Detail fragment
             Intent intent = new Intent(this, SitacActivity.class);
             intent.putExtra("interventionId",intervention.getId());
+            intent.putExtra("interventionIsArchived",intervention.isArchived());
             this.startActivity(intent);
         }
     }

@@ -85,6 +85,8 @@ public class SitacActivity extends BaseActivity implements
 
     private Intervention intervention;
 
+    private boolean interventionIsArchived;
+
     private Element selectedElement;
 
     @Inject InterventionDao interventionDao;
@@ -156,6 +158,8 @@ public class SitacActivity extends BaseActivity implements
 
         // Load data
         String interventionId = (String) getIntent().getExtras().get("interventionId");
+        interventionIsArchived = (boolean) getIntent().getExtras().get("interventionIsArchived");
+
         dataLoader = new DataLoader(interventionId);
         dataLoader.loadData();
 
@@ -166,7 +170,7 @@ public class SitacActivity extends BaseActivity implements
     public void onBackPressed() {
         if(!sitacFragment.equals(currentFragment))
         {
-            if(this.isCodis)
+            if(this.isCodis || this.isInterventionArchived())
             {
                 getSupportFragmentManager().beginTransaction()
                         .hide(toolbarFragment)
@@ -203,7 +207,7 @@ public class SitacActivity extends BaseActivity implements
 
     @Override
     public boolean isInterventionArchived() {
-        return this.intervention.isArchived();
+        return this.interventionIsArchived;
     }
 
     @Override
@@ -390,7 +394,7 @@ public class SitacActivity extends BaseActivity implements
                 break;
 
             case R.id.switch_to_sitac:
-                if(this.isCodis)
+                if(this.isCodis || isInterventionArchived())
                 {
                     getSupportFragmentManager().beginTransaction()
                             .hide(toolbarFragment)

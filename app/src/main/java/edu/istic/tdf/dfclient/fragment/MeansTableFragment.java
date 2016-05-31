@@ -18,19 +18,20 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.IElement;
-import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
@@ -107,27 +108,25 @@ public class MeansTableFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Element element;
-                    if(spinner.getSelectedItem().toString().equals("DRONE")){
-                        Drone mean=new Drone();
-                        mean.setState(MeanState.ASKED);
-                        mean.setLocation(new Location());
+                    IMean mean;
+                    if(spinner.getSelectedItem().toString().equals("DRONE"))
+                    {
+                        mean = new Drone();
                         mean.setForm(PictoFactory.ElementForm.AIRMEAN_PLANNED);
-                        mean.setRole(Role.DEFAULT);
-                        element=mean;
-
-                    }else{
-                        InterventionMean mean=new InterventionMean();
-                        mean.setState(MeanState.ASKED);
-                        mean.setName(spinner.getSelectedItem().toString());
-                        mean.setLocation(new Location());
-                        mean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
-                        mean.setRole(Role.DEFAULT);
-                        // TODO: 25/05/16  action bouchon
-                        mean.setAction("Action par défaut");
-                        //TODO mettre les couleurs plus spécifiquement
-                        element=mean;
                     }
+                    else
+                    {
+                        mean = new InterventionMean();
+                        mean.setForm(PictoFactory.ElementForm.MEAN_PLANNED);
+                        mean.setAction("Action par défaut");
+                    }
+
+                    element = (Element)mean;
+                    element.setName(spinner.getSelectedItem().toString());
+                    ((IMean)element).setState(MeanState.ASKED);
+                    element.setLocation(new Location());
                     element.setForm(element.getForm());
+                    element.setRoleFromMeanType(spinner.getSelectedItem().toString());
                     mListener.handleValidation(element);
                 }
             });
@@ -308,14 +307,18 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void addMeanState(TableRow tableRow,Date d){
-
         TextView textView=new TextView(meanTab.getContext());
-        if(d!=null) {
-            textView.setText(d.toString());
+        if(d!=null)
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE);
+            textView.setText(sdf.format(d));
             textView.setTextSize(20);
-        }else{
+        }
+        else
+        {
             textView.setText("");
         }
+
         textView.setGravity(Gravity.CENTER_HORIZONTAL);
         tableRow.addView(textView);
     }
@@ -369,10 +372,10 @@ public class MeansTableFragment extends Fragment {
     }
 
     private void removeElement(Element element){
-         if (element.isMeanFromMeanTable()) {
-             ((IMean) element).setState(MeanState.RELEASED);
-             mListener.handleValidation(element);
-         }
+        if (element.isMeanFromMeanTable()) {
+            ((IMean) element).setState(MeanState.RELEASED);
+            mListener.handleValidation(element);
+        }
     }
 
     public void removeElementFromUi(Collection<Element> element){
