@@ -18,6 +18,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -40,6 +42,7 @@ import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.IDrone;
+import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
@@ -71,6 +74,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     // List d'association id drone <--> polyline
     private HashMap<String, Polyline> dronePathsList = new HashMap<>();
     private HashMap<String, Polyline> missionPathsList = new HashMap<>();
+    private HashMap<String, Polygon> missionZonesList = new HashMap<>();
 
     private boolean isDronePathMode;
     private ArrayList<LatLng> currentPath;
@@ -360,35 +364,45 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             // Mission points
             ArrayList<LatLng> missionPathPoints = MapUtils.geoPointListToLatLngList(((Drone) element).getMission().getPathPoints());
-            PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(Color.LTGRAY);
-            missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
 
-            // Drone progress points
-            ArrayList<LatLng> dronePathPoints = new ArrayList<>();
+            if(((Drone)element).getMission().getPathMode() == Mission.PathMode.ZONE){
 
-            LatLng nearestPointOnMission = MapUtils.findNearestPoint(
-                    MapUtils.geoPointToLatLng(element.getLocation().getGeopoint()),
-                    missionPathPoints
-            );
+                PolygonOptions polygonOptions = new PolygonOptions().addAll(missionPathPoints).strokeColor(Role.PEOPLE.getColor()).fillColor(0x5564DD17);
+                Polygon polygon = googleMap.addPolygon(polygonOptions);
+                missionZonesList.put(element.getId(), googleMap.addPolygon(polygonOptions));
 
-            // Check on which mission segment is the nearest point
-            LatLng lastPoint = missionPathPoints.get(0);
-            int closestMissionPointIndex = 0;
+            } else {
 
-            for(LatLng currentPoint : missionPathPoints){
+                PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(0x5564DD17);
+                missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
 
-                if(MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)){
-                    closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
+                // Drone progress points
+                ArrayList<LatLng> dronePathPoints = new ArrayList<>();
+
+                LatLng nearestPointOnMission = MapUtils.findNearestPoint(
+                        MapUtils.geoPointToLatLng(element.getLocation().getGeopoint()),
+                        missionPathPoints
+                );
+
+                // Check on which mission segment is the nearest point
+                LatLng lastPoint = missionPathPoints.get(0);
+                int closestMissionPointIndex = 0;
+
+                for (LatLng currentPoint : missionPathPoints) {
+
+                    if (MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)) {
+                        closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
+                    }
+
+                    lastPoint = currentPoint;
                 }
 
-                lastPoint = currentPoint;
+                dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
+                dronePathPoints.add(nearestPointOnMission);
+
+                PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor());
+                dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
             }
-
-            dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
-            dronePathPoints.add(nearestPointOnMission);
-
-            PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor());
-            dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
 
         }
 
@@ -396,9 +410,14 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     private void removePathsForDrone(Element element) {
 
+        if(missionZonesList.get(element.getId()) != null){
+            missionZonesList.get(element.getId()).remove();
+        }
+
         if(dronePathsList.get(element.getId()) != null){
             dronePathsList.get(element.getId()).remove();
         }
+
         if(missionPathsList.get(element.getId()) != null){
             missionPathsList.get(element.getId()).remove();
         }

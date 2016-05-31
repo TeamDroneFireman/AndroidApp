@@ -1,11 +1,13 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -52,6 +54,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
     @Bind(R.id.DroneCreatePathButton)
     Button droneCreatePathButton;
+
+    @Bind(R.id.DronePathModeSpinner)
+    Spinner dronePathModeSpinner;
 
     @Bind(R.id.RoleSpinner)
     Spinner roleSpinner;
@@ -134,13 +139,38 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 if (createDronePathMode) {
+
+                    dronePathModeSpinner.setVisibility(View.GONE);
                     droneCreatePathButton.setText("Créer chemin");
-                    ArrayList<GeoPoint> pathPoints = mListener.getCurrentMission().getPathPoints();
-                    pathPoints.add(pathPoints.get(0));
-                    ((Drone) element).setMission(new Mission(pathPoints));
+
+                    Mission currentMission = mListener.getCurrentMission();
+
+                    if(currentMission != null){
+
+                        ArrayList<GeoPoint> pathPoints = mListener.getCurrentMission().getPathPoints();
+                        Mission.PathMode pathMode = (Mission.PathMode) dronePathModeSpinner.getSelectedItem();
+
+                        switch (pathMode){
+                            case SIMPLE:
+                            case CYCLE:
+                                pathPoints.add(pathPoints.get(0));
+                                break;
+                            case ZONE:
+                                break;
+                        }
+
+                        ((Drone) element).setMission(
+                                new Mission(
+                                        pathPoints,
+                                        (Mission.PathMode)dronePathModeSpinner.getSelectedItem()
+                                )
+                        );
+                    }
+
                     mListener.setCreateDronePathMode(false);
                 } else {
-                    droneCreatePathButton.setText("Fermer chemin");
+                    dronePathModeSpinner.setVisibility(View.VISIBLE);
+                    droneCreatePathButton.setText("Confirmer chemin");
                     mListener.setCreateDronePathMode(true);
                 }
                 createDronePathMode = !createDronePathMode;
@@ -192,6 +222,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         PictoFactory.ElementForm[] forms = PictoFactory.ElementForm.values();
         final MeanState[] states = MeanState.values();
         droneCreatePathButton.setVisibility(View.GONE);
+        dronePathModeSpinner.setVisibility(View.GONE);
 
         switch (element.getType()){
             case MEAN:
@@ -240,6 +271,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         }
 
         shapeArrayAdapter = new ShapeArrayAdapter(getContext(), forms);
+        dronePathModeSpinner.setAdapter(new ArrayAdapter<Mission.PathMode>(getContext(), android.R.layout.simple_spinner_item, Mission.PathMode.values()));
+
         formSpinner.setAdapter(shapeArrayAdapter);
         formSpinner.setSelection(Arrays.asList(forms).indexOf(element.getForm()));
         shapeArrayAdapter.notifyDataSetChanged();

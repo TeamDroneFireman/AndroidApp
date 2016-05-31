@@ -69,6 +69,12 @@
                 android:checked="false"
                 android:id="@+id/StateView"/>
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:id="@+id/DronePathModeSpinner"
+                android:layout_gravity="center_horizontal" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
