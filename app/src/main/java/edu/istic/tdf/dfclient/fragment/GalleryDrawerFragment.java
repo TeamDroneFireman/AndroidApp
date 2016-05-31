@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -24,6 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.UI.adapter.GalleryListAdapter;
+import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 
 public class GalleryDrawerFragment extends Fragment implements Observer {
     private OnFragmentInteractionListener mListener;
@@ -92,8 +94,6 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
             }
         });
 
-        updateList();
-
         return view;
     }
 
@@ -116,8 +116,9 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
 
     /**
      * methode that will fill the listview
+     * @param imageDrones
      */
-    public void updateList()
+    public void updateList(Collection<ImageDrone> imageDrones)
     {
         itemname.add("Safari");
         itemname.add("Camera");
