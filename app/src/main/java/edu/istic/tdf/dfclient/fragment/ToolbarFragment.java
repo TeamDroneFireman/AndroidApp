@@ -47,8 +47,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     //collections of object in each group
     private Map<Tool,IMean> mapGroupAsked = new HashMap<>();
     private Map<Tool,IMean> mapGroupInTransit = new HashMap<>();
-    private Map<Tool,IMean> mapGroupInactif = new HashMap<>();
-    private Map<Tool,IMean> mapGroupActif = new HashMap<>();
 
     public ToolbarFragment() {}
 
@@ -99,7 +97,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     }
 
     public void createData() {
-
         ToolsGroup group;
 
         group = new ToolsGroup("Outils", false);
@@ -123,15 +120,8 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
         group = new ToolsGroup("Demandés");
         groups.append(1, group);
 
-        group = new ToolsGroup("Va");
+        group = new ToolsGroup("En transit");
         groups.append(2, group);
-
-        group = new ToolsGroup("Inactifs");
-        groups.append(3, group);
-
-        group = new ToolsGroup("Actifs");
-        groups.append(4, group);
-
     }
 
     @Override
@@ -154,8 +144,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     public void dispatchMeanByState(Collection<InterventionMean> interventionMeans, Collection<Drone> drones)
     {
         this.mapGroupAsked.clear();
-        this.mapGroupActif.clear();
-        this.mapGroupInactif.clear();
         this.mapGroupInTransit.clear();
 
         Iterator<InterventionMean> itInterventionMean = interventionMeans.iterator();
@@ -173,12 +161,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
                         break;
                     case VALIDATED:
                         this.mapGroupInTransit.put(tool, interventionMean);
-                        break;
-                    case ARRIVED:
-                        this.mapGroupInactif.put(tool, interventionMean);
-                        break;
-                    case ENGAGED:
-                        this.mapGroupActif.put(tool, interventionMean);
                         break;
                 }
             }
@@ -200,12 +182,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
                     case VALIDATED:
                         this.mapGroupInTransit.put(tool, drone);
                         break;
-                    case ARRIVED:
-                        this.mapGroupInactif.put(tool, drone);
-                        break;
-                    case ENGAGED:
-                        this.mapGroupActif.put(tool, drone);
-                        break;
                 }
             }
         }
@@ -219,8 +195,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     private void refreshGroups(){
         ToolsGroup groupAsked;
         ToolsGroup groupInTransit;
-        ToolsGroup groupInactif;
-        ToolsGroup groupActif;
 
         groupAsked = new ToolsGroup("Demandés");
         Iterator<Tool> itAsked = this.mapGroupAsked.keySet().iterator();
@@ -255,40 +229,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
 
         groups.remove(2);
         groups.append(2, groupInTransit);
-
-        groupInactif = new ToolsGroup("Inactifs");
-        Iterator<Tool> itInactif = this.mapGroupInactif.keySet().iterator();
-        ArrayList<Tool> groupInactifArrayList = new ArrayList<>();
-        while(itInactif.hasNext())
-        {
-            groupInactifArrayList.add(itInTransit.next());
-        }
-
-        this.sortToolsByMeanAskedDate(groupInactifArrayList);
-
-        for (Tool tool: groupInactifArrayList ) {
-            groupInactif.addTool(tool);
-        }
-
-        groups.remove(3);
-        groups.append(3, groupInactif);
-
-        groupActif = new ToolsGroup("Actifs");
-        Iterator<Tool> itActif = this.mapGroupActif.keySet().iterator();
-        ArrayList<Tool> groupActifArrayList = new ArrayList<>();
-        while(itActif.hasNext())
-        {
-            groupActifArrayList.add(itInTransit.next());
-        }
-
-        this.sortToolsByMeanAskedDate(groupActifArrayList);
-
-        for (Tool tool: groupActifArrayList ) {
-            groupActif.addTool(tool);
-        }
-
-        groups.remove(4);
-        groups.append(4, groupActif);
 
         if(toolsListAdapter != null)
         {
@@ -348,18 +288,6 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
             return element;
         }
 
-        element = tryGetElementInactifFromTool(tool);
-        if(element != null)
-        {
-            return element;
-        }
-
-        element = tryGetElementActifFromTool(tool);
-        if(element != null)
-        {
-            return element;
-        }
-
         return null;
     }
 
@@ -371,15 +299,5 @@ public class ToolbarFragment extends Fragment implements ToolsListAdapter.OnTool
     private Element tryGetElementInTransitFromTool(Tool tool)
     {
         return (Element)this.mapGroupInTransit.get(tool);
-    }
-
-    private Element tryGetElementInactifFromTool(Tool tool)
-    {
-        return (Element)this.mapGroupInactif.get(tool);
-    }
-
-    private Element tryGetElementActifFromTool(Tool tool)
-    {
-        return (Element)this.mapGroupActif.get(tool);
     }
 }
