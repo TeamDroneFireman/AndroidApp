@@ -2,6 +2,8 @@ package edu.istic.tdf.dfclient.dataloader;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -184,6 +186,8 @@ public class DataLoader {
     }
 
     public void startMission(final Drone drone) {
+
+        final Gson gson = new Gson();
         sitacActivity.getDroneDao().startMission(drone, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -192,6 +196,11 @@ public class DataLoader {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
+                //Drone droneResponse = gson.fromJson(response.body().charStream(), Drone.class);
+
+                Log.i("DRONE JSON RESPONSE : ", response.body().string());
+                //Log.i("DRONE RESPONSE : ", droneResponse.toString());
                 Log.i("DRONE MISSION : ", "MISSION STARTED FOR DRONE [" + drone.getId() + "]");
 
             }

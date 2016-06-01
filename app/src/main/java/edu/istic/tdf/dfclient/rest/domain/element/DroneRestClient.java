@@ -37,17 +37,7 @@ public class DroneRestClient extends ElementRestClient<Drone> implements IRestCl
         this.httpClient.put(
                 drone.getId() + MISSION_URL,
                 jsonMission,
-                new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.e(TAG, "Mission error [" + drone.getId() + "] with mission [" + jsonMission + "]");
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        Log.i(TAG, "Mission started [" + drone.getId() + "] with mission [" + jsonMission + "]");
-                    }
-                }
+                callback
         );
     }
 
