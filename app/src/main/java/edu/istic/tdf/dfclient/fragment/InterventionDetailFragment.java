@@ -149,6 +149,7 @@ public class InterventionDetailFragment extends Fragment {
                 addMeansInValidationTable();
             }
 
+
             // archived button
             if(intervention.isArchived()) {
                 archiveBt.setText(R.string.intervention_detail_unarchive);
