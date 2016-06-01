@@ -427,6 +427,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     int closestMissionPointIndex = 0;
                     boolean isBeforeDronePosition = true;
 
+                    missionPathsCircles.put(element.getId(), new ArrayList<Circle>());
+
                     for (LatLng currentPoint : missionPathPoints) {
 
                         CircleOptions circleOptions = new CircleOptions();
@@ -440,7 +442,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                         } else {
                             circleOptions.fillColor(0x5564DD17);
                         }
-                        googleMap.addCircle(circleOptions);
+
+                        missionPathsCircles.get(element.getId()).add(googleMap.addCircle(circleOptions));
 
                         if (MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)) {
                             closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
@@ -482,6 +485,12 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
         if(missionPathsList.get(element.getId()) != null){
             missionPathsList.get(element.getId()).remove();
+        }
+
+        if(missionPathsCircles.get(element.getId()) != null){
+            for(Circle circle : missionPathsCircles.get(element.getId())){
+                circle.remove();
+            }
         }
     }
 
