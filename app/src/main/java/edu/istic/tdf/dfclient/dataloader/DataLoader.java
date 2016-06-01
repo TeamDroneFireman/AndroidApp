@@ -125,7 +125,7 @@ public class DataLoader {
                         sitacActivity.getMeansTableFragment().initComponentForAddNewAskedMean();
 
                         if (sitacActivity.getSitacFragment().isLocationEmpty())
-                            sitacActivity.getSitacFragment().setLocation(r.getLocation().getGeopoint());
+                            sitacActivity.getSitacFragment().setLocation(r.getLocation().getGeopoint(), true);
                     }
                 });
             }

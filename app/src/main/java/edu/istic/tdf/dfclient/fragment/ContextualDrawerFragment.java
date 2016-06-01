@@ -163,11 +163,11 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
                         // If cycle or simple we close the path
                         switch (pathMode){
-                            case SIMPLE:
                             case CYCLE:
+                            case ZONE:
                                 pathPoints.add(pathPoints.get(0));
                                 break;
-                            case ZONE:
+                            case SIMPLE:
                                 break;
                         }
 
@@ -284,6 +284,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
             default:
                     forms = new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.MEAN_OTHER,
                             PictoFactory.ElementForm.SOURCE,
                             PictoFactory.ElementForm.TARGET,
                             PictoFactory.ElementForm.WATERPOINT,
