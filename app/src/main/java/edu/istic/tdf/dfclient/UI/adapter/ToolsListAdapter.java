@@ -95,19 +95,6 @@ public class ToolsListAdapter extends BaseExpandableListAdapter {
                 result = toolsGroups.get(0).getTools().size() +
                         toolsGroups.get(1).getTools().size() + childPosition;
                 break;
-
-            case 3:
-                result = toolsGroups.get(0).getTools().size() +
-                        toolsGroups.get(1).getTools().size() +
-                        toolsGroups.get(2).getTools().size() + childPosition;
-                break;
-
-            case 4:
-                result = toolsGroups.get(0).getTools().size() +
-                        toolsGroups.get(1).getTools().size() +
-                        toolsGroups.get(2).getTools().size() +
-                        toolsGroups.get(3).getTools().size() + childPosition;
-                break;
         }
 
         return result;

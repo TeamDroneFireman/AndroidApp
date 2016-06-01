@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,16 +80,23 @@ public class GalleryDrawerFragment extends Fragment implements Observer {
                 //The layout which will contain the image
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.img_full_screen_popup, null);
-                ImageView imgFullScrenn = ((ImageView) layout.findViewById(R.id.imgFullScrenn));
+                ImageView imgFullScreen = ((ImageView) layout.findViewById(R.id.imgFullScrenn));
+
+                //Get max widht and height
+                WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                int width = display.getWidth();
+                int height = display.getHeight();
 
                 //Get the image
                 String url = TdfHttpClient.SCHEME + "://" + TdfHttpClient.HOST + ":12353" + imgUrl.get(position);
                 Picasso.with(getContext())
                         .load(url)
-                        .fit()
-                        .centerCrop()
-                        .noPlaceholder()
-                        .into(imgFullScrenn);
+                        .resize(width, height)
+                        .centerInside()
+                        .placeholder(getResources().getDrawable(R.drawable.image_loading))
+                        .error(getResources().getDrawable(R.drawable.image_not_downloaded))
+                        .into(imgFullScreen);
 
                 //create a dialog in order to show in full screnn the image
                 AlertDialog.Builder imgDialog = new AlertDialog.Builder(
