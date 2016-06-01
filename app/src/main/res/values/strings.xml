@@ -58,4 +58,7 @@
     <!-- Gallery Drawer -->
     <string name="drone_not_found">Drone source inconnu</string>
 
+    <!-- Validation Table -->
+    <string name="title_validation_table">Liste des moyens à valider</string>
+
 </resources>
