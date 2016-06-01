@@ -213,7 +213,7 @@ public class SitacActivity extends BaseActivity implements
         Bundle bundlePush = new Bundle();
         PushSubscriptionData pushSubscriptionData = new PushSubscriptionData();
 
-        //new AsyncPullRefresh().execute();
+        new AsyncPullRefresh().execute();
 
         //Register to the push handler
         this.registerPushHandlers();
@@ -894,6 +894,13 @@ public class SitacActivity extends BaseActivity implements
                                     Log.d("pushMessageDao", "onRestResult");
 
                                     for (PushMessage p : r) {
+                                        if(p==null){
+
+                                        }else if(p.getId()==null){
+
+                                        }else if(p.getTopic()==null){
+
+                                        }
                                         Bundle monBundle = new Bundle();
                                         Log.d("push message", "----------------------------------------------");
                                         Log.d("push message", "ID : "+p.getId());
