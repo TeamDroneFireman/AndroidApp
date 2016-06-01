@@ -328,15 +328,27 @@ public class InterventionCreateFormFragment extends Fragment {
 
                     intervention.addElement(drone);
                     for(int i = 0; i<mean.number;i++){
-                        droneDao.persist(drone, new IDaoWriteReturnHandler() {
-                            @Override
-                            public void onSuccess(Object r) {Log.d("Persist drone","Drone persisted");}
-                            @Override
-                            public void onRepositoryFailure(Throwable e) {Log.e("Persist drone", "Repository failure");}
-                            @Override
-                            public void onRestFailure(Throwable e) {Log.e("Persist drone", "Rest failure");}
-                        });
+                            drone.setName(drone.getName()+" "+i);
+
+                            droneDao.persist(drone, new IDaoWriteReturnHandler() {
+                                @Override
+                                public void onSuccess(Object r) {
+                                    Log.d("Persist drone", "Drone persisted");
+                                }
+
+                                @Override
+                                public void onRepositoryFailure(Throwable e) {
+                                    Log.e("Persist drone", "Repository failure");
+                                }
+
+                                @Override
+                                public void onRestFailure(Throwable e) {
+                                    Log.e("Persist drone", "Rest failure");
+                                }
+                            });
+
                     }
+
                     break;
                 default:
                     InterventionMean interventionMean = new InterventionMean();
@@ -347,6 +359,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
                     intervention.addElement(interventionMean);
                     for(int i = 0;i<mean.number;i++){
+                        interventionMean.setName(interventionMean.getName()+" "+i);
                         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
                             @Override
                             public void onSuccess(Object r) {Log.d("Persist mean","Mean persisted");}
