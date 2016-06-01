@@ -55,4 +55,7 @@
     <string name="refused_button">Refuser</string>
     <string name="validation_button">Valider</string>
 
+    <!-- Gallery Drawer -->
+    <string name="drone_not_found">Drone source inconnu</string>
+
 </resources>

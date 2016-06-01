@@ -16,7 +16,7 @@ import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
 
 /**
- * Created by btessiau on 30/05/16.
+ * Adapter for the GalleryDrawerFragment
  */
 public class GalleryListAdapter extends ArrayAdapter<String> {
 
@@ -37,6 +37,13 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
      */
     private final ArrayList<String> dates;
 
+    /**
+     * Constuctor
+     * @param context
+     * @param drones
+     * @param imgUrl
+     * @param dates
+     */
     public GalleryListAdapter(Activity context, ArrayList<String> drones, ArrayList<String> imgUrl, ArrayList<String> dates) {
         super(context, R.layout.list_view_gallery_row, drones);
 
@@ -46,9 +53,16 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
         this.dates = dates;
     }
 
+    /**
+     * Return the view that will be show in the list view
+     * @param position
+     * @param view
+     * @param parent
+     * @return
+     */
     public View getView(int position,View view,ViewGroup parent) {
-        LayoutInflater inflater=context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.list_view_gallery_row, null, true);
+        LayoutInflater inflater= context.getLayoutInflater();
+        View rowView = inflater.inflate(R.layout.list_view_gallery_row, null, true);
 
         TextView txtTitle = (TextView) rowView.findViewById(R.id.item);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
@@ -57,10 +71,12 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
         String url = TdfHttpClient.SCHEME + "://" + TdfHttpClient.HOST + ":12353" + imgUrl.get(position);
         Picasso.with(context)
                 .load(url)
+                .fit()
+                .centerCrop()
                 .noPlaceholder()
                 .into(imageView);
 
         extratxt.setText(dates.get(position));
         return rowView;
-    };
+    }
 }

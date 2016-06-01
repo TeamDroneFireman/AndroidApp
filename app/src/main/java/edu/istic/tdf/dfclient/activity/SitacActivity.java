@@ -237,7 +237,7 @@ public class SitacActivity extends BaseActivity implements
     public void handleImageDronesSelected(Collection<ImageDrone> imageDrones) {
         if(imageDrones != null)
         {
-            this.galleryDrawerFragment.updateList(imageDrones);
+            this.galleryDrawerFragment.updateList(imageDrones, this.dataLoader.getDrones());
         };
 
         showGalleryDrawer();
