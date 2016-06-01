@@ -14,11 +14,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/validation_button"
-        android:id="@+id/validation_button" />
+        android:id="@+id/validation_details_inter_button"
+        android:clickable="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/refused_button"
-        android:id="@+id/refused_button" />
+        android:id="@+id/refused_button"
+        android:clickable="true" />
 </LinearLayout>

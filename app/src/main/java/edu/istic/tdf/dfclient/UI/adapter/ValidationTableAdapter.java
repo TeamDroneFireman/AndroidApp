@@ -33,11 +33,12 @@ public class ValidationTableAdapter extends ArrayAdapter<String> {
         super(context, resource);
     }
 
-    public ValidationTableAdapter(Context context, LayoutInflater inflater,ArrayList<String> names, ArrayList<IMean> means,InterventionDetailFragment.OnFragmentInteractionListener mlistener){
+    public ValidationTableAdapter(Context context, LayoutInflater inflater,ArrayList<String> names, List<IMean> means,InterventionDetailFragment.OnFragmentInteractionListener mlistener){
         super(context, R.layout.validation_row_table,names);
         this.meanList=means;
         this.inflater=inflater;
         this.names=names;
+        this.mListener=mlistener;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ValidationTableAdapter extends ArrayAdapter<String> {
         final IMean mean=getMean(position);
         textView.setText(mean.getName());
 
-        Button validation=(Button)rowView.findViewById(R.id.validation_button);
+        Button validation=(Button)rowView.findViewById(R.id.validation_details_inter_button);
         validation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +69,7 @@ public class ValidationTableAdapter extends ArrayAdapter<String> {
             }
         });
 
-        return convertView;
+        return rowView;
     }
 
     private IMean getMean(int position) {

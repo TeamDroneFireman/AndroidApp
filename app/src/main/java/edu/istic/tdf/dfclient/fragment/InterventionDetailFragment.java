@@ -17,11 +17,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.Inflater;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
+import edu.istic.tdf.dfclient.UI.adapter.ValidationTableAdapter;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
@@ -47,6 +49,7 @@ public class InterventionDetailFragment extends Fragment {
     private OnFragmentInteractionListener fragmentInteractionListener;
     private List<IMean> meanList;
     private boolean isCodis;
+    private LayoutInflater inflater;
 
     public static InterventionDetailFragment newInstance(InterventionDao interventionDao) {
         InterventionDetailFragment fragment = new InterventionDetailFragment();
@@ -66,6 +69,7 @@ public class InterventionDetailFragment extends Fragment {
         // View
         View view = inflater.inflate(R.layout.fragment_intervention_detail, container, false);
         ButterKnife.bind(this, view);
+        this.inflater=inflater;
 
         // Events
         selectionBt.setOnClickListener(new View.OnClickListener() {
@@ -109,8 +113,8 @@ public class InterventionDetailFragment extends Fragment {
         this.meanList=meanList;
     }
 
-    public List<String> getMeansNames() {
-        List<String> list=new ArrayList<>();
+    public ArrayList<String> getMeansNames() {
+        ArrayList<String> list=new ArrayList<>();
         for(int i=0;i<meanList.size();i++){
             list.add(meanList.get(i).getName());
         }
@@ -145,7 +149,7 @@ public class InterventionDetailFragment extends Fragment {
                     .format(date);
             interventionDate.setText(strDate);
 
-            if(!meanList.isEmpty() && !isCodis && !intervention.isArchived()){
+            if(meanList!=null && !meanList.isEmpty() && isCodis && !intervention.isArchived()){
                 addMeansInValidationTable();
             }
 
@@ -167,8 +171,14 @@ public class InterventionDetailFragment extends Fragment {
     }
 
     private void addMeansInValidationTable() {
-        List<String> names=getMeansNames();
+        ArrayList<String> names=getMeansNames();
 
+
+        ValidationTableAdapter adapter=new ValidationTableAdapter(validationTable.getContext(),inflater,names,meanList,fragmentInteractionListener);
+
+        validationTable.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
 
 
     }

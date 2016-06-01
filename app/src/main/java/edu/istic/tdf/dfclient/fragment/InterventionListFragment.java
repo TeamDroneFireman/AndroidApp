@@ -242,90 +242,8 @@ public class InterventionListFragment extends Fragment {
             }
         });
 
-        /*interventionDao.findAll(new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<Intervention>>() {
-            @Override
-            public void onRepositoryResult(List<Intervention> interventionList) {
-            }
-
-            @Override
-            public void onRestResult(List<Intervention> interventionList) {
-                Iterator<Intervention> interventionIterator = interventionList.iterator();
-                Intervention intervention;
-                while (interventionIterator.hasNext()) {
-                    intervention = interventionIterator.next();
-                    interventionArrayList.add(intervention);
-                    getMeans(intervention);
-                }
-
-                sortInterventions();
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
-
-                        interventionsAdapter.notifyDataSetChanged();
-                    }
-                });
-
-                // Run callback
-                if (onLoaded != null) {
-                    onLoaded.run();
-                }
-            }
-
-            @Override
-            public void onRepositoryFailure(Throwable e) {
-            }
-
-            @Override
-            public void onRestFailure(Throwable e) {
-                // TODO : display toast error
-                Log.e("TAG", "Rest error when loading interventions");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
-                        Toast.makeText(InterventionListFragment.this.getActivity(),
-                                "Network error when loading interventions", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });*/
-
-
     }
 
-    /*private void getMeans(final Intervention intervention) {
-
-
-        this.interventionMeanDao.findByIntervention(intervention.getId(), new DaoSelectionParameters(),
-                new IDaoSelectReturnHandler<List<InterventionMean>>() {
-                    @Override
-                    public void onRepositoryResult(List<InterventionMean> r) {
-                        // Nothing
-                    }
-
-                    @Override
-                    public void onRestResult(List<InterventionMean> r) {
-                        addMeanInHashMap(intervention, r);
-                        getDrones(intervention);
-                    }
-
-                    @Override
-                    public void onRepositoryFailure(Throwable e) {
-                        // Nothing
-                    }
-
-                    @Override
-                    public void onRestFailure(Throwable e) {
-                        //TODO
-                    }
-                });
-
-
-
-    }*/
 
     private void addMeanInHashMap(Intervention intervention, Collection<? extends IMean> r) {
         String idI=intervention.getId();
@@ -337,50 +255,6 @@ public class InterventionListFragment extends Fragment {
         askedMeansList.put(idI, list);
     }
 
-    /*private void getDrones(final Intervention intervention) {
-
-        droneDao.findByIntervention(intervention.getId(), new DaoSelectionParameters(),
-                new IDaoSelectReturnHandler<List<Drone>>() {
-                    @Override
-                    public void onRepositoryResult(List<Drone> r) {
-                        // Nothing
-                    }
-
-                    @Override
-                    public void onRestResult(List<Drone> r) {
-                        // Cast to collection of elements
-                        addMeanInHashMap(intervention, r);
-
-                        interventionsAdapter.setHashMap(askedMeansList);
-                        interventionsAdapter.setArrayList(interventionArrayList);
-
-                        sortInterventions();
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
-
-                                interventionsAdapter.notifyDataSetChanged();
-                            }
-                        });
-
-
-                    }
-
-                    @Override
-                    public void onRepositoryFailure(Throwable e) {
-                        // Nothing
-                    }
-
-                    @Override
-                    public void onRestFailure(Throwable e) {
-                        //// TODO: 30/05/16
-                    }
-                });
-
-
-    }*/
 
     private void sortInterventions(){
         ArrayList<Intervention> interventionArrayListNotArchived = new ArrayList<>();
