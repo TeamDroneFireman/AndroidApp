@@ -10,6 +10,8 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
@@ -28,11 +30,22 @@ public class Drone extends Element implements IDrone {
      */
     private Mission mission;
     private MeanState currentState;
+    private Location home = new Location("blank", new GeoPoint(0,0,0));
     /**
      * represent the current action
      * But not use for the moment !
      */
     private String action;
+
+    @Override
+    public String toString() {
+        return "Drone{" +
+                "states=" + states +
+                ", mission=" + mission +
+                ", currentState=" + currentState +
+                ", action='" + action + '\'' +
+                '}';
+    }
 
     public Drone() {
         super();
