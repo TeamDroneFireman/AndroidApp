@@ -71,9 +71,12 @@ public class GalleryListAdapter extends ArrayAdapter<String> {
         String url = TdfHttpClient.SCHEME + "://" + TdfHttpClient.HOST + ":12353" + imgUrl.get(position);
         Picasso.with(context)
                 .load(url)
-                .fit()
+                .resize(context.getResources().getDimensionPixelSize(R.dimen.image_list_view_width),
+                        context.getResources().getDimensionPixelSize(R.dimen.image_list_view_height)
+                )
                 .centerCrop()
-                .noPlaceholder()
+                .placeholder(context.getResources().getDrawable(R.drawable.image_loading))
+                .error(context.getResources().getDrawable(R.drawable.image_not_downloaded))
                 .into(imageView);
 
         extratxt.setText(dates.get(position));
