@@ -713,15 +713,18 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         Marker marker = getImageDroneMarker(imageDrone);
         if(marker != null){
             Collection<ImageDrone> imageDrones = markersListImageDrone.get(marker);
-
+            Collection<ImageDrone> imageDronesWorkingCopy = new ArrayList<>();
+            imageDronesWorkingCopy.addAll(imageDrones);
             for (ImageDrone img:imageDrones)
             {
                 if(img.getId() == imageDrone.getId())
                 {
-                    imageDrones.remove(img);
+                    imageDronesWorkingCopy.remove(img);
                 }
             }
 
+            markersListImageDrone.get(marker).clear();
+            markersListImageDrone.get(marker).addAll(imageDronesWorkingCopy);
             if(imageDrones.size() == 0)
             {
                 marker.remove();
