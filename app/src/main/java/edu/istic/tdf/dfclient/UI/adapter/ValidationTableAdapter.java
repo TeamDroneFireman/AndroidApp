@@ -39,7 +39,14 @@ public class ValidationTableAdapter extends ArrayAdapter<String> {
         this.inflater=inflater;
         this.names=names;
         this.mListener=mlistener;
+
     }
+
+    @Override
+    public int getCount(){
+        return meanList.size();
+    }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
