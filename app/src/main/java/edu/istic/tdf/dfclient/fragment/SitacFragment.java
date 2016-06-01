@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -121,14 +122,15 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         googleMap.getUiSettings().setTiltGesturesEnabled(false);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
             @Override
             public void onMapClick(LatLng latLng) {
-                if(isDronePathMode){
+                if (isDronePathMode) {
 
                     currentPath.add(latLng);
 
                     PolylineOptions rectOptions = new PolylineOptions().addAll(currentPath);
-                    if(currentPolyline != null){
+                    if (currentPolyline != null) {
                         currentPolyline.remove();
                     }
 
@@ -136,19 +138,16 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
                     currentPolyline = googleMap.addPolyline(rectOptions);
 
-                }else if (hasElementSelected()) {
+                } else if (hasElementSelected()) {
                     Element element = mListener.tryGetSelectedElement();
-                    if (element != null)
-                    {
+                    if (element != null) {
                         GeoPoint geoPoint = new GeoPoint();
                         geoPoint.setLatitude(latLng.latitude);
                         geoPoint.setLongitude(latLng.longitude);
                         element.getLocation().setGeopoint(geoPoint);
                         Tool tool = mListener.getSelectedTool();
                         mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
-                    }
-                    else
-                    {
+                    } else {
                         element = createElementFromLatLng(latLng);
 
                         Marker marker = addMarker(element);
@@ -158,6 +157,19 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     }
                 } else {
                     cancelSelection();
+                }
+            }
+        });
+
+        googleMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(Polyline polyline) {
+                if(missionPathsList.containsValue(polyline)){
+                    Element element = getElementByPolyline(polyline);
+                    if(element != null){
+                        setLocation(element.getLocation().getGeopoint(), false);
+                        mListener.setSelectedElement(element);
+                    }
                 }
             }
         });
@@ -238,13 +250,17 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     }
 
-    public void setLocation(GeoPoint geoPoint){
+    public void setLocation(GeoPoint geoPoint, boolean isDefaultZoom){
 
         this.latitude = geoPoint.getLatitude();
         this.longitude = geoPoint.getLongitude();
 
         if(googleMap != null ){
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
+            if(isDefaultZoom){
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), 18));
+            } else {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(MapUtils.geoPointToLatLng(geoPoint)));
+            }
         }
     }
 
@@ -372,13 +388,17 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             if(((Drone)element).getMission().getPathMode() == Mission.PathMode.ZONE){
 
-                PolygonOptions polygonOptions = new PolygonOptions().addAll(missionPathPoints).strokeColor(Role.PEOPLE.getColor()).fillColor(0x5564DD17);
-                missionZonesList.put(element.getId(), googleMap.addPolygon(polygonOptions));
+                PolygonOptions polygonOptions = new PolygonOptions().addAll(missionPathPoints).strokeColor(Role.PEOPLE.getColor()).fillColor(0x5564DD17).clickable(true);
+                if(element.getId() != null){
+                    missionZonesList.put(element.getId(), googleMap.addPolygon(polygonOptions));
+                }
 
             } else {
 
-                PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(0x5564DD17);
-                missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
+                PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(0x5564DD17).clickable(true);
+                if(element.getId() != null && googleMap != null){
+                    missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
+                }
 
                 // Drone progress points
                 ArrayList<LatLng> dronePathPoints = new ArrayList<>();
@@ -389,7 +409,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 );
 
                 // Check on which mission segment is the nearest point
-                if(missionPathPoints.size() > 0){
+                if (missionPathPoints.size() > 0){
 
                     LatLng lastPoint = missionPathPoints.get(0);
                     int closestMissionPointIndex = 0;
@@ -406,8 +426,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
                     dronePathPoints.add(nearestPointOnMission);
 
-                    PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor());
-                    dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
+                    PolylineOptions dronePathsOptions = new PolylineOptions().addAll(dronePathPoints).color(Role.PEOPLE.getColor()).clickable(true);
+                    if(googleMap != null){
+                        dronePathsList.put(element.getId(), googleMap.addPolyline(dronePathsOptions));
+                    }
 
                 }
             }
@@ -589,6 +611,29 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
 
         return true;
+    }
+
+    private Element getElementByPolyline(Polyline polyline){
+        if(missionPathsList.containsValue(polyline)){
+
+            String elementId = "";
+
+            for(String missionPathId : missionPathsList.keySet()){
+                if(missionPathsList.get(missionPathId).equals(polyline)){
+                    elementId = missionPathId;
+                    break;
+                }
+            }
+
+            for(Map.Entry<Marker, Element> entry : markersList.entrySet()){
+                if(entry.getValue().getId() == elementId){
+                    return entry.getValue();
+                }
+            }
+
+        }
+
+        return null;
     }
 
     private boolean isImageDroneMarker(Marker marker)

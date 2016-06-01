@@ -174,8 +174,15 @@ public class PictoFactory {
                 || this.form == ElementForm.WATERPOINT
                 || this.form == ElementForm.WATERPOINT_SUPPLY
                 || this.form == ElementForm.WATERPOINT_SUSTAINABLE){
+
             paint.setColor(this.role.getDarkColor());
-            canvas.drawText(this.label, 4, bounds.height()/2 + bitmap.getScaledHeight(canvas)/2, paint);
+            canvas.drawText(this.label, 4, bounds.height() / 2 + bitmap.getScaledHeight(canvas) / 2, paint);
+
+            Paint strokePaint = paint;
+            strokePaint.setStyle(Paint.Style.STROKE);
+            strokePaint.setStrokeWidth(1.0f);
+            strokePaint.setColor(Color.WHITE);
+            canvas.drawText(this.label, 4, bounds.height() / 2 + bitmap.getScaledHeight(canvas) / 2, strokePaint);
         } else {
             canvas.drawText(this.label, 4, bounds.height()/2 + bitmap.getScaledHeight(canvas)/2, paint);
         }
