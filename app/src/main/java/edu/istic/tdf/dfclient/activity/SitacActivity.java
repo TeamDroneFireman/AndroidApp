@@ -369,10 +369,6 @@ public class SitacActivity extends BaseActivity implements
         {
             hideToolBar();
         }
-        else
-        {
-            showToolBar();
-        }
 
         hideContextualDrawer();
         hideGalleryDrawer();
