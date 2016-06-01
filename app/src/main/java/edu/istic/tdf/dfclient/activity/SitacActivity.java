@@ -755,6 +755,9 @@ public class SitacActivity extends BaseActivity implements
                 hideContextualDrawer();
                 sitacFragment.removeElement(element);
                 Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+
+                //update the meanTable
+                meansTableFragment.updateElement(element);
             }
         });
     }
