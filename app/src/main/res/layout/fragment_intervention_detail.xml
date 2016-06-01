@@ -74,13 +74,13 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_above="@+id/interventionSelectionButton"
-                    android:layout_below="@+id/scrollView2">
+                    android:layout_height="538dp"
+                    android:layout_below="@+id/scrollView2"
+                    android:scrollIndicators="right">
 
                     <ListView
                         android:layout_width="fill_parent"
-                        android:layout_height="390dp"
+                        android:layout_height="wrap_content"
                         android:id="@+id/validation_table" />
 
                 </RelativeLayout>

@@ -29,6 +29,7 @@ public class ValidationTableAdapter extends ArrayAdapter<String> {
     private InterventionDetailFragment.OnFragmentInteractionListener mListener;
 
 
+
     public ValidationTableAdapter(Context context, int resource) {
         super(context, resource);
     }
@@ -89,4 +90,6 @@ public class ValidationTableAdapter extends ArrayAdapter<String> {
         }
         return null;
     }
+
+
 }
