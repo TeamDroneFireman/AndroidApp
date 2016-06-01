@@ -149,7 +149,7 @@ public class InterventionDetailFragment extends Fragment {
                     .format(date);
             interventionDate.setText(strDate);
 
-            if(meanList!=null && !meanList.isEmpty() && isCodis && !intervention.isArchived()){
+            if(meanList!=null  && isCodis && !intervention.isArchived()){
                 addMeansInValidationTable();
             }
 
