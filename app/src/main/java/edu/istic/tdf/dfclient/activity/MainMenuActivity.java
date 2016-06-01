@@ -254,6 +254,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
+    public void welcomeToShow() {
+        displayWelcome();
+    }
+
+    @Override
     public void onCreateIntervention() {
         interventionListFragment.loadAndDisplayInterventions(null);
         displayWelcome();

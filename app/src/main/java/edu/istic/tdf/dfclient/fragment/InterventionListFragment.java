@@ -134,6 +134,7 @@ public class InterventionListFragment extends Fragment {
                         InterventionListFragment.this.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                fragmentInteractionListener.welcomeToShow();
                                 pullToRefresh.setRefreshing(false);
                             }
                         });
@@ -171,6 +172,8 @@ public class InterventionListFragment extends Fragment {
 
         // when an interventions is selected
         void handleInterventionSelected(Intervention intervention, List<IMean> meanList);
+
+        void welcomeToShow();
     }
 
     private void displayCreationBt() {
@@ -220,6 +223,10 @@ public class InterventionListFragment extends Fragment {
                 // Run callback
                 if (onLoaded != null) {
                     onLoaded.run();
+                }
+
+                if(interventionsList.isSelected()){
+                    selectItem(interventionsList.getSelectedItemPosition());
                 }
             }
 
