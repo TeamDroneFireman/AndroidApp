@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,12 +16,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Observer;
 
 import javax.inject.Inject;
@@ -30,19 +26,16 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
-import edu.istic.tdf.dfclient.dao.Dao;
-import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
-import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
+import edu.istic.tdf.dfclient.dataloader.DataLoader;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
@@ -61,9 +54,8 @@ import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.push.IPushCommand;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SitacActivity extends BaseActivity implements
         SitacFragment.OnFragmentInteractionListener,
@@ -78,10 +70,15 @@ public class SitacActivity extends BaseActivity implements
     private View galleryDrawer;
     private View sitacContainer;
 
+    @Getter
     private SitacFragment sitacFragment;
+    @Getter
     private ToolbarFragment toolbarFragment;
+    @Getter
     private ContextualDrawerFragment contextualDrawerFragment;
+    @Getter
     private MeansTableFragment meansTableFragment;
+    @Getter
     private GalleryDrawerFragment galleryDrawerFragment;
 
     private android.support.v4.app.Fragment currentFragment;
@@ -89,21 +86,32 @@ public class SitacActivity extends BaseActivity implements
     // Data
     private DataLoader dataLoader;
 
+    @Getter@Setter
     private Intervention intervention;
 
     private boolean interventionIsArchived;
 
     private Element selectedElement;
 
-    @Inject InterventionDao interventionDao;
-    @Inject DroneDao droneDao;
-    @Inject InterventionMeanDao interventionMeanDao;
-    @Inject PointOfInterestDao pointOfInterestDao;
-    @Inject ImageDroneDao imageDroneDao;
+    @Inject @Getter
+    InterventionDao interventionDao;
+
+    @Inject @Getter
+    DroneDao droneDao;
+
+    @Inject @Getter
+    InterventionMeanDao interventionMeanDao;
+
+    @Inject @Getter
+    PointOfInterestDao pointOfInterestDao;
+
+    @Inject @Getter
+    ImageDroneDao imageDroneDao;
 
     /**
      * true if and only if the current user is the CODIS
      */
+    @Getter
     private boolean isCodis;
 
     private ArrayList<Observer> observers = new ArrayList<>();
@@ -166,13 +174,18 @@ public class SitacActivity extends BaseActivity implements
 
         currentFragment = sitacFragment;
 
-        // Load data
+        // Get extras from previous activity
         String interventionId = (String) getIntent().getExtras().get("interventionId");
         interventionIsArchived = (boolean) getIntent().getExtras().get("interventionIsArchived");
 
-        dataLoader = new DataLoader(interventionId);
+        //initialize the data loader
+        dataLoader = new DataLoader(interventionId,
+                this);
+
+        //Load the datas in the dataloader
         dataLoader.loadData();
 
+        //Register to the push handler
         this.registerPushHandlers();
     }
 
@@ -365,7 +378,7 @@ public class SitacActivity extends BaseActivity implements
         hideGalleryDrawer();
     }
 
-    private void showContextualDrawer(){
+    public void showContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .show(contextualDrawerFragment)
                 .commit();
@@ -373,32 +386,32 @@ public class SitacActivity extends BaseActivity implements
 
     }
 
-    private void showGalleryDrawer() {
+    public void showGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .show(galleryDrawerFragment)
                 .commit();
     }
 
-    private void hideContextualDrawer(){
+    public void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
                 .commit();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
-    private void hideGalleryDrawer() {
+    public void hideGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .hide(galleryDrawerFragment)
                 .commit();
     }
 
-    private void hideToolBar(){
+    public void hideToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .hide(toolbarFragment)
                 .commit();
     }
 
-    private void showToolBar() {
+    public void showToolBar() {
         getSupportFragmentManager().beginTransaction()
                 .show(toolbarFragment)
                 .commit();
@@ -483,7 +496,7 @@ public class SitacActivity extends BaseActivity implements
         t.commit();
     }
 
-    private void displayNetworkError() {
+    public void displayNetworkError() {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -799,611 +812,5 @@ public class SitacActivity extends BaseActivity implements
                 Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    private class DataLoader {
-        private String interventionId;
-
-        public Collection<Drone> getDrones() {
-            return drones;
-        }
-
-        public Collection<InterventionMean> getInterventionMeans() {
-            return interventionMeans;
-        }
-
-        public Collection<PointOfInterest> getPointOfInterests() {
-            return pointOfInterests;
-        }
-
-        public Collection<ImageDrone> getImageDrones() { return imageDrones; }
-
-        // collection to save previous load datas
-        private Collection<Drone> drones = new ArrayList<>();
-        private Collection<InterventionMean> interventionMeans = new ArrayList<>();
-        private Collection<PointOfInterest> pointOfInterests = new ArrayList<>();
-        private Collection<ImageDrone> imageDrones = new ArrayList<>();
-
-        public DataLoader(String interventionId) {
-            this.interventionId = interventionId;
-        }
-
-        public void loadData() {
-            this.loadIntervention();
-            this.loadDrones();
-            this.loadMeans();
-            this.loadPointsOfInterest();
-
-            //load images taken by drones
-            this.loadImageDrones();
-        }
-
-        public Dao getDaoOfElement(IElement element) {
-            Dao dao = null;
-            switch (element.getType()) {
-                case MEAN:
-                    dao = SitacActivity.this.interventionMeanDao;
-                    break;
-                case POINT_OF_INTEREST:
-                case MEAN_OTHER:
-                case WATERPOINT:
-                    dao = SitacActivity.this.pointOfInterestDao;
-                    break;
-                case AIRMEAN:
-                    dao = SitacActivity.this.droneDao;
-                    break;
-            }
-
-            return dao;
-        }
-
-        private void subscribeToIntervention() {
-            TdfApplication tdfApplication = (TdfApplication) SitacActivity.this.getApplication();
-            String pushRegistrationId = tdfApplication.getPushRegistrationId();
-
-            SitacActivity.this.interventionDao.subscribe(SitacActivity.this.intervention, pushRegistrationId);
-        }
-
-        private void loadIntervention() {
-            SitacActivity.this.interventionDao.find(this.interventionId, new IDaoSelectReturnHandler<Intervention>() {
-                @Override
-                public void onRepositoryResult(Intervention r) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestResult(final Intervention r) {
-                    if (SitacActivity.this.isCodis || r.isArchived()) {
-                        hideToolBar();
-                    }
-
-                    SitacActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Set intervention
-                            SitacActivity.this.intervention = r;
-
-                            // Subscribe to intervention
-                            DataLoader.this.subscribeToIntervention();
-
-                            // Center map view on location
-                            meansTableFragment.initComponentForAddNewAskedMean();
-
-                            if (sitacFragment.isLocationEmpty())
-                                sitacFragment.setLocation(r.getLocation().getGeopoint());
-                        }
-                    });
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
-        }
-
-        private void loadDrones() {
-            SitacActivity.this.droneDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
-                    new IDaoSelectReturnHandler<List<Drone>>() {
-                        @Override
-                        public void onRepositoryResult(List<Drone> r) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestResult(List<Drone> r) {
-                            // Cast to collection of elements
-                            Collection<Element> colR = new ArrayList<Element>();
-                            colR.addAll(r);
-
-                            Collection<Element> colRRemove = new ArrayList<Element>();
-                            colRRemove.addAll(drones);
-
-                            drones = r;
-
-                            removeElementsInUi(colRRemove);
-                            updateElementsInUi(colR);
-
-                            SitacActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                                    sitacFragment.cancelSelection();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onRepositoryFailure(Throwable e) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestFailure(Throwable e) {
-                            SitacActivity.this.displayNetworkError();
-                        }
-                    });
-        }
-
-        private void startMission(final Drone drone) {
-
-            SitacActivity.this.droneDao.startMission(drone, new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.e("DRONE MISSION :", "ERROR WHEN STARTING MISSION FOR DRONE[" + drone.getId() + "]");
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    Log.i("DRONE MISSION : ", "MISSION STARTED FOR DRONE [" + drone.getId() + "]");
-
-                }
-            });
-
-        }
-
-
-        private void loadDrone(String droneId, final boolean loadAfterPush)
-        {
-            SitacActivity.this.droneDao.find(droneId, new IDaoSelectReturnHandler<Drone>() {
-                @Override
-                public void onRepositoryResult(Drone r) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestResult(Drone r) {
-                    Element elemToRemove = null;
-
-                    //Collection usefull for remove in the loop
-                    Collection<Drone> dronesCopy = new ArrayList<>();
-                    dronesCopy.addAll(drones);
-
-                    Iterator<Drone> it = drones.iterator();
-                    Drone drone;
-                    while (it.hasNext()) {
-                        drone = it.next();
-                        if (r.getId().equals(drone.getId())) {
-                            elemToRemove = drone;
-                            dronesCopy.remove(drone);
-                        }
-                    }
-
-                    drones = dronesCopy;
-                    drones.add(r);
-
-                    if (elemToRemove != null) {
-                        Collection<Element> elementsRemove = new ArrayList<Element>();
-                        elementsRemove.add(elemToRemove);
-                        removeElementsInUi(elementsRemove);
-                    }
-
-                    Collection<Element> elementsUpdate = new ArrayList<Element>();
-                    elementsUpdate.add(r);
-                    updateElementsInUi(elementsUpdate);
-
-                    final Element element = r;
-                    SitacActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            if (loadAfterPush) {
-                                //We keep the selection if modification come from an other tablet
-                                Element currentElement = contextualDrawerFragment.tryGetElement();
-                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            } else {
-                                sitacFragment.cancelSelection();
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
-        }
-
-        private void loadMeans() {
-            SitacActivity.this.interventionMeanDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
-                    new IDaoSelectReturnHandler<List<InterventionMean>>() {
-                        @Override
-                        public void onRepositoryResult(List<InterventionMean> r) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestResult(List<InterventionMean> r) {
-                            // Cast to collection of elements
-                            Collection<Element> colR = new ArrayList<Element>();
-                            colR.addAll(r);
-
-                            Collection<Element> colRRemove = new ArrayList<Element>();
-                            colRRemove.addAll(interventionMeans);
-
-                            interventionMeans = r;
-
-                            removeElementsInUi(colRRemove);
-                            updateElementsInUi(colR);
-
-                            SitacActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                                    sitacFragment.cancelSelection();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onRepositoryFailure(Throwable e) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestFailure(Throwable e) {
-                            SitacActivity.this.displayNetworkError();
-                        }
-                    });
-        }
-
-        private void loadMean(String meanId, final boolean loadAfterPush)
-        {
-            SitacActivity.this.interventionMeanDao.find(meanId, new IDaoSelectReturnHandler<InterventionMean>() {
-                @Override
-                public void onRepositoryResult(InterventionMean r) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestResult(InterventionMean r) {
-                    Element elemToRemove = null;
-
-                    //Collection usefull for remove in the loop
-                    Collection<InterventionMean> interventionMeansCopy = new ArrayList<>();
-                    interventionMeansCopy.addAll(interventionMeans);
-
-                    Iterator<InterventionMean> it = interventionMeans.iterator();
-                    InterventionMean interventionMean;
-                    while (it.hasNext()) {
-                        interventionMean = it.next();
-                        if (r.getId().equals(interventionMean.getId())) {
-                            elemToRemove = interventionMean;
-                            interventionMeansCopy.remove(interventionMean);
-                        }
-                    }
-
-                    interventionMeans = interventionMeansCopy;
-                    interventionMeans.add(r);
-
-                    if (elemToRemove != null) {
-                        Collection<Element> elementsRemove = new ArrayList<Element>();
-                        elementsRemove.add(elemToRemove);
-                        removeElementsInUi(elementsRemove);
-                    }
-
-                    Collection<Element> elementsUpdate = new ArrayList<Element>();
-                    elementsUpdate.add(r);
-                    updateElementsInUi(elementsUpdate);
-
-                    final Element element = r;
-                    SitacActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            toolbarFragment.dispatchMeanByState(getInterventionMeans(), getDrones());
-                            if (loadAfterPush) {
-                                //We keep the selection if modification come from an other tablet
-                                Element currentElement = contextualDrawerFragment.tryGetElement();
-                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            } else {
-                                sitacFragment.cancelSelection();
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
-        }
-
-        private void loadPointsOfInterest() {
-            SitacActivity.this.pointOfInterestDao.findByIntervention(this.interventionId, new DaoSelectionParameters(),
-                    new IDaoSelectReturnHandler<List<PointOfInterest>>() {
-                        @Override
-                        public void onRepositoryResult(List<PointOfInterest> r) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestResult(List<PointOfInterest> r) {
-                            // Cast to collection of elements
-                            Collection<Element> colR = new ArrayList<Element>();
-                            colR.addAll(r);
-
-                            Collection<Element> colRRemove = new ArrayList<Element>();
-                            colRRemove.addAll(pointOfInterests);
-
-                            pointOfInterests = r;
-
-                            removeElementsInUi(colRRemove);
-                            updateElementsInUi(colR);
-
-                            SitacActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    sitacFragment.cancelSelection();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onRepositoryFailure(Throwable e) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestFailure(Throwable e) {
-                            SitacActivity.this.displayNetworkError();
-                        }
-                    });
-        }
-
-        private void loadPointOfInterest(String pointOfInterestId, final boolean loadAfterPush) {
-            SitacActivity.this.pointOfInterestDao.find(pointOfInterestId, new IDaoSelectReturnHandler<PointOfInterest>() {
-                @Override
-                public void onRepositoryResult(PointOfInterest r) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestResult(PointOfInterest r) {
-                    Element elemToRemove = null;
-
-                    //Collection usefull for remove in the loop
-                    Collection<PointOfInterest> pointOfInterestsCopy = new ArrayList<>();
-                    pointOfInterestsCopy.addAll(pointOfInterests);
-
-                    Iterator<PointOfInterest> it = pointOfInterests.iterator();
-                    PointOfInterest pointOfInterest;
-                    while (it.hasNext()) {
-                        pointOfInterest = it.next();
-                        if (r.getId().equals(pointOfInterest.getId())) {
-                            elemToRemove = pointOfInterest;
-                            pointOfInterestsCopy.remove(pointOfInterest);
-                        }
-                    }
-
-                    pointOfInterests = pointOfInterestsCopy;
-                    pointOfInterests.add(r);
-
-                    if (elemToRemove != null) {
-                        Collection<Element> elementsRemove = new ArrayList<>();
-                        elementsRemove.add(elemToRemove);
-                        removeElementsInUi(elementsRemove);
-                    }
-
-                    Collection<Element> elementsUpdate = new ArrayList<>();
-                    elementsUpdate.add(r);
-                    updateElementsInUi(elementsUpdate);
-
-                    final Element element = r;
-                    SitacActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (loadAfterPush) {
-                                //We keep the selection if modification come from an other tablet
-                                Element currentElement = contextualDrawerFragment.tryGetElement();
-                                sitacFragment.cancelSelectionAfterPushIfRequire(element, currentElement);
-                            } else {
-                                sitacFragment.cancelSelection();
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-                    SitacActivity.this.displayNetworkError();
-                }
-            });
-        }
-
-        /**
-         * Load all images of the intervention
-         */
-        private void loadImageDrones()
-        {
-            SitacActivity.this.imageDroneDao.findByIntervention(interventionId,
-                    new DaoSelectionParameters(), new IDaoSelectReturnHandler<List<ImageDrone>>() {
-                        @Override
-                        public void onRepositoryResult(List<ImageDrone> r) {
-                            // Nothing
-                        }
-
-                        @Override
-                        public void onRestResult(List<ImageDrone> r) {
-                            // Cast to collection of elements
-                            Collection<ImageDrone> colR = new ArrayList<>();
-                            colR.addAll(r);
-
-                            Collection<ImageDrone> colRRemove = new ArrayList<>();
-                            colRRemove.addAll(imageDrones);
-
-                            imageDrones = r;
-
-                            removeImagesDrone(colRRemove);
-                            updateImagesDrone(colR);
-                        }
-
-                        @Override
-                        public void onRepositoryFailure(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onRestFailure(Throwable e) {
-
-                        }
-                    });
-        }
-
-        /**
-         * Load an image of the intervention
-         * @param pointOfInterestId
-         * @param loadAfterPush
-         */
-        private void loadImageDrone(String pointOfInterestId, final boolean loadAfterPush)
-        {
-            SitacActivity.this.imageDroneDao.find(interventionId, new IDaoSelectReturnHandler<ImageDrone>() {
-                @Override
-                public void onRepositoryResult(ImageDrone r) {
-                    // Nothing
-                }
-
-                @Override
-                public void onRestResult(ImageDrone r) {
-                    ImageDrone imgToRemove = null;
-
-                    //Collection usefull for remove in the loop
-                    Collection<ImageDrone> imageDronesCopy = new ArrayList<>();
-                    imageDronesCopy.addAll(imageDrones);
-
-                    Iterator<ImageDrone> it = imageDrones.iterator();
-                    ImageDrone imageDrone;
-                    while (it.hasNext()) {
-                        imageDrone = it.next();
-                        if (r.getId().equals(imageDrone.getId())) {
-                            imgToRemove = imageDrone;
-                            imageDronesCopy.remove(imageDrone);
-                        }
-                    }
-
-                    imageDrones = imageDronesCopy;
-                    imageDrones.add(r);
-
-                    if (imgToRemove != null) {
-                        Collection<ImageDrone> imgsRemove = new ArrayList<>();
-                        imgsRemove.add(imgToRemove);
-                        removeImagesDrone(imgsRemove);
-                    }
-
-                    Collection<ImageDrone> imgsUpdate = new ArrayList<>();
-                    imgsUpdate.add(r);
-                    updateImagesDrone(imgsUpdate);
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-
-                }
-            });
-        }
-
-        /**
-         * Update the sitacfragment
-         * @param imageDrones
-         */
-        public void updateImagesDrone(final Collection<ImageDrone> imageDrones)
-        {
-            SitacActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Update Map
-                    SitacActivity.this.sitacFragment.updateImageDrones(imageDrones);
-                }
-            });
-        }
-
-
-        /**
-         * Update the sitacfragment
-         * @param imageDrones
-         */
-        public void removeImagesDrone(final Collection<ImageDrone> imageDrones)
-        {
-            SitacActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Update Map
-                    SitacActivity.this.sitacFragment.removeImageDrones(imageDrones);
-                }
-            });
-        }
-
-        public void updateElementsInUi(final Collection<Element> elements) {
-            SitacActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Update Map
-                    SitacActivity.this.sitacFragment.updateElements(elements);
-
-                    // Update Means table
-                    SitacActivity.this.meansTableFragment.updateElements(elements);
-                }
-            });
-        }
-
-        public void removeElementsInUi(final Collection<Element> elements) {
-            SitacActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Update Map
-                    SitacActivity.this.sitacFragment.removeElements(elements);
-
-                    // Update Means table
-                    SitacActivity.this.meansTableFragment.removeElementFromUi(elements);
-                }
-            });
-        }
     }
 }
