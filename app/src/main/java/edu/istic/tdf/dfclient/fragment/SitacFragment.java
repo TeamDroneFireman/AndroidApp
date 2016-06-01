@@ -1,6 +1,7 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -77,11 +80,13 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     // List d'association id drone <--> polyline
     private HashMap<String, Polyline> dronePathsList = new HashMap<>();
     private HashMap<String, Polyline> missionPathsList = new HashMap<>();
+    private HashMap<String, ArrayList<Circle>> missionPathsCircles = new HashMap<>();
     private HashMap<String, Polygon> missionZonesList = new HashMap<>();
 
     private boolean isDronePathMode;
     private ArrayList<LatLng> currentPath;
     private Polyline currentPolyline;
+    private ArrayList<Circle> currentPathCircles = new ArrayList<>();
 
     private boolean isCodis;
 
@@ -129,12 +134,20 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
                     currentPath.add(latLng);
 
+                    CircleOptions circleOptions = new CircleOptions();
+
+                    circleOptions.center(latLng);
+                    circleOptions.radius(4);
+                    circleOptions.strokeWidth(0);
+                    circleOptions.fillColor(Color.LTGRAY);
+                    currentPathCircles.add(googleMap.addCircle(circleOptions));
+
                     PolylineOptions rectOptions = new PolylineOptions().addAll(currentPath);
                     if (currentPolyline != null) {
                         currentPolyline.remove();
                     }
 
-                    rectOptions.color(Role.WHITE.getColor());
+                    rectOptions.color(Color.LTGRAY);
 
                     currentPolyline = googleMap.addPolyline(rectOptions);
 
@@ -315,6 +328,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         if(currentPolyline != null){
             currentPolyline.remove();
         }
+        for(Circle circle: currentPathCircles){
+            circle.remove();
+        }
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
@@ -367,6 +383,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
     public void setDronePathMode(boolean isDronePathMode) {
         this.currentPath = new ArrayList<LatLng>();
+        this.currentPathCircles = new ArrayList<Circle>();
         this.isDronePathMode = isDronePathMode;
     }
 
@@ -395,11 +412,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             } else {
 
-                PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(0x5564DD17).clickable(true);
-                if(element.getId() != null && googleMap != null){
-                    missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
-                }
-
                 // Drone progress points
                 ArrayList<LatLng> dronePathPoints = new ArrayList<>();
 
@@ -413,14 +425,34 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
                     LatLng lastPoint = missionPathPoints.get(0);
                     int closestMissionPointIndex = 0;
+                    boolean isBeforeDronePosition = true;
 
                     for (LatLng currentPoint : missionPathPoints) {
 
+                        CircleOptions circleOptions = new CircleOptions();
+
+                        circleOptions.center(lastPoint);
+                        circleOptions.radius(4);
+                        circleOptions.strokeWidth(0);
+
+                        if(isBeforeDronePosition){
+                            circleOptions.fillColor(Role.PEOPLE.getColor());
+                        } else {
+                            circleOptions.fillColor(0x5564DD17);
+                        }
+                        googleMap.addCircle(circleOptions);
+
                         if (MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)) {
                             closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
+                            isBeforeDronePosition = false;
                         }
 
                         lastPoint = currentPoint;
+                    }
+
+                    PolylineOptions missionPathsOptions = new PolylineOptions().addAll(missionPathPoints).color(0x5564DD17).clickable(true);
+                    if(element.getId() != null && googleMap != null){
+                        missionPathsList.put(element.getId(), googleMap.addPolyline(missionPathsOptions));
                     }
 
                     dronePathPoints.addAll(missionPathPoints.subList(0, closestMissionPointIndex));
@@ -620,6 +652,19 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
 
             for(String missionPathId : missionPathsList.keySet()){
                 if(missionPathsList.get(missionPathId).equals(polyline)){
+                    elementId = missionPathId;
+                    break;
+                }
+            }
+
+            for(Map.Entry<Marker, Element> entry : markersList.entrySet()){
+                if(entry.getValue().getId() == elementId){
+                    return entry.getValue();
+                }
+            }
+
+            for(String missionPathId : dronePathsList.keySet()){
+                if(dronePathsList.get(missionPathId).equals(polyline)){
                     elementId = missionPathId;
                     break;
                 }
