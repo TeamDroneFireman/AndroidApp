@@ -257,11 +257,6 @@ public class SitacActivity extends BaseActivity implements
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
 
-        if(element.getType() == ElementType.AIRMEAN)
-        {
-            showGalleryDrawer();
-        }
-
         contextualDrawerFragment.setSelectedElement(element);
         if(!this.isCodis && !intervention.isArchived())
         {
