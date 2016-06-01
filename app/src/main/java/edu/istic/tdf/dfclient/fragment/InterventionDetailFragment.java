@@ -121,6 +121,10 @@ public class InterventionDetailFragment extends Fragment {
         return list;
     }
 
+    public void notifyChanged() {
+        addMeansInValidationTable();
+    }
+
     public interface OnFragmentInteractionListener {
         void onInterventionSelected(Intervention intervention);
         void onInterventionArchived();
@@ -240,5 +244,9 @@ public class InterventionDetailFragment extends Fragment {
             });
         }
 
+    }
+
+    public List<IMean> getMeanList() {
+        return meanList;
     }
 }

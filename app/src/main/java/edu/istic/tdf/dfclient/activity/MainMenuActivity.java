@@ -201,6 +201,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
                 }
             });
         }
+        List<IMean> means=interventionDetailFragment.getMeanList();
+        means.remove(mean);
+        interventionDetailFragment.setMeanList(means);
+        interventionDetailFragment.notifyChanged();
+        interventionListFragment.loadAndDisplayInterventions(null);
 
     }
 
