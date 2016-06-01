@@ -120,14 +120,16 @@
         android:layout_margin="24dp" />
 
     <ImageButton
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:src="@drawable/abc_ic_clear_mtrl_alpha"
         android:background="?android:attr/selectableItemBackground"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:id="@+id/ElementCancelButton"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="left|top" />
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="left|top"
+        android:scaleType="fitStart"
+        android:layout_margin="12dp" />
 
 
 </FrameLayout>

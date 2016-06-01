@@ -66,7 +66,9 @@ public class PictoFactory {
 
         // Sources / target
         SOURCE("Source", R.drawable.source),
-        TARGET("Cible", R.drawable.target);
+        TARGET("Cible", R.drawable.target),
+
+        PHOTO("Image", R.drawable.camera_icon);
 
         private String label;
         private int drawable;
@@ -144,6 +146,7 @@ public class PictoFactory {
         this.size = size;
         return this;
     }
+
 
     public Bitmap toBitmap(){
 
