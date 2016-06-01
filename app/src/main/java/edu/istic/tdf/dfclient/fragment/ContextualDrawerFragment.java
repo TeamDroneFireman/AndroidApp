@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -48,7 +49,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     Button elementSubmitButton;
 
     @Bind(R.id.ElementCancelButton)
-    Button elementCancelButton;
+    ImageButton elementCancelButton;
 
     @Bind(R.id.ElementDeleteButton)
     Button elementDeleteButton;
