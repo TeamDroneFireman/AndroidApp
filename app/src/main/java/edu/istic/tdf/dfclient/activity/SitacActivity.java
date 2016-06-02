@@ -209,7 +209,7 @@ public class SitacActivity extends BaseActivity implements
         Bundle bundlePush = new Bundle();
         PushSubscriptionData pushSubscriptionData = new PushSubscriptionData();
 
-        new AsyncPullRefresh().execute();
+        //new PushBackgroundTasks().execute();
 
         //Register to the push handler
         this.registerPushHandlers();
@@ -797,6 +797,14 @@ public class SitacActivity extends BaseActivity implements
         TdfApplication application = (TdfApplication) this.getApplication();
 
         // Means
+        application.getPushHandler().addCatcher("Mean/Create", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
+                Toast.makeText(SitacActivity.this, "Push create received for element", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         application.getPushHandler().addCatcher("mean/update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
@@ -813,7 +821,13 @@ public class SitacActivity extends BaseActivity implements
                 Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
             }
         });
-
+        application.getPushHandler().addCatcher("Drone/Create", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
+                Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
+            }
+        });
         // SIG
         application.getPushHandler().addCatcher("sig/update/", new IPushCommand() {
             @Override
@@ -857,12 +871,14 @@ public class SitacActivity extends BaseActivity implements
         super.onRestart();
     }
 
-    private class AsyncPullRefresh extends AsyncTask<Void, Void, Void> {
-        private final long pullRefreshTime = 5000;
-        @Override
-        protected Void doInBackground(Void ... params) {
+
+
+    private class PushBackgroundTasks extends AsyncTask<Void, Void, Void> {
+        final long pullRefreshTime = 5000;
+        protected Void doInBackground(Void... params) {
             try {
-                //Only one looper may be created per thread
+
+
                 if (Looper.myLooper() == null)
                 {
                     Looper.prepare();
@@ -872,13 +888,16 @@ public class SitacActivity extends BaseActivity implements
                     synchronized (this){
                         wait(pullRefreshTime);
                     }
+                }
+                while (!sitacQuitted) {
+
                     // TODO : handle dao
                     // Request on intervention and on the date of the last update
 
                     DaoSelectionParameters parameters = new DaoSelectionParameters();
 
-                    DateFormat formatter =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-                    java.sql.Timestamp lastUpdateTimeStamp = new Timestamp(lastUpdate.getTime()-10000000);
+                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    java.sql.Timestamp lastUpdateTimeStamp = new Timestamp(lastUpdate.getTime() - 1000000000);
                     parameters.addFilter("timestamp", formatter.format(lastUpdateTimeStamp)); //();
                     pushMessageDao.findMessageByInterventionAndDate(
                             intervention.getId(),
@@ -895,22 +914,25 @@ public class SitacActivity extends BaseActivity implements
                                     Log.d("pushMessageDao", "onRestResult");
 
                                     for (PushMessage p : r) {
-                                        if(p==null){
+                                        if (p == null) {
 
-                                        }else if(p.getId()==null){
+                                        } else if (p.getId() == null) {
 
-                                        }else if(p.getTopic()==null){
+                                        } else if (p.getTopic() == null) {
 
                                         }
                                         Bundle monBundle = new Bundle();
                                         Log.d("push message", "----------------------------------------------");
-                                        Log.d("push message", "ID : "+p.getId());
+                                        Log.d("push message", "ID : " + p.getIdElement());
                                         Log.d("push message", "TOPIC : " + p.getTopic());
 
                                         monBundle.putString("topic", p.getTopic());
-                                        monBundle.putString("id", p.getId());
+                                        monBundle.putString("id", p.getIdElement());
                                         ((TdfApplication) getApplication()).getPushHandler().handlePush("api", monBundle);
+                                        Log.d("push message", p.getTimestamp().toString());
+
                                         Log.d("push message", "-----------------------------------------------");
+
                                     }
                                 }
 
@@ -927,12 +949,15 @@ public class SitacActivity extends BaseActivity implements
 
                     //pushMessages.add(m);
                     // TODO : SUPPRESS BOUCHOUN BELOW
-
+                    synchronized (this) {
+                        wait(pullRefreshTime);
+                    }
                 }
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 Log.e("Async Push Refresh", e.getMessage());
             }
             return null;
         }
     }
+
 }
