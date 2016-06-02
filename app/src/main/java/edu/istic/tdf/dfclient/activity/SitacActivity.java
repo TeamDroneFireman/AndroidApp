@@ -209,7 +209,7 @@ public class SitacActivity extends BaseActivity implements
         Bundle bundlePush = new Bundle();
         PushSubscriptionData pushSubscriptionData = new PushSubscriptionData();
 
-        //new PushBackgroundTasks().execute();
+        new PushBackgroundTasks().execute();
 
         //Register to the push handler
         this.registerPushHandlers();
@@ -736,7 +736,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
@@ -779,7 +779,7 @@ public class SitacActivity extends BaseActivity implements
                 sitacFragment.cancelSelection();
                 hideContextualDrawer();
                 sitacFragment.removeElement(element);
-                Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
 
                 //update the meanTable
                 meansTableFragment.updateElement(element);
@@ -801,48 +801,51 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push create received for element", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push create received for element", Toast.LENGTH_SHORT).show();
             }
         });
 
-        application.getPushHandler().addCatcher("mean/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Mean/Update", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
+
             }
         });
 
+
+
         // Drones
-        application.getPushHandler().addCatcher("drone/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Drone/Update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
             }
         });
         application.getPushHandler().addCatcher("Drone/Create", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
             }
         });
         // SIG
-        application.getPushHandler().addCatcher("sig/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Sig/Update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
             }
         });
 
         // SIG Extern
-        application.getPushHandler().addCatcher("sigextern/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Sigextern/Update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -874,7 +877,7 @@ public class SitacActivity extends BaseActivity implements
 
 
     private class PushBackgroundTasks extends AsyncTask<Void, Void, Void> {
-        final long pullRefreshTime = 5000;
+        final long pullRefreshTime = 2000;
         protected Void doInBackground(Void... params) {
             try {
 
@@ -884,7 +887,7 @@ public class SitacActivity extends BaseActivity implements
                     Looper.prepare();
                 }
 
-                while(!sitacQuitted){
+                while(!dataLoader.isInterventionLoaded()){
                     synchronized (this){
                         wait(pullRefreshTime);
                     }
@@ -897,7 +900,7 @@ public class SitacActivity extends BaseActivity implements
                     DaoSelectionParameters parameters = new DaoSelectionParameters();
 
                     DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-                    java.sql.Timestamp lastUpdateTimeStamp = new Timestamp(lastUpdate.getTime() - 1000000000);
+                    final java.sql.Timestamp lastUpdateTimeStamp = new Timestamp(lastUpdate.getTime());
                     parameters.addFilter("timestamp", formatter.format(lastUpdateTimeStamp)); //();
                     pushMessageDao.findMessageByInterventionAndDate(
                             intervention.getId(),
@@ -906,32 +909,14 @@ public class SitacActivity extends BaseActivity implements
                             new IDaoSelectReturnHandler<List<PushMessage>>() {
                                 @Override
                                 public void onRepositoryResult(List<PushMessage> r) {
-                                    Log.d("pushMessageDao", "onRepositoryResult");
                                 }
 
                                 @Override
                                 public void onRestResult(List<PushMessage> r) {
-                                    Log.d("pushMessageDao", "onRestResult");
-
                                     for (PushMessage p : r) {
-                                        if (p == null) {
-
-                                        } else if (p.getId() == null) {
-
-                                        } else if (p.getTopic() == null) {
-
-                                        }
                                         Bundle monBundle = new Bundle();
-                                        Log.d("push message", "----------------------------------------------");
-                                        Log.d("push message", "ID : " + p.getIdElement());
-                                        Log.d("push message", "TOPIC : " + p.getTopic());
-
-                                        monBundle.putString("topic", p.getTopic());
-                                        monBundle.putString("id", p.getIdElement());
                                         ((TdfApplication) getApplication()).getPushHandler().handlePush("api", monBundle);
-                                        Log.d("push message", p.getTimestamp().toString());
-
-                                        Log.d("push message", "-----------------------------------------------");
+                                        lastUpdate=p.getTimestamp();
 
                                     }
                                 }
