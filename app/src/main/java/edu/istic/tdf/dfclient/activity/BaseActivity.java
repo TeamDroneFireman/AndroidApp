@@ -27,7 +27,6 @@ import eu.inloop.easygcm.EasyGcm;
  * Base activity that manages injection
  */
 public class BaseActivity extends AppCompatActivity {
-
     private final static String TAG = "BaseActivity";
 
     View progressOverlay;
@@ -52,6 +51,9 @@ public class BaseActivity extends AppCompatActivity {
         return ((TdfApplication) getApplication()).getApplicationComponent();
     }
 
+    /**
+     * logout the current user and go to login activity
+     */
     public void logout() {
         logoutRestService.logout(new IRestReturnHandler<LogoutResponse>() {
             // This will be called, no matter what the result is
@@ -93,10 +95,12 @@ public class BaseActivity extends AppCompatActivity {
                             Toast.makeText(BaseActivity.this, "Authorization error.", Toast.LENGTH_SHORT).show();
                         }
                     });
-
-                } else if (error instanceof HttpException
+                }
+                else if (error instanceof HttpException
                         && ((HttpException) error).getResponse() != null
-                        && ((HttpException) error).getResponse().code() == 500) { // If no credentials
+                        && ((HttpException) error).getResponse().code() == 500)
+                {
+                    // If no credentials
                     // Go back to login activity with transition
                     BaseActivity.this.overridePendingTransition(R.anim.shake, R.anim.shake);
 
@@ -110,6 +114,9 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Lock the screen and show a progress symbol
+     */
     public void showProgress(){
         if(progressOverlay != null){
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -118,6 +125,9 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Unlock the screen and hide the progress symbol
+     */
     public void hideProgress() {
         if(progressOverlay != null) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

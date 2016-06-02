@@ -81,8 +81,6 @@
         </activity>
         <activity android:name=".activity.MeansTableActivity"
             android:screenOrientation="landscape"></activity>
-        <activity android:name=".activity.DronesMapActivity"
-            android:screenOrientation="landscape"></activity>
 
         <!-- Google maps api key-->
         <meta-data
