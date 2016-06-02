@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.graphics.Path;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,7 +35,6 @@ import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 public class ContextualDrawerFragment extends Fragment implements Observer {
-
     private OnFragmentInteractionListener mListener;
 
     private RoleArrayAdapter roleArrayAdapter;
@@ -113,7 +111,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 element.setName(ElementLabelEdit.getText().toString());
                 element.setRole((Role) roleSpinner.getSelectedItem());
                 element.setForm((PictoFactory.ElementForm) formSpinner.getSelectedItem());
-
                 mListener.updateElement(element);
             }
         });
@@ -147,18 +144,19 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 if (createDronePathMode) {
-
                     droneStartMission.setVisibility(View.GONE);
-                    if(((Drone)element).hasMission()){
+                    if(((Drone)element).hasMission())
+                    {
                         droneStartMission.setVisibility(View.VISIBLE);
                     }
+
                     dronePathModeSpinner.setVisibility(View.GONE);
                     droneCreatePathButton.setText("Créer chemin");
 
                     Mission currentMission = mListener.getCurrentMission();
 
-                    if(!currentMission.getPathPoints().isEmpty()){
-
+                    if(!currentMission.getPathPoints().isEmpty())
+                    {
                         ArrayList<GeoPoint> pathPoints = mListener.getCurrentMission().getPathPoints();
                         Mission.PathMode pathMode = (Mission.PathMode) dronePathModeSpinner.getSelectedItem();
 
@@ -181,13 +179,15 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                     }
 
                     mListener.setCreateDronePathMode(false);
-                } else {
-
+                }
+                else
+                {
                     droneStartMission.setVisibility(View.GONE);
                     dronePathModeSpinner.setVisibility(View.VISIBLE);
                     droneCreatePathButton.setText("Confirmer chemin");
                     mListener.setCreateDronePathMode(true);
                 }
+
                 createDronePathMode = !createDronePathMode;
             }
         });
@@ -244,56 +244,79 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         switch (element.getType()){
             case MEAN:
                 meanState = ((IMean) element).getState();
-                if(meanState.equals(MeanState.ENGAGED)){
-                    forms = new PictoFactory.ElementForm[]{
-                                PictoFactory.ElementForm.MEAN,
-                                PictoFactory.ElementForm.MEAN_GROUP,
-                                PictoFactory.ElementForm.MEAN_COLUMN
-                            };
-                }else{
-                    forms = new PictoFactory.ElementForm[]{
-                                PictoFactory.ElementForm.MEAN_PLANNED,
-                                PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
-                                PictoFactory.ElementForm.MEAN_COLUMN_PLANNED
-                             };
+                if(meanState.equals(MeanState.ENGAGED))
+                {
+                    forms = new PictoFactory.ElementForm[]
+                            {
+                            PictoFactory.ElementForm.MEAN,
+                            PictoFactory.ElementForm.MEAN_GROUP,
+                            PictoFactory.ElementForm.MEAN_COLUMN
+                    };
                 }
-                 break;
+                else
+                {
+                    forms = new PictoFactory.ElementForm[]
+                            {
+                            PictoFactory.ElementForm.MEAN_PLANNED,
+                            PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
+                            PictoFactory.ElementForm.MEAN_COLUMN_PLANNED
+                    };
+                }
+
+                break;
             case AIRMEAN:
                 if(((Drone)element).hasMission() && !((Drone)element).getMission().getPathPoints().isEmpty()){
                     droneStartMission.setVisibility(View.VISIBLE);
                 }
+
                 meanState = ((IMean) element).getState();
                 droneCreatePathButton.setVisibility(View.VISIBLE);
-                if(meanState.equals(MeanState.ENGAGED)){
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.AIRMEAN};
-                }else{
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.AIRMEAN_PLANNED};
+                if(meanState.equals(MeanState.ENGAGED))
+                {
+                    forms = new PictoFactory.ElementForm[]
+                            {
+                            PictoFactory.ElementForm.AIRMEAN
+                    };
                 }
+                else
+                {
+                    forms = new PictoFactory.ElementForm[]
+                            {
+                                    PictoFactory.ElementForm.AIRMEAN_PLANNED
+                            };
+                }
+
                 break;
             case MEAN_OTHER:
                 meanState = ((IMean) element).getState();
-                if(meanState.equals(MeanState.ENGAGED)){
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_OTHER};
-                }else{
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_OTHER_PLANNED};
+                if(meanState.equals(MeanState.ENGAGED))
+                {
+                    forms = new PictoFactory.ElementForm[]
+                            {
+                                    PictoFactory.ElementForm.MEAN_OTHER
+                            };
                 }
+                else
+                {
+                    forms = new PictoFactory.ElementForm[]
+                            {
+                                    PictoFactory.ElementForm.MEAN_OTHER_PLANNED
+                            };
+                }
+
                 break;
-
             default:
-                    forms = new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN_OTHER,
-                            PictoFactory.ElementForm.SOURCE,
-                            PictoFactory.ElementForm.TARGET,
-                            PictoFactory.ElementForm.WATERPOINT,
-                            PictoFactory.ElementForm.WATERPOINT_SUPPLY,
-                            PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE};
-
-
+                forms = new PictoFactory.ElementForm[]
+                        {
+                        PictoFactory.ElementForm.MEAN_OTHER,
+                        PictoFactory.ElementForm.SOURCE,
+                        PictoFactory.ElementForm.TARGET,
+                        PictoFactory.ElementForm.WATERPOINT,
+                        PictoFactory.ElementForm.WATERPOINT_SUPPLY,
+                        PictoFactory.ElementForm.WATERPOINT_SUSTAINABLE
+                };
         }
+
         shapeArrayAdapter = new ShapeArrayAdapter(getContext(), forms);
         dronePathModeSpinner.setAdapter(new ArrayAdapter<Mission.PathMode>(getContext(), android.R.layout.simple_spinner_item, Mission.PathMode.values()));
 
@@ -326,16 +349,18 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         }
     }
 
-
     /**
      *  Method to help initializeStateSelection below
-      */
+     */
     private void setCheckBoxProperties(CheckBox button, boolean enable, boolean checked){
         button.setChecked(checked);
         button.setEnabled(enable);
-        if(enable){
+        if(enable)
+        {
             button.setVisibility(View.VISIBLE);
-        }else{
+        }
+        else
+        {
             button.setVisibility(View.GONE);
         }
     }
@@ -344,20 +369,50 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
      * Method to update the state with the checkbox and the actual states
      */
     private void updateState(){
-        MeanState meanState = ((IMean) element).getState();
-        if( meanState.equals(MeanState.ARRIVED)||
-                meanState.equals(MeanState.ENGAGED)||
-                meanState.equals(MeanState.VALIDATED)||
-                meanState.equals(MeanState.INTRANSIT)){
-            if (inTransit.isChecked()) {
-                ((IMean) element).setState(MeanState.INTRANSIT);
-            }else if (engagedStateCheckBox.isChecked()) {
-                ((IMean) element).setState(MeanState.ENGAGED);
-            }else{
-                ((IMean) element).setState(MeanState.ARRIVED);
-            }
+        MeanState m = ((IMean) element).getState();
+        switch (m) {
+            case VALIDATED:
+                if (arrivedStateCheckBox.isChecked()) {
+                    ((IMean) element).setState(MeanState.ARRIVED);
+                }
+
+                break;
+            case ARRIVED:
+                if (engagedStateCheckBox.isChecked()) {
+                    inTransit.setEnabled(false);
+                    ((IMean) element).setState(MeanState.ENGAGED);
+                }
+
+                if (inTransit.isChecked()) {
+                    engagedStateCheckBox.setEnabled(false);
+                    ((IMean) element).setState(MeanState.INTRANSIT);
+                }
+
+                if(!engagedStateCheckBox.isChecked() && !inTransit.isChecked())
+                {
+                    engagedStateCheckBox.setEnabled(true);
+                    inTransit.setEnabled(true);
+                }
+
+                break;
+            case ENGAGED:
+                if (inTransit.isChecked()) {
+                    ((IMean) element).setState(MeanState.INTRANSIT);
+                }
+
+                break;
+            case INTRANSIT:
+                if (engagedStateCheckBox.isChecked()) {
+                    ((IMean) element).setState(MeanState.ENGAGED);
+                }
+
+                break;
         }
     }
+
+    /**
+     * Initialize the contextual drawer with current selection
+     */
     private void initializeStateSelection() {
         inTransit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -366,6 +421,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 setSelectedElement(element);
             }
         });
+
         engagedStateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -373,6 +429,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 setSelectedElement(element);
             }
         });
+
         arrivedStateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -380,44 +437,12 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 setSelectedElement(element);
             }
         });
+
         switch(element.getType()){
             case MEAN_OTHER:
             case MEAN:
             case AIRMEAN:
-                MeanState m = ((IMean) element).getState();
-                stateTextView.setText(m.getMeanAsReadableText());
-                switch (m){
-                    case ASKED:
-                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
-                        setCheckBoxProperties(engagedStateCheckBox, false, false);
-                        setCheckBoxProperties(inTransit, false, false);
-                        break;
-                    case VALIDATED:
-                        setCheckBoxProperties(arrivedStateCheckBox, true, false);
-                        setCheckBoxProperties(engagedStateCheckBox, true, false);
-                        setCheckBoxProperties(inTransit, true, false);
-                        break;
-                    case ARRIVED:
-                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
-                        setCheckBoxProperties(engagedStateCheckBox, true, false);
-                        setCheckBoxProperties(inTransit, true, false);
-                        break;
-                    case ENGAGED:
-                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
-                        setCheckBoxProperties(engagedStateCheckBox, true, true);
-                        setCheckBoxProperties(inTransit, true, false);
-                        break;
-                    case INTRANSIT:
-                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
-                        setCheckBoxProperties(engagedStateCheckBox, true, true);
-                        setCheckBoxProperties(inTransit, true, true);
-                        break;
-                    case RELEASED:
-                        setCheckBoxProperties(arrivedStateCheckBox, false, false);
-                        setCheckBoxProperties(engagedStateCheckBox, false, false);
-                        setCheckBoxProperties(inTransit, false, false);
-                        break;
-                }
+                refreshComboBox();
                 break;
             case POINT_OF_INTEREST:
             case WATERPOINT:
@@ -428,8 +453,71 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                 inTransit.setVisibility(View.GONE);
                 break;
         }
+    }
 
+    /**
+     * Refresh the three combobox arrivedStateCheckBox, engagedStateCheckBox, inTransit
+     */
+    private void refreshComboBox()
+    {
+        MeanState m = ((IMean) element).getState();
+        stateTextView.setText(m.getMeanAsReadableText());
+        switch (m){
+            case ASKED:
+                setCheckBoxProperties(arrivedStateCheckBox, true, false);
+                setCheckBoxProperties(engagedStateCheckBox, true, false);
+                setCheckBoxProperties(inTransit, true, false);
 
+                arrivedStateCheckBox.setEnabled(false);
+                engagedStateCheckBox.setEnabled(false);
+                inTransit.setEnabled(false);
+                break;
+            case VALIDATED:
+                setCheckBoxProperties(arrivedStateCheckBox, true, false);
+                setCheckBoxProperties(engagedStateCheckBox, true, false);
+                setCheckBoxProperties(inTransit, true, true);
+
+                arrivedStateCheckBox.setEnabled(true);
+                engagedStateCheckBox.setEnabled(false);
+                inTransit.setEnabled(false);
+                break;
+            case ARRIVED:
+                setCheckBoxProperties(arrivedStateCheckBox, true, true);
+                setCheckBoxProperties(engagedStateCheckBox, true, false);
+                setCheckBoxProperties(inTransit, true, false);
+
+                arrivedStateCheckBox.setEnabled(false);
+                engagedStateCheckBox.setEnabled(true);
+                inTransit.setEnabled(true);
+                break;
+            case ENGAGED:
+                setCheckBoxProperties(arrivedStateCheckBox, true, true);
+                setCheckBoxProperties(engagedStateCheckBox, true, true);
+                setCheckBoxProperties(inTransit, true, false);
+
+                arrivedStateCheckBox.setEnabled(false);
+                engagedStateCheckBox.setEnabled(false);
+                inTransit.setEnabled(true);
+                break;
+            case INTRANSIT:
+                setCheckBoxProperties(arrivedStateCheckBox, true, true);
+                setCheckBoxProperties(engagedStateCheckBox, true, false);
+                setCheckBoxProperties(inTransit, true, true);
+
+                arrivedStateCheckBox.setEnabled(false);
+                engagedStateCheckBox.setEnabled(true);
+                inTransit.setEnabled(false);
+                break;
+            case RELEASED:
+                setCheckBoxProperties(arrivedStateCheckBox, false, false);
+                setCheckBoxProperties(engagedStateCheckBox, false, false);
+                setCheckBoxProperties(inTransit, false, false);
+
+                arrivedStateCheckBox.setEnabled(false);
+                engagedStateCheckBox.setEnabled(false);
+                inTransit.setEnabled(false);
+                break;
+        }
     }
 
     public interface OnFragmentInteractionListener {
