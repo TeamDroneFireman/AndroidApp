@@ -19,43 +19,52 @@ import edu.istic.tdf.dfclient.http.TdfHttpClient;
  * Dagger modules for injecting DAOs with their dependencies
  */
 @Module
-public class DaoModule {
-    public DaoModule() {
+public class DaoModule
+{
+    public DaoModule()
+    {
     }
 
     @Provides
     //@Singleton
-    InterventionDao provideInterventionDao(TdfHttpClient httpClient, Gson gson){
+    InterventionDao provideInterventionDao(TdfHttpClient httpClient, Gson gson)
+    {
         return new InterventionDao(httpClient, gson);
     }
 
     @Provides
-    InterventionMeanDao provideInterventionMeanDao(TdfHttpClient httpClient) {
+    InterventionMeanDao provideInterventionMeanDao(TdfHttpClient httpClient)
+    {
         return new InterventionMeanDao(httpClient);
     }
 
     @Provides
-    DroneDao provideDroneDao(TdfHttpClient httpClient) {
+    DroneDao provideDroneDao(TdfHttpClient httpClient)
+    {
         return new DroneDao(httpClient);
     }
 
     @Provides
-    PointOfInterestDao providePointOfInterestDao(TdfHttpClient httpClient) {
+    PointOfInterestDao providePointOfInterestDao(TdfHttpClient httpClient)
+    {
         return new PointOfInterestDao(httpClient);
     }
 
     @Provides
-    SinisterDao provideSinisterDao(TdfHttpClient httpClient) {
+    SinisterDao provideSinisterDao(TdfHttpClient httpClient)
+    {
         return new SinisterDao(httpClient);
     }
 
     @Provides
-    ImageDroneDao provideImageDroneDao(TdfHttpClient httpClient) {
+    ImageDroneDao provideImageDroneDao(TdfHttpClient httpClient)
+    {
         return new ImageDroneDao(httpClient);
     }
 
     @Provides
-    PushMessageDao providePushMessageDao(TdfHttpClient httpClient) {
+    PushMessageDao providePushMessageDao(TdfHttpClient httpClient)
+    {
         return new PushMessageDao(httpClient);
     }
 }

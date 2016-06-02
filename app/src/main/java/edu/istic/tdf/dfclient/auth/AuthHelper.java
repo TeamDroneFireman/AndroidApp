@@ -11,15 +11,20 @@ import edu.istic.tdf.dfclient.TdfApplication;
  * Created by maxime on 22/04/2016.
  */
 public class AuthHelper {
-
     private final static String SHARED_PREFENCES_LOGIN_NAME = "SPLOGIN";
     private final static String SHARED_PREFERENCE_USERID = "USERID";
     private final static String SHARED_PREFERENCE_TOKEN = "TOKEN";
     private final static String SHARED_PREFERENCE_ISCODIS = "ISCODIS";
 
-    public static void storeCredentials(Credentials credentials) {
+    /**
+     * Store the credentials
+     * @param credentials
+     */
+    public static void storeCredentials(Credentials credentials)
+    {
         Context context = TdfApplication.getAppContext();
-        if(context == null) {
+        if(context == null)
+        {
             return;
         }
 
@@ -31,9 +36,15 @@ public class AuthHelper {
         editor.apply();
     }
 
-    public static Credentials loadCredentials() {
+    /**
+     * Load the credentials
+     * @return
+     */
+    public static Credentials loadCredentials()
+    {
         Context context = TdfApplication.getAppContext();
-        if(context == null) {
+        if(context == null)
+        {
             return null;
         }
 
@@ -43,15 +54,19 @@ public class AuthHelper {
         credentials.setUserId(sharedPref.getString(SHARED_PREFERENCE_USERID, null));
         credentials.setToken(sharedPref.getString(SHARED_PREFERENCE_TOKEN, null));
         credentials.setIsCodisUser(sharedPref.getBoolean(SHARED_PREFERENCE_ISCODIS, false));
-
-        if(!credentials.isValid()) {
+        if(!credentials.isValid())
+        {
             return null;
         }
 
         return credentials;
     }
 
-    public static void deleteCredentials() {
+    /**
+     * Delete the credentials
+     */
+    public static void deleteCredentials()
+    {
         Context context = TdfApplication.getAppContext();
         if(context == null) {
             return;

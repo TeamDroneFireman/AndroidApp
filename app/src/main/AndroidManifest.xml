@@ -79,8 +79,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainMenuActivity" />
         </activity>
-        <activity android:name=".activity.MeansTableActivity"
-            android:screenOrientation="landscape"></activity>
 
         <!-- Google maps api key-->
         <meta-data
