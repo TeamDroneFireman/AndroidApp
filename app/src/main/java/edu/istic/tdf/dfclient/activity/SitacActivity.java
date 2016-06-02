@@ -810,11 +810,8 @@ public class SitacActivity extends BaseActivity implements
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
                 //Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
-
             }
         });
-
-
 
         // Drones
         application.getPushHandler().addCatcher("Drone/Update/", new IPushCommand() {
@@ -880,8 +877,6 @@ public class SitacActivity extends BaseActivity implements
         final long pullRefreshTime = 2000;
         protected Void doInBackground(Void... params) {
             try {
-
-
                 if (Looper.myLooper() == null)
                 {
                     Looper.prepare();
@@ -917,7 +912,6 @@ public class SitacActivity extends BaseActivity implements
                                         Bundle monBundle = new Bundle();
                                         ((TdfApplication) getApplication()).getPushHandler().handlePush("api", monBundle);
                                         lastUpdate=p.getTimestamp();
-
                                     }
                                 }
 
