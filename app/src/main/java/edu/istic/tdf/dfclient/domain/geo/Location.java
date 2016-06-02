@@ -1,7 +1,5 @@
 package edu.istic.tdf.dfclient.domain.geo;
 
-import java.util.Locale;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +12,8 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Location {
+public class Location
+{
 
     @Getter @Setter
     String address;

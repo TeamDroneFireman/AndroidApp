@@ -11,8 +11,8 @@ import edu.istic.tdf.dfclient.database.TdfDatabase;
  * {@inheritDoc}
  */
 @Table(database = TdfDatabase.class)
-public class Entity extends BaseModel implements IEntity {
-
+public class Entity extends BaseModel implements IEntity
+{
     @Column
     @PrimaryKey
     String id;

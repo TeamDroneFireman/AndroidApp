@@ -25,7 +25,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PushMessage extends Entity {
+public class PushMessage extends Entity
+{
     @Getter
     @Setter
     String idElement;

@@ -13,8 +13,8 @@ import lombok.Setter;
  * Created by guerin on 21/04/16.
  */
 @Table(database = TdfDatabase.class)
-public class PointOfInterest extends Element implements IPointOfInterest {
-
+public class PointOfInterest extends Element implements IPointOfInterest
+{
     /**
      *
      * @return

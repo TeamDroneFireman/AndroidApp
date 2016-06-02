@@ -5,8 +5,8 @@ import edu.istic.tdf.dfclient.drawable.PictoFactory;
 /**
  * Created by Alexandre on 28/04/2016.
  */
-public enum ElementType {
-
+public enum ElementType
+{
     MEAN,
     MEAN_GROUP,
     MEAN_COLUMN,
@@ -15,10 +15,10 @@ public enum ElementType {
     WATERPOINT,
     AIRMEAN;
 
-    public static ElementType getElementType(PictoFactory.ElementForm form){
-
-        switch (form){
-
+    public static ElementType getElementType(PictoFactory.ElementForm form)
+    {
+        switch (form)
+        {
             case MEAN:
             case MEAN_PLANNED:
                 return ElementType.MEAN;
@@ -48,7 +48,7 @@ public enum ElementType {
             case AIRMEAN_PLANNED:
                 return ElementType.AIRMEAN;
         }
+
         return ElementType.MEAN;
     }
-
 }

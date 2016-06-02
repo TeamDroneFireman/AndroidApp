@@ -20,8 +20,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ImageDrone extends Entity {
-
+public class ImageDrone extends Entity
+{
     @Getter
     @Setter
     public GeoPoint geoPoint;
