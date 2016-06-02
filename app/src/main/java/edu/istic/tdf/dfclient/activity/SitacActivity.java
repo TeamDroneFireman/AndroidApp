@@ -703,7 +703,7 @@ public class SitacActivity extends BaseActivity implements
 
     private void deleteIfMean(final Element element){
         if (element.isMeanFromMeanTable()) {
-            ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
+            ((IMean) element).setState(MeanState.RELEASED);
             IDao dao = this.dataLoader.getDaoOfElement(element);
             dao.persist(element, new IDaoWriteReturnHandler() {
                 @Override
