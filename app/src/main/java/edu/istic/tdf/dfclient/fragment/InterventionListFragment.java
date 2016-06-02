@@ -242,8 +242,8 @@ public class InterventionListFragment extends Fragment {
                     @Override
                     public void run() {
                         ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
-                        Toast.makeText(InterventionListFragment.this.getActivity(),
-                                "Network error when loading interventions", Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(InterventionListFragment.this.getActivity(),
+                                "Network error when loading interventions", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }

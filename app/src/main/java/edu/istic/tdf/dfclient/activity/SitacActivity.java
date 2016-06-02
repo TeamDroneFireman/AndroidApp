@@ -492,7 +492,7 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void run() {
                 // TODO : This to string.xml
-                Toast.makeText(SitacActivity.this, "A network error occured. Please retry in a few seconds.", Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(SitacActivity.this, "A network error occured. Please retry in a few seconds.", Toast.LENGTH_SHORT).show();*/
             }
         });
     }
@@ -555,8 +555,8 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
-
+                       /* Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+*/
                     }
                 });
             }
@@ -567,7 +567,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
@@ -594,7 +594,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                       /** Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
 
                     }
                 });
@@ -606,7 +606,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                       /* Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
@@ -633,7 +633,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                       /* Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
 
                     }
                 });
@@ -645,7 +645,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
@@ -691,7 +691,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                            /*Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
                         }
                     });
                 }
@@ -701,7 +701,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                           /** Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                         }
                     });
                 }
@@ -727,7 +727,7 @@ public class SitacActivity extends BaseActivity implements
                         SitacActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                               /* Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
                             }
                         });
                     }
@@ -737,7 +737,7 @@ public class SitacActivity extends BaseActivity implements
                         SitacActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                                /*Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                             }
                         });
                     }

@@ -62,7 +62,7 @@ public class BaseActivity extends AppCompatActivity {
             public void onNetworkError() {
                 BaseActivity.this.runOnUiThread(new Runnable() { // If other error
                     public void run() {
-                        Toast.makeText(BaseActivity.this, "Network error. Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                       /* Toast.makeText(BaseActivity.this, "Network error. Please check your internet connection.", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
