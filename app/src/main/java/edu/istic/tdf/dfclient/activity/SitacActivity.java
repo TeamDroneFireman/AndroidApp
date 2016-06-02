@@ -209,7 +209,7 @@ public class SitacActivity extends BaseActivity implements
         Bundle bundlePush = new Bundle();
         PushSubscriptionData pushSubscriptionData = new PushSubscriptionData();
 
-        new AsyncPullRefresh().execute();
+        //new AsyncPullRefresh().execute();
 
         //Register to the push handler
         this.registerPushHandlers();

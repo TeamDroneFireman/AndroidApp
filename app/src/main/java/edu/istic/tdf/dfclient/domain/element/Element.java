@@ -53,7 +53,9 @@ public abstract class Element extends Entity implements IElement {
             case MEAN:
             case MEAN_PLANNED:
             case MEAN_GROUP:
+            case MEAN_GROUP_PLANNED:
             case MEAN_COLUMN:
+            case MEAN_COLUMN_PLANNED:
                 return ElementType.MEAN;
 
             case MEAN_OTHER:
@@ -70,6 +72,7 @@ public abstract class Element extends Entity implements IElement {
             case AIRMEAN:
             case AIRMEAN_PLANNED:
                 return ElementType.AIRMEAN;
+
         }
 
         return ElementType.MEAN;

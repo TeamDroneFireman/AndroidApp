@@ -124,50 +124,26 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     private void initMap(){
+
         googleMap.getUiSettings().setTiltGesturesEnabled(false);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
+
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
             public void onMapClick(LatLng latLng) {
+
+                // Create a new drone path
                 if (isDronePathMode) {
+                    updateCurrentDronePath(latLng);
 
-                    currentPath.add(latLng);
-
-                    CircleOptions circleOptions = new CircleOptions();
-
-                    circleOptions.center(latLng);
-                    circleOptions.radius(4);
-                    circleOptions.strokeWidth(0);
-                    circleOptions.fillColor(Color.LTGRAY);
-                    currentPathCircles.add(googleMap.addCircle(circleOptions));
-
-                    PolylineOptions rectOptions = new PolylineOptions().addAll(currentPath);
-                    if (currentPolyline != null) {
-                        currentPolyline.remove();
-                    }
-
-                    rectOptions.color(Color.LTGRAY);
-
-                    currentPolyline = googleMap.addPolyline(rectOptions);
-
+                // Add a new marker on map
                 } else if (hasElementSelected()) {
-                    Element element = mListener.tryGetSelectedElement();
-                    if (element != null) {
-                        GeoPoint geoPoint = new GeoPoint();
-                        geoPoint.setLatitude(latLng.latitude);
-                        geoPoint.setLongitude(latLng.longitude);
-                        element.getLocation().setGeopoint(geoPoint);
-                        Tool tool = mListener.getSelectedTool();
-                        mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
-                    } else {
-                        element = createElementFromLatLng(latLng);
 
-                        Marker marker = addMarker(element);
-                        if (marker != null) {
-                            addMarker(element).showInfoWindow();
-                        }
-                    }
+                    Element element = mListener.tryGetSelectedElement();
+
+                    addElement(element, latLng);
+
                 } else {
                     cancelSelection();
                 }
@@ -293,6 +269,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
      */
     private void computeLastValidPosition(Marker currentMarker)
     {
+
         Double newLat = currentMarker.getPosition().latitude;
         Double newLng = currentMarker.getPosition().longitude;
 
@@ -324,13 +301,10 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     }
 
     public void cancelSelection(){
+
         isDronePathMode = false;
-        if(currentPolyline != null){
-            currentPolyline.remove();
-        }
-        for(Circle circle: currentPathCircles){
-            circle.remove();
-        }
+        removeCurrentDronePath(true);
+
         for (Map.Entry<Marker, Element> entry : markersList.entrySet()) {
             Marker marker = entry.getKey();
             IElement elementValue = entry.getValue();
@@ -741,6 +715,21 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         markersListImageDrone.put(marker, newImageDrones);
     }
 
+    private void addElement(Element element, LatLng latLng){
+
+        if (element != null) {
+            element.getLocation().setGeopoint(MapUtils.latLngToGeoPoint(latLng));
+            Tool tool = mListener.getSelectedTool();
+            mListener.handleElementAdded(tool, latLng.latitude, latLng.longitude);
+        } else {
+            element = createElementFromLatLng(latLng);
+            Marker marker = addMarker(element);
+            if (marker != null) {
+                addMarker(element).showInfoWindow();
+            }
+        }
+    }
+
     public void updateElement(Element element){
         Marker marker = getMarker(element);
         if(marker == null){
@@ -834,4 +823,44 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             }
         }
     }
+
+
+    /*
+    *   Manage current drone path
+     */
+    private void updateCurrentDronePath(LatLng latLng){
+
+        currentPath.add(latLng);
+
+        CircleOptions circleOptions = new CircleOptions()
+                .center(latLng)
+                .radius(4)
+                .strokeWidth(0)
+                .fillColor(Color.LTGRAY);
+
+        PolylineOptions rectOptions = new PolylineOptions()
+                .addAll(currentPath)
+                .color(Color.LTGRAY);
+
+        removeCurrentDronePath(false);
+
+        currentPathCircles.add(googleMap.addCircle(circleOptions));
+        currentPolyline =  googleMap.addPolyline(rectOptions);
+    }
+
+    private void removeCurrentDronePath(boolean deletePoints){
+
+        if(currentPolyline != null){
+            currentPolyline.remove();
+        }
+
+        if(deletePoints){
+
+            for(Circle circle: currentPathCircles){
+                circle.remove();
+            }
+
+        }
+    }
+
 }
