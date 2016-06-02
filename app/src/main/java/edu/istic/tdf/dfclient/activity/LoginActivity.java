@@ -38,6 +38,6 @@ public class LoginActivity extends BaseActivity implements LoginFragment.OnFragm
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.login_container, loginFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 }

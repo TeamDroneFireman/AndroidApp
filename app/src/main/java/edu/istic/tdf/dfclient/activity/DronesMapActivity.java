@@ -8,7 +8,6 @@ import android.view.MenuItem;
 
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.fragment.DronesMapFragment;
-import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 
 /**
  * Created by tremo on 27/04/16.
@@ -22,7 +21,7 @@ public class DronesMapActivity extends BaseActivity implements DronesMapFragment
         setContentView(R.layout.activity_drones_map);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.map_container, DronesMapFragment.newInstance())
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override

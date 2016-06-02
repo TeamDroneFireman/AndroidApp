@@ -97,12 +97,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.list_container, interventionListFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
 
         // Map
@@ -214,7 +214,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         hideMap();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionCreateFormFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -222,7 +222,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         // Display detail in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
         // Load intervention in fragment and display it
         interventionDetailFragment.setIntervention(intervention);
@@ -284,7 +284,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         // Display in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionWelcomeFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideMap() {
@@ -293,7 +293,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             fm.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
                     .hide(mapFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -303,7 +303,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             fm.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
                     .show(mapFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 }

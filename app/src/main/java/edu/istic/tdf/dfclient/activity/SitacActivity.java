@@ -18,12 +18,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +44,7 @@ import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.dataloader.DataLoader;
+import edu.istic.tdf.dfclient.domain.PushMessage;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -67,9 +65,7 @@ import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.push.IPushCommand;
-import edu.istic.tdf.dfclient.domain.PushMessage;
 import edu.istic.tdf.dfclient.push.PushSubscriptionData;
-import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -195,7 +191,7 @@ public class SitacActivity extends BaseActivity implements
                 .add(R.id.gallery_drawer_container, galleryDrawerFragment)
                 .hide(galleryDrawerFragment);
 
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
 
         currentFragment = sitacFragment;
 
@@ -229,7 +225,7 @@ public class SitacActivity extends BaseActivity implements
                         .hide(toolbarFragment)
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
-                        .commit();
+                        .commitAllowingStateLoss();
                 switchTo(sitacFragment);
             }
             else
@@ -238,7 +234,7 @@ public class SitacActivity extends BaseActivity implements
                         .show(toolbarFragment)
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
-                        .commit();
+                        .commitAllowingStateLoss();
                 switchTo(sitacFragment);
             }
         }
@@ -401,7 +397,7 @@ public class SitacActivity extends BaseActivity implements
     public void showContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .show(contextualDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
         contextualDrawer.animate().translationX(0);
 
     }
@@ -409,32 +405,32 @@ public class SitacActivity extends BaseActivity implements
     public void showGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .show(galleryDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
     public void hideGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .hide(galleryDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .hide(toolbarFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void showToolBar() {
         getSupportFragmentManager().beginTransaction()
                 .show(toolbarFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -456,7 +452,7 @@ public class SitacActivity extends BaseActivity implements
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
                         .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                        .commit();
+                        .commitAllowingStateLoss();
 
                 switchTo(meansTableFragment);
                 break;
@@ -469,7 +465,7 @@ public class SitacActivity extends BaseActivity implements
                             .hide(contextualDrawerFragment)
                             .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                            .commit();
+                            .commitAllowingStateLoss();
                     switchTo(sitacFragment);
                 }
                 else
@@ -479,7 +475,7 @@ public class SitacActivity extends BaseActivity implements
                             .hide(contextualDrawerFragment)
                             .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                            .commit();
+                            .commitAllowingStateLoss();
                     switchTo(sitacFragment);
                 }
                 break;
@@ -513,7 +509,7 @@ public class SitacActivity extends BaseActivity implements
         // You probably want to add the transaction to the backstack
         // so that user can use the back button
         t.addToBackStack(null);
-        t.commit();
+        t.commitAllowingStateLoss();
     }
 
     public void displayNetworkError() {
@@ -866,7 +862,12 @@ public class SitacActivity extends BaseActivity implements
         @Override
         protected Void doInBackground(Void ... params) {
             try {
-                Looper.prepare();
+                //Only one looper may be created per thread
+                if (Looper.myLooper() == null)
+                {
+                    Looper.prepare();
+                }
+
                 while(!sitacQuitted){
                     synchronized (this){
                         wait(pullRefreshTime);
