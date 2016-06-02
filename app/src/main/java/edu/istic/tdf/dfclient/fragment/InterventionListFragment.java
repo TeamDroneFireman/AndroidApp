@@ -231,7 +231,7 @@ public class InterventionListFragment extends Fragment {
 
             @Override
             public void onRepositoryFailure(Throwable e) {
-
+                ((MainMenuActivity) InterventionListFragment.this.getActivity()).hideProgress();
             }
 
             @Override

@@ -910,8 +910,11 @@ public class SitacActivity extends BaseActivity implements
                                 public void onRestResult(List<PushMessage> r) {
                                     for (PushMessage p : r) {
                                         Bundle monBundle = new Bundle();
+                                        monBundle.putString("topic", p.getTopic());
+                                        monBundle.putString("id", p.getIdElement());
                                         ((TdfApplication) getApplication()).getPushHandler().handlePush("api", monBundle);
                                         lastUpdate=p.getTimestamp();
+
                                     }
                                 }
 
