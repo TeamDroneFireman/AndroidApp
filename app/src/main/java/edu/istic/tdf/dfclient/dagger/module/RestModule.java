@@ -6,7 +6,6 @@ import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.auth.AuthHelper;
 import edu.istic.tdf.dfclient.http.TdfHttpClient;
-import edu.istic.tdf.dfclient.http.configuration.TdfHttpClientConf;
 import edu.istic.tdf.dfclient.rest.serializer.RestSerializerBuilder;
 import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
 import edu.istic.tdf.dfclient.rest.service.logout.LogoutRestService;
@@ -19,11 +18,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * Dagger modules for injecting REST services with their dependencies
  */
 @Module
-public class RestModule {
-
+public class RestModule
+{
     @Provides
     //@Singleton
-    OkHttpClient provideOkHttpClient() {
+    OkHttpClient provideOkHttpClient()
+    {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder()
@@ -33,32 +33,36 @@ public class RestModule {
 
     @Provides
     //@Singleton
-    Gson provideSerializer() {
+    Gson provideSerializer()
+    {
         return RestSerializerBuilder.build();
     }
 
     @Provides
     //@Singleton
-    AuthHelper provideAuthHelper() {
+    AuthHelper provideAuthHelper()
+    {
         return new AuthHelper();
     }
 
     @Provides
     //@Singleton
-    TdfHttpClient provideTdfHttpClient(OkHttpClient client) {
+    TdfHttpClient provideTdfHttpClient(OkHttpClient client)
+    {
         return new TdfHttpClient(client);
     }
 
     @Provides
     //@Singleton
-    LoginRestService provideLoginRestService(TdfHttpClient httpClient, Gson serializer) {
+    LoginRestService provideLoginRestService(TdfHttpClient httpClient, Gson serializer)
+    {
         return new LoginRestService(httpClient, serializer);
     }
 
     @Provides
     //@Singleton
-    LogoutRestService provideLogoutRestService(TdfHttpClient httpClient, Gson serializer) {
+    LogoutRestService provideLogoutRestService(TdfHttpClient httpClient, Gson serializer)
+    {
         return new LogoutRestService(httpClient);
     }
-
 }

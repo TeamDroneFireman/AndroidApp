@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
 
 /**
- * Created by btessiau on 20/04/16.
+ * Object mission for drones
  */
-public class Mission {
-
-    public enum PathMode{
-
+public class Mission
+{
+    public enum PathMode
+    {
         SIMPLE("Parcours simple"),
         CYCLE("Boucle"),
         ZONE("Zone");
 
         private String title;
 
-        private PathMode(String title){
+        PathMode(String title){
             this.title = title;
         }
 
@@ -27,6 +27,7 @@ public class Mission {
     }
 
     private ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+
     private PathMode pathMode = PathMode.SIMPLE;
 
     public ArrayList<GeoPoint> getPathPoints() {
@@ -46,7 +47,8 @@ public class Mission {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Mission{" +
                 "pathPoints=" + geoPoints +
                 '}';
@@ -63,6 +65,4 @@ public class Mission {
         this.geoPoints = pathPoints;
         this.pathMode = pathMode;
     }
-
-
 }

@@ -3,15 +3,10 @@ package edu.istic.tdf.dfclient.domain.sinister;
 import com.raizlabs.android.dbflow.annotation.Table;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
-import edu.istic.tdf.dfclient.UI.Mean;
 import edu.istic.tdf.dfclient.database.TdfDatabase;
 import edu.istic.tdf.dfclient.domain.Entity;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +20,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Sinister extends Entity implements ISinister{
+public class Sinister extends Entity implements ISinister
+{
     @Getter
     @Setter
     private String code;
@@ -59,5 +55,4 @@ public class Sinister extends Entity implements ISinister{
     public ArrayList<MeanCount> getMeans(){
         return this.means;
     }
-
 }

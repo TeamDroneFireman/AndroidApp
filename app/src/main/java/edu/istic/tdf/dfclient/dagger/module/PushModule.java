@@ -10,12 +10,12 @@ import edu.istic.tdf.dfclient.push.PushHandler;
  * Dagger modules for injecting REST services with their dependencies
  */
 @Module
-public class PushModule {
-
+public class PushModule
+{
     @Provides
     //@Singleton
-    PushHandler providePushHandler() {
+    PushHandler providePushHandler()
+    {
         return new PushHandler();
     }
-
 }

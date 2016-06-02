@@ -1,20 +1,9 @@
 package edu.istic.tdf.dfclient.domain.element;
 
-import android.support.v4.app.ActivityCompat;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import edu.istic.tdf.dfclient.R;
-import lombok.Value;
-
 /**
  * Created by btessiau on 20/04/16.
  */
 public enum Role {
-
     PEOPLE("Personnes/Sanitaire", 0xFF64DD17, 0xFF64DD17, 0xFF2A5D0A),
     FIRE("Extinction/Incendie", 0xFFD50000, 0xFFD50000, 0xFF550000),
     WATER("Eau", 0xFF2962FF, 0xFF2962FF, 0xFF14317F),
@@ -28,7 +17,7 @@ public enum Role {
     private int lightColor;
     private int darkColor;
 
-    private Role(String title, int color, int lightColor, int darkColor){
+    Role(String title, int color, int lightColor, int darkColor){
         this.title = title;
         this.color = color;
         this.lightColor = lightColor;
@@ -42,9 +31,11 @@ public enum Role {
     public int getColor(){
         return color;
     }
+
     public int getLightColor(){
         return lightColor;
     }
+
     public int getDarkColor(){
         return darkColor;
     }

@@ -72,12 +72,14 @@ public class Intervention extends Entity implements IIntervention {
     private boolean archived;
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
@@ -98,7 +100,8 @@ public class Intervention extends Entity implements IIntervention {
     }
 
     @Override
-    public boolean removeElement(IElement element) {
+    public boolean removeElement(IElement element)
+    {
         return this.elements.remove(element);
     }
 

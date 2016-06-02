@@ -9,8 +9,10 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.fragment.LoginFragment;
 
+/**
+ * First activity of the application
+ */
 public class LoginActivity extends BaseActivity implements LoginFragment.OnFragmentInteractionListener {
-
     @Inject
     LoginFragment loginFragment;
 
@@ -27,7 +29,8 @@ public class LoginActivity extends BaseActivity implements LoginFragment.OnFragm
 
         // Hide action bar
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if(actionBar != null)
+        {
             actionBar.hide();
         }
 

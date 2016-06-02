@@ -1,13 +1,6 @@
 package edu.istic.tdf.dfclient.dagger.component;
 
 
-import android.app.Application;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.inject.Singleton;
-
 import dagger.Component;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.activity.BaseActivity;
@@ -19,7 +12,6 @@ import edu.istic.tdf.dfclient.dagger.module.DaoModule;
 import edu.istic.tdf.dfclient.dagger.module.FragmentsModule;
 import edu.istic.tdf.dfclient.dagger.module.PushModule;
 import edu.istic.tdf.dfclient.dagger.module.RestModule;
-import edu.istic.tdf.dfclient.dagger.scope.AppScope;
 
 // TODO : Singleton fore some injections, not all of them
 // TODO : Set that back
@@ -32,7 +24,9 @@ import edu.istic.tdf.dfclient.dagger.scope.AppScope;
         FragmentsModule.class,
         PushModule.class
 })
-public interface ApplicationComponent {
+
+public interface ApplicationComponent
+{
     void inject(BaseActivity activity);
     void inject(LoginActivity activity);
     void inject(MainMenuActivity activity);

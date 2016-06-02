@@ -12,108 +12,113 @@ import edu.istic.tdf.dfclient.domain.geo.Location;
  * Created by btessiau on 20/04/16.
  */
 public interface IIntervention extends IEntity {
-
-
+    /**
+     * get the name of the intervention
+     * @return
+     */
     String getName();
 
+    /**
+     * set the name of the intervention
+     * @param name
+     */
     void setName(String name);
 
     /**
      *
      * @return true iff the intervention is archived
      */
-    public boolean isArchived();
+    boolean isArchived();
 
     /**
      * archive the intervention
      */
-    public void archive();
+    void archive();
 
     /**
      *
      * @param element must be not null
      * @return true iff the collection is modified
      */
-    public boolean addElement(IElement element);
+    boolean addElement(IElement element);
 
     /**
      *
      * @param element must be not null
      * @return true iff the collection is modified
      */
-    public boolean removeElement(IElement element);
+    boolean removeElement(IElement element);
 
     /**
      *
      * @return an iterator on elements collection
      * or null if elements collection is null
      */
-    public Iterator<IElement> getIteratorOnElements();
+    Iterator<IElement> getIteratorOnElements();
 
     /**
      *
      * @return the address of the intervention
      */
-    public Location getLocation();
+    Location getLocation();
 
     /**
      *
      * @param location of the intervention
      */
-    public void setLocation(Location location);
+    void setLocation(Location location);
 
     /**
      *
      * @return
      */
-    public Collection<IElement> getElements();
+    Collection<IElement> getElements();
 
     /**
      *
      * @param elements
      */
-    public void setElements(Collection<IElement> elements);
+    void setElements(Collection<IElement> elements);
 
     /**
      *
      * @return
      */
-    public Date getCreationDate();
+    Date getCreationDate();
 
     /**
      *
      * @param dateCreation
      */
-    public void setCreationDate(Date dateCreation);
+    void setCreationDate(Date dateCreation);
 
     /**
      *
      * @return
      */
-    public Date getArchiveDate();
+    Date getArchiveDate();
 
     /**
      *
      * @param dateArchived
      */
-    public void setArchiveDate(Date dateArchived);
+    void setArchiveDate(Date dateArchived);
 
     /**
      *
      * @param archived
      */
-    public void setArchived(boolean archived);
+    void setArchived(boolean archived);
 
     /**
      *
      * @return
      */
-    public String getSinisterCode();
+    String getSinisterCode();
 
     /**
      *
      * @param sinisterCode
      */
-    public void setSinisterCode(String sinisterCode);
-
+    void setSinisterCode(String sinisterCode);
 }

@@ -5,8 +5,8 @@ package edu.istic.tdf.dfclient.domain;
  *
  * @author maxime
  */
-public interface IEntity {
-
+public interface IEntity
+{
     /**
      * Returns the entity ID
      * @return The ID

@@ -19,16 +19,16 @@ import edu.istic.tdf.dfclient.rest.service.login.LoginRestService;
  * Dagger modules for injecting fragments with their dependencies
  */
 @Module
-public class FragmentsModule {
-
-
+public class FragmentsModule
+{
     @Provides
     LoginFragment provideLoginFragment(LoginRestService loginRestService) {
         return LoginFragment.newInstance(loginRestService);
     }
 
     @Provides
-    InterventionListFragment provideInterventionListFragment(InterventionDao interventionDao,DroneDao droneDao,InterventionMeanDao interventionMeanDao) {
+    InterventionListFragment provideInterventionListFragment(InterventionDao interventionDao,DroneDao droneDao,InterventionMeanDao interventionMeanDao)
+    {
         return InterventionListFragment.newInstance(interventionDao,droneDao,interventionMeanDao);
     }
 
@@ -36,17 +36,20 @@ public class FragmentsModule {
     InterventionCreateFormFragment provideInterventionCreateFormFragment(InterventionDao interventionDao,
                                                                          DroneDao droneDao,
                                                                          InterventionMeanDao interventionMeanDao,
-                                                                         SinisterDao sinisterDao) {
+                                                                         SinisterDao sinisterDao)
+    {
         return InterventionCreateFormFragment.newInstance(interventionDao, droneDao, interventionMeanDao, sinisterDao);
     }
 
     @Provides
-    InterventionDetailFragment provideInterventionDetailFragment(InterventionDao interventionDao) {
+    InterventionDetailFragment provideInterventionDetailFragment(InterventionDao interventionDao)
+    {
         return InterventionDetailFragment.newInstance(interventionDao);
     }
 
     @Provides
-    InterventionWelcomeFragment provideInterventionWelcomeFragment() {
+    InterventionWelcomeFragment provideInterventionWelcomeFragment()
+    {
         return InterventionWelcomeFragment.newInstance();
     }
 }
