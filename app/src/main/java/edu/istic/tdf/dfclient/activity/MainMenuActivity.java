@@ -74,6 +74,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Inject
     InterventionWelcomeFragment interventionWelcomeFragment;
 
+    /**
+     * Boolean to know if it's handling a validation from the validation table
+     */
+    private Boolean isHandlingValidation = false;
+
     @Override
     public void onBackPressed() {
         this.overridePendingTransition(R.anim.shake, R.anim.shake);
@@ -166,11 +171,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleValidation(IMean mean) {
+        this.isHandlingValidation = true;
         if(mean.getType().equals(ElementType.AIRMEAN)){
             droneDao.persist((Drone) mean, new IDaoWriteReturnHandler() {
                 @Override
                 public void onSuccess(Object r) {
-
+                    isHandlingValidation = false;
                 }
 
                 @Override
@@ -180,33 +186,40 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
                 @Override
                 public void onRestFailure(Throwable e) {
-
-                }
-            });
-        }else if(mean.getType().equals(ElementType.MEAN)){
-            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler() {
-                @Override
-                public void onSuccess(Object r) {
-
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-
+                    isHandlingValidation = false;
                 }
             });
         }
+        else if(mean.getType().equals(ElementType.MEAN))
+        {
+            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    isHandlingValidation = false;
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    isHandlingValidation = false;
+                }
+            });
+        }
+
         List<IMean> means=interventionDetailFragment.getMeanList();
         means.remove(mean);
         interventionDetailFragment.setMeanList(means);
         interventionDetailFragment.notifyChanged();
         interventionListFragment.loadAndDisplayInterventions(null);
+    }
 
+    @Override
+    public Boolean isHandlingValidation() {
+        return this.isHandlingValidation;
     }
 
     @Override
