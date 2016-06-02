@@ -2,6 +2,8 @@ package edu.istic.tdf.dfclient.dataloader;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +22,8 @@ import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionM
 import edu.istic.tdf.dfclient.domain.element.pointOfInterest.PointOfInterest;
 import edu.istic.tdf.dfclient.domain.image.ImageDrone;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
+import lombok.Getter;
+import lombok.Setter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -53,12 +57,38 @@ public class DataLoader {
     private Collection<Drone> drones = new ArrayList<>();
     private Collection<InterventionMean> interventionMeans = new ArrayList<>();
     private Collection<PointOfInterest> pointOfInterests = new ArrayList<>();
-    private Collection<ImageDrone> imageDrones = new ArrayList<>();
+    private Collection<ImageDrone>  imageDrones = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private boolean interventionLoaded=false;
+    @Getter
+    @Setter
+    private boolean dronesLoaded=false;
+    @Getter
+    @Setter
+    private boolean meansLoaded=false;
+    @Getter
+    @Setter
+    private boolean pointsOfInterestLoaded=false;
+    @Getter
+    @Setter
+    private boolean imageDronesLoaded=false;
 
     public DataLoader(String interventionId,
                       SitacActivity sitacActivity) {
         this.interventionId = interventionId;
         this.sitacActivity = sitacActivity;
+        this.setDataNotLoaded();
+    }
+
+    // Used to block or unblock asynchrone process
+    public void setDataNotLoaded(){
+        interventionLoaded = false;
+        dronesLoaded = false;
+        meansLoaded = false;
+        pointsOfInterestLoaded = false;
+        imageDronesLoaded = false;
     }
 
     public void loadData() {
@@ -123,7 +153,9 @@ public class DataLoader {
                         sitacActivity.getMeansTableFragment().initComponentForAddNewAskedMean();
 
                         if (sitacActivity.getSitacFragment().isLocationEmpty())
-                            sitacActivity.getSitacFragment().setLocation(r.getLocation().getGeopoint());
+                            sitacActivity.getSitacFragment().setLocation(r.getLocation().getGeopoint(), true);
+                        interventionLoaded=true;
+
                     }
                 });
             }
@@ -167,6 +199,7 @@ public class DataLoader {
                             public void run() {
                                 sitacActivity.getToolbarFragment().dispatchMeanByState(getInterventionMeans(), getDrones());
                                 sitacActivity.getSitacFragment().cancelSelection();
+                                dronesLoaded=true;
                             }
                         });
                     }
@@ -184,6 +217,8 @@ public class DataLoader {
     }
 
     public void startMission(final Drone drone) {
+
+        final Gson gson = new Gson();
         sitacActivity.getDroneDao().startMission(drone, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -192,6 +227,11 @@ public class DataLoader {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
+                //Drone droneResponse = gson.fromJson(response.body().charStream(), Drone.class);
+
+                Log.i("DRONE JSON RESPONSE : ", response.body().string());
+                //Log.i("DRONE RESPONSE : ", droneResponse.toString());
                 Log.i("DRONE MISSION : ", "MISSION STARTED FOR DRONE [" + drone.getId() + "]");
 
             }
@@ -296,6 +336,7 @@ public class DataLoader {
                                 sitacActivity.getSitacFragment().cancelSelection();
                             }
                         });
+                        meansLoaded=true;
                     }
 
                     @Override
@@ -405,6 +446,7 @@ public class DataLoader {
                                 sitacActivity.getSitacFragment().cancelSelection();
                             }
                         });
+                        pointsOfInterestLoaded=true;
                     }
 
                     @Override
@@ -509,6 +551,7 @@ public class DataLoader {
 
                         removeImagesDrone(colRRemove);
                         updateImagesDrone(colR);
+                        imageDronesLoaded=true;
                     }
 
                     @Override

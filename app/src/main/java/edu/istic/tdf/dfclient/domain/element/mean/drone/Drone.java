@@ -10,14 +10,16 @@ import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.Role;
 import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.domain.element.mean.drone.mission.Mission;
+import edu.istic.tdf.dfclient.domain.geo.GeoPoint;
+import edu.istic.tdf.dfclient.domain.geo.Location;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
  * A mean of type drone
  */
 @Table(database = TdfDatabase.class)
-public class Drone extends Element implements IDrone {
-
+public class Drone extends Element implements IDrone
+{
     /**
      * represent the list of states with the corresponding timestamp
      */
@@ -28,13 +30,26 @@ public class Drone extends Element implements IDrone {
      */
     private Mission mission;
     private MeanState currentState;
+    private Location home = new Location("blank", new GeoPoint(0,0,0));
     /**
      * represent the current action
      * But not use for the moment !
      */
     private String action;
 
-    public Drone() {
+    @Override
+    public String toString()
+    {
+        return "Drone{" +
+                "states=" + states +
+                ", mission=" + mission +
+                ", currentState=" + currentState +
+                ", action='" + action + '\'' +
+                '}';
+    }
+
+    public Drone()
+    {
         super();
         this.states = new HashMap<>();
         this.currentState = MeanState.ASKED;
@@ -49,25 +64,15 @@ public class Drone extends Element implements IDrone {
     }
 
     @Override
-    public void setState(MeanState state) {
+    public void setState(MeanState state)
+    {
         this.currentState = state;
         this.states.put(state, new Date());
     }
 
     @Override
-    public MeanState getState() {
-        /*MeanState currentState;
-        if(this.states.get(MeanState.RELEASED) != null){
-            currentState = MeanState.RELEASED;
-        }else if (this.states.get(MeanState.ENGAGED) != null){
-            currentState = MeanState.ENGAGED;
-        }else if (this.states.get(MeanState.ARRIVED) != null){
-            currentState = MeanState.ARRIVED;
-        }else if (this.states.get(MeanState.VALIDATED) != null){
-            currentState = MeanState.VALIDATED;
-        }else{
-            currentState = MeanState.ASKED;
-        }*/
+    public MeanState getState()
+    {
         if(this.states.get(MeanState.RELEASED)!=null){
             return MeanState.RELEASED;
         }

@@ -33,22 +33,38 @@ import edu.istic.tdf.dfclient.fragment.InterventionDetailFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionListFragment;
 import edu.istic.tdf.dfclient.fragment.InterventionWelcomeFragment;
 
-public class MainMenuActivity extends BaseActivity implements InterventionDetailFragment.OnFragmentInteractionListener,
+/**
+ * Activity the will contain the intervention list fragment, the detail fragment
+ * and the creation form fragment
+ */
+public class MainMenuActivity extends BaseActivity implements
+        InterventionDetailFragment.OnFragmentInteractionListener,
         InterventionListFragment.OnFragmentInteractionListener,
         InterventionCreateFormFragment.OnFragmentInteractionListener,
         InterventionWelcomeFragment.OnFragmentInteractionListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback
+{
+    /**
+     * Fragment containing the map
+     */
+    SupportMapFragment mapFragment;
 
-    // UI
-    SupportMapFragment mapFragment; // Map
-    Marker mapMarker; // Map markerD
+    /**
+     * Map markerD
+     */
+    Marker mapMarker;
 
+    /**
+     * Dao for the drones
+     */
     @Inject
     DroneDao droneDao;
 
+    /**
+     * Dao for the interventions
+     */
     @Inject
     InterventionMeanDao interventionMeanDao;
-
 
     /**
      * The right bottom fragment (intervention details)
@@ -74,36 +90,38 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Inject
     InterventionWelcomeFragment interventionWelcomeFragment;
 
+    /**
+     * Boolean to know if it's handling a validation from the validation table
+     */
+    private Boolean isHandlingValidation = false;
+
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         this.overridePendingTransition(R.anim.shake, R.anim.shake);
         final Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-
-
         setTitle(getString(R.string.activity_main_menu_title));
-
         progressOverlay = findViewById(R.id.progress_overlay);
-
 
         // Inject dagger dependencies
         getApplicationComponent().inject(this);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.list_container, interventionListFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
-                .commit();
-
+                .commitAllowingStateLoss();
 
         // Map
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -111,20 +129,21 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         mapFragment.getMapAsync(this);
 
         displayWelcome();
-
-
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
             case R.id.logout_button:
                 logout();
                 break;
@@ -140,7 +159,8 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
      * @param intervention The selected intervention
      */
     @Override
-    public void onInterventionSelected(Intervention intervention) {
+    public void onInterventionSelected(Intervention intervention)
+    {
         if(intervention != null)
         {
             // Detail fragment
@@ -152,7 +172,8 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         // nothing to do
     }
 
@@ -160,145 +181,192 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
      * Called when archive button is touched.
      */
     @Override
-    public void onInterventionArchived() {
+    public void onInterventionArchived()
+    {
         interventionListFragment.loadAndDisplayInterventions(null);
     }
 
     @Override
-    public void handleValidation(IMean mean) {
-        if(mean.getType().equals(ElementType.AIRMEAN)){
-            droneDao.persist((Drone) mean, new IDaoWriteReturnHandler() {
+    public void handleValidation(IMean mean)
+    {
+        this.isHandlingValidation = true;
+        if(mean.getType().equals(ElementType.AIRMEAN))
+        {
+            droneDao.persist((Drone) mean, new IDaoWriteReturnHandler()
+            {
                 @Override
-                public void onSuccess(Object r) {
-
+                public void onSuccess(Object r)
+                {
+                    isHandlingValidation = false;
                 }
 
                 @Override
-                public void onRepositoryFailure(Throwable e) {
-
+                public void onRepositoryFailure(Throwable e)
+                {
                 }
 
                 @Override
-                public void onRestFailure(Throwable e) {
-
-                }
-            });
-        }else if(mean.getType().equals(ElementType.MEAN)){
-            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler() {
-                @Override
-                public void onSuccess(Object r) {
-
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-
+                public void onRestFailure(Throwable e)
+                {
+                    isHandlingValidation = false;
                 }
             });
         }
+        else if (mean.getType().equals(ElementType.MEAN))
+        {
+            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler()
+            {
+                @Override
+                public void onSuccess(Object r)
+                {
+                    isHandlingValidation = false;
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e)
+                {
+
+                }
+
+                @Override
+                public void onRestFailure(Throwable e)
+                {
+                    isHandlingValidation = false;
+                }
+            });
+        }
+
         List<IMean> means=interventionDetailFragment.getMeanList();
         means.remove(mean);
         interventionDetailFragment.setMeanList(means);
         interventionDetailFragment.notifyChanged();
         interventionListFragment.loadAndDisplayInterventions(null);
-
     }
 
     @Override
-    public void handleInterventionCreation() {
+    public Boolean isHandlingValidation()
+    {
+        return this.isHandlingValidation;
+    }
+
+    @Override
+    public void handleInterventionCreation()
+    {
         hideMap();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionCreateFormFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
-    public void handleInterventionSelected(Intervention intervention, List<IMean> meanList) {
+    public void handleInterventionSelected(Intervention intervention, List<IMean> meanList)
+    {
         // Display detail in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
         // Load intervention in fragment and display it
         interventionDetailFragment.setIntervention(intervention);
         interventionDetailFragment.setMeanList(meanList);
-        //TODO passer les informations chargé pas le liste??
-        //
         interventionDetailFragment.displayIntervention();
 
         // Map
-        if(intervention.getLocation() != null && intervention.getLocation().getGeopoint() != null) {
+        if(intervention.getLocation() != null &&
+                intervention.getLocation().getGeopoint() != null)
+        {
             showMap();
             final LatLng location = new LatLng(intervention.getLocation().getGeopoint().getLatitude(),
                     intervention.getLocation().getGeopoint().getLongitude());
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
+            mapFragment.getMapAsync(new OnMapReadyCallback()
+            {
                 @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    if (mapMarker != null) {
+                public void onMapReady(GoogleMap googleMap)
+                {
+                    if (mapMarker != null)
+                    {
                         mapMarker.remove();
                     }
+
                     mapMarker = googleMap.addMarker(new MarkerOptions().position(location));
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
                     googleMap.moveCamera(CameraUpdateFactory.zoomTo(16));
                 }
             });
 
-        } else {
+        }
+        else
+        {
             hideMap();
         }
     }
 
     @Override
-    public void onCreateIntervention() {
+    public void welcomeToShow()
+    {
+        displayWelcome();
+    }
+
+    @Override
+    public void onCreateIntervention()
+    {
         interventionListFragment.loadAndDisplayInterventions(null);
         displayWelcome();
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap)
+    {
 
     }
 
     @Override
-    public void onNewInterventionPressed() {
+    public void onNewInterventionPressed()
+    {
 
     }
 
-    public void displayWelcome() {
+    /**
+     * display the welcome fragment instead of detail intervention fragment
+     */
+    public void displayWelcome()
+    {
         // Hide map
         hideMap();
-
-        // Unselect from list
-        // TODO
 
         // Display in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionWelcomeFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
-    public void hideMap() {
-        if(!mapFragment.isHidden()) {
+    /**
+     * hide the map fragment
+     */
+    public void hideMap()
+    {
+        if(!mapFragment.isHidden())
+        {
             FragmentManager fm = getSupportFragmentManager();
             fm.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
                     .hide(mapFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
-    public void showMap() {
-        if(mapFragment.isHidden()) {
+    /**
+     * Show the map fragment
+     */
+    public void showMap()
+    {
+        if(mapFragment.isHidden())
+        {
             FragmentManager fm = getSupportFragmentManager();
             fm.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
                     .show(mapFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 }

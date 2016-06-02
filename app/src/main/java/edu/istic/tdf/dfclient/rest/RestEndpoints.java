@@ -11,5 +11,6 @@ public enum RestEndpoints {
     Sig,
     Mean,
     Sinister,
-    ImageDrone
+    ImageDrone,
+    PushMessage
 }

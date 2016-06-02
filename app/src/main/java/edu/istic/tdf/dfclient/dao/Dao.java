@@ -126,6 +126,8 @@ public abstract class Dao<E extends Entity, R extends IRepository<E>, C extends 
         });
     }
 
+
+
     @Override
     public void delete(final E entity, final IDaoWriteReturnHandler handler) {
         // Persist distant

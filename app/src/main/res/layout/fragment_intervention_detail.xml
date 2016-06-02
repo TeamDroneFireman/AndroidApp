@@ -1,28 +1,46 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context="edu.istic.tdf.dfclient.fragment.InterventionDetailFragment">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="vertical">
+    <LinearLayout
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:baselineAligned="false">
 
         <ScrollView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/scrollView2"
-            android:layout_above="@+id/interventionSelectionButton"
-            android:layout_alignParentTop="true">
+            android:layout_weight="50">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp">
+
+
+                <TextView
+            android:id="@+id/intervention_address"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:textSize="16sp"
+            android:text=""
+            android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="20dp"
+                    android:text="Adresse"
+                    android:textSize="14sp"/>
 
                 <TextView
                     android:id="@+id/intervention_name"
@@ -34,83 +52,60 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="20dp"
-                    android:text="Nom de code"
-                    android:textSize="14sp"/>
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:text="Nom de code"
+            android:textSize="14sp"/>
 
                 <TextView
-                    android:id="@+id/intervention_address"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="20dp"
-                    android:textSize="16sp"
-                    android:text=""
-                    android:textStyle="bold"/>
+            android:id="@+id/intervention_date"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:textSize="16sp"
+            android:text=""
+            android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="20dp"
-                    android:text="Adresse"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:id="@+id/intervention_date"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="20dp"
-                    android:textSize="16sp"
-                    android:text=""
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="20dp"
-                    android:text="Date"
-                    android:textSize="14sp"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_above="@+id/interventionSelectionButton"
-                    android:layout_below="@+id/scrollView2">
-
-                    <ListView
-                        android:layout_width="fill_parent"
-                        android:layout_height="390dp"
-                        android:id="@+id/validation_table" />
-
-                </RelativeLayout>
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:text="Date"
+            android:textSize="14sp"/>
 
             </LinearLayout>
         </ScrollView>
 
+        <ListView
+    android:layout_width="0dp"
+    android:layout_height="fill_parent"
+    android:id="@+id/validation_table"
+            android:layout_weight="50"
+            android:paddingTop="20dp"
+            android:paddingBottom="46dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom">
 
         <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/intervention_selection_button"
-                android:id="@+id/interventionSelectionButton"
-                android:layout_gravity="right|bottom"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/interventionArchiveButton"
-            android:layout_toStartOf="@+id/interventionArchiveButton" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/intervention_archive_button"
+            android:id="@+id/interventionArchiveButton"
+            android:layout_weight="20" />
 
         <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/intervention_archive_button"
-                android:id="@+id/interventionArchiveButton"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:text="@string/intervention_selection_button"
+            android:id="@+id/interventionSelectionButton"
+            android:layout_weight="80" />
 
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </FrameLayout>

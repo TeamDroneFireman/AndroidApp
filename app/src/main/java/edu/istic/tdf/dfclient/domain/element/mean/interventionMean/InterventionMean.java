@@ -14,13 +14,12 @@ import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
 import edu.istic.tdf.dfclient.drawable.PictoFactory;
 
 /**
- *
  * InterventionMean represent things like trucks... during an intervention (
  * Created by guerin on 21/04/16.
  */
 @Table(database = TdfDatabase.class)
-public class InterventionMean extends Element implements IInterventionMean {
-
+public class InterventionMean extends Element implements IInterventionMean
+{
     /**
      * represent the list of states with the corresponding timestamp
      */
@@ -33,7 +32,8 @@ public class InterventionMean extends Element implements IInterventionMean {
      */
     private String action;
 
-    public InterventionMean() {
+    public InterventionMean()
+    {
         super();
         states = new HashMap<MeanState, Date>();
         this.currentState=MeanState.ASKED;
@@ -48,7 +48,8 @@ public class InterventionMean extends Element implements IInterventionMean {
     }
 
     @Override
-    public void setState(MeanState state) {
+    public void setState(MeanState state)
+    {
         this.currentState = state;
         if(this.states.get(state)==null){
             this.states.put(state, new Date());
@@ -56,19 +57,8 @@ public class InterventionMean extends Element implements IInterventionMean {
     }
 
     @Override
-    public MeanState getState(){
-        /*MeanState currentState;
-        if(this.states.get(MeanState.RELEASED) != null){
-            currentState = MeanState.RELEASED;
-        }else if (this.states.get(MeanState.ENGAGED) != null){
-            currentState = MeanState.ENGAGED;
-        }else if (this.states.get(MeanState.ARRIVED) != null){
-            currentState = MeanState.ARRIVED;
-        }else if (this.states.get(MeanState.VALIDATED) != null){
-            currentState = MeanState.VALIDATED;
-        }else{
-            currentState = MeanState.ASKED;
-        }*/
+    public MeanState getState()
+    {
         if(this.states.get(MeanState.RELEASED)!=null){
             return MeanState.RELEASED;
         }
@@ -76,62 +66,74 @@ public class InterventionMean extends Element implements IInterventionMean {
     }
 
     @Override
-    public Date getStateDate(MeanState state) {
+    public Date getStateDate(MeanState state)
+    {
         return this.states.get(state);
     }
 
     @Override
-    public HashMap<MeanState, Date> getStates() {
+    public HashMap<MeanState, Date> getStates()
+    {
         return this.states;
     }
 
     @Override
-    public void setAction(String action) {
+    public void setAction(String action)
+    {
         this.action=action;
     }
 
     @Override
-    public String getAction() {
+    public String getAction()
+    {
         return this.action;
     }
 
     @Override
-    public void setRole(Role role) {
+    public void setRole(Role role)
+    {
         this.role=role;
     }
 
     @Override
-    public Role getRole() {
+    public Role getRole()
+    {
         return this.role;
     }
 
     @Override
-    public void setLocation(Location location) {
+    public void setLocation(Location location)
+    {
         this.location=location;
     }
 
     @Override
-    public Location getLocation() {
+    public Location getLocation()
+    {
         return this.location;
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name=name;
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
     @Override
-    public PictoFactory.ElementForm getForm() {
+    public PictoFactory.ElementForm getForm()
+    {
         return form;
     }
 
     @Override
-    public void setForm(PictoFactory.ElementForm form) {
+    public void setForm(PictoFactory.ElementForm form)
+    {
         this.form = form;
     }
 

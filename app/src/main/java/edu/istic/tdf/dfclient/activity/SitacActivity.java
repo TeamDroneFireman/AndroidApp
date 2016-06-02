@@ -2,12 +2,15 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,9 +19,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Observer;
 
 import javax.inject.Inject;
@@ -26,14 +33,18 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.PushMessageDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.dataloader.DataLoader;
+import edu.istic.tdf.dfclient.domain.PushMessage;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -54,6 +65,7 @@ import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.push.IPushCommand;
+import edu.istic.tdf.dfclient.push.PushSubscriptionData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -108,6 +120,9 @@ public class SitacActivity extends BaseActivity implements
     @Inject @Getter
     ImageDroneDao imageDroneDao;
 
+    @Inject @Getter
+    PushMessageDao pushMessageDao;
+
     /**
      * true if and only if the current user is the CODIS
      */
@@ -115,10 +130,16 @@ public class SitacActivity extends BaseActivity implements
     private boolean isCodis;
 
     private ArrayList<Observer> observers = new ArrayList<>();
+    private boolean sitacQuitted = true;
+    private Date lastUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.isCodis = ((TdfApplication)this.getApplication()).loadCredentials().isCodisUser();
+
+        // Used for the Asynchrone database synchronisation with push
+        sitacQuitted=false;
+        lastUpdate = new Date();
 
         //intervention = createInterventionBouton();
         super.onCreate(savedInstanceState);
@@ -170,7 +191,7 @@ public class SitacActivity extends BaseActivity implements
                 .add(R.id.gallery_drawer_container, galleryDrawerFragment)
                 .hide(galleryDrawerFragment);
 
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
 
         currentFragment = sitacFragment;
 
@@ -184,6 +205,11 @@ public class SitacActivity extends BaseActivity implements
 
         //Load the datas in the dataloader
         dataLoader.loadData();
+
+        Bundle bundlePush = new Bundle();
+        PushSubscriptionData pushSubscriptionData = new PushSubscriptionData();
+
+        new PushBackgroundTasks().execute();
 
         //Register to the push handler
         this.registerPushHandlers();
@@ -199,7 +225,7 @@ public class SitacActivity extends BaseActivity implements
                         .hide(toolbarFragment)
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
-                        .commit();
+                        .commitAllowingStateLoss();
                 switchTo(sitacFragment);
             }
             else
@@ -208,7 +234,7 @@ public class SitacActivity extends BaseActivity implements
                         .show(toolbarFragment)
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
-                        .commit();
+                        .commitAllowingStateLoss();
                 switchTo(sitacFragment);
             }
         }
@@ -220,7 +246,6 @@ public class SitacActivity extends BaseActivity implements
             NavUtils.navigateUpTo(this, upIntent);
         }
     }
-
     @Override
     public void handleSelectedToolUtils(Tool tool) {
         this.sitacFragment.cancelSelection();
@@ -237,7 +262,7 @@ public class SitacActivity extends BaseActivity implements
     public void handleImageDronesSelected(Collection<ImageDrone> imageDrones) {
         if(imageDrones != null)
         {
-            this.galleryDrawerFragment.updateList(imageDrones);
+            this.galleryDrawerFragment.updateList(imageDrones, this.dataLoader.getDrones());
         };
 
         showGalleryDrawer();
@@ -256,11 +281,6 @@ public class SitacActivity extends BaseActivity implements
     @Override
     public void setSelectedElement(Element element) {
         sitacFragment.cancelSelection();
-
-        if(element.getType() == ElementType.AIRMEAN)
-        {
-            showGalleryDrawer();
-        }
 
         contextualDrawerFragment.setSelectedElement(element);
         if(!this.isCodis && !intervention.isArchived())
@@ -377,7 +397,7 @@ public class SitacActivity extends BaseActivity implements
     public void showContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .show(contextualDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
         contextualDrawer.animate().translationX(0);
 
     }
@@ -385,32 +405,32 @@ public class SitacActivity extends BaseActivity implements
     public void showGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .show(galleryDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
     public void hideGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .hide(galleryDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .hide(toolbarFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void showToolBar() {
         getSupportFragmentManager().beginTransaction()
                 .show(toolbarFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -432,7 +452,7 @@ public class SitacActivity extends BaseActivity implements
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
                         .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                        .commit();
+                        .commitAllowingStateLoss();
 
                 switchTo(meansTableFragment);
                 break;
@@ -445,7 +465,7 @@ public class SitacActivity extends BaseActivity implements
                             .hide(contextualDrawerFragment)
                             .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                            .commit();
+                            .commitAllowingStateLoss();
                     switchTo(sitacFragment);
                 }
                 else
@@ -455,7 +475,7 @@ public class SitacActivity extends BaseActivity implements
                             .hide(contextualDrawerFragment)
                             .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                            .commit();
+                            .commitAllowingStateLoss();
                     switchTo(sitacFragment);
                 }
                 break;
@@ -489,7 +509,7 @@ public class SitacActivity extends BaseActivity implements
         // You probably want to add the transaction to the backstack
         // so that user can use the back button
         t.addToBackStack(null);
-        t.commit();
+        t.commitAllowingStateLoss();
     }
 
     public void displayNetworkError() {
@@ -497,7 +517,7 @@ public class SitacActivity extends BaseActivity implements
             @Override
             public void run() {
                 // TODO : This to string.xml
-                Toast.makeText(SitacActivity.this, "A network error occured. Please retry in a few seconds.", Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(SitacActivity.this, "A network error occured. Please retry in a few seconds.", Toast.LENGTH_SHORT).show();*/
             }
         });
     }
@@ -560,8 +580,8 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
-
+                       /* Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+*/
                     }
                 });
             }
@@ -572,7 +592,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
@@ -599,7 +619,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                       /** Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
 
                     }
                 });
@@ -611,7 +631,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                       /* Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
@@ -638,7 +658,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                       /* Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
 
                     }
                 });
@@ -650,7 +670,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }
@@ -683,7 +703,7 @@ public class SitacActivity extends BaseActivity implements
 
     private void deleteIfMean(final Element element){
         if (element.isMeanFromMeanTable()) {
-            ((IMean) element).getStates().put(MeanState.RELEASED, new Date());
+            ((IMean) element).setState(MeanState.RELEASED);
             IDao dao = this.dataLoader.getDaoOfElement(element);
             dao.persist(element, new IDaoWriteReturnHandler() {
                 @Override
@@ -696,7 +716,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                            /*Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
                         }
                     });
                 }
@@ -706,7 +726,7 @@ public class SitacActivity extends BaseActivity implements
                     SitacActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                           /** Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                         }
                     });
                 }
@@ -716,7 +736,7 @@ public class SitacActivity extends BaseActivity implements
                 SitacActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SitacActivity.this, "Cet element ne peut être supprimé", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
@@ -732,7 +752,7 @@ public class SitacActivity extends BaseActivity implements
                         SitacActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();
+                               /* Toast.makeText(SitacActivity.this, "Error repo", Toast.LENGTH_SHORT).show();*/
                             }
                         });
                     }
@@ -742,7 +762,7 @@ public class SitacActivity extends BaseActivity implements
                         SitacActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();
+                                /*Toast.makeText(SitacActivity.this, "Error rest", Toast.LENGTH_SHORT).show();*/
                             }
                         });
                     }
@@ -759,7 +779,10 @@ public class SitacActivity extends BaseActivity implements
                 sitacFragment.cancelSelection();
                 hideContextualDrawer();
                 sitacFragment.removeElement(element);
-                Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+
+                //update the meanTable
+                meansTableFragment.updateElement(element);
             }
         });
     }
@@ -774,39 +797,146 @@ public class SitacActivity extends BaseActivity implements
         TdfApplication application = (TdfApplication) this.getApplication();
 
         // Means
-        application.getPushHandler().addCatcher("mean/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Mean/Create", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push create received for element", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        application.getPushHandler().addCatcher("Mean/Update", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadMean(bundle.getString("id"), true);
+                //Toast.makeText(SitacActivity.this, "Push update received for element", Toast.LENGTH_SHORT).show();
             }
         });
 
         // Drones
-        application.getPushHandler().addCatcher("drone/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Drone/Update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
             }
         });
-
+        application.getPushHandler().addCatcher("Drone/Create", new IPushCommand() {
+            @Override
+            public void execute(Bundle bundle) {
+                SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
+                //Toast.makeText(SitacActivity.this, "Push update received for drone id", Toast.LENGTH_SHORT).show();
+            }
+        });
         // SIG
-        application.getPushHandler().addCatcher("sig/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Sig/Update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for sig", Toast.LENGTH_SHORT).show();
             }
         });
 
         // SIG Extern
-        application.getPushHandler().addCatcher("sigextern/update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Sigextern/Update/", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
-                Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        sitacQuitted=true;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        sitacQuitted=true;
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        sitacQuitted=true;
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        sitacQuitted=false;
+        super.onRestart();
+    }
+
+
+
+    private class PushBackgroundTasks extends AsyncTask<Void, Void, Void> {
+        final long pullRefreshTime = 2000;
+        protected Void doInBackground(Void... params) {
+            try {
+                if (Looper.myLooper() == null)
+                {
+                    Looper.prepare();
+                }
+
+                while(!dataLoader.isInterventionLoaded()){
+                    synchronized (this){
+                        wait(pullRefreshTime);
+                    }
+                }
+                while (!sitacQuitted) {
+
+                    // TODO : handle dao
+                    // Request on intervention and on the date of the last update
+
+                    DaoSelectionParameters parameters = new DaoSelectionParameters();
+
+                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    final java.sql.Timestamp lastUpdateTimeStamp = new Timestamp(lastUpdate.getTime());
+                    parameters.addFilter("timestamp", formatter.format(lastUpdateTimeStamp)); //();
+                    pushMessageDao.findMessageByInterventionAndDate(
+                            intervention.getId(),
+                            lastUpdate,
+                            parameters,
+                            new IDaoSelectReturnHandler<List<PushMessage>>() {
+                                @Override
+                                public void onRepositoryResult(List<PushMessage> r) {
+                                }
+
+                                @Override
+                                public void onRestResult(List<PushMessage> r) {
+                                    for (PushMessage p : r) {
+                                        Bundle monBundle = new Bundle();
+                                        ((TdfApplication) getApplication()).getPushHandler().handlePush("api", monBundle);
+                                        lastUpdate=p.getTimestamp();
+                                    }
+                                }
+
+                                @Override
+                                public void onRepositoryFailure(Throwable e) {
+                                    Log.e("pushMessageDao", "onRepositoryFailure  " + e.getMessage());
+                                }
+
+                                @Override
+                                public void onRestFailure(Throwable e) {
+                                    Log.e("pushMessageDao", "onRestFailure  " + e.getMessage());
+                                }
+                            });
+
+                    //pushMessages.add(m);
+                    // TODO : SUPPRESS BOUCHOUN BELOW
+                    synchronized (this) {
+                        wait(pullRefreshTime);
+                    }
+                }
+            } catch (InterruptedException e) {
+                Log.e("Async Push Refresh", e.getMessage());
+            }
+            return null;
+        }
+    }
+
 }

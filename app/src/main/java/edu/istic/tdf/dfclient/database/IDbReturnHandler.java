@@ -5,8 +5,8 @@ package edu.istic.tdf.dfclient.database;
  *
  * @author maxime
  */
-public interface IDbReturnHandler<Result> {
-
+public interface IDbReturnHandler<Result>
+{
     /**
      * Callback called in case of successful request
      * @param r Result of the request

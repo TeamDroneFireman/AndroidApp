@@ -8,68 +8,85 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollView4" >
+        android:id="@+id/scrollView4"
+        android:layout_marginTop="60dp"
+        android:fillViewport="false">
 
         <LinearLayout
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="24dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/PropertiesWrapper"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
 
-            <Spinner
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/RoleSpinner"
-                android:layout_gravity="center_horizontal|top"
-                android:spinnerMode="dropdown" />
+                 <Spinner
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/RoleSpinner"
+                    android:layout_gravity="center_horizontal|top"
+                    android:spinnerMode="dropdown" />
 
-            <Spinner
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/FormSpinner"
-                android:layout_gravity="center_horizontal|top"
-                android:spinnerMode="dropdown" />
+                <Spinner
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/FormSpinner"
+                    android:layout_gravity="center_horizontal|top"
+                    android:spinnerMode="dropdown" />
 
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ElementLabelEdit"
-                android:layout_gravity="center_horizontal|top" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ElementLabelEdit"
+                    android:layout_gravity="center_horizontal|top" />
+            </LinearLayout>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="Le moyen est arrivé"
-                android:checked="false"
-                android:id="@+id/ArrivedState"/>
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:clickable="true"
-                android:text="Le moyen est engagé"
-                android:checked="false"
-                android:id="@+id/EngagedState"/>
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:clickable="true"
-                android:text="Le moyen est en transit"
-                android:checked="false"
-                android:id="@+id/InTransitState"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:clickable="true"
-                android:text="Default state of TextView"
-                android:checked="false"
-                android:id="@+id/StateView"/>
+            <LinearLayout
+                android:id="@+id/StatesWrapper"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
 
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Le moyen est demandé"
+                    android:id="@+id/AskedState"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Le moyen est arrivé"
+                    android:id="@+id/ArrivedState"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Le moyen est engagé"
+                    android:id="@+id/EngagedState"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Le moyen est en transit"
+                    android:id="@+id/InTransitState"/>
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/DroneOptionsWrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
@@ -89,20 +106,7 @@
                 android:text="Créer chemin"
                 android:id="@+id/DroneCreatePathButton"
                 android:layout_gravity="center_horizontal|bottom" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Enregistrer"
-                android:id="@+id/ElementSubmitButton"
-                android:layout_gravity="center_horizontal|bottom" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Annuler"
-                android:id="@+id/ElementCancelButton"
-                android:layout_gravity="center_horizontal|bottom" />
+        </LinearLayout>
 
             <Button
                 android:layout_width="match_parent"
@@ -113,5 +117,24 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mettre à jour"
+        android:id="@+id/ElementSubmitButton"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_margin="24dp" />
+
+    <ImageButton
+        android:src="@drawable/abc_ic_clear_mtrl_alpha"
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/ElementCancelButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="left|top"
+        android:scaleType="fitStart"
+        android:layout_margin="12dp" />
+
 
 </FrameLayout>

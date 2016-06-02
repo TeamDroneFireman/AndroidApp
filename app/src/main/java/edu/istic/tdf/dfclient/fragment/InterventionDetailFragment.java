@@ -1,6 +1,5 @@
 package edu.istic.tdf.dfclient.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.Inflater;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,7 +25,6 @@ import edu.istic.tdf.dfclient.UI.adapter.ValidationTableAdapter;
 import edu.istic.tdf.dfclient.activity.MainMenuActivity;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
-import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
 
@@ -130,6 +127,7 @@ public class InterventionDetailFragment extends Fragment {
         void onInterventionArchived();
 
         void handleValidation(IMean mean);
+        Boolean isHandlingValidation();
     }
 
     public void setIntervention(Intervention intervention){
@@ -183,8 +181,6 @@ public class InterventionDetailFragment extends Fragment {
         validationTable.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-
-
     }
 
     private void archiveCurrentIntervention(){

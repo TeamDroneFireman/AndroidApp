@@ -118,7 +118,7 @@ public class LoginFragment extends Fragment {
                 LoginFragment.this.getActivity().runOnUiThread(new Runnable() { // If other error
                     public void run() {
                         loginBt.setProgress(0);
-                        Toast.makeText(LoginFragment.this.getActivity(), "Network error. Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(LoginFragment.this.getActivity(), "Network error. Please check your internet connection.", Toast.LENGTH_SHORT).show();*/
                     }
                 });
             }

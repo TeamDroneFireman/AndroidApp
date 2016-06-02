@@ -158,6 +158,9 @@ public class TdfHttpClient {
             case ImageDrone:
                 host = "image";
                 break;
+            case PushMessage:
+                host = "push";
+                break;
             default:
                 return "";
         }
@@ -185,6 +188,9 @@ public class TdfHttpClient {
                 break;
             case ImageDrone:
                 path = "images";
+                break;
+            case PushMessage:
+                path = "pushMessages";
                 break;
             default:
                 return "";

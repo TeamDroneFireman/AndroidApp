@@ -1,9 +1,10 @@
 package edu.istic.tdf.dfclient.auth;
 
 /**
- * Created by maxime on 22/04/2016.
+ * Class credentials wich contains current user infos
  */
-public class Credentials {
+public class Credentials
+{
     /**
      * Id of user
      */
@@ -19,10 +20,12 @@ public class Credentials {
      */
     private Boolean isCodisUser;
 
-    public Credentials() {
+    public Credentials()
+    {
     }
 
-    public Credentials(String userId, String token, Boolean isCodisUser) {
+    public Credentials(String userId, String token, Boolean isCodisUser)
+    {
         this.userId = userId;
         this.token = token;
         this.isCodisUser = isCodisUser;

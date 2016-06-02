@@ -82,6 +82,14 @@ public class MapUtils {
         return new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
     }
 
+    public static ArrayList<LatLng> geoPointListToLatLngList(ArrayList<GeoPoint> geoPoints) {
+        ArrayList<LatLng> latLngs = new ArrayList<>();
+        for (GeoPoint geoPoint : geoPoints){
+            latLngs.add(geoPointToLatLng(geoPoint));
+        }
+        return latLngs;
+    }
+
     public static boolean isOnSegment(LatLng latLng, LatLng startPoint, LatLng endPoint) {
 
         ArrayList<LatLng> segment = new ArrayList<>();
@@ -91,11 +99,7 @@ public class MapUtils {
         return PolyUtil.isLocationOnPath(latLng, segment, false, 2.0);
     }
 
-    public static ArrayList<LatLng> geoPointListToLatLngList(ArrayList<GeoPoint> geoPoints) {
-        ArrayList<LatLng> latLngs = new ArrayList<>();
-        for (GeoPoint geoPoint : geoPoints){
-            latLngs.add(geoPointToLatLng(geoPoint));
-        }
-        return latLngs;
+    public static GeoPoint latLngToGeoPoint(LatLng latLng) {
+        return new GeoPoint(latLng.latitude, latLng.longitude, 0);
     }
 }
