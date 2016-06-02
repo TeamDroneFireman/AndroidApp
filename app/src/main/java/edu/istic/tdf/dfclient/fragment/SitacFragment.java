@@ -141,7 +141,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 } else if (hasElementSelected()) {
 
                     Element element = mListener.tryGetSelectedElement();
-
                     addElement(element, latLng);
 
                 } else {
@@ -590,6 +589,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())
                                     .setSize(32)
+                                    .setRole(Role.WATER)
                                     .setForm(PictoFactory.ElementForm.PHOTO)
                                     .toBitmap()))
                     .position(new LatLng(imageDrone.getGeoPoint().getLatitude(), imageDrone.getGeoPoint().getLongitude()))
@@ -855,7 +855,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
         }
 
         if(deletePoints){
-
             for(Circle circle: currentPathCircles){
                 circle.remove();
             }

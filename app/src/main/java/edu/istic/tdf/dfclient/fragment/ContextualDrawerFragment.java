@@ -83,6 +83,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.FormSpinner)
     Spinner formSpinner;
 
+    @Bind(R.id.DefaultMeansSpinner)
+    Spinner defaultMeansSpinner;
+
     @Bind(R.id.AskedState)
     CheckBox askedStateCheckbox;
     @Bind(R.id.ArrivedState)
@@ -146,8 +149,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     fillStateCheckBox(MeanState.INTRANSIT, false, true);
-                    updateElementStates((IMean) element);
-                    formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element)));
+                    formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element, false)));
                 }
             }
         });
@@ -155,11 +157,9 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         inTransitCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     fillStateCheckBox(MeanState.ENGAGED, false, true);
-                    updateElementStates((IMean) element);
-                    formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element)));
-
+                    formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element, true)));
                 }
             }
         });
@@ -185,8 +185,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             public void onClick(View v) {
                 if (createDronePathMode) {
                     droneStartMission.setVisibility(View.GONE);
-                    if(((Drone)element).hasMission())
-                    {
+                    if (((Drone) element).hasMission()) {
                         droneStartMission.setVisibility(View.VISIBLE);
                     }
 
@@ -195,13 +194,12 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
                     Mission currentMission = mListener.getCurrentMission();
 
-                    if(!currentMission.getPathPoints().isEmpty())
-                    {
+                    if (!currentMission.getPathPoints().isEmpty()) {
                         ArrayList<GeoPoint> pathPoints = mListener.getCurrentMission().getPathPoints();
                         Mission.PathMode pathMode = (Mission.PathMode) dronePathModeSpinner.getSelectedItem();
 
                         // If cycle or simple we close the path
-                        switch (pathMode){
+                        switch (pathMode) {
                             case CYCLE:
                             case ZONE:
                                 pathPoints.add(pathPoints.get(0));
@@ -213,15 +211,13 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                         ((Drone) element).setMission(
                                 new Mission(
                                         pathPoints,
-                                        (Mission.PathMode)dronePathModeSpinner.getSelectedItem()
+                                        (Mission.PathMode) dronePathModeSpinner.getSelectedItem()
                                 )
                         );
                     }
 
                     mListener.setCreateDronePathMode(false);
-                }
-                else
-                {
+                } else {
                     droneStartMission.setVisibility(View.GONE);
                     dronePathModeSpinner.setVisibility(View.VISIBLE);
                     droneCreatePathButton.setText("Confirmer chemin");
@@ -234,6 +230,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
         dronePathModeSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Mission.PathMode.values()));
+        defaultMeansSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, getDefaultMeanList()));
 
         return view;
     }
@@ -295,29 +292,27 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         // Shape and role init
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
-        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element)));
+
+        boolean isPlanned = false;
 
         // States init
         if(element.getType() == ElementType.MEAN || element.getType() == ElementType.AIRMEAN){
+            isPlanned = ((IMean)element).getState() != MeanState.ENGAGED;
             Toast.makeText(getContext(), ((IMean)element).getState().getMeanAsReadableText(), Toast.LENGTH_SHORT).show();
             fillStateCheckboxes((IMean) element);
         }
+
+        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element, isPlanned)));
         //formSpinner.setSelection(Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm()));
 
     }
 
     private void updateElementStates(IMean mean){
         switch (mean.getState()){
-
-            case ASKED:
-                break;
-            case VALIDATED:
-                break;
             case ARRIVED:
                 if(engagedStateCheckBox.isChecked()){
                     mean.setState(MeanState.ENGAGED);
                 }
-
                 if(inTransitCheckBox.isChecked()){
                     mean.setState(MeanState.INTRANSIT);
                 }
@@ -332,38 +327,42 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
                     mean.setState(MeanState.ENGAGED);
                 }
                 break;
-            case RELEASED:
-                break;
         }
     }
 
 
-    private PictoFactory.ElementForm[] getAvailableForms(Element element){
+    private PictoFactory.ElementForm[] getAvailableForms(Element element, boolean isPlanned){
 
         switch (element.getType()){
 
             case MEAN:
-                if(((IMean)element).getState() == MeanState.ENGAGED){
+
+                if(isPlanned){
                     return new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.MEAN,
-                            PictoFactory.ElementForm.MEAN_GROUP,
-                            PictoFactory.ElementForm.MEAN_COLUMN
+                            PictoFactory.ElementForm.MEAN_PLANNED,
+                            PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
+                            PictoFactory.ElementForm.MEAN_COLUMN_PLANNED
                     };
                 }
+
                 return new PictoFactory.ElementForm[]{
-                        PictoFactory.ElementForm.MEAN_PLANNED,
-                        PictoFactory.ElementForm.MEAN_GROUP_PLANNED,
-                        PictoFactory.ElementForm.MEAN_COLUMN_PLANNED
-                    };
-            case AIRMEAN:
-                if(((IMean)element).getState() == MeanState.ENGAGED) {
-                    return new PictoFactory.ElementForm[]{
-                            PictoFactory.ElementForm.AIRMEAN
-                    };
-                }
-                return new PictoFactory.ElementForm[]{
-                        PictoFactory.ElementForm.AIRMEAN_PLANNED
+                        PictoFactory.ElementForm.MEAN,
+                        PictoFactory.ElementForm.MEAN_GROUP,
+                        PictoFactory.ElementForm.MEAN_COLUMN
                 };
+
+
+            case AIRMEAN:
+                if(isPlanned){
+
+                    return new PictoFactory.ElementForm[]{
+                            PictoFactory.ElementForm.AIRMEAN_PLANNED
+                    };
+                }
+                return new PictoFactory.ElementForm[]{
+                        PictoFactory.ElementForm.AIRMEAN
+                };
+
             case MEAN_OTHER:
                 return new PictoFactory.ElementForm[]{
                         PictoFactory.ElementForm.MEAN_OTHER,
@@ -461,5 +460,18 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     public Element tryGetElement()
     {
         return this.element;
+    }
+
+    public String[] getDefaultMeanList() {
+        //TODO recup dans la base la liste des moyens
+        return new String[]{
+                "FPT",
+                "VSAV",
+                "EPA",
+                "VLCG",
+                "CCF",
+                "CCGC",
+                "VLHR"
+        };
     }
 }
