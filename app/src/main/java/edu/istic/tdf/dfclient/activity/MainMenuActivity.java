@@ -74,6 +74,11 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
     @Inject
     InterventionWelcomeFragment interventionWelcomeFragment;
 
+    /**
+     * Boolean to know if it's handling a validation from the validation table
+     */
+    private Boolean isHandlingValidation = false;
+
     @Override
     public void onBackPressed() {
         this.overridePendingTransition(R.anim.shake, R.anim.shake);
@@ -97,12 +102,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.list_container, interventionListFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
 
         // Map
@@ -166,11 +171,12 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
     @Override
     public void handleValidation(IMean mean) {
+        this.isHandlingValidation = true;
         if(mean.getType().equals(ElementType.AIRMEAN)){
             droneDao.persist((Drone) mean, new IDaoWriteReturnHandler() {
                 @Override
                 public void onSuccess(Object r) {
-
+                    isHandlingValidation = false;
                 }
 
                 @Override
@@ -180,33 +186,40 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
 
                 @Override
                 public void onRestFailure(Throwable e) {
-
-                }
-            });
-        }else if(mean.getType().equals(ElementType.MEAN)){
-            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler() {
-                @Override
-                public void onSuccess(Object r) {
-
-                }
-
-                @Override
-                public void onRepositoryFailure(Throwable e) {
-
-                }
-
-                @Override
-                public void onRestFailure(Throwable e) {
-
+                    isHandlingValidation = false;
                 }
             });
         }
+        else if(mean.getType().equals(ElementType.MEAN))
+        {
+            interventionMeanDao.persist((InterventionMean) mean, new IDaoWriteReturnHandler() {
+                @Override
+                public void onSuccess(Object r) {
+                    isHandlingValidation = false;
+                }
+
+                @Override
+                public void onRepositoryFailure(Throwable e) {
+
+                }
+
+                @Override
+                public void onRestFailure(Throwable e) {
+                    isHandlingValidation = false;
+                }
+            });
+        }
+
         List<IMean> means=interventionDetailFragment.getMeanList();
         means.remove(mean);
         interventionDetailFragment.setMeanList(means);
         interventionDetailFragment.notifyChanged();
         interventionListFragment.loadAndDisplayInterventions(null);
+    }
 
+    @Override
+    public Boolean isHandlingValidation() {
+        return this.isHandlingValidation;
     }
 
     @Override
@@ -214,7 +227,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         hideMap();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionCreateFormFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -222,7 +235,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         // Display detail in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionDetailFragment)
-                .commit();
+                .commitAllowingStateLoss();
 
         // Load intervention in fragment and display it
         interventionDetailFragment.setIntervention(intervention);
@@ -284,7 +297,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
         // Display in fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, interventionWelcomeFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideMap() {
@@ -293,7 +306,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             fm.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
                     .hide(mapFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -303,7 +316,7 @@ public class MainMenuActivity extends BaseActivity implements InterventionDetail
             fm.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_vert, R.anim.slide_out_vert)
                     .show(mapFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 }

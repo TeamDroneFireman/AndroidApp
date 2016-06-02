@@ -2,12 +2,15 @@ package edu.istic.tdf.dfclient.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,9 +19,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Observer;
 
 import javax.inject.Inject;
@@ -26,14 +33,18 @@ import javax.inject.Inject;
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.Tool;
+import edu.istic.tdf.dfclient.dao.DaoSelectionParameters;
 import edu.istic.tdf.dfclient.dao.IDao;
 import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.PushMessageDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.domain.element.PointOfInterestDao;
+import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
 import edu.istic.tdf.dfclient.dao.handler.IDaoWriteReturnHandler;
 import edu.istic.tdf.dfclient.dataloader.DataLoader;
+import edu.istic.tdf.dfclient.domain.PushMessage;
 import edu.istic.tdf.dfclient.domain.element.Element;
 import edu.istic.tdf.dfclient.domain.element.ElementType;
 import edu.istic.tdf.dfclient.domain.element.Role;
@@ -54,6 +65,7 @@ import edu.istic.tdf.dfclient.fragment.MeansTableFragment;
 import edu.istic.tdf.dfclient.fragment.SitacFragment;
 import edu.istic.tdf.dfclient.fragment.ToolbarFragment;
 import edu.istic.tdf.dfclient.push.IPushCommand;
+import edu.istic.tdf.dfclient.push.PushSubscriptionData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -108,6 +120,9 @@ public class SitacActivity extends BaseActivity implements
     @Inject @Getter
     ImageDroneDao imageDroneDao;
 
+    @Inject @Getter
+    PushMessageDao pushMessageDao;
+
     /**
      * true if and only if the current user is the CODIS
      */
@@ -115,10 +130,16 @@ public class SitacActivity extends BaseActivity implements
     private boolean isCodis;
 
     private ArrayList<Observer> observers = new ArrayList<>();
+    private boolean sitacQuitted = true;
+    private Date lastUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.isCodis = ((TdfApplication)this.getApplication()).loadCredentials().isCodisUser();
+
+        // Used for the Asynchrone database synchronisation with push
+        sitacQuitted=false;
+        lastUpdate = new Date();
 
         //intervention = createInterventionBouton();
         super.onCreate(savedInstanceState);
@@ -170,7 +191,7 @@ public class SitacActivity extends BaseActivity implements
                 .add(R.id.gallery_drawer_container, galleryDrawerFragment)
                 .hide(galleryDrawerFragment);
 
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
 
         currentFragment = sitacFragment;
 
@@ -184,6 +205,11 @@ public class SitacActivity extends BaseActivity implements
 
         //Load the datas in the dataloader
         dataLoader.loadData();
+
+        Bundle bundlePush = new Bundle();
+        PushSubscriptionData pushSubscriptionData = new PushSubscriptionData();
+
+        new AsyncPullRefresh().execute();
 
         //Register to the push handler
         this.registerPushHandlers();
@@ -199,7 +225,7 @@ public class SitacActivity extends BaseActivity implements
                         .hide(toolbarFragment)
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
-                        .commit();
+                        .commitAllowingStateLoss();
                 switchTo(sitacFragment);
             }
             else
@@ -208,7 +234,7 @@ public class SitacActivity extends BaseActivity implements
                         .show(toolbarFragment)
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
-                        .commit();
+                        .commitAllowingStateLoss();
                 switchTo(sitacFragment);
             }
         }
@@ -220,7 +246,6 @@ public class SitacActivity extends BaseActivity implements
             NavUtils.navigateUpTo(this, upIntent);
         }
     }
-
     @Override
     public void handleSelectedToolUtils(Tool tool) {
         this.sitacFragment.cancelSelection();
@@ -372,7 +397,7 @@ public class SitacActivity extends BaseActivity implements
     public void showContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .show(contextualDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
         contextualDrawer.animate().translationX(0);
 
     }
@@ -380,32 +405,32 @@ public class SitacActivity extends BaseActivity implements
     public void showGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .show(galleryDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideContextualDrawer(){
         getSupportFragmentManager().beginTransaction()
                 .hide(contextualDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
         contextualDrawer.animate().translationX(contextualDrawer.getWidth());
     }
 
     public void hideGalleryDrawer() {
         getSupportFragmentManager().beginTransaction()
                 .hide(galleryDrawerFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void hideToolBar(){
         getSupportFragmentManager().beginTransaction()
                 .hide(toolbarFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void showToolBar() {
         getSupportFragmentManager().beginTransaction()
                 .show(toolbarFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -427,7 +452,7 @@ public class SitacActivity extends BaseActivity implements
                         .hide(contextualDrawerFragment)
                         .hide(galleryDrawerFragment)
                         .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                        .commit();
+                        .commitAllowingStateLoss();
 
                 switchTo(meansTableFragment);
                 break;
@@ -440,7 +465,7 @@ public class SitacActivity extends BaseActivity implements
                             .hide(contextualDrawerFragment)
                             .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                            .commit();
+                            .commitAllowingStateLoss();
                     switchTo(sitacFragment);
                 }
                 else
@@ -450,7 +475,7 @@ public class SitacActivity extends BaseActivity implements
                             .hide(contextualDrawerFragment)
                             .hide(galleryDrawerFragment)
                             .setCustomAnimations(R.anim.frag_slide_in, R.anim.frag_slide_out)
-                            .commit();
+                            .commitAllowingStateLoss();
                     switchTo(sitacFragment);
                 }
                 break;
@@ -484,7 +509,7 @@ public class SitacActivity extends BaseActivity implements
         // You probably want to add the transaction to the backstack
         // so that user can use the back button
         t.addToBackStack(null);
-        t.commit();
+        t.commitAllowingStateLoss();
     }
 
     public void displayNetworkError() {
@@ -806,5 +831,108 @@ public class SitacActivity extends BaseActivity implements
                 Toast.makeText(SitacActivity.this, "Push update received for sigextern", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        sitacQuitted=true;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        sitacQuitted=true;
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        sitacQuitted=true;
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        sitacQuitted=false;
+        super.onRestart();
+    }
+
+    private class AsyncPullRefresh extends AsyncTask<Void, Void, Void> {
+        private final long pullRefreshTime = 5000;
+        @Override
+        protected Void doInBackground(Void ... params) {
+            try {
+                //Only one looper may be created per thread
+                if (Looper.myLooper() == null)
+                {
+                    Looper.prepare();
+                }
+
+                while(!sitacQuitted){
+                    synchronized (this){
+                        wait(pullRefreshTime);
+                    }
+                    // TODO : handle dao
+                    // Request on intervention and on the date of the last update
+
+                    DaoSelectionParameters parameters = new DaoSelectionParameters();
+
+                    DateFormat formatter =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    java.sql.Timestamp lastUpdateTimeStamp = new Timestamp(lastUpdate.getTime()-10000000);
+                    parameters.addFilter("timestamp", formatter.format(lastUpdateTimeStamp)); //();
+                    pushMessageDao.findMessageByInterventionAndDate(
+                            intervention.getId(),
+                            lastUpdate,
+                            parameters,
+                            new IDaoSelectReturnHandler<List<PushMessage>>() {
+                                @Override
+                                public void onRepositoryResult(List<PushMessage> r) {
+                                    Log.d("pushMessageDao", "onRepositoryResult");
+                                }
+
+                                @Override
+                                public void onRestResult(List<PushMessage> r) {
+                                    Log.d("pushMessageDao", "onRestResult");
+
+                                    for (PushMessage p : r) {
+                                        if(p==null){
+
+                                        }else if(p.getId()==null){
+
+                                        }else if(p.getTopic()==null){
+
+                                        }
+                                        Bundle monBundle = new Bundle();
+                                        Log.d("push message", "----------------------------------------------");
+                                        Log.d("push message", "ID : "+p.getId());
+                                        Log.d("push message", "TOPIC : " + p.getTopic());
+
+                                        monBundle.putString("topic", p.getTopic());
+                                        monBundle.putString("id", p.getId());
+                                        ((TdfApplication) getApplication()).getPushHandler().handlePush("api", monBundle);
+                                        Log.d("push message", "-----------------------------------------------");
+                                    }
+                                }
+
+                                @Override
+                                public void onRepositoryFailure(Throwable e) {
+                                    Log.e("pushMessageDao", "onRepositoryFailure  " + e.getMessage());
+                                }
+
+                                @Override
+                                public void onRestFailure(Throwable e) {
+                                    Log.e("pushMessageDao", "onRestFailure  " + e.getMessage());
+                                }
+                            });
+
+                    //pushMessages.add(m);
+                    // TODO : SUPPRESS BOUCHOUN BELOW
+
+                }
+            }catch (InterruptedException e){
+                Log.e("Async Push Refresh", e.getMessage());
+            }
+            return null;
+        }
     }
 }

@@ -1,7 +1,6 @@
 package edu.istic.tdf.dfclient.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,7 +24,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
 import edu.istic.tdf.dfclient.R;
 import edu.istic.tdf.dfclient.TdfApplication;
 import edu.istic.tdf.dfclient.UI.adapter.InterventionListAdapter;
@@ -35,15 +33,8 @@ import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
 import edu.istic.tdf.dfclient.dao.handler.IDaoSelectReturnHandler;
-import edu.istic.tdf.dfclient.domain.element.Element;
-import edu.istic.tdf.dfclient.domain.element.ElementType;
-import edu.istic.tdf.dfclient.domain.element.IElement;
 import edu.istic.tdf.dfclient.domain.element.mean.IMean;
-import edu.istic.tdf.dfclient.domain.element.mean.MeanState;
-import edu.istic.tdf.dfclient.domain.element.mean.drone.Drone;
-import edu.istic.tdf.dfclient.domain.element.mean.interventionMean.InterventionMean;
 import edu.istic.tdf.dfclient.domain.intervention.Intervention;
-import su.levenetc.android.badgeview.BadgeView;
 
 
 public class InterventionListFragment extends Fragment {
@@ -109,8 +100,11 @@ public class InterventionListFragment extends Fragment {
         interventionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setSelected(true);
-                selectItem(position);
+                if(!fragmentInteractionListener.isHandlingValidation())
+                {
+                    view.setSelected(true);
+                    selectItem(position);
+                }
             }
 
         });
@@ -134,8 +128,11 @@ public class InterventionListFragment extends Fragment {
                         InterventionListFragment.this.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                fragmentInteractionListener.welcomeToShow();
-                                pullToRefresh.setRefreshing(false);
+                                if(!fragmentInteractionListener.isHandlingValidation())
+                                {
+                                    fragmentInteractionListener.welcomeToShow();
+                                    pullToRefresh.setRefreshing(false);
+                                }
                             }
                         });
                     }
@@ -174,6 +171,8 @@ public class InterventionListFragment extends Fragment {
         void handleInterventionSelected(Intervention intervention, List<IMean> meanList);
 
         void welcomeToShow();
+
+        Boolean isHandlingValidation();
     }
 
     private void displayCreationBt() {
@@ -202,7 +201,7 @@ public class InterventionListFragment extends Fragment {
                     intervention = interventionIterator.next();
                     interventionArrayList.add(intervention);
 
-                    addMeanInHashMap(intervention,intervention.getDrones());
+                    addMeanInHashMap(intervention, intervention.getDrones());
                     addMeanInHashMap(intervention, intervention.getMeans());
                 }
 
@@ -225,7 +224,7 @@ public class InterventionListFragment extends Fragment {
                     onLoaded.run();
                 }
 
-                if(interventionsList.isSelected()){
+                if (interventionsList.isSelected()) {
                     selectItem(interventionsList.getSelectedItemPosition());
                 }
             }

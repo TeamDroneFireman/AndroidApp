@@ -20,7 +20,7 @@ public class MeansTableActivity extends BaseActivity implements MeansTableFragme
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.means_table_container, MeansTableFragment.newInstance())
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override

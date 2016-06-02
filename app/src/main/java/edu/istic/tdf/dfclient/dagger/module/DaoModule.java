@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import edu.istic.tdf.dfclient.dao.domain.ImageDroneDao;
 import edu.istic.tdf.dfclient.dao.domain.InterventionDao;
+import edu.istic.tdf.dfclient.dao.domain.PushMessageDao;
 import edu.istic.tdf.dfclient.dao.domain.SinisterDao;
 import edu.istic.tdf.dfclient.dao.domain.element.DroneDao;
 import edu.istic.tdf.dfclient.dao.domain.element.InterventionMeanDao;
@@ -51,5 +52,10 @@ public class DaoModule {
     @Provides
     ImageDroneDao provideImageDroneDao(TdfHttpClient httpClient) {
         return new ImageDroneDao(httpClient);
+    }
+
+    @Provides
+    PushMessageDao providePushMessageDao(TdfHttpClient httpClient) {
+        return new PushMessageDao(httpClient);
     }
 }

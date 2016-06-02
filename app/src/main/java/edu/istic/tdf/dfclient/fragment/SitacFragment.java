@@ -406,7 +406,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
             if(((Drone)element).getMission().getPathMode() == Mission.PathMode.ZONE){
 
                 PolygonOptions polygonOptions = new PolygonOptions().addAll(missionPathPoints).strokeColor(Role.PEOPLE.getColor()).fillColor(0x5564DD17).clickable(true);
-                if(element.getId() != null){
+                if(element.getId() != null && googleMap != null){
                     missionZonesList.put(element.getId(), googleMap.addPolygon(polygonOptions));
                 }
 
@@ -613,6 +613,11 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
     private Marker addMarker(ImageDrone imageDrone){
         if(googleMap != null) {
             Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(
+                            PictoFactory.createPicto(getContext())
+                                    .setSize(32)
+                                    .setForm(PictoFactory.ElementForm.PHOTO)
+                                    .toBitmap()))
                     .position(new LatLng(imageDrone.getGeoPoint().getLatitude(), imageDrone.getGeoPoint().getLongitude()))
                     .draggable(false));
 
@@ -666,12 +671,6 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 }
             }
 
-            for(Map.Entry<Marker, Element> entry : markersList.entrySet()){
-                if(entry.getValue().getId() == elementId){
-                    return entry.getValue();
-                }
-            }
-
             for(String missionPathId : dronePathsList.keySet()){
                 if(dronePathsList.get(missionPathId).equals(polyline)){
                     elementId = missionPathId;
@@ -684,6 +683,7 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                     return entry.getValue();
                 }
             }
+
 
         }
 
@@ -728,12 +728,15 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                 newImageDrones.add(img);
             }
         }
-
-        newImageDrones.add(imageDrone);
         marker.remove();
         markersListImageDrone.remove(marker);
         marker = googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(imageDrone.getGeoPoint().getLatitude(), imageDrone.getGeoPoint().getLongitude()))
+                .icon(BitmapDescriptorFactory.fromBitmap(
+                        PictoFactory.createPicto(getContext())
+                                .setSize(32)
+                                .setForm(PictoFactory.ElementForm.PHOTO)
+                                .toBitmap()))
+                .position(MapUtils.geoPointToLatLng(imageDrone.getGeoPoint()))
                 .draggable(false));
         markersListImageDrone.put(marker, newImageDrones);
     }

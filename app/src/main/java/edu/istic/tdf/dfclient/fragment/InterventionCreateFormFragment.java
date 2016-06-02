@@ -317,6 +317,7 @@ public class InterventionCreateFormFragment extends Fragment {
 
     // Persist all the means
     public void createElementsFromMeans(Intervention intervention){
+        String name="";
         for(Mean mean : means) {
             switch (mean.name) {
                 case "DRONE":
@@ -326,17 +327,29 @@ public class InterventionCreateFormFragment extends Fragment {
 
                     Element.setDefaultElementValues(drone, mean.name, intervention);
 
-                    intervention.addElement(drone);
+
+                    name = drone.getName();
                     for(int i = 0; i<mean.number;i++){
-                        droneDao.persist(drone, new IDaoWriteReturnHandler() {
-                            @Override
-                            public void onSuccess(Object r) {Log.d("Persist drone","Drone persisted");}
-                            @Override
-                            public void onRepositoryFailure(Throwable e) {Log.e("Persist drone", "Repository failure");}
-                            @Override
-                            public void onRestFailure(Throwable e) {Log.e("Persist drone", "Rest failure");}
-                        });
-                    }
+                            drone.setName(name+" "+(i+1));
+                            droneDao.persist(drone, new IDaoWriteReturnHandler() {
+                                @Override
+                                public void onSuccess(Object r) {
+                                    Log.d("Persist drone", "Drone persisted");
+                                }
+
+                                @Override
+                                public void onRepositoryFailure(Throwable e) {
+                                    Log.e("Persist drone", "Repository failure");
+                                }
+
+                                @Override
+                                public void onRestFailure(Throwable e) {
+                                    Log.e("Persist drone", "Rest failure");
+                                }
+                            });
+
+                    }intervention.addElement(drone);
+
                     break;
                 default:
                     InterventionMean interventionMean = new InterventionMean();
@@ -345,8 +358,9 @@ public class InterventionCreateFormFragment extends Fragment {
 
                     Element.setDefaultElementValues(interventionMean, mean.name, intervention);
 
-                    intervention.addElement(interventionMean);
+                    name = interventionMean.getName();
                     for(int i = 0;i<mean.number;i++){
+                        interventionMean.setName(name+" "+(i+1));
                         interventionMeanDao.persist(interventionMean, new IDaoWriteReturnHandler() {
                             @Override
                             public void onSuccess(Object r) {Log.d("Persist mean","Mean persisted");}
@@ -359,7 +373,7 @@ public class InterventionCreateFormFragment extends Fragment {
                                 Log.e("Persist Means", "couldn't persist mean ");
                                 Log.e("Persist Means", e.getMessage());}
                         });
-                    }
+                    }intervention.addElement(interventionMean);
                     break;
             }
         }
