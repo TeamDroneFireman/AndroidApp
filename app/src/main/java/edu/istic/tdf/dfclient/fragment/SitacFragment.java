@@ -415,8 +415,9 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
                         } else {
                             circleOptions.fillColor(0x5564DD17);
                         }
-
-                        missionPathsCircles.get(element.getId()).add(googleMap.addCircle(circleOptions));
+                        if(googleMap != null){
+                            missionPathsCircles.get(element.getId()).add(googleMap.addCircle(circleOptions));
+                        }
 
                         if (MapUtils.isOnSegment(nearestPointOnMission, lastPoint, currentPoint)) {
                             closestMissionPointIndex = missionPathPoints.indexOf(currentPoint);
@@ -583,8 +584,8 @@ public class SitacFragment extends SupportMapFragment implements OnMapReadyCallb
      * @param imageDrone
      * @return
      */
-    private Marker addMarker(ImageDrone imageDrone){
-        if(googleMap != null) {
+    private Marker addMarker(ImageDrone imageDrone) {
+        if (googleMap != null) {
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             PictoFactory.createPicto(getContext())

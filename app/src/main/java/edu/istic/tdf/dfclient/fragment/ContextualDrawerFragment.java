@@ -300,7 +300,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         }
             formSpinner.setSelection(indexInSpinner);
-        
+
         /*int spinnerIndex = Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm());
         if(formSpinner.getItemAtPosition(spinnerIndex) != null){
             formSpinner.setSelection(spinnerIndex);
