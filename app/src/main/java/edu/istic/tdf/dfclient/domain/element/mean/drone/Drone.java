@@ -58,9 +58,9 @@ public class Drone extends Element implements IDrone
         this.states.put(MeanState.ARRIVED, null);
         this.states.put(MeanState.ENGAGED, null);
         this.states.put(MeanState.RELEASED, null);
-        this.role=Role.DEFAULT;
         this.name="";
         this.form = PictoFactory.ElementForm.AIRMEAN;
+        this.role = Role.COMMAND;
     }
 
     @Override
