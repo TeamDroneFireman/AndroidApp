@@ -124,6 +124,8 @@
         android:layout_margin="24dp"
         />
 
+    </LinearLayout>
+
     <ImageButton
         android:src="@drawable/abc_ic_clear_mtrl_alpha"
         android:background="?android:attr/selectableItemBackground"
@@ -133,6 +135,4 @@
         android:layout_gravity="left|top"
         android:scaleType="fitStart"
         android:layout_margin="12dp" />
-
-</LinearLayout>
 </FrameLayout>

@@ -281,7 +281,8 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         // Shape and role init
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
-
+        roleSpinner.refreshDrawableState();
+        
         boolean isPlanned = false;
 
         // States init
