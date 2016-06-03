@@ -65,9 +65,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.ElementCancelButton)
     ImageButton elementCancelButton;
 
-    @Bind(R.id.ElementDeleteButton)
-    Button elementDeleteButton;
-
     @Bind(R.id.DroneCreatePathButton)
     Button droneCreatePathButton;
 
@@ -164,12 +161,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         });
 
-        elementDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.deleteElement(element);
-            }
-        });
 
         droneStartMission.setOnClickListener(new View.OnClickListener() {
             @Override
