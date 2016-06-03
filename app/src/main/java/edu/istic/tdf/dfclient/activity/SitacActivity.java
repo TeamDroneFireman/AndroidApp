@@ -814,7 +814,7 @@ public class SitacActivity extends BaseActivity implements
         });
 
         // Drones
-        application.getPushHandler().addCatcher("Drone/Update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Drone/Update", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadDrone(bundle.getString("id"), true);
@@ -829,7 +829,7 @@ public class SitacActivity extends BaseActivity implements
             }
         });
         // SIG
-        application.getPushHandler().addCatcher("Sig/Update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Sig/Update", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
@@ -838,7 +838,7 @@ public class SitacActivity extends BaseActivity implements
         });
 
         // SIG Extern
-        application.getPushHandler().addCatcher("Sigextern/Update/", new IPushCommand() {
+        application.getPushHandler().addCatcher("Sigextern/Update", new IPushCommand() {
             @Override
             public void execute(Bundle bundle) {
                 SitacActivity.this.dataLoader.loadPointOfInterest(bundle.getString("id"), true);
