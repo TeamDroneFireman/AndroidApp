@@ -83,9 +83,6 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     @Bind(R.id.FormSpinner)
     Spinner formSpinner;
 
-    @Bind(R.id.DefaultMeansSpinner)
-    Spinner defaultMeansSpinner;
-
     @Bind(R.id.AskedState)
     CheckBox askedStateCheckbox;
     @Bind(R.id.ArrivedState)
@@ -120,9 +117,12 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
 
         ButterKnife.bind(this, view);
 
+        roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
+
         elementSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 element.setName(ElementLabelEdit.getText().toString());
                 element.setRole((Role) roleSpinner.getSelectedItem());
                 element.setForm((PictoFactory.ElementForm) formSpinner.getSelectedItem());
@@ -228,9 +228,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             }
         });
 
-        roleSpinner.setAdapter(new RoleArrayAdapter(getContext(), Role.values()));
         dronePathModeSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Mission.PathMode.values()));
-        defaultMeansSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, getDefaultMeanList()));
 
         return view;
     }
@@ -298,13 +296,14 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         // States init
         if(element.getType() == ElementType.MEAN || element.getType() == ElementType.AIRMEAN){
             isPlanned = ((IMean)element).getState() != MeanState.ENGAGED;
-            Toast.makeText(getContext(), ((IMean)element).getState().getMeanAsReadableText(), Toast.LENGTH_SHORT).show();
             fillStateCheckboxes((IMean) element);
         }
 
         formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element, isPlanned)));
-        //formSpinner.setSelection(Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm()));
-
+        /*int spinnerIndex = Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm());
+        if(formSpinner.getItemAtPosition(spinnerIndex) != null){
+            formSpinner.setSelection(spinnerIndex);
+        }*/
     }
 
     private void updateElementStates(IMean mean){
