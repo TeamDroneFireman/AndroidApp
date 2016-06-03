@@ -291,7 +291,16 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             fillStateCheckboxes((IMean) element);
         }
 
-        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), getAvailableForms(element, isPlanned)));
+        PictoFactory.ElementForm[] forms = getAvailableForms(element, isPlanned);
+        formSpinner.setAdapter(new ShapeArrayAdapter(getContext(), forms));
+        int indexInSpinner = 0;
+        for(int i=0; i< forms.length; i++){
+            if(forms[i] == element.getForm()){
+                indexInSpinner = i;
+            }
+        }
+            formSpinner.setSelection(indexInSpinner);
+        
         /*int spinnerIndex = Arrays.asList(PictoFactory.ElementForm.values()).indexOf(element.getForm());
         if(formSpinner.getItemAtPosition(spinnerIndex) != null){
             formSpinner.setSelection(spinnerIndex);
