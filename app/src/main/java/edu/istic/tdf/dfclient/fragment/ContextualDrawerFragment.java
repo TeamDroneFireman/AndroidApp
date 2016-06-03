@@ -282,7 +282,7 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
         // Shape and role init
         roleSpinner.setSelection(Arrays.asList(Role.values()).indexOf(element.getRole()));
         roleSpinner.refreshDrawableState();
-        
+
         boolean isPlanned = false;
 
         // States init
@@ -301,11 +301,11 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
     private void updateElementStates(IMean mean){
         switch (mean.getState()){
             case ARRIVED:
-                if(engagedStateCheckBox.isChecked()){
-                    mean.setState(MeanState.ENGAGED);
-                }
                 if(inTransitCheckBox.isChecked()){
                     mean.setState(MeanState.INTRANSIT);
+                }
+                if(engagedStateCheckBox.isChecked()){
+                    mean.setState(MeanState.ENGAGED);
                 }
                 break;
             case ENGAGED:
@@ -316,6 +316,16 @@ public class ContextualDrawerFragment extends Fragment implements Observer {
             case INTRANSIT:
                 if(engagedStateCheckBox.isChecked()){
                     mean.setState(MeanState.ENGAGED);
+                }
+                break;
+            case VALIDATED:
+                if(arrivedStateCheckBox.isChecked()){
+                    mean.setState(MeanState.ARRIVED);
+                }
+                break;
+            case ASKED:
+                if(arrivedStateCheckBox.isChecked()){
+                    mean.setState(MeanState.ARRIVED);
                 }
                 break;
         }
